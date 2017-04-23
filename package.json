@@ -28,7 +28,8 @@
     "package-win": "npm run build && build --win --x64",
     "package-linux": "npm run build && build --linux",
     "package-all": "npm run build && build -mwl",
-    "cleanup": "mop -v"
+    "cleanup": "mop -v",
+    "server": "(cd server && npm start)"
   },
   "browserslist": "electron 1.4",
   "build": {
@@ -184,18 +185,24 @@
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
+    "@exponent/electron-cookies": "^2.0.0",
+    "apollo-client": "^1.0.4",
     "electron-debug": "^1.1.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "font-awesome": "^4.7.0",
     "history": "^4.6.1",
+    "persistgraphql": "^0.3.1",
     "react": "^15.5.4",
+    "react-apollo": "^1.1.0",
     "react-dom": "^15.5.4",
     "react-hot-loader": "3.0.0-beta.6",
     "react-redux": "^5.0.4",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
     "react-router-redux": "^5.0.0-alpha.6",
+    "react-timeago": "^3.2.0",
     "redux": "^3.6.0",
+    "redux-form": "^6.6.3",
     "redux-thunk": "^2.2.0",
     "source-map-support": "^0.4.14"
   },

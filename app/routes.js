@@ -2,15 +2,21 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Switch, Route } from 'react-router';
-import App from './containers/App';
-import HomePage from './containers/HomePage';
+
+import Layout from './components/Layout';
+import LinksPage from './containers/LinksPage';
+import LinkPage from './containers/LinkPage';
+import AddLinkPage from './containers/AddLinkPage';
 
 export default () => (
   <Router>
-    <App>
+    <Layout>
       <Switch>
-        <Route path="/" component={HomePage} />
+        <Route path="/links" exact component={LinksPage} />
+        <Route path="/links/add" exact component={AddLinkPage} />
+        <Route path="/links/:linkId" exact component={LinkPage} />
+        <Route path="/" exact component={LinksPage} />
       </Switch>
-    </App>
+    </Layout>
   </Router>
 );

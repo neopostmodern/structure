@@ -1,6 +1,6 @@
 /* eslint global-require: 1, flowtype-errors/show-errors: 0 */
 // @flow
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import MenuBuilder from './menu';
 
 let mainWindow = null;
@@ -22,7 +22,8 @@ const installExtensions = async () => {
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [
     'REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS'
+    'REDUX_DEVTOOLS',
+    'APOLLO_DEVELOPER_TOOLS'
   ];
 
   return Promise
@@ -58,13 +59,13 @@ app.on('ready', async () => {
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    mainWindow.show();
-    mainWindow.focus();
-  });
+  // mainWindow.webContents.on('did-finish-load', () => {
+  if (!mainWindow) {
+    throw new Error('"mainWindow" is not defined');
+  }
+  mainWindow.show();
+  mainWindow.focus();
+  // });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -72,4 +73,43 @@ app.on('ready', async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+
+  // login logic
+  ipcMain.on('login-modal', () => {
+    let loginWindow = new BrowserWindow({
+      parent: mainWindow,
+      modal: true,
+      show: false,
+      width: 400,
+      webPreferences: {
+        nodeIntegration: false,
+      }
+    });
+    loginWindow.loadURL('http://localhost:3001/login/github');
+    loginWindow.once('ready-to-show', () => {
+      loginWindow.show();
+    });
+    loginWindow.webContents.on('did-get-redirect-request', function (event, url) {
+      if (url.includes('login/github/callback')) {
+        loginWindow.webContents.session.cookies.get({}, (error, cookies) => {
+          cookies.forEach((cookie) => {
+            cookie.url = "http://" + cookie.domain;
+            delete cookie.domain;
+            mainWindow.webContents.session.cookies.set(cookie, (error) => {
+              if (error) {
+                console.error("Can't set cookie.", error, error.message, error.toString());
+              }
+            })
+          })
+        });
+
+        loginWindow.close();
+        mainWindow.send('login-closed');
+      }
+    });
+    loginWindow.on('closed', () => {
+      loginWindow = null;
+      mainWindow.send('login-closed');
+    }, false);
+  });
 });

@@ -120,6 +120,12 @@ export default class MenuBuilder {
     const templateDefault = [{
       label: '&File',
       submenu: [{
+        label: '&New link',
+        accelerator: 'CommandOrControl+N',
+        click: () => {
+          this.mainWindow.webContents.send('global-shortcut', 'new');
+        }
+      }, {
         label: '&Open',
         accelerator: 'Ctrl+O'
       }, {

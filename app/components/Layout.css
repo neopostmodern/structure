@@ -1,0 +1,22 @@
+.container {
+  max-width: 50rem;
+  margin: 2rem auto 5rem;
+}
+
+.container h2 {
+  font-size: 5rem;
+}
+
+.container a {
+  /*font-size: 1.4rem;*/
+}
+
+.loginButton {
+  border: 1px solid black;
+  background: none;
+
+  padding: 0.3em 1.2em;
+
+  font-family: "Futura Std Medium", sans-serif;
+  font-size: 2rem;
+}

@@ -1,20 +1,21 @@
 // @flow
 import React from 'react';
-import { Provider } from 'react-redux';
+import { ApolloProvider } from 'react-apollo';
 import { ConnectedRouter } from 'react-router-redux';
 import Routes from '../routes';
 
 type RootType = {
   store: {},
-  history: {}
+  history: {},
+  client: {}
 };
 
-export default function Root({ store, history }: RootType) {
+export default function Root({ store, history, client }: RootType) {
   return (
-    <Provider store={store}>
+    <ApolloProvider store={store} client={client}>
       <ConnectedRouter history={history}>
         <Routes />
       </ConnectedRouter>
-    </Provider>
+    </ApolloProvider>
   );
 }

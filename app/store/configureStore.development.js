@@ -5,14 +5,14 @@ import { createBrowserHistory } from 'history';
 import { routerMiddleware, push } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
-
+import middlewares from '../middleware';
 
 
 const history = createBrowserHistory();
 
 const configureStore = (initialState: ?counterStateType) => {
   // Redux Configuration
-  const middleware = [];
+  const middleware = [...middlewares];
   const enhancers = [];
 
   // Thunk Middleware

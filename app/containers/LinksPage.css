@@ -1,0 +1,13 @@
+.menu {
+  display: flex;
+}
+
+.menu a,
+.menu button {
+  color: black;
+  border: none;
+  background: none;
+
+  font-family: "Futura Std Medium", sans-serif;
+  font-size: 1.5rem;
+}
