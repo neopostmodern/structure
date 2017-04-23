@@ -2,9 +2,9 @@ import url from 'url';
 import mongoose, { Schema } from 'mongoose';
 import MigrateMongoose from 'migrate-mongoose';
 
-// todo: environemnt!
-const MONGO_URL = 'mongodb://localhost/structureApp';
-mongoose.connect(MONGO_URL);
+import config from './config.json';
+
+mongoose.connect(config.MONGO_URL);
 
 const userSchema = Schema({
   _id: String,
@@ -44,9 +44,10 @@ export const Link = mongoose.model('Link', linkSchema);
 
 
 let migrator = new MigrateMongoose({
-  dbConnectionUri: MONGO_URL,
+  migrationsPath: config.MIGRATIONS_DIRECTORY,
+  dbConnectionUri: config.MONGO_URL,
   es6Templates: true,
-  autosync: true
+  autosync: true,
 });
 
 migrator.list().then((migrations) => {

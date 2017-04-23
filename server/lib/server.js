@@ -6,7 +6,7 @@ import { User, Link, Tag } from './mongo';
 import { setUpGitHubLogin } from './githubLogin';
 import schema from './schema';
 
-const PORT = 3001;
+import config from './config.json';
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -34,9 +34,10 @@ app.use('/graphql', graphqlExpress((req) => {
   };
 }));
 
-app.use('/graphiql', graphiqlExpress({
-  endpointURL: '/graphql',
-  query: `{
+if (config.GRAPHIQL) {
+  app.use('/graphiql', graphiqlExpress({
+    endpointURL: '/graphql',
+    query: `{
     links {
       url
       tags {
@@ -44,8 +45,9 @@ app.use('/graphiql', graphiqlExpress({
       }
     }
   }`,
-}));
+  }));
+}
 
-app.listen(PORT, () => {
-  console.log(`Structure GraphQL Server running at ${PORT}...`);
+app.listen(config.PORT, () => {
+  console.log(`Structure GraphQL Server running at ${config.PORT}...`);
 });

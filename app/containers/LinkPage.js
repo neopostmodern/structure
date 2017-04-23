@@ -1,38 +1,11 @@
 // @flow
 import React from 'react';
 import { gql, graphql, compose } from 'react-apollo';
-import { Field, reduxForm } from 'redux-form';
 
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 import Tags from '../components/Tags';
+import LinkForm from "../components/LinkForm";
 
-import formStyles from './LinkForm.css';
-
-export class InternalLinkForm extends React.Component {
-  render() {
-    return (<form onSubmit={this.props.handleSubmit} className={formStyles.form}>
-      <Field
-        name="url"
-        component="input"
-        type="text"
-        className={formStyles.url}
-      />
-      <Field
-        name="name"
-        component="input"
-        type="text"
-        className={formStyles.name}
-      />
-      <Field
-        name="description"
-        component="textarea"
-        className={formStyles.description}
-      />
-    </form>);
-  }
-}
-
-export const LinkForm = reduxForm()(InternalLinkForm);
 
 export class LinkPage extends React.Component {
   deleteLink = () => {

@@ -49,7 +49,8 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
-    height: 728
+    height: 728,
+    icon: '/home/neopostmodern/Code/Structure2/resources/icon.png'
   });
 
   const url = (process.env.NODE_ENV === 'development')
@@ -75,7 +76,7 @@ app.on('ready', async () => {
   menuBuilder.buildMenu();
 
   // login logic
-  ipcMain.on('login-modal', () => {
+  ipcMain.on('login-modal', (event, backendUrl) => {
     let loginWindow = new BrowserWindow({
       parent: mainWindow,
       modal: true,
@@ -85,7 +86,8 @@ app.on('ready', async () => {
         nodeIntegration: false,
       }
     });
-    loginWindow.loadURL('http://localhost:3001/login/github');
+
+    loginWindow.loadURL(`${backendUrl}/login/github`);
     loginWindow.once('ready-to-show', () => {
       loginWindow.show();
     });

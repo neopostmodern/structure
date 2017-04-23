@@ -8,10 +8,9 @@ export default store => {
   });
 
   return next => action => {
-    if (action.type == REQUEST_LOGIN) {
-      ipcRenderer.send('login-modal', true);
+    if (action.type === REQUEST_LOGIN) {
+      ipcRenderer.send('login-modal', BACKEND_URL);
     }
-    // console.log('next state', store.getState())
     return next(action);
   };
 };

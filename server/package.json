@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-node server.js"
+    "start": "babel-node lib/server.js",
+    "build": "babel lib -d ./dist && babel migrations -d ./dist/migrations",
+    "bundle": "npm run build && ./deploy/bundle.sh",
+    "deploy": "npm run bundle && ./deploy/deploy.sh"
   },
   "author": "",
   "license": "ISC",

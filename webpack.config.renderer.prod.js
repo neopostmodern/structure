@@ -11,6 +11,14 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import BabiliPlugin from 'babili-webpack-plugin';
 import baseConfig from './webpack.config.base';
 
+import config from './config.prod.json';
+const jsonifiedConfig = {};
+Object.keys(config).forEach((key) => {
+  jsonifiedConfig[key] = JSON.stringify(config[key]);
+});
+// jsonifiedConfig['VERSION'] = JSON.stringify(package_json.version);
+const configPlugin = new webpack.DefinePlugin(jsonifiedConfig);
+
 export default merge.smart(baseConfig, {
   devtool: 'source-map',
 
@@ -168,6 +176,8 @@ export default merge.smart(baseConfig, {
     new HtmlWebpackPlugin({
       filename: 'app.html',
       template: 'app/app.html'
-    })
+    }),
+
+    configPlugin
   ],
 });

@@ -31,7 +31,7 @@ function getNetworkInterface(host = '', headers = {}) {
 //   wsClient,
 // );
 const apolloOptions = {
-  networkInterface: getNetworkInterface('http://localhost:3001'), // networkInterfaceWithSubscriptions,
+  networkInterface: getNetworkInterface(BACKEND_URL), // networkInterfaceWithSubscriptions,
   initialState: window.__APOLLO_STATE__, // eslint-disable-line no-underscore-dangle
   // ssrForceFetchDelay: 100,
   connectToDevTools: true,

@@ -18,10 +18,19 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import baseConfig from './webpack.config.base';
 
+import config from './config.dev.json';
+
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
 const dll = path.resolve(process.cwd(), 'dll');
 const manifest = path.resolve(dll, 'vendor.json');
+
+const jsonifiedConfig = {};
+Object.keys(config).forEach((key) => {
+  jsonifiedConfig[key] = JSON.stringify(config[key]);
+});
+// jsonifiedConfig['VERSION'] = JSON.stringify(package_json.version);
+const configPlugin = new webpack.DefinePlugin(jsonifiedConfig);
 
 /**
  * Warn if the DLL is not built
@@ -226,7 +235,10 @@ export default merge.smart(baseConfig, {
       filename: 'app.html',
       template: 'app/app.html',
       dll: `${publicPath}/dll/vendor.dll.js`
-    })
+    }),
+
+    // define globals config
+    configPlugin
   ],
 
   devServer: {
