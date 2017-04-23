@@ -30,14 +30,8 @@ export class Layout extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log(prevProps, this.props);
     if (this.props.user.loggingIn !== prevProps.user.loggingIn) {
-      console.log("Refetch");
       this.props.user.refetch();
-    }
-    if (this.props.path !== prevProps.path) {
-      console.log("Path change, re-render");
-      this.forceUpdate();
     }
   }
 

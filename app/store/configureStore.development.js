@@ -1,14 +1,13 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { hashHistory } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
+import { createHashHistory as createHistory } from 'history';
 import { routerMiddleware, push } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import middlewares from '../middleware';
 
 
-const history = createBrowserHistory();
+const history = createHistory();
 
 const configureStore = (initialState: ?counterStateType) => {
   // Redux Configuration
@@ -26,7 +25,7 @@ const configureStore = (initialState: ?counterStateType) => {
   middleware.push(logger);
 
   // Router Middleware
-  const router = routerMiddleware(hashHistory);
+  const router = routerMiddleware(history);
   middleware.push(router);
 
   // Redux DevTools Configuration
