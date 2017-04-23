@@ -1,7 +1,7 @@
-//@flow
+// @flow
 import React from 'react';
 import { gql, graphql, compose } from 'react-apollo';
-import { Field, reduxForm } from "redux-form";
+import { Field, reduxForm } from 'redux-form';
 
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 import Tags from '../components/Tags';
@@ -10,19 +10,25 @@ import formStyles from './LinkForm.css';
 
 export class InternalLinkForm extends React.Component {
   render() {
-    return <form onSubmit={this.props.handleSubmit} className={formStyles.form}>
-      <Field name="url"
-             component="input"
-             type="text"
-             className={formStyles.url} />
-      <Field name="name"
-             component="input"
-             type="text"
-             className={formStyles.name} />
-      <Field name="description"
-             component="textarea"
-             className={formStyles.description} />
-    </form>;
+    return (<form onSubmit={this.props.handleSubmit} className={formStyles.form}>
+      <Field
+        name="url"
+        component="input"
+        type="text"
+        className={formStyles.url}
+      />
+      <Field
+        name="name"
+        component="input"
+        type="text"
+        className={formStyles.name}
+      />
+      <Field
+        name="description"
+        component="textarea"
+        className={formStyles.description}
+      />
+    </form>);
   }
 }
 
@@ -34,17 +40,21 @@ export class LinkPage extends React.Component {
     if (loading) {
       return <i>Loading...</i>;
     }
-    return <div style={{marginTop: 50}}>
-      <LinkForm form={link._id}
-                initialValues={link}
-                onSubmit={this.props.updateLink}
-                onChange={this.props.updateLink} />
-      <div style={{marginTop: 30}}>
-        <Tags tags={link.tags}
-              onAddTag={this.props.addTagByNameToLink.bind(this, link._id)}
-              onRemoveTag={this.props.removeTagByIdFromLink.bind(null, link._id)} />
+    return (<div style={{ marginTop: 50 }}>
+      <LinkForm
+        form={link._id}
+        initialValues={link}
+        onSubmit={this.props.updateLink}
+        onChange={this.props.updateLink}
+      />
+      <div style={{ marginTop: 30 }}>
+        <Tags
+          tags={link.tags}
+          onAddTag={this.props.addTagByNameToLink.bind(this, link._id)}
+          onRemoveTag={this.props.removeTagByIdFromLink.bind(null, link._id)}
+        />
       </div>
-    </div>;
+    </div>);
   }
 }
 

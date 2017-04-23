@@ -89,18 +89,18 @@ app.on('ready', async () => {
     loginWindow.once('ready-to-show', () => {
       loginWindow.show();
     });
-    loginWindow.webContents.on('did-get-redirect-request', function (event, url) {
+    loginWindow.webContents.on('did-get-redirect-request', (event, url) => {
       if (url.includes('login/github/callback')) {
         loginWindow.webContents.session.cookies.get({}, (error, cookies) => {
           cookies.forEach((cookie) => {
-            cookie.url = "http://" + cookie.domain;
+            cookie.url = `http://${cookie.domain}`;
             delete cookie.domain;
             mainWindow.webContents.session.cookies.set(cookie, (error) => {
               if (error) {
                 console.error("Can't set cookie.", error, error.message, error.toString());
               }
-            })
-          })
+            });
+          });
         });
 
         loginWindow.close();

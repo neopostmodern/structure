@@ -1,4 +1,4 @@
-//@flow
+// @flow
 import React, { Component } from 'react';
 import { gql, graphql } from 'react-apollo';
 import { bindActionCreators } from 'redux';
@@ -40,8 +40,8 @@ export class Layout extends Component {
   }
 
   render() {
-    let headline = "Structure";
-    if (this.props.path !== "/") {
+    let headline = 'Structure';
+    if (this.props.path !== '/') {
       headline = <span><Link to="/">/</Link>{this.props.path.substr(1)}</span>;
     }
 
@@ -51,22 +51,22 @@ export class Layout extends Component {
     if (this.props.user.loggingIn) {
       content = <Centered text="Logging in..." />;
     } else if (this.props.user.loading) {
-      content = <Centered text="Loading..."/>;
+      content = <Centered text="Loading..." />;
     } else if (this.props.user.name) {
       content = this.props.children;
       userIndicator = <b>{this.props.user.name}.</b>;
     } else {
-      content = <Centered>
+      content = (<Centered>
         <button onClick={this.openLoginModal} className={styles.loginButton}>Log in</button>
-      </Centered>;
+      </Centered>);
     }
 
     return (
       <div>
         <div className={styles.container}>
-          <div style={{display: 'flex'}}>
+          <div style={{ display: 'flex' }}>
             <h2>{headline}</h2>
-            <div style={{marginLeft: 'auto'}}>
+            <div style={{ marginLeft: 'auto' }}>
               {userIndicator}
             </div>
           </div>

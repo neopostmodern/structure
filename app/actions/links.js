@@ -18,7 +18,7 @@ export function addTagToLink(linkId: string, tag: string) {
       linkId,
       tag
     }
-  }
+  };
 }
 
 export function removeLink(link: string) {

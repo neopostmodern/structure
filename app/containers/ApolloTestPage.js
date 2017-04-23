@@ -11,10 +11,10 @@ class FeedPage extends React.Component {
     super();
     this.offset = 0;
   }
-  
+
   render() {
     const { vote, loading, currentUser, feed, fetchMore } = this.props;
-    
+
     return (
       <div>
         <Feed

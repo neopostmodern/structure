@@ -1,6 +1,6 @@
 // @flow
-import * as React from "react";
-import { Link } from "react-router-dom";
+import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { gql, graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
@@ -14,12 +14,12 @@ import styles from './LinksPage.css';
 export function layoutToName(layout: LinkLayoutType) {
   switch (layout) {
     case LinkLayouts.GRID_LAYOUT:
-      return "Grid layout";
+      return 'Grid layout';
     case LinkLayouts.LIST_LAYOUT:
-      return "List layout";
+      return 'List layout';
     default:
-      console.error("Unkown layout", layout);
-      return "Unknown layout";
+      console.error('Unkown layout', layout);
+      return 'Unknown layout';
   }
 }
 
@@ -46,9 +46,11 @@ export class LinksPage extends React.Component {
     if (!this.props.loading) {
       if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
         content = (
-          <LinksList links={this.props.links}
-                     addTagToLink={this.props.addTagByNameToLink}
-                     onRemoveTagFromLink={this.props.removeTagByIdFromLink}/>
+          <LinksList
+            links={this.props.links}
+            addTagToLink={this.props.addTagByNameToLink}
+            onRemoveTagFromLink={this.props.removeTagByIdFromLink}
+          />
         );
       } else {
         content = <i>Unsupported layout</i>;
@@ -60,7 +62,7 @@ export class LinksPage extends React.Component {
       <div>
         <div className={styles.menu}>
           <Link to="/links/add">Add new</Link>
-          <a onClick={this.toggleLayout} style={{marginLeft: 'auto'}}>
+          <a onClick={this.toggleLayout} style={{ marginLeft: 'auto' }}>
             {layoutToName(this.props.layout)}
           </a>
         </div>

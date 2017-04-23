@@ -32,10 +32,10 @@ const FeedEntry = ({
   };
 
   return (
-    <div style={{marginBottom: '1rem'}}>
+    <div style={{ marginBottom: '1rem' }}>
       <div className="media-body">
         <div>
-          {full_name}<br/>
+          {full_name}<br />
           <a href={html_url}>{html_url}</a>
         </div>
         <RepoInfo entry={filter(RepoInfo.fragments.entry, entry)} >

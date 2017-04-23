@@ -4,7 +4,7 @@ import TimeAgo from 'react-timeago';
 import type LinkObject from '../reducers/links';
 import Tags from './Tags';
 import styles from './LinksList.css';
-import {Link} from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 export default class LinksList extends Component {
   props: {
@@ -38,9 +38,11 @@ export default class LinksList extends Component {
               <a href={link.url} className={styles.domain}>{link.domain}</a>
               <div className={styles.description}>{link.description}</div>
             </div>
-            <Tags tags={link.tags}
-                  onAddTag={this._handleSubmitTag.bind(this, link._id)}
-                  onRemoveTag={this.props.onRemoveTagFromLink.bind(null, link._id)} />
+            <Tags
+              tags={link.tags}
+              onAddTag={this._handleSubmitTag.bind(this, link._id)}
+              onRemoveTag={this.props.onRemoveTagFromLink.bind(null, link._id)}
+            />
           </div>
         )}
       </div>

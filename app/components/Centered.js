@@ -7,8 +7,8 @@ export default function Centered({ text, children }) {
   } else {
     content = children;
   }
-  
-  return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh'}}>
+
+  return (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
     <div>{content}</div>
-  </div>
+  </div>);
 }

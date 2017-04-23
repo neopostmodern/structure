@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 
-import styles from "./AddLink.css";
+import styles from './AddLink.css';
 
 class AddLink extends Component {
   props: {
@@ -17,7 +17,7 @@ class AddLink extends Component {
 
   render() {
     return (
-      <div style={{paddingTop: '20vh'}}>
+      <div style={{ paddingTop: '20vh' }}>
         <form onSubmit={this.handleSubmit}>
           <input
             type="text"

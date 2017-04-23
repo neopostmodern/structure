@@ -1,8 +1,8 @@
 // @flow
 
 export const LinkLayouts = {
-  LIST_LAYOUT: "LIST_LAYOUT",
-  GRID_LAYOUT: "GRID_LAYOUT"
+  LIST_LAYOUT: 'LIST_LAYOUT',
+  GRID_LAYOUT: 'GRID_LAYOUT'
 };
 export type LinkLayoutType = $Keys<typeof LinkLayouts>;
 

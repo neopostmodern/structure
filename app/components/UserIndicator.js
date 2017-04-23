@@ -1,4 +1,4 @@
-//@flow
+// @flow
 import React, { Component } from 'react';
 import { gql, graphql } from 'react-apollo';
 import { bindActionCreators } from 'redux';
@@ -10,28 +10,28 @@ export class UserIndicator extends Component {
   props: {
     requestLogin: () => void,
     loggingIn: boolean,
-    
+
     loading: boolean,
     name: string,
     refetch: () => void
   };
-  
+
   constructor() {
     super();
-    
+
     this.openLoginModal = this.openLoginModal.bind(this);
   }
-  
+
   openLoginModal() {
     this.props.requestLogin();
   }
-  
+
   componentDidUpdate(prevProps) {
     if (this.props.loggingIn !== prevProps.loggingIn) {
       this.props.refetch();
     }
   }
-  
+
   render() {
     console.log(this.props);
     if (this.props.loggingIn) {
@@ -40,9 +40,8 @@ export class UserIndicator extends Component {
       return <i>Loading...</i>;
     } else if (this.props.name) {
       return <b>{this.props.name}.</b>;
-    } else {
-      return <button onClick={this.openLoginModal}>Log in</button>;
     }
+    return <button onClick={this.openLoginModal}>Log in</button>;
   }
 }
 
