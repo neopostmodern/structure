@@ -1,12 +1,14 @@
+@import "../styles/tag";
+
 .tags {
   display: flex;
 }
-.tag {
-  padding: 0.2em 0.4em 0.1em;
-  margin-right: 0.5em;
-  cursor: pointer;
-}
+
 .tags input {
   border: none;
   border-bottom: 1px solid black;
+}
+
+.tag {
+  @extend .base-tag;
 }

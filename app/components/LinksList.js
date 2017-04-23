@@ -10,7 +10,8 @@ export default class LinksList extends Component {
   props: {
     links: Array<LinkObject>,
 
-    addTagToLink: (linkId: string, tag: string) => void
+    addTagToLink: (linkId: string, tag: string) => void,
+    onRemoveTagFromLink: (linkId: string, tagId: string) => void
   };
 
   _handleSubmitTag(linkId, tag) {

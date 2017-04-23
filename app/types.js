@@ -1,6 +1,7 @@
 // @flow
 
 export type TagType = {
-  id: number,
-  name: string
+  _id: string,
+  name: string,
+  color: string
 };

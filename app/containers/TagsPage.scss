@@ -1,0 +1,13 @@
+@import "../styles/tag";
+
+.tagContainer {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag {
+  @extend .base-tag;
+
+  margin-bottom: $tag-margin;
+}

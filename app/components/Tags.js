@@ -1,14 +1,17 @@
 // @flow
-import * as React from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 import { findDOMNode } from 'react-dom';
-import { TagType } from '../types';
-import styles from './Tags.css';
+import type { TagType } from '../types';
+import styles from './Tags.scss';
 
 class Tags extends React.Component {
   propTypes: {
     tags: [TagType],
     onAddTag: () => void,
-    onRemoveTag: (string) => void
+    onRemoveTag: (string) => void,
+    onClickTag: (string) => void
   };
 
   constructor() {
@@ -59,6 +62,7 @@ class Tags extends React.Component {
           key={tag._id}
           className={styles.tag}
           style={{ backgroundColor: tag.color }}
+          onClick={this.props.navigateToTag.bind(null, tag._id)}
           onDoubleClick={this.props.onRemoveTag.bind(null, tag._id)}
         >
           {tag.name}
@@ -82,4 +86,12 @@ class Tags extends React.Component {
 //   `
 // };
 
-export default Tags;
+
+const mapDispatchToProps = (dispatch) => ({
+  navigateToTag: (tagId) => dispatch(push(`/tags/${tagId}`))
+});
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Tags);

@@ -20,6 +20,8 @@ type Tag {
   
   name: String!
   color: String!
+  
+  links: [Link]
 }
 
 # Information about a link
@@ -59,6 +61,13 @@ type Query {
     # The number of items to fetch starting from the offset, for pagination
     limit: Int
   ): [Link]
+  
+  tags(
+    offset: Int,
+    limit: Int
+  ): [Tag]
+  
+  tag(tagId: ID): Tag
 }
 
 type Mutation {
@@ -108,6 +117,11 @@ const rootResolvers = {
       return null;
     },
   }),
+  Tag: {
+    links(tag, args, context) {
+      return context.Link.find({ tags: tag }).populate("tags");
+    }
+  },
   Query: {
     currentUser(root, args, context) {
       return context.user || null;
@@ -121,6 +135,23 @@ const rootResolvers = {
         .sort({ createdAt: -1 })
         .limit(protectedLimit)
         .populate("tags")
+        .exec();
+    },
+    tag(root, { tagId }, context) {
+      if (!context.user) {
+        throw new Error("Need to be logged in to fetch a tag.");
+      }
+      return context.Tag.findById(tagId);
+    },
+    tags(root, { offset, limit }, context) {
+      if (!context.user) {
+        throw new Error("Need to be logged in to fetch links.");
+      }
+      const protectedLimit = (limit < 1 || limit > 10) ? 10 : limit;
+      return context.Tag.find({ user: context.user })
+      // .sort({ createdAt: -1 })
+        .limit(protectedLimit)
+        // .populate("tags")
         .exec();
     }
   },
