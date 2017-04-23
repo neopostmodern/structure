@@ -6,7 +6,6 @@ body {
   height: 100vh;
   background-color: white;
   font-family: Helvetica, Helvetica Neue, Arial, serif;
-  overflow-y: hidden;
 }
 
 h2 {
