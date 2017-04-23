@@ -69,6 +69,10 @@ type Mutation {
   updateLink(
     link: InputLink!
   ): Link
+  
+  deleteLink(
+    linkId: ID!
+  ): Link
 
   addTagByNameToLink(
     linkId: ID!
@@ -149,6 +153,18 @@ const rootResolvers = {
         return link.save();
       })
         .then(link => context.Link.populate(link, 'tags'));
+    },
+    deleteLink(root, { linkId }, context) {
+      if (!context.user) {
+        throw new Error("Need to be logged in to delete links.");
+      }
+      return context.Link.findOne({ _id: linkId, user: context.user }).then((link) => {
+        if (!link) {
+          throw new Error("Resource could not be found.");
+        }
+
+        return link.remove();
+      });
     },
     addTagByNameToLink(root, { linkId, name }, context) {
       if (!context.user) {

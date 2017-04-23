@@ -35,6 +35,14 @@ export class InternalLinkForm extends React.Component {
 export const LinkForm = reduxForm()(InternalLinkForm);
 
 export class LinkPage extends React.Component {
+  deleteLink = () => {
+    this.props.deleteLink(this.props.link._id)
+      .then((result) => {
+        this.props.history.push('/');
+        return result;
+      });
+  };
+
   render() {
     const { loading, link } = this.props;
     if (loading) {
@@ -53,6 +61,11 @@ export class LinkPage extends React.Component {
           onAddTag={this.props.addTagByNameToLink.bind(this, link._id)}
           onRemoveTag={this.props.removeTagByIdFromLink.bind(null, link._id)}
         />
+      </div>
+      <div style={{ display: 'flex', marginTop: 50 }}>
+        <button type="button" style={{ marginLeft: 'auto' }} onClick={this.deleteLink}>
+          Delete
+        </button>
       </div>
     </div>);
   }
@@ -93,6 +106,13 @@ const UPDATE_LINK_MUTATION = gql`
     }
   }
 `;
+const DELETE_LINK_MUTATION = gql`
+  mutation deleteLink($linkId: ID!){
+    deleteLink(linkId: $linkId) {
+      _id
+    }
+  }
+`;
 
 const withData = graphql(PROFILE_QUERY, {
   options: {
@@ -109,9 +129,15 @@ const withUpdateLink = graphql(UPDATE_LINK_MUTATION, {
     updateLink: ({ _id, url, domain, path, name, description }) => mutate({ variables: { link: { _id, url, domain, path, name, description } } })
   })
 });
+const withDeleteLink = graphql(DELETE_LINK_MUTATION, {
+  props: ({ mutate }) => ({
+    deleteLink: (_id) => mutate({ variables: { linkId: _id } })
+  })
+});
 export default compose(
   withData,
   withAddTagMutation,
   withRemoveTagMutation,
-  withUpdateLink
+  withUpdateLink,
+  withDeleteLink
 )(LinkPage);

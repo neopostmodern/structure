@@ -7,7 +7,7 @@ import { ipcRenderer } from 'electron';
 import apolloClient from './apollo';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
-import './app.global.css';
+import './app.global.scss';
 
 ElectronCookies.enable({
   origin: 'http://localhost:3010',
