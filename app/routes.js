@@ -11,8 +11,8 @@ import TagsPage from './containers/TagsPage';
 import TagPage from './containers/TagPage';
 
 export default () => (
-  <Router>
-    <Layout>
+  <Layout>
+    <Router>
       <Switch>
         <Route path="/" exact component={LinksPage} />
         <Route path="/links" exact component={LinksPage} />
@@ -21,6 +21,6 @@ export default () => (
         <Route path="/tags" exact component={TagsPage} />
         <Route path="/tags/:tagId" exact component={TagPage} />
       </Switch>
-    </Layout>
-  </Router>
+    </Router>
+  </Layout>
 );
