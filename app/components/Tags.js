@@ -9,9 +9,14 @@ import styles from './Tags.scss';
 class Tags extends React.Component {
   propTypes: {
     tags: [TagType],
+    withShortcuts?: boolean,
     onAddTag: () => void,
     onRemoveTag: (string) => void,
     onClickTag: (string) => void
+  };
+
+  defaultProps: {
+    withShortcuts: false
   };
 
   constructor() {
@@ -20,46 +25,74 @@ class Tags extends React.Component {
     this.state = {
       addingNewTag: false
     };
-
-    this._showNewTagForm = this._showNewTagForm.bind(this);
-    this._handleSubmit = this._handleSubmit.bind(this);
   }
 
-  _showNewTagForm() {
+  componentDidMount() {
+    if (this.props.withShortcuts) {
+      window.addEventListener('keydown', (event: KeyboardEvent) => {
+        if (event.key === 't' && event.ctrlKey) {
+          this.showNewTagForm();
+        }
+      }, true);
+    }
+  }
+
+  showNewTagForm = () => {
     this.setState({ addingNewTag: true });
-  }
-  _handleSubmit(event) {
+  };
+  hideNewTagForm = () => {
+    this.tagInput.value = '';
+    this.setState({ addingNewTag: false });
+  };
+
+  handleSubmit = (event) => {
     event.preventDefault();
 
-    const tagField = findDOMNode(this.refs.tag);
-    const tagValue = tagField.value.trim();
+    const tagValue = this.tagInput.value.trim();
     if (tagValue.length > 0) {
       this.props.onAddTag(tagValue);
-      tagField.value = '';
-      this.setState({ addingNewTag: false });
+      this.hideNewTagForm();
     } else {
       alert("Can't add empty tag."); // todo: error handling in UI
     }
-  }
+  };
 
   handleContextMenu(tagId, event: SyntheticMouseEvent) {
     event.preventDefault();
     this.props.onRemoveTag(tagId);
+  }
+
+  handleInputKeydown = (event: SyntheticKeyboardEvent) => {
+    if (event.key === 'Escape') {
+      this.hideNewTagForm();
+    }
   };
 
   render() {
     let newTagForm;
     if (this.state.addingNewTag) {
-      newTagForm = <form onSubmit={this._handleSubmit}><input type="text" placeholder="tag name" ref="tag" /></form>;
+      // todo: redux form
+      newTagForm = (
+        <form onSubmit={this.handleSubmit}>
+          <input
+            type="text"
+            placeholder="tag name"
+            ref={(element) => { if (element) { element.focus(); } this.tagInput = element; }}
+            onKeyDown={this.handleInputKeydown}
+          />
+        </form>
+      );
     } else {
       const addTagText = this.props.tags.length === 0 ? '+tag' : '+';
-      newTagForm = (<div
-        className={styles.tag}
-        style={{ border: '1px solid black' }}
-        onClick={this._showNewTagForm}
-      >
-        {addTagText}
-      </div>);
+      newTagForm = (
+        <div
+          className={styles.tag}
+          style={{ border: '1px solid black' }}
+          onClick={this.showNewTagForm}
+        >
+          {addTagText}
+        </div>
+      );
     }
     return (<div className={styles.tags}>
       {this.props.tags.map((tag) =>

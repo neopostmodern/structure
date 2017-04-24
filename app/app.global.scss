@@ -34,21 +34,27 @@ a:hover {
   cursor: pointer;
 }
 
+/* INPUTS */
 input[type="text"] {
   outline: none;
   padding: 0.3em 0;
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0);
 }
+
 textarea {
   border: 1px solid #eee;
   box-sizing: border-box;
   padding: 0.5em;
 }
-input[type="text"]:hover, textarea:hover {
-  border-color: gray;
+
+input[type="text"]:hover,
+textarea:hover {
+  border-color: lightgray;
 }
-input[type="text"]:focus, textarea:focus {
+
+input[type="text"]:focus,
+textarea:focus {
   border-color: black;
   outline: none;
 }

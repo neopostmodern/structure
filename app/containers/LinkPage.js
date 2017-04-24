@@ -31,6 +31,7 @@ export class LinkPage extends React.Component {
       <div style={{ marginTop: 30 }}>
         <Tags
           tags={link.tags}
+          withShortcuts
           onAddTag={this.props.addTagByNameToLink.bind(this, link._id)}
           onRemoveTag={this.props.removeTagByIdFromLink.bind(null, link._id)}
         />
