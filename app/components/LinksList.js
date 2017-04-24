@@ -36,7 +36,14 @@ export default class LinksList extends Component {
               </div>
             </div>
             <div className={styles.info}>
-              <a href={link.url} className={styles.domain}>{link.domain}</a>
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.domain}
+              >
+                {link.domain}
+              </a>
               <div className={styles.description}>{link.description}</div>
             </div>
             <Tags

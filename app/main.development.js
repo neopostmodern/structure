@@ -1,6 +1,6 @@
 /* eslint global-require: 1, flowtype-errors/show-errors: 0 */
 // @flow
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import MenuBuilder from './menu';
 
 let mainWindow = null;
@@ -72,6 +72,11 @@ app.on('ready', async () => {
         mainWindow.send('can-login');
       }
     });
+  });
+
+  mainWindow.webContents.on('new-window', (event, targetUrl) => {
+    event.preventDefault();
+    shell.openExternal(targetUrl);
   });
 
   mainWindow.on('closed', () => {
