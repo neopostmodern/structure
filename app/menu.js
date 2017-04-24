@@ -119,22 +119,27 @@ export default class MenuBuilder {
   buildDefaultTemplate() {
     const templateDefault = [{
       label: '&File',
-      submenu: [{
-        label: '&New link',
-        accelerator: 'CommandOrControl+N',
-        click: () => {
-          this.mainWindow.webContents.send('global-shortcut', 'new');
+      submenu: [
+        {
+          label: 'Home',
+          accelerator: 'CommandOrControl+/'
+          // accelerator doesn't actually work, handled in index.js on the window object
+        },
+        {
+          label: '&New link',
+          accelerator: 'CommandOrControl+N',
+          click: () => {
+            this.mainWindow.webContents.send('global-shortcut', 'new');
+          }
+        },
+        {
+          label: '&Close',
+          accelerator: 'Ctrl+W',
+          click: () => {
+            this.mainWindow.close();
+          }
         }
-      }, {
-        label: '&Open',
-        accelerator: 'Ctrl+O'
-      }, {
-        label: '&Close',
-        accelerator: 'Ctrl+W',
-        click: () => {
-          this.mainWindow.close();
-        }
-      }]
+      ]
     }, {
       label: '&View',
       submenu: (process.env.NODE_ENV === 'development') ? [{

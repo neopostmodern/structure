@@ -15,13 +15,21 @@ ElectronCookies.enable({
 
 ipcRenderer.on('global-shortcut', (event, shortcut) => {
   switch (shortcut) {
-    case 'new':
-      history.push('/links/add'); // todo: doesn't update UI
+    case 'home':
+      history.push('/');
       break;
     default:
       console.log('Unhandled shortcut', shortcut);
   }
 });
+
+// hack because menu can't capture CTRL+/
+window.addEventListener('keydown', (event: KeyboardEvent) => {
+  if (event.key === '/' && event.ctrlKey) {
+    history.push('/');
+    event.preventDefault();
+  }
+}, true);
 
 
 const store = configureStore();
