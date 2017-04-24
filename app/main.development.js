@@ -60,13 +60,19 @@ app.on('ready', async () => {
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  // mainWindow.webContents.on('did-finish-load', () => {
-  if (!mainWindow) {
-    throw new Error('"mainWindow" is not defined');
-  }
-  mainWindow.show();
-  mainWindow.focus();
-  // });
+  mainWindow.webContents.on('did-finish-load', () => {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+    mainWindow.show();
+    mainWindow.focus();
+
+    mainWindow.webContents.session.cookies.get({}, (error, cookies) => {
+      if (cookies.some(({ name }) => name === 'logged_in')) {
+        mainWindow.send('can-login');
+      }
+    });
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;

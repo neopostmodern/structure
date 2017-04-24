@@ -1,10 +1,13 @@
 // @flow
-import { REQUEST_LOGIN, completeLogin } from '../actions/userInterface';
+import { REQUEST_LOGIN, completeLogin, requestLogin } from '../actions/userInterface';
 import { ipcRenderer } from 'electron';
 
 export default store => {
   ipcRenderer.on('login-closed', () => {
     store.dispatch(completeLogin());
+  });
+  ipcRenderer.on('can-login', () => {
+    store.dispatch(requestLogin());
   });
 
   return next => action => {
