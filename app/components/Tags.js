@@ -42,6 +42,11 @@ class Tags extends React.Component {
     }
   }
 
+  handleContextMenu(tagId, event: SyntheticMouseEvent) {
+    event.preventDefault();
+    this.props.onRemoveTag(tagId);
+  };
+
   render() {
     let newTagForm;
     if (this.state.addingNewTag) {
@@ -63,7 +68,7 @@ class Tags extends React.Component {
           className={styles.tag}
           style={{ backgroundColor: tag.color }}
           onClick={this.props.navigateToTag.bind(null, tag._id)}
-          onDoubleClick={this.props.onRemoveTag.bind(null, tag._id)}
+          onContextMenu={this.handleContextMenu.bind(this, tag._id)}
         >
           {tag.name}
         </div>

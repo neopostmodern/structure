@@ -18,7 +18,7 @@ const ADD_LINK_MUTATION = gql`
 
 const withAddLinkMutation = graphql(ADD_LINK_MUTATION, {
   props: ({ mutate }) => ({
-    addLink: (url) => mutate({ variables: { url } })
+    addLink: (url) => mutate({ variables: { url } }).then(({ data }) => data.submitLink)
   })
 });
 

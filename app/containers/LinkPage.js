@@ -44,9 +44,9 @@ export class LinkPage extends React.Component {
   }
 }
 
-const PROFILE_QUERY = gql`
-  query LinksForList {
-    links {
+const LINK_QUERY = gql`
+  query Link($linkId: ID) {
+    link(linkId: $linkId) {
       _id
       createdAt
       url
@@ -87,13 +87,14 @@ const DELETE_LINK_MUTATION = gql`
   }
 `;
 
-const withData = graphql(PROFILE_QUERY, {
-  options: {
+const withData = graphql(LINK_QUERY, {
+  options:  ({ match }) => ({
     fetchPolicy: 'cache-and-network',
-  },
-  props: ({ data: { loading, links, refetch }, ownProps: { match } }) => ({
+    variables: { linkId: match.params.linkId }
+  }),
+  props: ({ data: { loading, link, refetch } }) => ({
     loading,
-    link: links && links.find((link) => link._id === match.params.linkId),
+    link,
     refetch
   }),
 });

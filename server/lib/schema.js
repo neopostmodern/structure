@@ -62,6 +62,8 @@ type Query {
     limit: Int
   ): [Link]
   
+  link(linkId: ID): Link
+  
   tags(
     offset: Int,
     limit: Int
@@ -117,14 +119,25 @@ const rootResolvers = {
       return null;
     },
   }),
+  Link: {
+    tags(link, args, context) {
+      return context.Tag.find({ _id: { $in: link.tags } });
+    }
+  },
   Tag: {
     links(tag, args, context) {
-      return context.Link.find({ tags: tag }).populate("tags");
+      return context.Link.find({ tags: tag });
     }
   },
   Query: {
     currentUser(root, args, context) {
       return context.user || null;
+    },
+    link(root, { linkId }, context) {
+      if (!context.user) {
+        throw new Error("Need to be logged in to fetch a link.");
+      }
+      return context.Link.findById(linkId);
     },
     links(root, { offset, limit }, context) {
       if (!context.user) {
@@ -134,7 +147,6 @@ const rootResolvers = {
       return context.Link.find({ user: context.user })
         .sort({ createdAt: -1 })
         .limit(protectedLimit)
-        .populate("tags")
         .exec();
     },
     tag(root, { tagId }, context) {
@@ -182,8 +194,7 @@ const rootResolvers = {
           link[propName] = props[propName];
         }
         return link.save();
-      })
-        .then(link => context.Link.populate(link, 'tags'));
+      });
     },
     deleteLink(root, { linkId }, context) {
       if (!context.user) {
@@ -212,12 +223,8 @@ const rootResolvers = {
           { $addToSet: { tags: tag._id }}
         )
           .exec()
-          .then(({ _id }) => {
-            return context.Link.findOne({ _id })
-              .populate("tags")
-              .exec();
-          })
-      })
+          .then(({ _id }) => context.Link.findOne({ _id }));
+      });
     },
     removeTagByIdFromLink(root, {linkId, tagId}, context) {
       if (!context.user) {
@@ -228,11 +235,7 @@ const rootResolvers = {
         { $pull: { tags: tagId }}
       )
         .exec()
-        .then(({ _id }) => {
-          return context.Link.findOne({ _id })
-            .populate("tags")
-            .exec();
-        })
+        .then(({ _id }) => context.Link.findOne({ _id }));
     }
   }
 };

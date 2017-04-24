@@ -5,14 +5,14 @@ import styles from './AddLink.css';
 
 class AddLink extends Component {
   props: {
-    addLink: (link: string) => void
+    addLink: (link: string) => Promise<{ _id: string }>
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
 
     this.props.addLink(this.refs.link.value)
-      .then(() => this.props.history.push('/'));
+      .then(({ _id }) => this.props.history.push(`/links/${_id}`));
   };
 
   render() {
