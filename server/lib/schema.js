@@ -23,6 +23,12 @@ type Tag {
   
   links: [Link]
 }
+input InputTag {
+  _id: ID!
+  
+  name: String!
+  color: String!
+}
 
 # Information about a link
 type Link {
@@ -85,6 +91,10 @@ type Mutation {
     linkId: ID!
   ): Link
 
+  updateTag(
+    tag: InputTag!
+  ): Tag
+  
   addTagByNameToLink(
     linkId: ID!
     name: String!
@@ -191,6 +201,21 @@ const rootResolvers = {
           link[propName] = propValue;
         });
         return link.save();
+      });
+    },
+    updateTag(root, { tag: { _id, ...props } }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to update tags.');
+      }
+      return context.Tag.findOne({ _id, user: context.user }).then((tag) => {
+        if (!tag) {
+          throw new Error('Resource could not be found.');
+        }
+
+        Object.entries(props).forEach(([propName, propValue]) => {
+          tag[propName] = propValue;
+        });
+        return tag.save();
       });
     },
     deleteLink(root, { linkId }, context) {

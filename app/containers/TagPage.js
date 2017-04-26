@@ -1,7 +1,5 @@
 // @flow
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 import { gql, graphql, compose } from 'react-apollo';
 
 import styles from './TagPage.scss';
@@ -9,18 +7,29 @@ import type { TagType } from '../types';
 import LinksList from '../components/LinksList';
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 
+import TagForm from '../components/TagForm';
+
+type TagActions = {
+  addTagByNameToLink: (linkId: string, tagName: string) => void,
+  removeTagByIdFromLink: (linkId: string, tagId: string) => void
+};
+type TagPropsLoading = { loading: true };
+type TagProps = { loading: false, tag: TagType };
+
 export class TagPage extends React.Component {
-  props: {
-    loading: boolean,
-    tag?: TagType
-  };
+  // todo: breaks flow runtime
+  // props: TagPropsLoading | TagProps & TagActions;
 
   render() {
     let content;
     if (!this.props.loading) {
       content = (<div className={styles.container}>
-        <div className={styles.colorBlock} style={{ backgroundColor: this.props.tag.color }} />
-        <h1>{this.props.tag.name}</h1>
+        <TagForm
+          initialValues={this.props.tag}
+          form={this.props.tag._id}
+          onSubmit={this.props.updateTag}
+          onChange={this.props.updateTag}
+        />
 
         <LinksList
           links={this.props.tag.links}
@@ -62,6 +71,29 @@ const TAG_QUERY = gql`
     }
   }
 `;
+const UPDATE_TAG_MUTATION = gql`
+  mutation UpdateTag($tag: InputTag!) {
+    updateTag(tag: $tag) {
+      _id
+      name
+      color
+      
+      links {
+        _id
+        createdAt
+        url
+        domain
+        name
+        description
+        tags {
+          _id
+          name
+          color
+        }
+      }
+    }
+  }
+`;
 const withData = graphql(TAG_QUERY, {
   options: ({ match }) => ({
     fetchPolicy: 'cache-and-network',
@@ -73,9 +105,15 @@ const withData = graphql(TAG_QUERY, {
     refetch
   }),
 });
+const withUpdateTag = graphql(UPDATE_TAG_MUTATION, {
+  props: ({ mutate }) => ({
+    updateTag: ({ _id, name, color }) => mutate({ variables: { tag: { _id, name, color } } })
+  })
+});
 
 export default compose(
   withData,
   withAddTagMutation,
-  withRemoveTagMutation
+  withRemoveTagMutation,
+  withUpdateTag
 )(TagPage);
