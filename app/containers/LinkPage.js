@@ -4,7 +4,7 @@ import { gql, graphql, compose } from 'react-apollo';
 
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 import Tags from '../components/Tags';
-import LinkForm from "../components/LinkForm";
+import LinkForm from '../components/LinkForm';
 
 
 export class LinkPage extends React.Component {
@@ -89,7 +89,7 @@ const DELETE_LINK_MUTATION = gql`
 `;
 
 const withData = graphql(LINK_QUERY, {
-  options:  ({ match }) => ({
+  options: ({ match }) => ({
     fetchPolicy: 'cache-and-network',
     variables: { linkId: match.params.linkId }
   }),
@@ -101,7 +101,8 @@ const withData = graphql(LINK_QUERY, {
 });
 const withUpdateLink = graphql(UPDATE_LINK_MUTATION, {
   props: ({ mutate }) => ({
-    updateLink: ({ _id, url, domain, path, name, description }) => mutate({ variables: { link: { _id, url, domain, path, name, description } } })
+    updateLink: ({ _id, url, domain, path, name, description }) =>
+      mutate({ variables: { link: { _id, url, domain, path, name, description } } })
   })
 });
 const withDeleteLink = graphql(DELETE_LINK_MUTATION, {

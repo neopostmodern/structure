@@ -6,7 +6,7 @@ import { gql, graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
 
 import styles from './TagsPage.scss';
-import type {TagType} from "../types";
+import type { TagType } from '../types';
 
 export class TagsPage extends React.Component {
   props: {
@@ -24,7 +24,7 @@ export class TagsPage extends React.Component {
               key={tag._id}
               className={styles.tag}
               style={{ backgroundColor: tag.color }}
-              onClick={() => this.props.history.push('/tags/' + tag._id)}
+              onClick={() => this.props.history.push(`/tags/${tag._id}`)}
             >
               {tag.name}
             </div>

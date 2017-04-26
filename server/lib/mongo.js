@@ -24,7 +24,7 @@ const linkSchema = Schema({
 });
 linkSchema.pre('save', function (next) {
   const { hostname, pathname } = url.parse(this.url);
-  if (typeof this.name === "undefined" || this.name.length === 0) {
+  if (typeof this.name === 'undefined' || this.name.length === 0) {
     this.name = hostname + pathname;
   }
   this.domain = hostname;
@@ -39,11 +39,11 @@ const tagSchema = Schema({
 });
 
 export const User = mongoose.model('User', userSchema);
-export const Tag  = mongoose.model('Tag', tagSchema);
+export const Tag = mongoose.model('Tag', tagSchema);
 export const Link = mongoose.model('Link', linkSchema);
 
 
-let migrator = new MigrateMongoose({
+const migrator = new MigrateMongoose({
   migrationsPath: config.MIGRATIONS_DIRECTORY,
   dbConnectionUri: config.MONGO_URL,
   es6Templates: true,
@@ -51,22 +51,21 @@ let migrator = new MigrateMongoose({
 });
 
 migrator.list().then((migrations) => {
-  console.log("Running migrations...");
+  console.log('Running migrations...');
   Promise.all(
     migrations.map((migration) => {
       if (migration.state === 'up') {
         console.log(`  ⇒ ${migration.name} already migrated`);
         return Promise.resolve();
-      } else {
-        console.log(`  ⇑ ${migration.name} will migrate 'up'...`);
-        return migrator.run('up', migration.name)
+      }
+      console.log(`  ⇑ ${migration.name} will migrate 'up'...`);
+      return migrator.run('up', migration.name)
           .then(() => console.log('    ...OK'))
           .catch((error) => console.error('    ...FAILED', error));
-      }
     })
   )
-    .then(() => console.log("Migrations complete."))
-    .catch(() => console.error("Migration failed."))
+    .then(() => console.log('Migrations complete.'))
+    .catch(() => console.error('Migration failed.'));
 });
 
 // migrator.run('down', 'links-add-name-description')

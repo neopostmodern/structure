@@ -15,6 +15,6 @@ export async function up() {
 /**
  * Make any changes that UNDO the up function side effects here (if possible)
  */
-export async function down()  {
+export async function down() {
   return this('Link').updateMany({}, { $unset: { name: true, description: true } });
 }

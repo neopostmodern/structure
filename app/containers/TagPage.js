@@ -5,9 +5,9 @@ import { bindActionCreators } from 'redux';
 import { gql, graphql, compose } from 'react-apollo';
 
 import styles from './TagPage.scss';
-import type { TagType } from "../types";
-import LinksList from "../components/LinksList";
-import {withAddTagMutation, withRemoveTagMutation} from "../wrappers/tags";
+import type { TagType } from '../types';
+import LinksList from '../components/LinksList';
+import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 
 export class TagPage extends React.Component {
   props: {
@@ -18,7 +18,7 @@ export class TagPage extends React.Component {
   render() {
     let content;
     if (!this.props.loading) {
-      content = <div className={styles.container}>
+      content = (<div className={styles.container}>
         <div className={styles.colorBlock} style={{ backgroundColor: this.props.tag.color }} />
         <h1>{this.props.tag.name}</h1>
 
@@ -27,7 +27,7 @@ export class TagPage extends React.Component {
           addTagToLink={this.props.addTagByNameToLink}
           onRemoveTagFromLink={this.props.removeTagByIdFromLink}
         />
-      </div>;
+      </div>);
     } else {
       content = <i>Loading...</i>;
     }

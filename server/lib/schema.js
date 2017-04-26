@@ -135,13 +135,13 @@ const rootResolvers = {
     },
     link(root, { linkId }, context) {
       if (!context.user) {
-        throw new Error("Need to be logged in to fetch a link.");
+        throw new Error('Need to be logged in to fetch a link.');
       }
       return context.Link.findById(linkId);
     },
     links(root, { offset, limit }, context) {
       if (!context.user) {
-        throw new Error("Need to be logged in to fetch links.");
+        throw new Error('Need to be logged in to fetch links.');
       }
       const protectedLimit = (limit < 1 || limit > 10) ? 10 : limit;
       return context.Link.find({ user: context.user })
@@ -151,13 +151,13 @@ const rootResolvers = {
     },
     tag(root, { tagId }, context) {
       if (!context.user) {
-        throw new Error("Need to be logged in to fetch a tag.");
+        throw new Error('Need to be logged in to fetch a tag.');
       }
       return context.Tag.findById(tagId);
     },
     tags(root, { offset, limit }, context) {
       if (!context.user) {
-        throw new Error("Need to be logged in to fetch links.");
+        throw new Error('Need to be logged in to fetch links.');
       }
       const protectedLimit = (limit < 1 || limit > 10) ? 10 : limit;
       return context.Tag.find({ user: context.user })
@@ -170,39 +170,36 @@ const rootResolvers = {
   Mutation: {
     submitLink(root, { url }, context) {
       if (!context.user) {
-        throw new Error("Need to be logged in to submit links.");
+        throw new Error('Need to be logged in to submit links.');
       }
       return new context.Link({
         url,
         user: context.user,
         createdAt: new Date()
-      }).save()
+      }).save();
     },
     updateLink(root, { link: { _id, ...props } }, context) {
       if (!context.user) {
-        throw new Error("Need to be logged in to update links.");
+        throw new Error('Need to be logged in to update links.');
       }
       return context.Link.findOne({ _id, user: context.user }).then((link) => {
         if (!link) {
-          throw new Error("Resource could not be found.");
+          throw new Error('Resource could not be found.');
         }
 
-        for (let propName in props) {
-          if (!props.hasOwnProperty(propName)) {
-            continue;
-          }
-          link[propName] = props[propName];
-        }
+        Object.entries(props).forEach(([propName, propValue]) => {
+          link[propName] = propValue;
+        });
         return link.save();
       });
     },
     deleteLink(root, { linkId }, context) {
       if (!context.user) {
-        throw new Error("Need to be logged in to delete links.");
+        throw new Error('Need to be logged in to delete links.');
       }
       return context.Link.findOne({ _id: linkId, user: context.user }).then((link) => {
         if (!link) {
-          throw new Error("Resource could not be found.");
+          throw new Error('Resource could not be found.');
         }
 
         return link.remove();
@@ -210,29 +207,27 @@ const rootResolvers = {
     },
     addTagByNameToLink(root, { linkId, name }, context) {
       if (!context.user) {
-        throw new Error("Need to be logged in to tag links.");
+        throw new Error('Need to be logged in to tag links.');
       }
       return context.Tag.findOne({ name, user: context.user }).then((tag) => {
         if (tag) {
           return tag;
         }
-        return new context.Tag({ name, color: "lightgray", user: context.user }).save();
-      }).then((tag) => {
-        return context.Link.findOneAndUpdate(
+        return new context.Tag({ name, color: 'lightgray', user: context.user }).save();
+      }).then((tag) => context.Link.findOneAndUpdate(
           { _id: linkId },
-          { $addToSet: { tags: tag._id }}
+          { $addToSet: { tags: tag._id } }
         )
           .exec()
-          .then(({ _id }) => context.Link.findOne({ _id }));
-      });
+          .then(({ _id }) => context.Link.findOne({ _id })));
     },
-    removeTagByIdFromLink(root, {linkId, tagId}, context) {
+    removeTagByIdFromLink(root, { linkId, tagId }, context) {
       if (!context.user) {
-        throw new Error("Need to be logged in to untag links.");
+        throw new Error('Need to be logged in to untag links.');
       }
       return context.Link.findOneAndUpdate(
         { _id: linkId, user: context.user },
-        { $pull: { tags: tagId }}
+        { $pull: { tags: tagId } }
       )
         .exec()
         .then(({ _id }) => context.Link.findOne({ _id }));

@@ -37,7 +37,7 @@ export function setUpGitHubLogin(app, User) {
             authenticationProvider: profile.provider
           }).save().then((newUser) => {
             cb(null, newUser);
-          })
+          });
         }
       });
     }));
@@ -67,7 +67,7 @@ export function setUpGitHubLogin(app, User) {
 
   app.get('/logout', (req, res) => {
     req.logout();
-    res.redirect('/success')
+    res.redirect('/success');
   });
 }
 
