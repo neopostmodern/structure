@@ -2,28 +2,28 @@
 import React, { Component } from 'react';
 
 import styles from './AddLink.css';
+import { reduxForm, Field } from 'redux-form';
+
+const urlValidator = (value) => (value && value.indexOf('http') === 0 ? undefined : "Did you forget the protocol? (e.g. https://)");
+const renderField = ({ input, placeholder, className, type, meta: { touched, error, warning } }) => (
+  <div>
+    <input {...input} placeholder={placeholder} type={type} className={className} />
+    {touched && ((error && <div style={{marginTop: '0.5em', color: 'darkred'}}>{error}</div>) || (warning && <span>{warning}</span>))}
+  </div>
+);
 
 class AddLink extends Component {
-  props: {
-    addLink: (link: string) => Promise<{ _id: string }>
-  };
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-
-    this.props.addLink(this.refs.link.value)
-      .then(({ _id }) => this.props.history.push(`/links/${_id}`));
-  };
-
   render() {
     return (
       <div style={{ paddingTop: '20vh' }}>
-        <form onSubmit={this.handleSubmit}>
-          <input
+        <form onSubmit={this.props.handleSubmit}>
+          <Field
+            name="url"
+            component={renderField}
             type="text"
-            ref="link"
             className={styles.urlInput}
             placeholder="URL here"
+            validate={urlValidator}
           />
         </form>
       </div>
@@ -31,4 +31,4 @@ class AddLink extends Component {
   }
 }
 
-export default AddLink;
+export default reduxForm({ form: 'addLink' })(AddLink);
