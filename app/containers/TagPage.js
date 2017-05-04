@@ -16,7 +16,7 @@ type TagActions = {
 type TagPropsLoading = { loading: true };
 type TagProps = { loading: false, tag: TagType };
 
-export class TagPage extends React.Component {
+class TagPage extends React.Component {
   // todo: breaks flow runtime
   // props: TagPropsLoading | TagProps & TagActions;
 
