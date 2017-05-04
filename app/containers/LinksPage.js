@@ -7,7 +7,10 @@ import { connect } from 'react-redux';
 
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 import LinksList from '../components/LinksList';
-import { changeLinkLayout, LinkLayouts, LinkLayoutType } from '../actions/userInterface';
+import {
+  changeLinkLayout, changeSearchQuery, LinkLayouts,
+  LinkLayoutType
+} from '../actions/userInterface'
 
 import styles from './LinksPage.css';
 
@@ -24,14 +27,38 @@ export function layoutToName(layout: LinkLayoutType) {
 }
 
 export class LinksPage extends React.Component {
+  searchInput: HTMLInputElement;
+
   props: {
     loading: boolean,
     links?: Array<{ _id: string, url: string, createdAt: number }>,
     layout: LinkLayoutType,
+    searchQuery: string,
 
     addTagByNameToLink: (linkId: string, tag: string) => void,
-    changeLayout: (layout: LinkLayoutType) => void
+    changeLayout: (layout: LinkLayoutType) => void,
+    changeSearchQuery: (query: string) => void
   };
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.handleKeyboardEvent, true);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleKeyboardEvent, true);
+  }
+
+  handleKeyboardEvent = (event: KeyboardEvent) => {
+    if (event.ctrlKey) {
+      // eslint-disable-next-line default-case
+      switch (event.key) {
+        case 'f':
+          console.log(this, this.searchInput);
+          this.searchInput.focus();
+          event.preventDefault();
+          break;
+      }
+    }
+  }
 
   toggleLayout = () => {
     if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
@@ -41,13 +68,28 @@ export class LinksPage extends React.Component {
     }
   };
 
+  handleSearchInputChange = () => {
+    this.props.changeSearchQuery(this.searchInput.value);
+  }
+
+  filteredLinks() {
+    if (this.props.searchQuery.length === 0) {
+      return this.props.links;
+    }
+
+    return this.props.links.filter((link) => link.url.includes(this.props.searchQuery) ||
+      link.name.includes(this.props.searchQuery) ||
+      link.tags.some((tag) => tag.name.includes(this.props.searchQuery))
+    );
+  }
+
   render() {
     let content;
     if (!this.props.loading) {
       if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
         content = (
           <LinksList
-            links={this.props.links}
+            links={this.filteredLinks()}
             addTagToLink={this.props.addTagByNameToLink}
             onRemoveTagFromLink={this.props.removeTagByIdFromLink}
           />
@@ -61,10 +103,18 @@ export class LinksPage extends React.Component {
     return (
       <div>
         <div className={styles.menu}>
-          <Link to="/links/add">Add new</Link>
-          <a onClick={this.toggleLayout} style={{ marginLeft: 'auto' }}>
+          <Link to="/links/add">Add new</Link>,&nbsp;
+          <a onClick={this.toggleLayout}>
             {layoutToName(this.props.layout)}
           </a>
+          <input
+            type="text"
+            placeholder="Filter"
+            style={{ marginLeft: 'auto' }}
+            ref={(input) => { this.searchInput = input; }}
+            onChange={this.handleSearchInputChange}
+            defaultValue={this.props.searchQuery}
+          />
         </div>
         {content}
       </div>
@@ -74,12 +124,13 @@ export class LinksPage extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    layout: state.userInterface.linkLayout
+    layout: state.userInterface.linkLayout,
+    searchQuery: state.userInterface.searchQuery
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ changeLayout: changeLinkLayout }, dispatch);
+  return bindActionCreators({ changeLayout: changeLinkLayout, changeSearchQuery }, dispatch);
 }
 
 const PROFILE_QUERY = gql`

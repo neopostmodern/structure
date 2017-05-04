@@ -9,6 +9,7 @@ export type LinkLayoutType = $Keys<typeof LinkLayouts>;
 export const REQUEST_LOGIN = 'REQUEST_LOGIN';
 export const COMPLETE_LOGIN = 'COMPLETE_LOGIN';
 export const CHANGE_LINK_LAYOUT = 'CHANGE_LINK_LAYOUT';
+export const CHANGE_SEARCH_QUERY = 'CHANGE_SEARCH_QUERY';
 
 export function requestLogin() {
   return {
@@ -24,5 +25,11 @@ export function changeLinkLayout(layout: LinkLayoutType) {
   return {
     type: CHANGE_LINK_LAYOUT,
     payload: layout
+  };
+}
+export function changeSearchQuery(query: string) {
+  return {
+    type: CHANGE_SEARCH_QUERY,
+    payload: query
   };
 }

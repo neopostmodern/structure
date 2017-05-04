@@ -1,5 +1,8 @@
 .menu {
   display: flex;
+
+  font-family: "Futura Std Medium", sans-serif;
+  font-size: 1.5rem;
 }
 
 .menu a,
@@ -7,7 +10,4 @@
   color: black;
   border: none;
   background: none;
-
-  font-family: "Futura Std Medium", sans-serif;
-  font-size: 1.5rem;
 }

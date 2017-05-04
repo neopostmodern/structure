@@ -1,9 +1,10 @@
 // @flow
-import { REQUEST_LOGIN, COMPLETE_LOGIN, CHANGE_LINK_LAYOUT, LinkLayouts, LinkLayoutType } from '../actions/userInterface';
+import { REQUEST_LOGIN, COMPLETE_LOGIN, CHANGE_LINK_LAYOUT, CHANGE_SEARCH_QUERY, LinkLayouts, LinkLayoutType } from '../actions/userInterface';
 
 export type userInterfaceStateType = {
   loggingIn: boolean,
-  linkLayout: LinkLayoutType
+  linkLayout: LinkLayoutType,
+  searchQuery: string
 };
 
 type Action = {type: string};
@@ -13,7 +14,8 @@ type Action = {type: string};
 
 const initialState: userInterfaceStateType = {
   loggingIn: false,
-  linkLayout: LinkLayouts.LIST_LAYOUT
+  linkLayout: LinkLayouts.LIST_LAYOUT,
+  searchQuery: ''
 };
 
 export default function links(state: userInterfaceStateType = initialState, action: Action) {
@@ -24,6 +26,8 @@ export default function links(state: userInterfaceStateType = initialState, acti
       return Object.assign({}, state, { loggingIn: false });
     case CHANGE_LINK_LAYOUT:
       return Object.assign({}, state, { linkLayout: action.payload });
+    case CHANGE_SEARCH_QUERY:
+      return Object.assign({}, state, { searchQuery: action.payload });
     default:
       return state;
   }
