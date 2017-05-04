@@ -13,21 +13,19 @@ ElectronCookies.enable({
   origin: 'http://localhost:3010',
 });
 
-ipcRenderer.on('global-shortcut', (event, shortcut) => {
-  switch (shortcut) {
-    case 'home':
-      history.push('/');
-      break;
-    default:
-      console.log('Unhandled shortcut', shortcut);
-  }
-});
-
-// hack because menu can't capture CTRL+/
 window.addEventListener('keydown', (event: KeyboardEvent) => {
-  if (event.key === '/' && event.ctrlKey) {
-    history.push('/');
-    event.preventDefault();
+  if (event.ctrlKey) {
+    // eslint-disable-next-line default-case
+    switch (event.key) {
+      case '/':
+        history.push('/');
+        event.preventDefault();
+        break;
+      case 'n':
+        history.push('/links/add');
+        event.preventDefault();
+        break;
+    }
   }
 }, true);
 

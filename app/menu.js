@@ -121,18 +121,6 @@ export default class MenuBuilder {
       label: '&File',
       submenu: [
         {
-          label: 'Home',
-          accelerator: 'CommandOrControl+/'
-          // accelerator doesn't actually work, handled in index.js on the window object
-        },
-        {
-          label: '&New link',
-          accelerator: 'CommandOrControl+N',
-          click: () => {
-            this.mainWindow.webContents.send('global-shortcut', 'new');
-          }
-        },
-        {
           label: '&Close',
           accelerator: 'Ctrl+W',
           click: () => {
