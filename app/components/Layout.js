@@ -65,7 +65,7 @@ export class Layout extends Component {
       <div>
         <div className={styles.container}>
           <div style={{ display: 'flex' }}>
-            <h2>{headline}</h2>
+            <h2 className={styles.title}>{headline}</h2>
             <div style={{ marginLeft: 'auto' }}>
               {userIndicator}
             </div>

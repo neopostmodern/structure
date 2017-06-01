@@ -11,6 +11,12 @@
   /*font-size: 1.4rem;*/
 }
 
+.title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .loginButton {
   border: 1px solid black;
   background: none;
