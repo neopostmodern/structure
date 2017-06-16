@@ -1,4 +1,5 @@
 import { merge } from 'lodash';
+import Moment from 'moment';
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
 import { makeExecutableSchema } from 'graphql-tools';
@@ -7,7 +8,6 @@ const rootSchema = [`
 scalar Date
 
 type User {
-  # The name of the user, e.g. apollostack
   _id: String!
   name: String!
   createdAt: Date!
@@ -21,7 +21,7 @@ type Tag {
   name: String!
   color: String!
   
-  links: [Link]
+  notes: [Note]
 }
 input InputTag {
   _id: ID!
@@ -30,8 +30,49 @@ input InputTag {
   color: String!
 }
 
+enum NoteType {
+  TEXT
+  LINK
+}
+
+interface INote {
+  type: NoteType!
+  _id: ID!
+  user: User!
+
+  name: String!
+  description: String!
+  
+  createdAt: Date!
+
+  # Comments posted about this repository
+  # tags(limit: Int, offset: Int): [Tag]!
+  tags: [Tag]!
+}
+
+type Text implements INote {
+  type: NoteType!
+  _id: ID!
+  user: User!
+
+  name: String!
+  description: String!
+  
+  createdAt: Date!
+
+  # Comments posted about this repository
+  # tags(limit: Int, offset: Int): [Tag]!
+  tags: [Tag]!
+}
+input InputText {
+  _id: ID!
+  name: String
+  description: String
+}
+
 # Information about a link
-type Link {
+type Link implements INote {
+  type: NoteType!
   _id: ID!
   user: User!
   
@@ -56,6 +97,8 @@ input InputLink {
   description: String
 }
 
+union Note = Link | Text
+
 type Query {
   # Return the currently logged in user, or null if nobody is logged in
   currentUser: User
@@ -68,7 +111,13 @@ type Query {
     limit: Int
   ): [Link]
   
+  notes(
+    offset: Int,
+    limit: Int
+  ): [Note]
+  
   link(linkId: ID): Link
+  text(textId: ID): Text
   
   tags(
     offset: Int,
@@ -79,29 +128,35 @@ type Query {
 }
 
 type Mutation {
-  submitLink(
-    url: String!
-  ): Link
-  
-  updateLink(
-    link: InputLink!
-  ): Link
-  
-  deleteLink(
-    linkId: ID!
-  ): Link
-
   updateTag(
     tag: InputTag!
   ): Tag
   
-  addTagByNameToLink(
+  submitLink(
+    url: String!
+  ): Link
+  updateLink(
+    link: InputLink!
+  ): Link
+  deleteLink(
     linkId: ID!
+  ): Link
+  
+  createText: Text
+  updateText(
+    text: InputText!
+  ): Text
+  deleteText(
+    textId: ID!
+  ): Text
+  
+  addTagByNameToNote(
+    noteId: ID!
     name: String!
   ): Link
   
-  removeTagByIdFromLink(
-    linkId: ID!
+  removeTagByIdFromNote(
+    noteId: ID!
     tagId: ID!
   ): Link
 }
@@ -111,6 +166,16 @@ schema {
   mutation: Mutation
 }
 `];
+
+const INoteResolvers = {
+  tags(note, args, context) {
+    return context.Tag.find({ _id: { $in: note.tags } });
+  }
+};
+const typeEnumFixer = (notes) => (
+// eslint-disable-next-line no-underscore-dangle
+  notes.map((note) => Object.assign({}, note._doc, { type: note.type.toUpperCase() }))
+);
 
 const rootResolvers = {
   Date: new GraphQLScalarType({
@@ -129,19 +194,34 @@ const rootResolvers = {
       return null;
     },
   }),
-  Link: {
-    tags(link, args, context) {
-      return context.Tag.find({ _id: { $in: link.tags } });
-    }
+  Note: {
+    __resolveType(obj, context, info) {
+      // console.log("__resolveType", obj.type, obj.type[0].toUpperCase() + obj.type.substring(1).toLowerCase());
+      return obj.type[0].toUpperCase() + obj.type.substring(1).toLowerCase();
+    },
   },
+  Link: INoteResolvers,
+  Text: INoteResolvers,
   Tag: {
-    links(tag, args, context) {
-      return context.Link.find({ tags: tag });
+    notes(tag, args, context) {
+      return context.Note.find({ tags: tag })
+        .then(typeEnumFixer);
     }
   },
   Query: {
     currentUser(root, args, context) {
       return context.user || null;
+    },
+    notes(root, { offset, limit }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to fetch links.');
+      }
+      const protectedLimit = (limit < 1 || limit > 10) ? 10 : limit;
+      return context.Note.find({ user: context.user })
+        .sort({ createdAt: -1 })
+        .limit(protectedLimit)
+        .exec()
+        .then(typeEnumFixer);
     },
     link(root, { linkId }, context) {
       if (!context.user) {
@@ -158,6 +238,12 @@ const rootResolvers = {
         .sort({ createdAt: -1 })
         .limit(protectedLimit)
         .exec();
+    },
+    text(root, { textId }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to fetch a text.');
+      }
+      return context.Text.findById(textId);
     },
     tag(root, { tagId }, context) {
       if (!context.user) {
@@ -178,6 +264,21 @@ const rootResolvers = {
     }
   },
   Mutation: {
+    updateTag(root, { tag: { _id, ...props } }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to update tags.');
+      }
+      return context.Tag.findOne({ _id, user: context.user }).then((tag) => {
+        if (!tag) {
+          throw new Error('Resource could not be found.');
+        }
+
+        Object.entries(props).forEach(([propName, propValue]) => {
+          tag[propName] = propValue;
+        });
+        return tag.save();
+      });
+    },
     submitLink(root, { url }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to submit links.');
@@ -203,21 +304,6 @@ const rootResolvers = {
         return link.save();
       });
     },
-    updateTag(root, { tag: { _id, ...props } }, context) {
-      if (!context.user) {
-        throw new Error('Need to be logged in to update tags.');
-      }
-      return context.Tag.findOne({ _id, user: context.user }).then((tag) => {
-        if (!tag) {
-          throw new Error('Resource could not be found.');
-        }
-
-        Object.entries(props).forEach(([propName, propValue]) => {
-          tag[propName] = propValue;
-        });
-        return tag.save();
-      });
-    },
     deleteLink(root, { linkId }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to delete links.');
@@ -230,32 +316,72 @@ const rootResolvers = {
         return link.remove();
       });
     },
-    addTagByNameToLink(root, { linkId, name }, context) {
+
+    createText(root, {}, context) {
       if (!context.user) {
-        throw new Error('Need to be logged in to tag links.');
+        throw new Error('Need to be logged in to create texts.');
+      }
+
+      return new context.Text({
+        name: new Moment().format('dddd, MMMM Do YYYY'),
+        user: context.user,
+        createdAt: new Date()
+      }).save();
+    },
+    updateText(root, { text: { _id, ...props } }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to update texts.');
+      }
+      return context.Text.findOne({ _id, user: context.user }).then((text) => {
+        if (!text) {
+          throw new Error('Resource could not be found.');
+        }
+
+        Object.entries(props).forEach(([propName, propValue]) => {
+          text[propName] = propValue;
+        });
+        return text.save();
+      });
+    },
+    deleteText(root, { textId }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to delete texts.');
+      }
+      return context.Text.findOne({ _id: textId, user: context.user }).then((text) => {
+        if (!text) {
+          throw new Error('Resource could not be found.');
+        }
+
+        return text.remove();
+      });
+    },
+
+    addTagByNameToNote(root, { noteId, name }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to tag notes.');
       }
       return context.Tag.findOne({ name, user: context.user }).then((tag) => {
         if (tag) {
           return tag;
         }
         return new context.Tag({ name, color: 'lightgray', user: context.user }).save();
-      }).then((tag) => context.Link.findOneAndUpdate(
-          { _id: linkId },
+      }).then((tag) => context.Note.findOneAndUpdate(
+          { _id: noteId },
           { $addToSet: { tags: tag._id } }
         )
           .exec()
-          .then(({ _id }) => context.Link.findOne({ _id })));
+          .then(({ _id }) => context.Note.findOne({ _id })));
     },
-    removeTagByIdFromLink(root, { linkId, tagId }, context) {
+    removeTagByIdFromNote(root, { noteId, tagId }, context) {
       if (!context.user) {
-        throw new Error('Need to be logged in to untag links.');
+        throw new Error('Need to be logged in to untag notes.');
       }
-      return context.Link.findOneAndUpdate(
-        { _id: linkId, user: context.user },
+      return context.Note.findOneAndUpdate(
+        { _id: noteId, user: context.user },
         { $pull: { tags: tagId } }
       )
         .exec()
-        .then(({ _id }) => context.Link.findOne({ _id }));
+        .then(({ _id }) => context.Note.findOne({ _id }));
     }
   }
 };

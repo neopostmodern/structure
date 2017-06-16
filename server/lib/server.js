@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
-import { User, Link, Tag } from './mongo';
+import { User, Note, Link, Text, Tag } from './mongo';
 import { setUpGitHubLogin } from './githubLogin';
 import schema from './schema';
 
@@ -29,7 +29,9 @@ app.use('/graphql', graphqlExpress((req) => {
     context: {
       user: req.user,
       Tag,
-      Link
+      Note,
+      Link,
+      Text,
     },
   };
 }));
@@ -37,14 +39,22 @@ app.use('/graphql', graphqlExpress((req) => {
 if (config.GRAPHIQL) {
   app.use('/graphiql', graphiqlExpress({
     endpointURL: '/graphql',
-    query: `{
-    links {
-      url
+    query: `# Structure Example Query
+{
+  notes(limit: 5, offset: 0) {
+    ... on INote {
+      _id
+      name
       tags {
         name
       }
     }
-  }`,
+    ... on Link {
+      url
+    }
+  }
+}
+    `,
   }));
 }
 

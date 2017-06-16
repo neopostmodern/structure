@@ -6,7 +6,7 @@ import { gql, graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
 
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
-import LinksList from '../components/LinksList';
+import NotesList from '../components/NotesList';
 import {
   changeLinkLayout, changeSearchQuery, LinkLayouts,
   LinkLayoutType
@@ -26,16 +26,17 @@ export function layoutToName(layout: LinkLayoutType) {
   }
 }
 
-export class LinksPage extends React.Component {
+export class NotesPage extends React.Component {
   searchInput: HTMLInputElement;
 
   props: {
     loading: boolean,
-    links?: Array<{ _id: string, url: string, createdAt: number }>,
+    notes?: Array<{ _id: string, url: string, createdAt: number }>,
     layout: LinkLayoutType,
     searchQuery: string,
 
-    addTagByNameToLink: (linkId: string, tag: string) => void,
+    addTagByNameToNote: (linkId: string, tag: string) => void,
+    removeTagByIdFromNote: (linkId: string, tagId: string) => void,
     changeLayout: (layout: LinkLayoutType) => void,
     changeSearchQuery: (query: string) => void
   };
@@ -52,7 +53,6 @@ export class LinksPage extends React.Component {
       // eslint-disable-next-line default-case
       switch (event.key) {
         case 'f':
-          console.log(this, this.searchInput);
           this.searchInput.focus();
           event.preventDefault();
           break;
@@ -74,12 +74,13 @@ export class LinksPage extends React.Component {
 
   filteredLinks() {
     if (this.props.searchQuery.length === 0) {
-      return this.props.links;
+      return this.props.notes;
     }
 
-    return this.props.links.filter((link) => link.url.includes(this.props.searchQuery) ||
-      link.name.includes(this.props.searchQuery) ||
-      link.tags.some((tag) => tag.name.includes(this.props.searchQuery))
+    return this.props.notes.filter((note) =>
+      (note.url && note.url.includes(this.props.searchQuery))
+      || (note.name && note.name.includes(this.props.searchQuery))
+      || note.tags.some((tag) => tag.name.includes(this.props.searchQuery))
     );
   }
 
@@ -88,10 +89,10 @@ export class LinksPage extends React.Component {
     if (!this.props.loading) {
       if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
         content = (
-          <LinksList
-            links={this.filteredLinks()}
-            addTagToLink={this.props.addTagByNameToLink}
-            onRemoveTagFromLink={this.props.removeTagByIdFromLink}
+          <NotesList
+            notes={this.filteredLinks()}
+            addTagToNote={this.props.addTagByNameToNote}
+            onRemoveTagFromNote={this.props.removeTagByIdFromNote}
           />
         );
       } else {
@@ -103,7 +104,7 @@ export class LinksPage extends React.Component {
     return (
       <div>
         <div className={styles.menu}>
-          <Link to="/links/add">Add new</Link>,&nbsp;
+          <Link to="/notes/add">Add new</Link>,&nbsp;
           <a onClick={this.toggleLayout}>
             {layoutToName(this.props.layout)}
           </a>
@@ -134,18 +135,23 @@ function mapDispatchToProps(dispatch) {
 }
 
 const PROFILE_QUERY = gql`
-  query LinksForList {
-    links {
-      _id
-      createdAt
-      url
-      domain
-      name
-      description
-      tags {
+  query NotesForList {
+    notes {
+      ... on INote {
+        type
         _id
         name
-        color
+        createdAt
+        description
+        tags {
+          _id
+          name
+          color
+        }
+      }
+      ... on Link {
+        url
+        domain
       }
     }
   }
@@ -154,9 +160,9 @@ const withData = graphql(PROFILE_QUERY, {
   options: {
     fetchPolicy: 'cache-and-network',
   },
-  props: ({ data: { loading, links, refetch } }) => ({
+  props: ({ data: { loading, notes, refetch } }) => ({
     loading,
-    links,
+    notes,
     refetch
   }),
 });
@@ -166,4 +172,4 @@ export default compose(
   withAddTagMutation,
   withRemoveTagMutation,
   connect(mapStateToProps, mapDispatchToProps)
-)(LinksPage);
+)(NotesPage);

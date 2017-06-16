@@ -32,8 +32,8 @@ export class LinkPage extends React.Component {
         <Tags
           tags={link.tags}
           withShortcuts
-          onAddTag={this.props.addTagByNameToLink.bind(this, link._id)}
-          onRemoveTag={this.props.removeTagByIdFromLink.bind(null, link._id)}
+          onAddTag={this.props.addTagByNameToNote.bind(this, link._id)}
+          onRemoveTag={this.props.removeTagByIdFromNote.bind(null, link._id)}
         />
       </div>
       <div style={{ display: 'flex', marginTop: 50 }}>

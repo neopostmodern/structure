@@ -1,8 +1,8 @@
 import { gql, graphql } from 'react-apollo';
 
 const ADD_TAG_MUTATION = gql`
-  mutation addTagByNameToLink($linkId: ID!, $name: String!){
-    addTagByNameToLink(linkId: $linkId, name: $name) {
+  mutation addTagByNameToNote($noteId: ID!, $name: String!){
+    addTagByNameToNote(noteId: $noteId, name: $name) {
       _id
       tags {
         _id
@@ -13,8 +13,8 @@ const ADD_TAG_MUTATION = gql`
   }
 `;
 const REMOVE_TAG_MUTATION = gql`
-  mutation removeTagByIdFromLink($linkId: ID!, $tagId: ID!){
-    removeTagByIdFromLink(linkId: $linkId, tagId: $tagId) {
+  mutation removeTagByIdFromNote($noteId: ID!, $tagId: ID!){
+    removeTagByIdFromNote(noteId: $noteId, tagId: $tagId) {
       _id
       tags {
         _id
@@ -27,11 +27,11 @@ const REMOVE_TAG_MUTATION = gql`
 
 export const withAddTagMutation = graphql(ADD_TAG_MUTATION, {
   props: ({ mutate }) => ({
-    addTagByNameToLink: (linkId, name) => mutate({ variables: { linkId, name } })
+    addTagByNameToNote: (noteId, name) => mutate({ variables: { noteId, name } })
   })
 });
 export const withRemoveTagMutation = graphql(REMOVE_TAG_MUTATION, {
   props: ({ mutate }) => ({
-    removeTagByIdFromLink: (linkId, tagId) => mutate({ variables: { linkId, tagId } })
+    removeTagByIdFromNote: (noteId, tagId) => mutate({ variables: { noteId, tagId } })
   })
 });

@@ -12,9 +12,17 @@
   margin-bottom: 0.3em;
   font-size: 130%;
 }
+.type {
+  margin-left: 0.5rem;
+  margin-top: 0.3rem;
+  font-family: monospace;
+}
 .link .date {
+  flex-shrink: 0;
+
   margin-top: 0.2rem;
   margin-left: auto;
+  padding-left: 0.5rem;
   color: gray;
   font-size: 80%;
 }

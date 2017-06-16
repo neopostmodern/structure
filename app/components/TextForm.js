@@ -5,15 +5,9 @@ import { Field, reduxForm } from 'redux-form';
 import formStyles from './NoteForm.css';
 
 // todo: can't export; break build?
-class LinkForm extends React.Component {
+class TextForm extends React.Component {
   render() {
     return (<form onSubmit={this.props.handleSubmit} className={formStyles.form}>
-      <Field
-        name="url"
-        component="input"
-        type="text"
-        className={formStyles.url}
-      />
       <Field
         name="name"
         component="input"
@@ -29,4 +23,4 @@ class LinkForm extends React.Component {
   }
 }
 
-export default reduxForm()(LinkForm);
+export default reduxForm()(TextForm);

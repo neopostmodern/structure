@@ -4,12 +4,14 @@ import { ADD_LINK, ADD_TAG_TO_LINK, REMOVE_LINK } from '../actions/links';
 import UUID from '../utils/uuid';
 
 export type LinkObject = {
+  type: string,
   _id: string,
-  url: string,
-  domain: string,
+  url?: string,
+  domain?: string,
   name: string,
   description: string,
-  tags: Array<string>
+  tags: Array<string>,
+  createdAt: Date
 };
 
 export type linksStateType = {

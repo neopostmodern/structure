@@ -7,7 +7,7 @@ import type { TagType } from '../types';
 import styles from './Tags.scss';
 
 class Tags extends React.Component {
-  propTypes: {
+  props: {
     tags: [TagType],
     withShortcuts?: boolean,
     onAddTag: () => void,
@@ -15,7 +15,7 @@ class Tags extends React.Component {
     onClickTag: (string) => void
   };
 
-  defaultProps: {
+  defaultProps = {
     withShortcuts: false
   };
 

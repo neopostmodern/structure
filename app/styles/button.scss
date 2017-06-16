@@ -1,0 +1,12 @@
+.textButton {
+  margin-top: 1rem;
+  border: none;
+  padding: 0;
+
+  &:focus {
+	outline: none;
+	//text-decoration: underline;
+	background-color: black;
+	color: white;
+  }
+}

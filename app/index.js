@@ -22,7 +22,7 @@ window.addEventListener('keydown', (event: KeyboardEvent) => {
         event.preventDefault();
         break;
       case 'n':
-        history.push('/links/add');
+        history.push('/notes/add');
         event.preventDefault();
         break;
     }

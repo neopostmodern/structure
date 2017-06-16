@@ -4,14 +4,14 @@ import { gql, graphql, compose } from 'react-apollo';
 
 import styles from './TagPage.scss';
 import type { TagType } from '../types';
-import LinksList from '../components/LinksList';
+import NotesList from '../components/NotesList';
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 
 import TagForm from '../components/TagForm';
 
 type TagActions = {
-  addTagByNameToLink: (linkId: string, tagName: string) => void,
-  removeTagByIdFromLink: (linkId: string, tagId: string) => void
+  addTagByNameToNote: (linkId: string, tagName: string) => void,
+  removeTagByIdFromNote: (linkId: string, tagId: string) => void
 };
 type TagPropsLoading = { loading: true };
 type TagProps = { loading: false, tag: TagType };
@@ -31,10 +31,10 @@ class TagPage extends React.Component {
           onChange={this.props.updateTag}
         />
 
-        <LinksList
-          links={this.props.tag.links}
-          addTagToLink={this.props.addTagByNameToLink}
-          onRemoveTagFromLink={this.props.removeTagByIdFromLink}
+        <NotesList
+          notes={this.props.tag.notes}
+          addTagToNote={this.props.addTagByNameToNote}
+          onRemoveTagFromNote={this.props.removeTagByIdFromNote}
         />
       </div>);
     } else {
@@ -55,17 +55,22 @@ const TAG_QUERY = gql`
       name
       color
       
-      links {
-        _id
-        createdAt
-        url
-        domain
-        name
-        description
-        tags {
+      notes {
+        ... on INote {
+          type
           _id
+          createdAt
+          description
+          tags {
+            _id
+            name
+            color
+          }
+        }
+        ... on Link {
+          url
+          domain
           name
-          color
         }
       }
     }
@@ -78,17 +83,22 @@ const UPDATE_TAG_MUTATION = gql`
       name
       color
       
-      links {
-        _id
-        createdAt
-        url
-        domain
-        name
-        description
-        tags {
+      notes {
+        ... on INote {
+          type
           _id
+          createdAt
+          description
+          tags {
+            _id
+            name
+            color
+          }
+        }
+        ... on Link {
+          url
+          domain
           name
-          color
         }
       }
     }
