@@ -27,6 +27,10 @@ window.addEventListener('keydown', (event: KeyboardEvent) => {
         break;
     }
   }
+
+  if (event.key === 'F12') {
+    ipcRenderer.send('toggle-dev-tools');
+  }
 }, true);
 
 

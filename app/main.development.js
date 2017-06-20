@@ -125,4 +125,9 @@ app.on('ready', async () => {
       mainWindow.send('login-closed');
     }, false);
   });
+
+  // enable toggling dev-tools for production app
+  ipcMain.on('toggle-dev-tools', () => {
+    mainWindow.toggleDevTools();
+  });
 });
