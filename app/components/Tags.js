@@ -5,6 +5,7 @@ import { push } from 'react-router-redux';
 import { findDOMNode } from 'react-dom';
 import type { TagType } from '../types';
 import styles from './Tags.scss';
+import InlineTagForm from './InlineTagForm';
 
 class Tags extends React.Component {
   props: {
@@ -44,14 +45,11 @@ class Tags extends React.Component {
     this.setState({ addingNewTag: true });
   };
   hideNewTagForm = () => {
-    this.tagInput.value = '';
     this.setState({ addingNewTag: false });
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-
-    const tagValue = this.tagInput.value.trim();
+  handleSubmit = (data) => {
+    const tagValue = data.name.trim();
     if (tagValue.length > 0) {
       this.props.onAddTag(tagValue);
       this.hideNewTagForm();
@@ -64,12 +62,6 @@ class Tags extends React.Component {
     event.preventDefault();
     this.props.onRemoveTag(tagId);
   }
-
-  handleInputKeydown = (event: SyntheticKeyboardEvent) => {
-    if (event.key === 'Escape') {
-      this.hideNewTagForm();
-    }
-  };
 
   calculateFontColor = (element) => {
     if (!element) {
@@ -94,17 +86,7 @@ class Tags extends React.Component {
   render() {
     let newTagForm;
     if (this.state.addingNewTag) {
-      // todo: redux form
-      newTagForm = (
-        <form onSubmit={this.handleSubmit}>
-          <input
-            type="text"
-            placeholder="tag name"
-            ref={(element) => { if (element) { element.focus(); } this.tagInput = element; }}
-            onKeyDown={this.handleInputKeydown}
-          />
-        </form>
-      );
+      newTagForm = <InlineTagForm onSubmit={this.handleSubmit} />;
     } else {
       const addTagText = this.props.tags.length === 0 ? '+tag' : '+';
       newTagForm = (
