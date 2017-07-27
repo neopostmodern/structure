@@ -41,6 +41,14 @@ export class NotesPage extends React.Component {
     changeSearchQuery: (query: string) => void
   };
 
+  static textIncludes(needle?: string, haystack?: string): boolean {
+    if (!haystack || !needle) {
+      return false;
+    }
+
+    return haystack.toLowerCase().includes(needle.toLowerCase());
+  }
+
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyboardEvent, true);
   }
@@ -72,25 +80,27 @@ export class NotesPage extends React.Component {
     this.props.changeSearchQuery(this.searchInput.value);
   }
 
-  filteredLinks() {
+  filteredNotes() {
     if (this.props.searchQuery.length === 0) {
       return this.props.notes;
     }
 
     return this.props.notes.filter((note) =>
-      (note.url && note.url.includes(this.props.searchQuery))
-      || (note.name && note.name.includes(this.props.searchQuery))
-      || note.tags.some((tag) => tag.name.includes(this.props.searchQuery))
+      NotesPage.textIncludes(this.props.searchQuery, note.url)
+      || NotesPage.textIncludes(this.props.searchQuery, note.name)
+      || note.tags.some((tag) => NotesPage.textIncludes(this.props.searchQuery, tag.name))
     );
   }
 
   render() {
     let content;
+    let matchedNotes;
     if (!this.props.loading) {
       if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
+        matchedNotes = this.filteredNotes();
         content = (
           <NotesList
-            notes={this.filteredLinks()}
+            notes={matchedNotes}
             addTagToNote={this.props.addTagByNameToNote}
             onRemoveTagFromNote={this.props.removeTagByIdFromNote}
           />
@@ -108,14 +118,18 @@ export class NotesPage extends React.Component {
           <a onClick={this.toggleLayout}>
             {layoutToName(this.props.layout)}
           </a>
-          <input
-            type="text"
-            placeholder="Filter"
-            style={{ marginLeft: 'auto' }}
-            ref={(input) => { this.searchInput = input; }}
-            onChange={this.handleSearchInputChange}
-            defaultValue={this.props.searchQuery}
-          />
+          <div style={{ marginLeft: 'auto' }}>
+            <input
+              type="text"
+              placeholder="Filter"
+              ref={(input) => { this.searchInput = input; }}
+              onChange={this.handleSearchInputChange}
+              defaultValue={this.props.searchQuery}
+            />
+            <div style={{textAlign: 'right', fontSize: '50%', marginTop: '0.3em'}}>
+              {matchedNotes && `${matchedNotes.length} / ${this.props.notes.length}`}
+            </div>
+          </div>
         </div>
         {content}
       </div>
