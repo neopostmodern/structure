@@ -4,12 +4,16 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { findDOMNode } from 'react-dom';
 import type { TagType } from '../types';
+import { gql, graphql, compose } from 'react-apollo';
 import styles from './Tags.scss';
 import InlineTagForm from './InlineTagForm';
+import calculateFontColor from '../utils/calculateFontColor';
 
 class Tags extends React.Component {
   props: {
     tags: [TagType],
+    existingTagsLoading: boolean,
+    existingTags?: [TagType],
     withShortcuts?: boolean,
     onAddTag: () => void,
     onRemoveTag: (string) => void,
@@ -63,30 +67,16 @@ class Tags extends React.Component {
     this.props.onRemoveTag(tagId);
   }
 
-  calculateFontColor = (element) => {
-    if (!element) {
-      return;
-    }
-
-    const backgroundColorRGB = window.getComputedStyle(element).backgroundColor
-      .replace(new RegExp('[^0-9.,]+', 'g'), '')
-      .split(',');
-    const perceivedBackgroundLightness = (
-      0.299 * backgroundColorRGB[0]
-      + 0.587 * backgroundColorRGB[1]
-      + 0.114 * backgroundColorRGB[2]
-      ) / 255;
-
-    if (perceivedBackgroundLightness < 0.5) {
-      // eslint-disable-next-line no-param-reassign
-      element.style.color = '#eee';
-    }
-  }
-
   render() {
     let newTagForm;
     if (this.state.addingNewTag) {
-      newTagForm = <InlineTagForm onSubmit={this.handleSubmit} />;
+      newTagForm = (
+        <InlineTagForm
+          onSubmit={this.handleSubmit}
+          tags={this.props.existingTags}
+          tagsLoading={this.props.existingTagsLoading}
+        />
+      );
     } else {
       const addTagText = this.props.tags.length === 0 ? '+tag' : '+';
       newTagForm = (
@@ -107,7 +97,7 @@ class Tags extends React.Component {
           style={{ backgroundColor: tag.color }}
           onClick={this.props.navigateToTag.bind(null, tag._id)}
           onContextMenu={this.handleContextMenu.bind(this, tag._id)}
-          ref={this.calculateFontColor}
+          ref={calculateFontColor}
         >
           {tag.name}
         </div>
@@ -135,7 +125,27 @@ const mapDispatchToProps = (dispatch) => ({
   navigateToTag: (tagId) => dispatch(push(`/tags/${tagId}`))
 });
 
+
+const TAGS_QUERY = gql`
+  query Tags {
+    tags {
+      _id
+      name
+      color
+    }
+  }
+`;
+const withData = graphql(TAGS_QUERY, {
+  options: {
+    fetchPolicy: 'cache-and-network',
+  },
+  props: ({ data: { loading, tags } }) => ({
+    existingTagsLoading: loading,
+    existingTags: tags
+  }),
+});
+
 export default connect(
   null,
   mapDispatchToProps
-)(Tags);
+)(compose(withData)(Tags));

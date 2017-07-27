@@ -1,0 +1,32 @@
+@import "../styles/tag";
+
+.tagAutocompleteContainer {
+  position: absolute;
+  z-index: 1;
+  left: -0.5em;
+  padding-left: 0.5em;
+  background-color: white;
+  padding-right: 0.5em;
+  width: calc(100% + 1em);
+}
+
+.tagAutocomplete {
+  @extend .base-tag;
+
+  border: 2px solid transparent;
+  margin-top: 0.5em;
+  display: inline-block;
+}
+
+.tagAutocompleteMore {
+  @extend .tagAutocomplete;
+
+  background-color: white;
+  font-weight: bold;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: 0;
+
+  cursor: initial;
+}

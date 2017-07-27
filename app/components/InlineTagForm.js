@@ -1,20 +1,85 @@
+// @flow
+
 import React from 'react';
-import { Field, reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Field, reduxForm, formValueSelector } from 'redux-form';
+import styles from './InlineTagForm.scss';
+import calculateFontColor from '../utils/calculateFontColor';
+
+const FORM_NAME = 'inline-tag';
+
+const notEmpty = value => (value && value.length > 0 ? undefined : 'No empty tags');
+const inputField = ({ input, label, type, meta: { touched, error, warning }, ...rest }) => (
+  <div>
+    {(touched && error) && <div style={{color: 'darkred', position: 'absolute', bottom: '100%', right: 0, fontSize: '70%'}}>{error}</div>}
+    <input {...input} placeholder={label} type={type} {...rest} />
+  </div>
+  );
 
 const InlineTagForm = props => {
-  const { handleSubmit, pristine, submitting } = props;
+  const { handleSubmit, tags, tagsLoading, pristine, submitting, nameValue, change, submit } = props;
+  let tagAutocomplete;
+
+  if (!pristine) {
+    if (tagsLoading) {
+      tagAutocomplete = (
+        <div className={styles.tagAutocompleteContainer}>
+          Tags loading...
+        </div>
+      );
+    } else {
+      const matchingTagsForAutocomplete = tags.filter((tag) => tag.name.includes(nameValue));
+      tagAutocomplete = (
+        <div className={styles.tagAutocompleteContainer}>
+          {matchingTagsForAutocomplete.slice(0, 5).map((tag) => (
+            <div
+              key={tag._id}
+              className={styles.tagAutocomplete}
+              style={{ backgroundColor: tag.color }}
+              ref={calculateFontColor}
+              onClick={() => { change('name', tag.name); setTimeout(submit, 0); }}
+            >
+              {tag.name}
+            </div>
+          ))}
+          {matchingTagsForAutocomplete.length > 5 ? (
+            <div
+              key={'more'}
+              className={styles.tagAutocompleteMore}
+            >
+              +{matchingTagsForAutocomplete.length - 5}
+            </div>
+          ) : null}
+        </div>
+      );
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
       <Field
         name="name"
-        component="input"
+        component={inputField}
         type="text"
         placeholder="tag name"
+        autoFocus
+        validate={notEmpty}
       />
+      {tagAutocomplete}
     </form>
   );
 };
 
-export default reduxForm({
-  form: 'inline-tag' // a unique identifier for this form
-})(InlineTagForm);
+const selector = formValueSelector(FORM_NAME);
+
+export default connect(state => {
+  const nameValue = selector(state, 'name');
+  return {
+    nameValue
+  };
+})(
+  reduxForm({
+    form: FORM_NAME,
+  })(InlineTagForm)
+);
