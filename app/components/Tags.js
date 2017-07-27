@@ -72,6 +72,10 @@ class Tags extends React.Component {
   };
 
   calculateFontColor = (element) => {
+    if (!element) {
+      return;
+    }
+
     const backgroundColorRGB = window.getComputedStyle(element).backgroundColor
       .replace(new RegExp('[^0-9.,]+', 'g'), '')
       .split(',');
