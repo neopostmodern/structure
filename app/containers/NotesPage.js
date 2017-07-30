@@ -36,12 +36,14 @@ export class NotesPage extends React.Component {
     layout: LinkLayoutType,
     searchQuery: string,
     infiniteScrollLimit: number,
+    graphQlError?: Object,
 
     addTagByNameToNote: (linkId: string, tag: string) => void,
     removeTagByIdFromNote: (linkId: string, tagId: string) => void,
     changeLayout: (layout: LinkLayoutType) => void,
     changeSearchQuery: (query: string) => void,
-    increaseInfiniteScroll: (by: number) => void
+    increaseInfiniteScroll: (by: number) => void,
+    refetch: () => void,
   };
 
   static textIncludes(needle?: string, haystack?: string): boolean {
@@ -112,30 +114,57 @@ export class NotesPage extends React.Component {
   render() {
     let content;
     let matchedNotes;
-    if (!this.props.loading) {
-      if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
-        const currentLength = this.props.infiniteScrollLimit;
-        matchedNotes = this.filteredNotes();
-        content = [
-          <NotesList
-            key="notes-list"
-            notes={matchedNotes.slice(0, currentLength)}
-            addTagToNote={this.props.addTagByNameToNote}
-            onRemoveTagFromNote={this.props.removeTagByIdFromNote}
-          />
-        ];
-        if (matchedNotes.length > currentLength) {
-          content.push(
-            <div key="more" className={styles.more} ref={(element) => this.moreElement = element}>
-              ({matchedNotes.length - currentLength} remaining)
-            </div>
-          );
+    if (this.props.graphQlError) {
+      let fullErrorMessage;
+      try {
+        fullErrorMessage = <pre>{JSON.stringify(this.props.graphQlError, null, 2)}</pre>;
+      } catch (e) {
+        fullErrorMessage = <div>Complete error message couldn't be displayed.</div>;
+      }
+      content = (
+        <div className={styles.errorContainer}>
+          <h1>Network error.</h1>
+          <button
+            type="button"
+            onClick={() => this.props.refetch()}
+            className={styles.errorReloadButton}
+            autoFocus
+          >
+            Reload
+          </button>
+          <div className={styles.errorInformation}>
+            <h3>Further information</h3>
+            <div>{this.props.graphQlError.message}</div>
+            {fullErrorMessage}
+          </div>
+        </div>
+      );
+    } else {
+      if (!this.props.loading) {
+        if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
+          const currentLength = this.props.infiniteScrollLimit;
+          matchedNotes = this.filteredNotes();
+          content = [
+            <NotesList
+              key="notes-list"
+              notes={matchedNotes.slice(0, currentLength)}
+              addTagToNote={this.props.addTagByNameToNote}
+              onRemoveTagFromNote={this.props.removeTagByIdFromNote}
+            />
+          ];
+          if (matchedNotes.length > currentLength) {
+            content.push(
+              <div key="more" className={styles.more} ref={(element) => this.moreElement = element}>
+                ({matchedNotes.length - currentLength} remaining)
+              </div>
+            );
+          }
+        } else {
+          content = <i>Unsupported layout</i>;
         }
       } else {
-        content = <i>Unsupported layout</i>;
+        content = <i>Loading...</i>;
       }
-    } else {
-      content = <i>Loading...</i>;
     }
     return (
       <div>
@@ -153,7 +182,7 @@ export class NotesPage extends React.Component {
               defaultValue={this.props.searchQuery}
             />
             <div style={{ textAlign: 'right', fontSize: '50%', marginTop: '0.3em' }}>
-              {matchedNotes && `${matchedNotes.length} / ${this.props.notes.length}`}
+              {(this.props.notes && matchedNotes) && `${matchedNotes.length} / ${this.props.notes.length}`}
             </div>
           </div>
         </div>
@@ -205,10 +234,11 @@ const withData = graphql(PROFILE_QUERY, {
   options: {
     fetchPolicy: 'cache-and-network',
   },
-  props: ({ data: { loading, notes, refetch } }) => ({
+  props: ({ data: { loading, notes, refetch, error } }) => ({
     loading,
     notes,
-    refetch
+    refetch,
+    graphQlError: error
   }),
 });
 
