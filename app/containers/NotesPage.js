@@ -96,11 +96,13 @@ export class NotesPage extends React.Component {
   }
 
   filteredNotes() {
+    const notes = this.props.notes || [];
+
     if (this.props.searchQuery.length === 0) {
-      return this.props.notes;
+      return notes;
     }
 
-    return this.props.notes.filter((note) =>
+    return notes.filter((note) =>
       NotesPage.textIncludes(this.props.searchQuery, note.url)
       || NotesPage.textIncludes(this.props.searchQuery, note.name)
       || note.tags.some((tag) => NotesPage.textIncludes(this.props.searchQuery, tag.name))
