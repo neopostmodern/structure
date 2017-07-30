@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { findDOMNode } from 'react-dom';
 import type { TagType } from '../types';
-import { gql, graphql, compose } from 'react-apollo';
 import styles from './Tags.scss';
 import InlineTagForm from './InlineTagForm';
 import calculateFontColor from '../utils/calculateFontColor';
@@ -73,8 +72,7 @@ class Tags extends React.Component {
       newTagForm = (
         <InlineTagForm
           onSubmit={this.handleSubmit}
-          tags={this.props.existingTags}
-          tagsLoading={this.props.existingTagsLoading}
+          onAbort={this.hideNewTagForm}
         />
       );
     } else {
@@ -125,27 +123,7 @@ const mapDispatchToProps = (dispatch) => ({
   navigateToTag: (tagId) => dispatch(push(`/tags/${tagId}`))
 });
 
-
-const TAGS_QUERY = gql`
-  query Tags {
-    tags {
-      _id
-      name
-      color
-    }
-  }
-`;
-const withData = graphql(TAGS_QUERY, {
-  options: {
-    fetchPolicy: 'cache-and-network',
-  },
-  props: ({ data: { loading, tags } }) => ({
-    existingTagsLoading: loading,
-    existingTags: tags
-  }),
-});
-
 export default connect(
   null,
   mapDispatchToProps
-)(compose(withData)(Tags));
+)(Tags);

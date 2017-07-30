@@ -4,6 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Field, reduxForm, formValueSelector } from 'redux-form';
+import { gql, graphql, compose } from 'react-apollo';
+
 import styles from './InlineTagForm.scss';
 import calculateFontColor from '../utils/calculateFontColor';
 
@@ -56,6 +58,12 @@ const InlineTagForm = props => {
     }
   }
 
+  const handleInputKeydown = (event: SyntheticKeyboardEvent) => {
+    if (event.key === 'Escape') {
+      props.onAbort();
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
       <Field
@@ -65,6 +73,7 @@ const InlineTagForm = props => {
         placeholder="tag name"
         autoFocus
         validate={notEmpty}
+        onKeyDown={handleInputKeydown}
       />
       {tagAutocomplete}
     </form>
@@ -72,6 +81,25 @@ const InlineTagForm = props => {
 };
 
 const selector = formValueSelector(FORM_NAME);
+
+const TAGS_QUERY = gql`
+  query Tags {
+    tags {
+      _id
+      name
+      color
+    }
+  }
+`;
+const withData = graphql(TAGS_QUERY, {
+  options: {
+    fetchPolicy: 'cache-and-network',
+  },
+  props: ({ data: { loading, tags } }) => ({
+    tagsLoading: loading,
+    tags
+  }),
+});
 
 export default connect(state => {
   const nameValue = selector(state, 'name');
@@ -81,5 +109,7 @@ export default connect(state => {
 })(
   reduxForm({
     form: FORM_NAME,
-  })(InlineTagForm)
+  })(
+    compose(withData)(InlineTagForm)
+  )
 );
