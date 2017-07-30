@@ -8,11 +8,11 @@ import { connect } from 'react-redux';
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 import NotesList from '../components/NotesList';
 import {
-  changeLinkLayout, changeSearchQuery, LinkLayouts,
+  changeLinkLayout, changeSearchQuery, increaseInfiniteScroll, LinkLayouts,
   LinkLayoutType
-} from '../actions/userInterface'
+} from '../actions/userInterface';
 
-import styles from './LinksPage.css';
+import styles from './NotesPage.css';
 
 export function layoutToName(layout: LinkLayoutType) {
   switch (layout) {
@@ -28,17 +28,20 @@ export function layoutToName(layout: LinkLayoutType) {
 
 export class NotesPage extends React.Component {
   searchInput: HTMLInputElement;
+  moreElement: HTMLElement;
 
   props: {
     loading: boolean,
     notes?: Array<{ _id: string, url: string, createdAt: number }>,
     layout: LinkLayoutType,
     searchQuery: string,
+    infiniteScrollLimit: number,
 
     addTagByNameToNote: (linkId: string, tag: string) => void,
     removeTagByIdFromNote: (linkId: string, tagId: string) => void,
     changeLayout: (layout: LinkLayoutType) => void,
-    changeSearchQuery: (query: string) => void
+    changeSearchQuery: (query: string) => void,
+    increaseInfiniteScroll: (by: number) => void
   };
 
   static textIncludes(needle?: string, haystack?: string): boolean {
@@ -51,9 +54,11 @@ export class NotesPage extends React.Component {
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyboardEvent, true);
+    window.addEventListener('scroll', this.handleScrollEvent);
   }
   componentWillUnmount() {
     window.removeEventListener('keydown', this.handleKeyboardEvent, true);
+    window.removeEventListener('scroll', this.handleScrollEvent);
   }
 
   handleKeyboardEvent = (event: KeyboardEvent) => {
@@ -65,6 +70,16 @@ export class NotesPage extends React.Component {
           event.preventDefault();
           break;
       }
+    }
+  }
+
+  handleScrollEvent = (event: Event) => {
+    if (!this.moreElement) {
+      return;
+    }
+
+    if (this.moreElement.getBoundingClientRect().top < window.innerHeight) {
+      this.props.increaseInfiniteScroll(20);
     }
   }
 
@@ -97,14 +112,23 @@ export class NotesPage extends React.Component {
     let matchedNotes;
     if (!this.props.loading) {
       if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
+        const currentLength = this.props.infiniteScrollLimit;
         matchedNotes = this.filteredNotes();
-        content = (
+        content = [
           <NotesList
-            notes={matchedNotes}
+            key="notes-list"
+            notes={matchedNotes.slice(0, currentLength)}
             addTagToNote={this.props.addTagByNameToNote}
             onRemoveTagFromNote={this.props.removeTagByIdFromNote}
           />
-        );
+        ];
+        if (matchedNotes.length > currentLength) {
+          content.push(
+            <div key="more" className={styles.more} ref={(element) => this.moreElement = element}>
+              ({matchedNotes.length - currentLength} remaining)
+            </div>
+          );
+        }
       } else {
         content = <i>Unsupported layout</i>;
       }
@@ -126,7 +150,7 @@ export class NotesPage extends React.Component {
               onChange={this.handleSearchInputChange}
               defaultValue={this.props.searchQuery}
             />
-            <div style={{textAlign: 'right', fontSize: '50%', marginTop: '0.3em'}}>
+            <div style={{ textAlign: 'right', fontSize: '50%', marginTop: '0.3em' }}>
               {matchedNotes && `${matchedNotes.length} / ${this.props.notes.length}`}
             </div>
           </div>
@@ -140,12 +164,17 @@ export class NotesPage extends React.Component {
 function mapStateToProps(state) {
   return {
     layout: state.userInterface.linkLayout,
-    searchQuery: state.userInterface.searchQuery
+    searchQuery: state.userInterface.searchQuery,
+    infiniteScrollLimit: state.userInterface.infiniteScrollLimit,
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ changeLayout: changeLinkLayout, changeSearchQuery }, dispatch);
+  return bindActionCreators({
+    changeLayout: changeLinkLayout,
+    changeSearchQuery,
+    increaseInfiniteScroll
+  }, dispatch);
 }
 
 const PROFILE_QUERY = gql`

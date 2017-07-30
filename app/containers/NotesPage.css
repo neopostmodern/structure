@@ -11,3 +11,9 @@
   border: none;
   background: none;
 }
+
+.more {
+  background-color: #eee;
+  text-align: center;
+  padding: 1em;
+}
