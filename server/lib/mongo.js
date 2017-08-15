@@ -21,6 +21,7 @@ const noteSchema = Schema({
   createdAt: Date,
   user: { type: String, ref: 'User' },
   tags: [{ type: Schema.Types.ObjectId, ref: 'Tag', index: true }],
+  archivedAt: { type: Date, default: null },
 }, noteOptions);
 export const Note = mongoose.model('Note', noteSchema);
 

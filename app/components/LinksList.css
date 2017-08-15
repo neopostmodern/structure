@@ -4,6 +4,9 @@
 .link {
   margin-bottom: 2rem;
 }
+.archived {
+  opacity: 0.5;
+}
 .title {
   display: flex;
 }
@@ -42,6 +45,25 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}
+.archive {
+  margin-left: auto;
+  font-family: "Futura Std Medium", sans-serif;
+}
+.archive .change {
+  display: none;
+}
+.link:hover .archive .change {
+  display: block;
+}
+
+.link:hover .archive .status {
+  display: none;
 }
 
 .tags {

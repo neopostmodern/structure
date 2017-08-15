@@ -24,6 +24,16 @@ const REMOVE_TAG_MUTATION = gql`
     }
   }
 `;
+const TOGGLE_ARCHIVED_MUTATION = gql`
+  mutation toggleArchivedNote($noteId: ID!){
+    toggleArchivedNote(noteId: $noteId) {
+      ... on INote {
+        _id
+        archivedAt
+      }
+    }
+  }
+`;
 
 export const withAddTagMutation = graphql(ADD_TAG_MUTATION, {
   props: ({ mutate }) => ({
@@ -33,5 +43,10 @@ export const withAddTagMutation = graphql(ADD_TAG_MUTATION, {
 export const withRemoveTagMutation = graphql(REMOVE_TAG_MUTATION, {
   props: ({ mutate }) => ({
     removeTagByIdFromNote: (noteId, tagId) => mutate({ variables: { noteId, tagId } })
+  })
+});
+export const withToggleArchivedMutation = graphql(TOGGLE_ARCHIVED_MUTATION, {
+  props: ({ mutate }) => ({
+    toggleArchivedNote: (noteId, tagId) => mutate({ variables: { noteId, tagId } })
   })
 });

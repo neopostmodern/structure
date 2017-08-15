@@ -44,6 +44,7 @@ interface INote {
   description: String!
   
   createdAt: Date!
+  archivedAt: Date
 
   # Comments posted about this repository
   # tags(limit: Int, offset: Int): [Tag]!
@@ -59,6 +60,7 @@ type Text implements INote {
   description: String!
   
   createdAt: Date!
+  archivedAt: Date
 
   # Comments posted about this repository
   # tags(limit: Int, offset: Int): [Tag]!
@@ -83,6 +85,7 @@ type Link implements INote {
   description: String!
   
   createdAt: Date!
+  archivedAt: Date
 
   # Comments posted about this repository
   # tags(limit: Int, offset: Int): [Tag]!
@@ -95,6 +98,7 @@ input InputLink {
   path: String
   name: String
   description: String
+  archivedAt: Date
 }
 
 union Note = Link | Text
@@ -159,6 +163,10 @@ type Mutation {
     noteId: ID!
     tagId: ID!
   ): Link
+  
+  toggleArchivedNote(
+    noteId: ID!
+  ): Note
 }
 
 schema {
@@ -382,6 +390,24 @@ const rootResolvers = {
       )
         .exec()
         .then(({ _id }) => context.Note.findOne({ _id }));
+    },
+    toggleArchivedNote(root, { noteId }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to change archive status of notes.');
+      }
+
+      return context.Note.findOne({ _id: noteId, user: context.user })
+        .then((note) => {
+          if (note.archivedAt) {
+            // eslint-disable-next-line no-param-reassign
+            note.archivedAt = null;
+          } else {
+            // eslint-disable-next-line no-param-reassign
+            note.archivedAt = new Date();
+          }
+
+          return note.save();
+        });
     }
   }
 };

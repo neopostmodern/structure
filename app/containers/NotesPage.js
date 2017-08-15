@@ -5,7 +5,10 @@ import { bindActionCreators } from 'redux';
 import { gql, graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
 
-import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
+import {
+  withAddTagMutation, withRemoveTagMutation,
+  withToggleArchivedMutation
+} from '../wrappers/tags'
 import NotesList from '../components/NotesList';
 import {
   changeLinkLayout, changeSearchQuery, increaseInfiniteScroll, LinkLayouts,
@@ -40,6 +43,8 @@ export class NotesPage extends React.Component {
 
     addTagByNameToNote: (linkId: string, tag: string) => void,
     removeTagByIdFromNote: (linkId: string, tagId: string) => void,
+    toggleArchivedNote: (noteId: string) => void,
+
     changeLayout: (layout: LinkLayoutType) => void,
     changeSearchQuery: (query: string) => void,
     increaseInfiniteScroll: (by: number) => void,
@@ -150,6 +155,7 @@ export class NotesPage extends React.Component {
               notes={matchedNotes.slice(0, currentLength)}
               addTagToNote={this.props.addTagByNameToNote}
               onRemoveTagFromNote={this.props.removeTagByIdFromNote}
+              onToggleArchived={this.props.toggleArchivedNote}
             />
           ];
           if (matchedNotes.length > currentLength) {
@@ -216,6 +222,7 @@ const PROFILE_QUERY = gql`
         _id
         name
         createdAt
+        archivedAt
         description
         tags {
           _id
@@ -246,5 +253,6 @@ export default compose(
   withData,
   withAddTagMutation,
   withRemoveTagMutation,
+  withToggleArchivedMutation,
   connect(mapStateToProps, mapDispatchToProps)
 )(NotesPage);

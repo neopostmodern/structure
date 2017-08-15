@@ -3,7 +3,7 @@ import { ADD_LINK, ADD_TAG_TO_LINK, REMOVE_LINK } from '../actions/links';
 
 import UUID from '../utils/uuid';
 
-export type LinkObject = {
+export type NoteObject = {
   type: string,
   _id: string,
   url?: string,
@@ -11,11 +11,12 @@ export type LinkObject = {
   name: string,
   description: string,
   tags: Array<string>,
-  createdAt: Date
+  createdAt: Date,
+  archivedAt?: Date
 };
 
 export type linksStateType = {
-  links: Array<LinkObject>
+  links: Array<NoteObject>
 };
 
 type actionType = {
@@ -23,7 +24,7 @@ type actionType = {
   // payload: ?string
 };
 
-export default function links(state: Array<LinkObject> = [], action: actionType) {
+export default function links(state: Array<NoteObject> = [], action: actionType) {
   switch (action.type) {
     case ADD_LINK:
       return [...state, { id: UUID(), url: action.payload, tags: [] }];

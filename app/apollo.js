@@ -30,6 +30,7 @@ function getNetworkInterface(host = '', headers = {}) {
 //   getNetworkInterface('http://localhost:3001'), // 'http://localhost:3010/subscriptions'
 //   wsClient,
 // );
+// todo: investigate 'dataIdFromObject'
 const apolloOptions = {
   networkInterface: getNetworkInterface(BACKEND_URL), // networkInterfaceWithSubscriptions,
   initialState: window.__APOLLO_STATE__, // eslint-disable-line no-underscore-dangle
