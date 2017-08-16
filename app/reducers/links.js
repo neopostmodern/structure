@@ -3,6 +3,11 @@ import { ADD_LINK, ADD_TAG_TO_LINK, REMOVE_LINK } from '../actions/links';
 
 import UUID from '../utils/uuid';
 
+export type TagObject = {
+  _id: string,
+  name: string,
+  color: string
+}
 export type NoteObject = {
   type: string,
   _id: string,
@@ -10,9 +15,9 @@ export type NoteObject = {
   domain?: string,
   name: string,
   description: string,
-  tags: Array<string>,
-  createdAt: Date,
-  archivedAt?: Date
+  tags: Array<TagObject>,
+  createdAt: number, // todo: Date
+  archivedAt: ?number // todo: Date
 };
 
 export type linksStateType = {

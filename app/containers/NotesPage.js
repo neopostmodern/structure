@@ -11,11 +11,13 @@ import {
 } from '../wrappers/tags'
 import NotesList from '../components/NotesList';
 import {
-  changeLinkLayout, changeSearchQuery, increaseInfiniteScroll, LinkLayouts,
-  LinkLayoutType
-} from '../actions/userInterface';
+  changeLinkLayout, changeSearchQuery, increaseInfiniteScroll,
+  ArchiveStateType, ArchiveStates,
+  LinkLayouts, LinkLayoutType, changeArchiveState
+} from '../actions/userInterface'
 
 import styles from './NotesPage.css';
+import { type NoteObject } from '../reducers/links';
 
 export function layoutToName(layout: LinkLayoutType) {
   switch (layout) {
@@ -29,14 +31,29 @@ export function layoutToName(layout: LinkLayoutType) {
   }
 }
 
+export function archiveStateToName(archiveState: ArchiveStateType) {
+  switch (archiveState) {
+    case ArchiveStates.ONLY_ARCHIVE:
+      return 'Only archive';
+    case ArchiveStates.BOTH:
+      return 'Including archive';
+    case ArchiveStates.NO_ARCHIVE:
+      return 'Without archive';
+    default:
+      console.error('Unkown layout', archiveState);
+      return 'Unknown layout';
+  }
+}
+
 export class NotesPage extends React.Component {
   searchInput: HTMLInputElement;
   moreElement: HTMLElement;
 
   props: {
     loading: boolean,
-    notes?: Array<{ _id: string, url: string, createdAt: number }>,
+    notes?: Array<NoteObject>,
     layout: LinkLayoutType,
+    archiveState: ArchiveStateType,
     searchQuery: string,
     infiniteScrollLimit: number,
     graphQlError?: Object,
@@ -46,6 +63,7 @@ export class NotesPage extends React.Component {
     toggleArchivedNote: (noteId: string) => void,
 
     changeLayout: (layout: LinkLayoutType) => void,
+    changeArchiveState: (layout: ArchiveStateType) => void,
     changeSearchQuery: (query: string) => void,
     increaseInfiniteScroll: (by: number) => void,
     refetch: () => void,
@@ -97,28 +115,87 @@ export class NotesPage extends React.Component {
       this.props.changeLayout(LinkLayouts.LIST_LAYOUT);
     }
   };
+  changeArchiveState = () => {
+    switch (this.props.archiveState) {
+      case ArchiveStates.ONLY_ARCHIVE:
+        this.props.changeArchiveState(ArchiveStates.BOTH);
+        break;
+      case ArchiveStates.BOTH:
+        this.props.changeArchiveState(ArchiveStates.NO_ARCHIVE);
+        break;
+      case ArchiveStates.NO_ARCHIVE:
+        this.props.changeArchiveState(ArchiveStates.ONLY_ARCHIVE);
+        break;
+      default:
+        console.error('Unkown layout', this.props.archiveState);
+    }
+  };
 
   handleSearchInputChange = () => {
     this.props.changeSearchQuery(this.searchInput.value);
   }
 
   filteredNotes() {
-    const notes = this.props.notes || [];
+    let notes = this.props.notes || [];
 
-    if (this.props.searchQuery.length === 0) {
-      return notes;
+    if (this.props.searchQuery.length !== 0) {
+      notes = notes.filter((note) =>
+        NotesPage.textIncludes(this.props.searchQuery, note.url)
+        || NotesPage.textIncludes(this.props.searchQuery, note.name)
+        || note.tags.some((tag) => NotesPage.textIncludes(this.props.searchQuery, tag.name))
+      );
     }
 
-    return notes.filter((note) =>
-      NotesPage.textIncludes(this.props.searchQuery, note.url)
-      || NotesPage.textIncludes(this.props.searchQuery, note.name)
-      || note.tags.some((tag) => NotesPage.textIncludes(this.props.searchQuery, tag.name))
-    );
+    let completeCount = notes.length;
+    let archivedCount;
+
+    if (this.props.archiveState === ArchiveStates.ONLY_ARCHIVE) {
+      notes = notes.filter(note => Boolean(note.archivedAt));
+      archivedCount = notes.length;
+    } else if (this.props.archiveState === ArchiveStates.NO_ARCHIVE) {
+      notes = notes.filter(note => !note.archivedAt);
+      archivedCount = completeCount - notes.length;
+    }
+
+    return {
+      notes,
+      archivedCount
+    };
+  }
+
+  noteCount(matchedNotes?: Array<NoteObject>, archivedMatchedNotesCount?: number) {
+    if (this.props.notes && matchedNotes) {
+      let totalNotes = this.props.notes.length;
+      const archivedNotesCount = this.props.notes.filter(note => Boolean(note.archivedAt)).length;
+      let displayableNoteCount = totalNotes;
+      if (this.props.archiveState === ArchiveStates.ONLY_ARCHIVE) {
+        displayableNoteCount = archivedNotesCount;
+        totalNotes = `(${this.props.notes.length - archivedNotesCount}+) ${archivedNotesCount}`;
+      } else if (this.props.archiveState === ArchiveStates.NO_ARCHIVE) {
+        displayableNoteCount = this.props.notes.length - archivedNotesCount;
+        totalNotes = `${this.props.notes.length - archivedNotesCount} (+${archivedNotesCount})`;
+      }
+      if (matchedNotes.length === displayableNoteCount) {
+        return totalNotes;
+      }
+
+      let matchedNotesCount = matchedNotes.length;
+      if (this.props.archiveState === ArchiveStates.ONLY_ARCHIVE) {
+        matchedNotesCount = `(${matchedNotes.length - archivedMatchedNotesCount}+) ${archivedMatchedNotesCount}`;
+      } else if (this.props.archiveState === ArchiveStates.NO_ARCHIVE) {
+        if (archivedMatchedNotesCount && archivedMatchedNotesCount > 0) {
+          matchedNotesCount = `${matchedNotes.length} (+${archivedMatchedNotesCount})`;
+        }
+      }
+
+      return `${matchedNotesCount} / ${totalNotes}`;
+    }
   }
 
   render() {
     let content;
     let matchedNotes;
+    let archivedMatchedNotesCount;
     if (this.props.graphQlError) {
       let fullErrorMessage;
       try {
@@ -148,7 +225,9 @@ export class NotesPage extends React.Component {
       if (!this.props.loading) {
         if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
           const currentLength = this.props.infiniteScrollLimit;
-          matchedNotes = this.filteredNotes();
+          const filteredNotes = this.filteredNotes();
+          matchedNotes = filteredNotes.notes;
+          archivedMatchedNotesCount = filteredNotes.archivedCount;
           content = [
             <NotesList
               key="notes-list"
@@ -178,6 +257,9 @@ export class NotesPage extends React.Component {
           <Link to="/notes/add">Add new</Link>,&nbsp;
           <a onClick={this.toggleLayout}>
             {layoutToName(this.props.layout)}
+          </a>,&nbsp;
+          <a onClick={this.changeArchiveState}>
+            {archiveStateToName(this.props.archiveState)}
           </a>
           <div style={{ marginLeft: 'auto' }}>
             <input
@@ -188,7 +270,7 @@ export class NotesPage extends React.Component {
               defaultValue={this.props.searchQuery}
             />
             <div style={{ textAlign: 'right', fontSize: '50%', marginTop: '0.3em' }}>
-              {(this.props.notes && matchedNotes) && `${matchedNotes.length} / ${this.props.notes.length}`}
+              {this.noteCount(matchedNotes, archivedMatchedNotesCount)}
             </div>
           </div>
         </div>
@@ -201,6 +283,7 @@ export class NotesPage extends React.Component {
 function mapStateToProps(state) {
   return {
     layout: state.userInterface.linkLayout,
+    archiveState: state.userInterface.archiveState,
     searchQuery: state.userInterface.searchQuery,
     infiniteScrollLimit: state.userInterface.infiniteScrollLimit,
   };
@@ -209,6 +292,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     changeLayout: changeLinkLayout,
+    changeArchiveState,
     changeSearchQuery,
     increaseInfiniteScroll
   }, dispatch);
