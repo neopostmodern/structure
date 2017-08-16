@@ -5,7 +5,10 @@ import { gql, graphql, compose } from 'react-apollo';
 import styles from './TagPage.scss';
 import type { TagType } from '../types';
 import NotesList from '../components/NotesList';
-import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
+import {
+  withAddTagMutation, withRemoveTagMutation,
+  withToggleArchivedMutation
+} from '../wrappers/tags'
 
 import TagForm from '../components/TagForm';
 
@@ -35,6 +38,7 @@ class TagPage extends React.Component {
           notes={this.props.tag.notes}
           addTagToNote={this.props.addTagByNameToNote}
           onRemoveTagFromNote={this.props.removeTagByIdFromNote}
+          onToggleArchived={this.props.toggleArchivedNote}
         />
       </div>);
     } else {
@@ -125,5 +129,6 @@ export default compose(
   withData,
   withAddTagMutation,
   withRemoveTagMutation,
-  withUpdateTag
+  withUpdateTag,
+  withToggleArchivedMutation,
 )(TagPage);
