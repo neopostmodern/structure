@@ -1,4 +1,5 @@
 import ApolloClient, { addTypename } from 'apollo-client';
+import { IntrospectionFragmentMatcher } from 'react-apollo';
 import { PersistedQueryNetworkInterface } from 'persistgraphql';
 
 import config from './config';
@@ -21,6 +22,39 @@ function getNetworkInterface(host = '', headers = {}) {
   });
 }
 
+const apolloFragmentMatcher = new IntrospectionFragmentMatcher({
+  introspectionQueryResultData: {
+    __schema: {
+      types: [
+        {
+          kind: 'INTERFACE',
+          name: 'INote',
+          possibleTypes: [
+            {
+              name: 'Link'
+            },
+            {
+              name: 'Text'
+            }
+          ]
+        },
+        {
+          kind: 'UNION',
+          name: 'Note',
+          possibleTypes: [
+            {
+              name: 'Link'
+            },
+            {
+              name: 'Text'
+            }
+          ]
+        },
+      ],
+    },
+  }
+});
+
 // webFrame.registerURLSchemeAsSecure('ws');
 // const subscriptionsURL = 'ws://localhost:3001/subscriptions';
 // const wsClient = new SubscriptionClient(subscriptionsURL, {
@@ -36,7 +70,8 @@ const apolloOptions = {
   initialState: window.__APOLLO_STATE__, // eslint-disable-line no-underscore-dangle
   // ssrForceFetchDelay: 100,
   connectToDevTools: true,
-  dataIdFromObject: o => o._id // eslint-disable-line no-underscore-dangle
+  dataIdFromObject: o => o._id, // eslint-disable-line no-underscore-dangle
+  fragmentMatcher: apolloFragmentMatcher,
 };
 const client = new ApolloClient(Object.assign({}, {
   queryTransformer: addTypename,
