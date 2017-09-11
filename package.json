@@ -1,7 +1,7 @@
 {
   "name": "structure",
   "productName": "Structure",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "Structure. For bookmarks, notes and soon everything else.",
   "main": "main.js",
   "scripts": {
@@ -45,7 +45,9 @@
       "package.json"
     ],
     "mac": {
-      "target": ["tar.gz"],
+      "target": [
+        "tar.gz"
+      ],
       "category": "public.app-category.productivity"
     },
     "win": {
