@@ -26,6 +26,7 @@
     "dev": "cross-env START_HOT=1 npm run hot-updates-server",
     "package": "npm run build && build --publish never",
     "package-win": "npm run build && build --win --x64",
+    "package-macos": "npm run build && build --mac",
     "package-linux": "npm run build && build --linux",
     "package-all": "npm run build && build -mwl",
     "cleanup": "mop -v",
@@ -43,19 +44,9 @@
       "main.js.map",
       "package.json"
     ],
-    "dmg": {
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
+    "mac": {
+      "target": ["tar.gz"],
+      "category": "public.app-category.productivity"
     },
     "win": {
       "target": [
