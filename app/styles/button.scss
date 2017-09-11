@@ -3,10 +3,10 @@
   border: none;
   padding: 0;
 
-  &:focus {
+  &:focus, &:hover {
 	outline: none;
 	//text-decoration: underline;
 	background-color: black;
-	color: white;
+    color: white;
   }
 }

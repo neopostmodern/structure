@@ -18,6 +18,9 @@ export const CHANGE_LINK_LAYOUT = 'CHANGE_LINK_LAYOUT';
 export const CHANGE_ARCHIVE_STATE = 'CHANGE_ARCHIVE_STATE';
 export const CHANGE_SEARCH_QUERY = 'CHANGE_SEARCH_QUERY';
 export const INCREASE_INFINITE_SCROLL = 'INCREASE_INFINITE_SCROLL';
+export const REQUEST_METADATA = 'REQUEST_METADATA';
+export const RECEIVED_METADATA = 'RECEIVED_METADATA';
+export const CLEAR_METADATA = 'CLEAR_METADATA';
 
 export function requestLogin() {
   return {
@@ -51,5 +54,23 @@ export function increaseInfiniteScroll(by: number) {
   return {
     type: INCREASE_INFINITE_SCROLL,
     payload: by
+  };
+}
+
+export function requestMetadata(url: string) {
+  return {
+    type: REQUEST_METADATA,
+    payload: url
+  };
+}
+export function receivedMetadata(metadata: Object) {
+  return {
+    type: RECEIVED_METADATA,
+    payload: metadata
+  };
+}
+export function clearMetadata() {
+  return {
+    type: CLEAR_METADATA
   };
 }

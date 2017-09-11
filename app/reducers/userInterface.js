@@ -2,7 +2,7 @@
 import {
   REQUEST_LOGIN, COMPLETE_LOGIN, CHANGE_LINK_LAYOUT, CHANGE_SEARCH_QUERY,
   INCREASE_INFINITE_SCROLL, LinkLayouts, LinkLayoutType, ArchiveStateType, ArchiveStates,
-  CHANGE_ARCHIVE_STATE
+  CHANGE_ARCHIVE_STATE, RECEIVED_METADATA, CLEAR_METADATA
 } from '../actions/userInterface'
 
 export type userInterfaceStateType = {
@@ -10,7 +10,10 @@ export type userInterfaceStateType = {
   linkLayout: LinkLayoutType,
   archiveState: ArchiveStateType,
   searchQuery: string,
-  infiniteScrollLimit: number
+  infiniteScrollLimit: number,
+  metadata?: {
+    titles: [string]
+  }
 };
 
 type Action = {type: string};
@@ -42,6 +45,12 @@ export default function links(state: userInterfaceStateType = initialState, acti
       return Object.assign({}, state, {
         infiniteScrollLimit: state.infiniteScrollLimit + action.payload
       });
+    case RECEIVED_METADATA:
+      return Object.assign({}, state, { metadata: action.payload });
+    case CLEAR_METADATA:
+      let nextState = Object.assign({}, state);
+      delete nextState.metadata;
+      return nextState;
     default:
       return state;
   }

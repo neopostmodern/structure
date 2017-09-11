@@ -50,7 +50,8 @@ app.on('ready', async () => {
     show: false,
     width: 1024,
     height: 728,
-    icon: '/home/neopostmodern/Code/Structure2/resources/icon.png'
+    icon: '/home/neopostmodern/Code/Structure2/resources/icon.png',
+    webPreferences: { webSecurity: false }
   });
 
   const url = (process.env.NODE_ENV === 'development')

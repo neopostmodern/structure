@@ -1,5 +1,7 @@
 import login from './login';
+import metadata from './metadata';
 
 export default [
-  login
+  login,
+  metadata
 ];

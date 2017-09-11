@@ -1,13 +1,40 @@
 // @flow
 import React from 'react';
 import { gql, graphql, compose } from 'react-apollo';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 import Tags from '../components/Tags';
 import LinkForm from '../components/LinkForm';
+import { clearMetadata, requestMetadata } from '../actions/userInterface';
+import type { LinkType } from '../types'
 
 
 export class LinkPage extends React.Component {
+  props: {
+    link: LinkType,
+    requestMetadata: (url: string) => void,
+    clearMetadata: () => void
+  }
+
+  componentDidMount() {
+    if (this.props.link) {
+      this.props.requestMetadata(this.props.link.url);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(this.props.link, nextProps.link);
+    if (this.props.link && nextProps.link && this.props.link.url !== nextProps.link.url) {
+      this.props.requestMetadata(nextProps.link.url);
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.clearMetadata();
+  }
+
   deleteLink = () => {
     this.props.deleteLink(this.props.link._id)
       .then((result) => {
@@ -15,6 +42,11 @@ export class LinkPage extends React.Component {
         return result;
       });
   };
+
+  handleLinkChange = (data) => {
+    this.props.requestMetadata(data.url);
+    this.props.updateLink(data);
+  }
 
   render() {
     const { loading, link } = this.props;
@@ -25,8 +57,9 @@ export class LinkPage extends React.Component {
       <LinkForm
         form={link._id}
         initialValues={link}
+        metadata={this.props.metadata}
         onSubmit={this.props.updateLink}
-        onChange={this.props.updateLink}
+        onChange={this.handleLinkChange}
       />
       <div style={{ marginTop: 30 }}>
         <Tags
@@ -115,5 +148,9 @@ export default compose(
   withAddTagMutation,
   withRemoveTagMutation,
   withUpdateLink,
-  withDeleteLink
+  withDeleteLink,
+  connect(
+    ({ userInterface: { metadata } }) => ({ metadata }),
+    (dispatch) => bindActionCreators({ requestMetadata, clearMetadata }, dispatch)
+  )
 )(LinkPage);
