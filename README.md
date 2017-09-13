@@ -8,6 +8,8 @@ Keep in mind that these will use private server infrastructure, a privacy and se
 Feel free to build and deploy the app and required server infrastructure yourself. 
 See [below](https://github.com/neopostmodern/structure#server) on how to do so.
 
+![screenshot](./screenshot.png)
+
 ## Features
 
 ### It allow you to bookmark...
