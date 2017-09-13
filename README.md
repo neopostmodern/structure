@@ -13,7 +13,7 @@ See [below](https://github.com/neopostmodern/structure#server) on how to do so.
 ### It allow you to bookmark...
 - [x] URLs (websites)
 - [x] Notes
-- [ ] Local files #2
+- [ ] Local files [#2](https://github.com/neopostmodern/structure/issues/2)
 
 ### ...and then...
 - [x] multi-tag
@@ -29,10 +29,10 @@ See [below](https://github.com/neopostmodern/structure#server) on how to do so.
 - [ ] Take a screenshot (where applicable)
 	- [ ] Viewport
 	- [ ] Whole page
-- [ ] Take a source-code snapshot (URLs only, prevents future deadlinks) #4
+- [ ] Take a source-code snapshot (URLs only, prevents future deadlinks) [#4](https://github.com/neopostmodern/structure/issues/4)
 - [ ] Ease metadata-entry
 	- [x] Name suggestions (URLs only)
-	- [ ] Tag suggestions #5
+	- [ ] Tag suggestions [#5](https://github.com/neopostmodern/structure/issues/5)
 
 
 ## Build / deploy
@@ -51,7 +51,7 @@ AppImage (Linux), .exe (NSIS-Installer for Windows) and .tar.gz (macOS) are plac
 
 Deployment script variables are stored in `server/deploy/server.sh`, 
 environment variables for server are stored in `server/deploy/config.json`.
-Example files coming soon (#6).
+Example files coming soon ([#6](https://github.com/neopostmodern/structure/issues/6)).
 ```bash
 cd server
 npm run deploy
