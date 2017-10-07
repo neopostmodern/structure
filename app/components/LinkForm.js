@@ -1,7 +1,10 @@
 // @flow
 
 import React from 'react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, formValueSelector, reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+
+import MarkedTextarea from './MarkedTextarea';
 
 import formStyles from './NoteForm.css';
 import buttonStyles from '../styles/button.scss';
@@ -14,7 +17,8 @@ class LinkForm extends React.Component {
     metadata?: {
       titles?: [string]
     },
-    handleSubmit: () => void
+    handleSubmit: () => void,
+    descriptionFieldValue: string
   }
 
   static defaultProps = { metadata: {} }
@@ -24,11 +28,12 @@ class LinkForm extends React.Component {
     if (this.props.metadata && this.props.metadata.titles) {
       titles = (
         <div style={{ marginBottom: '2rem' }}>
+          <div className={formStyles.subheader}>Title suggestions</div>
           {this.props.metadata.titles.map((title, index) => (
             <button
               type="button"
               className={buttonStyles.textButton}
-              style={{ fontStyle: 'italic', fontSize: '80%' }}
+              style={{ fontStyle: 'italic', fontSize: '80%', display: 'block', marginTop: '0.3em' }}
               key={index}
               onClick={() => this.props.change('name', title)}
             >
@@ -39,13 +44,22 @@ class LinkForm extends React.Component {
       );
     }
 
+
     return (<form onSubmit={this.props.handleSubmit} className={formStyles.form}>
       <Field
         name="url"
         component="input"
         type="text"
         className={formStyles.url}
+        style={{ width: 'calc(100% - 2.5rem)' }}
       />
+      <button
+        type="button"
+        style={{ textAlign: 'center', width: '1.5rem', height: '1.5rem', marginLeft: '1rem' }}
+        onClick={() => window.open(this.props.urlValue, '_blank', 'noopener, noreferrer')}
+      >
+        🡭
+      </button>
       <Field
         name="name"
         component="input"
@@ -53,13 +67,21 @@ class LinkForm extends React.Component {
         className={formStyles.name}
       />
       {titles}
+
+      <div className={formStyles.subheader}>Description / notes</div>
       <Field
         name="description"
-        component="textarea"
+        component={MarkedTextarea}
         className={formStyles.description}
       />
     </form>);
   }
 }
 
-export default reduxForm({ form: LINK_FORM_NAME })(LinkForm);
+// todo: this most likely has a very negative impact on performance. value access should be delegated to sub-components.
+const selector = formValueSelector(LINK_FORM_NAME);
+const mapStateToProps = (state) => ({
+  urlValue: selector(state, 'url')
+});
+
+export default connect(mapStateToProps)(reduxForm({ form: LINK_FORM_NAME })(LinkForm));

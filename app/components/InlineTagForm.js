@@ -14,10 +14,10 @@ const FORM_NAME = 'inline-tag';
 const notEmpty = value => (value && value.length > 0 ? undefined : 'No empty tags');
 const inputField = ({ input, label, type, meta: { touched, error, warning }, ...rest }) => (
   <div>
-    {(touched && error) && <div style={{color: 'darkred', position: 'absolute', bottom: '100%', right: 0, fontSize: '70%'}}>{error}</div>}
+    {(touched && error) && <div style={{ color: 'darkred', position: 'absolute', bottom: '100%', right: 0, fontSize: '70%' }}>{error}</div>}
     <input {...input} placeholder={label} type={type} {...rest} />
   </div>
-  );
+);
 
 const InlineTagForm = props => {
   const { handleSubmit, tags, tagsLoading, pristine, submitting, nameValue, change, submit } = props;

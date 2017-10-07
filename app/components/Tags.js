@@ -89,7 +89,7 @@ class Tags extends React.Component {
     }
     return (<div className={styles.tags}>
       {this.props.tags.map((tag) =>
-        <div
+        (<div
           key={tag._id}
           className={styles.tag}
           style={{ backgroundColor: tag.color }}
@@ -98,7 +98,7 @@ class Tags extends React.Component {
           ref={calculateFontColor}
         >
           {tag.name}
-        </div>
+        </div>)
       )}
       {newTagForm}
     </div>);

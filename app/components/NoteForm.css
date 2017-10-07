@@ -9,3 +9,11 @@
   width: 100%;
   height: 20vh;
 }
+
+.subheader {
+  font-family: "Futura Std Medium", sans-serif;
+  font-size: 70%;
+  text-transform: uppercase;
+  color: gray;
+  margin-top: 0.5em;
+}

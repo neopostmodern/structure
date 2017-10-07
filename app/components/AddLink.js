@@ -8,7 +8,7 @@ const urlValidator = (value) => (value && value.indexOf('http') === 0
   ? undefined
   : 'Did you forget the protocol? (e.g. https://)'
 );
-const renderField = ({input, autoFocus, placeholder, className, type, meta: {touched, error, warning}}) => (
+const renderField = ({ input, autoFocus, placeholder, className, type, meta: { touched, error, warning } }) => (
   <div>
     <input
       {...input}
@@ -21,7 +21,7 @@ const renderField = ({input, autoFocus, placeholder, className, type, meta: {tou
       (error &&
         <div style={{ marginTop: '0.5em', color: 'darkred' }}>
           {error}
-          </div>
+        </div>
       ) ||
       (warning &&
         <span>{warning}</span>
@@ -33,7 +33,7 @@ const renderField = ({input, autoFocus, placeholder, className, type, meta: {tou
 class AddLink extends Component {
   render() {
     return (
-      <div style={{paddingTop: '20vh'}}>
+      <div style={{ paddingTop: '20vh' }}>
         <form onSubmit={this.props.handleSubmit}>
           <Field
             name="url"
@@ -50,4 +50,4 @@ class AddLink extends Component {
   }
 }
 
-export default reduxForm({form: 'addLink'})(AddLink)
+export default reduxForm({ form: 'addLink' })(AddLink);

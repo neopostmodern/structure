@@ -29,7 +29,7 @@ export default class NotesList extends Component {
     return (
       <div className={styles.links}>
         {this.props.notes.map((note) =>
-          <div key={note._id} className={ClassNames(styles.link, { [styles.archived]: Boolean(note.archivedAt) })}>
+          (<div key={note._id} className={ClassNames(styles.link, { [styles.archived]: Boolean(note.archivedAt) })}>
             <div className={styles.title}>
               <Link className={styles.name} to={`/${note.type.toLowerCase()}s/${note._id}`}>
                 {note.name}
@@ -41,14 +41,14 @@ export default class NotesList extends Component {
             </div>
             <div className={styles.info}>
               {note.url ?
-                  <a
-                    href={note.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.domain}
-                  >
-                    {note.domain}
-                  </a> : null}
+                <a
+                  href={note.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.domain}
+                >
+                  {note.domain}
+                </a> : null}
               <div className={styles.description}>{note.description}</div>
             </div>
             <div className={styles.actions}>
@@ -61,11 +61,11 @@ export default class NotesList extends Component {
                 className={styles.archive}
                 onClick={() => this.props.onToggleArchived(note._id)}
               >
-                <div className={styles.status}>{note.archivedAt ? "Archived" : null}</div>
-                <button type="button" className={styles.change}>{note.archivedAt ? "Unarchive" : "Archive"}</button>
+                <div className={styles.status}>{note.archivedAt ? 'Archived' : null}</div>
+                <button type="button" className={styles.change}>{note.archivedAt ? 'Unarchive' : 'Archive'}</button>
               </div>
             </div>
-          </div>
+          </div>)
         )}
       </div>
     );

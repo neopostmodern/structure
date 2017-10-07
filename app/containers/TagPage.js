@@ -8,7 +8,7 @@ import NotesList from '../components/NotesList';
 import {
   withAddTagMutation, withRemoveTagMutation,
   withToggleArchivedMutation
-} from '../wrappers/tags'
+} from '../wrappers/tags';
 
 import TagForm from '../components/TagForm';
 

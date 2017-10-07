@@ -12,9 +12,9 @@ class TagForm extends React.Component {
           component="input"
           type="text"
           className={styles.colorBlock}
-          style={{backgroundColor: this.props.initialValues.color}}
+          style={{ backgroundColor: this.props.initialValues.color }}
         />
-        <br/>
+        <br />
         <Field
           name="name"
           component="input"

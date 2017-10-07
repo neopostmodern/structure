@@ -3,7 +3,7 @@ import {
   REQUEST_LOGIN, COMPLETE_LOGIN, CHANGE_LINK_LAYOUT, CHANGE_SEARCH_QUERY,
   INCREASE_INFINITE_SCROLL, LinkLayouts, LinkLayoutType, ArchiveStateType, ArchiveStates,
   CHANGE_ARCHIVE_STATE, RECEIVED_METADATA, CLEAR_METADATA
-} from '../actions/userInterface'
+} from '../actions/userInterface';
 
 export type userInterfaceStateType = {
   loggingIn: boolean,
@@ -17,9 +17,9 @@ export type userInterfaceStateType = {
 };
 
 type Action = {type: string};
-  // | { type: REQUEST_LOGIN }
-  // | { type: COMPLETE_LOGIN }
-  // | { type: CHANGE_LINK_LAYOUT, payload: LinkLayoutType };
+// | { type: REQUEST_LOGIN }
+// | { type: COMPLETE_LOGIN }
+// | { type: CHANGE_LINK_LAYOUT, payload: LinkLayoutType };
 
 const initialState: userInterfaceStateType = {
   loggingIn: false,
@@ -48,7 +48,7 @@ export default function links(state: userInterfaceStateType = initialState, acti
     case RECEIVED_METADATA:
       return Object.assign({}, state, { metadata: action.payload });
     case CLEAR_METADATA:
-      let nextState = Object.assign({}, state);
+      const nextState = Object.assign({}, state);
       delete nextState.metadata;
       return nextState;
     default:

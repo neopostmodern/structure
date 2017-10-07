@@ -7,7 +7,7 @@ export type TagObject = {
   _id: string,
   name: string,
   color: string
-}
+};
 export type NoteObject = {
   type: string,
   _id: string,

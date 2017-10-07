@@ -3,6 +3,7 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 
 import formStyles from './NoteForm.css';
+import MarkedTextarea from './MarkedTextarea';
 
 // todo: can't export; break build?
 class TextForm extends React.Component {
@@ -14,9 +15,10 @@ class TextForm extends React.Component {
         type="text"
         className={formStyles.name}
       />
+
       <Field
         name="description"
-        component="textarea"
+        component={MarkedTextarea}
         className={formStyles.description}
       />
     </form>);

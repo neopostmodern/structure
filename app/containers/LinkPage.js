@@ -8,7 +8,7 @@ import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 import Tags from '../components/Tags';
 import LinkForm from '../components/LinkForm';
 import { clearMetadata, requestMetadata } from '../actions/userInterface';
-import type { LinkType } from '../types'
+import type { LinkType } from '../types';
 
 
 export class LinkPage extends React.Component {
@@ -25,8 +25,11 @@ export class LinkPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(this.props.link, nextProps.link);
-    if (this.props.link && nextProps.link && this.props.link.url !== nextProps.link.url) {
+    if (this.props.link) {
+      if (nextProps.link && this.props.link.url !== nextProps.link.url) {
+        this.props.requestMetadata(nextProps.link.url);
+      }
+    } else if (nextProps.link && nextProps.link.url) {
       this.props.requestMetadata(nextProps.link.url);
     }
   }
@@ -53,9 +56,10 @@ export class LinkPage extends React.Component {
     if (loading) {
       return <i>Loading...</i>;
     }
+    //    form={link._id}
     return (<div style={{ marginTop: 50 }}>
+
       <LinkForm
-        form={link._id}
         initialValues={link}
         metadata={this.props.metadata}
         onSubmit={this.props.updateLink}

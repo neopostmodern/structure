@@ -8,13 +8,13 @@ import { connect } from 'react-redux';
 import {
   withAddTagMutation, withRemoveTagMutation,
   withToggleArchivedMutation
-} from '../wrappers/tags'
+} from '../wrappers/tags';
 import NotesList from '../components/NotesList';
 import {
   changeLinkLayout, changeSearchQuery, increaseInfiniteScroll,
   ArchiveStateType, ArchiveStates,
   LinkLayouts, LinkLayoutType, changeArchiveState
-} from '../actions/userInterface'
+} from '../actions/userInterface';
 
 import styles from './NotesPage.css';
 import { type NoteObject } from '../reducers/links';
@@ -66,7 +66,7 @@ export class NotesPage extends React.Component {
     changeArchiveState: (layout: ArchiveStateType) => void,
     changeSearchQuery: (query: string) => void,
     increaseInfiniteScroll: (by: number) => void,
-    refetch: () => void,
+    refetch: () => void
   };
 
   static textIncludes(needle?: string, haystack?: string): boolean {
@@ -146,7 +146,7 @@ export class NotesPage extends React.Component {
       );
     }
 
-    let completeCount = notes.length;
+    const completeCount = notes.length;
     let archivedCount;
 
     if (this.props.archiveState === ArchiveStates.ONLY_ARCHIVE) {
@@ -221,35 +221,33 @@ export class NotesPage extends React.Component {
           </div>
         </div>
       );
-    } else {
-      if (!this.props.loading) {
-        if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
-          const currentLength = this.props.infiniteScrollLimit;
-          const filteredNotes = this.filteredNotes();
-          matchedNotes = filteredNotes.notes;
-          archivedMatchedNotesCount = filteredNotes.archivedCount;
-          content = [
-            <NotesList
-              key="notes-list"
-              notes={matchedNotes.slice(0, currentLength)}
-              addTagToNote={this.props.addTagByNameToNote}
-              onRemoveTagFromNote={this.props.removeTagByIdFromNote}
-              onToggleArchived={this.props.toggleArchivedNote}
-            />
-          ];
-          if (matchedNotes.length > currentLength) {
-            content.push(
-              <div key="more" className={styles.more} ref={(element) => this.moreElement = element}>
+    } else if (!this.props.loading) {
+      if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
+        const currentLength = this.props.infiniteScrollLimit;
+        const filteredNotes = this.filteredNotes();
+        matchedNotes = filteredNotes.notes;
+        archivedMatchedNotesCount = filteredNotes.archivedCount;
+        content = [
+          <NotesList
+            key="notes-list"
+            notes={matchedNotes.slice(0, currentLength)}
+            addTagToNote={this.props.addTagByNameToNote}
+            onRemoveTagFromNote={this.props.removeTagByIdFromNote}
+            onToggleArchived={this.props.toggleArchivedNote}
+          />
+        ];
+        if (matchedNotes.length > currentLength) {
+          content.push(
+            <div key="more" className={styles.more} ref={(element) => this.moreElement = element}>
                 ({matchedNotes.length - currentLength} remaining)
-              </div>
-            );
-          }
-        } else {
-          content = <i>Unsupported layout</i>;
+            </div>
+          );
         }
       } else {
-        content = <i>Loading...</i>;
+        content = <i>Unsupported layout</i>;
       }
+    } else {
+      content = <i>Loading...</i>;
     }
     return (
       <div>

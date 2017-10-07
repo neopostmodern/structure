@@ -1,5 +1,5 @@
 // @flow
-import { REQUEST_METADATA, receivedMetadata, clearMetadata } from '../actions/userInterface'
+import { REQUEST_METADATA, receivedMetadata, clearMetadata } from '../actions/userInterface';
 
 export default store => next => action => {
   if (action.type === REQUEST_METADATA) {
