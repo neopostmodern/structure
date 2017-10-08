@@ -9,18 +9,35 @@ import Tags from '../components/Tags';
 import LinkForm from '../components/LinkForm';
 import { clearMetadata, requestMetadata } from '../actions/userInterface';
 import type { LinkType } from '../types';
+import Centered from '../components/Centered';
 
 
 export class LinkPage extends React.Component {
   props: {
     link: LinkType,
     requestMetadata: (url: string) => void,
-    clearMetadata: () => void
+    clearMetadata: () => void,
+    scrapeLink: (linkId: string) => void
+  }
+
+  longPollInterval = null;
+
+  startLongPoll() {
+    this.longPollInterval = setInterval(() => this.props.refetch(), 5);
+  }
+  stopLongPoll() {
+    clearInterval(this.longPollInterval);
   }
 
   componentDidMount() {
     if (this.props.link) {
       this.props.requestMetadata(this.props.link.url);
+
+      if (this.props.link.scrapedAt === 0) {
+        this.startLongPoll();
+      } else {
+        this.stopLongPoll();
+      }
     }
   }
 
@@ -31,6 +48,12 @@ export class LinkPage extends React.Component {
       }
     } else if (nextProps.link && nextProps.link.url) {
       this.props.requestMetadata(nextProps.link.url);
+    }
+
+    if (nextProps.link.scrapedAt === 0) {
+      this.startLongPoll();
+    } else {
+      this.stopLongPoll();
     }
   }
 
@@ -54,16 +77,16 @@ export class LinkPage extends React.Component {
   render() {
     const { loading, link } = this.props;
     if (loading) {
-      return <i>Loading...</i>;
+      return <Centered>Loading...</Centered>;
     }
-    //    form={link._id}
-    return (<div style={{ marginTop: 50 }}>
 
+    return (<div style={{ marginTop: 50 }}>
       <LinkForm
         initialValues={link}
         metadata={this.props.metadata}
         onSubmit={this.props.updateLink}
         onChange={this.handleLinkChange}
+        onRequestScrape={this.props.scrapeLink}
       />
       <div style={{ marginTop: 30 }}>
         <Tags
@@ -87,6 +110,7 @@ const LINK_QUERY = gql`
     link(linkId: $linkId) {
       _id
       createdAt
+      scrapedAt
       url
       name
       description
@@ -105,6 +129,25 @@ const UPDATE_LINK_MUTATION = gql`
     updateLink(link: $link) {
       _id
       createdAt
+      scrapedAt
+      url
+      domain
+      name
+      description
+      tags {
+        _id
+        name
+        color
+      }
+    }
+  }
+`;
+const SCRAPE_LINK_MUTATION = gql`
+  mutation scrapeLink($linkId: ID!){
+    scrapeLink(linkId: $linkId) {
+      _id
+      createdAt
+      scrapedAt
       url
       domain
       name
@@ -142,6 +185,11 @@ const withUpdateLink = graphql(UPDATE_LINK_MUTATION, {
       mutate({ variables: { link: { _id, url, domain, path, name, description } } })
   })
 });
+const withScrapeLink = graphql(SCRAPE_LINK_MUTATION, {
+  props: ({ mutate }) => ({
+    scrapeLink: (_id) => mutate({ variables: { linkId: _id } })
+  })
+});
 const withDeleteLink = graphql(DELETE_LINK_MUTATION, {
   props: ({ mutate }) => ({
     deleteLink: (_id) => mutate({ variables: { linkId: _id } })
@@ -152,6 +200,7 @@ export default compose(
   withAddTagMutation,
   withRemoveTagMutation,
   withUpdateLink,
+  withScrapeLink,
   withDeleteLink,
   connect(
     ({ userInterface: { metadata } }) => ({ metadata }),

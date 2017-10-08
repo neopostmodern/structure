@@ -179,6 +179,7 @@
     "font-awesome": "^4.7.0",
     "history": "^4.6.3",
     "marked": "^0.3.6",
+    "moment": "^2.18.1",
     "persistgraphql": "^0.3.2",
     "react": "^15.6.1",
     "react-apollo": "^1.4.14",

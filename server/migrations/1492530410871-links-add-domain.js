@@ -6,7 +6,7 @@ export async function up() {
     .then((links) =>
       Promise.all(links.map((link) =>
         // pre-save hook does all the necessary work
-         link.save()))
+        link.save()))
     );
 }
 
