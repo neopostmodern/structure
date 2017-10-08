@@ -34,6 +34,7 @@ const linkSchema = Schema({
   url: String,
   domain: String,
   path: String,
+  scrapedAt: Date,
 }, noteOptions);
 linkSchema.pre('save', function (next) {
   const { hostname, pathname } = url.parse(this.url);
@@ -61,7 +62,7 @@ const migrationSystem = new MigrateMongoose({
   autosync: true,
 });
 
-const forceRerunMigration = null; // 'note-types';
+const forceRerunMigration = 'scrape-links'; // 'note-types';
 
 migrationSystem.list().then((migrations) => {
   console.log('Running migrations...');
@@ -76,23 +77,21 @@ migrationSystem.list().then((migrations) => {
               return migration.name;
             })
             .catch((error) => console.error('    ...FAILED', error));
-        } else {
-          console.log(`  ⇒ ${migration.name} already migrated`);
-          return Promise.resolve();
         }
-      } else {
-        return Promise.resolve(migration.name);
+        console.log(`  ⇒ ${migration.name} already migrated`);
+        return Promise.resolve();
       }
+      return Promise.resolve(migration.name);
     })
   ).then(migrationNames => Promise.all(
-      migrationNames
-        .filter(migrationName => Boolean(migrationName))
-        .map(migrationName => {
-          console.log(`  ⇑ ${migrationName} will migrate 'up'...`);
-          return migrationSystem.run('up', migrationName)
-            .then(() => console.log('    ...OK'))
-            .catch((error) => console.error('    ...FAILED', error));
-        })
+    migrationNames
+      .filter(migrationName => Boolean(migrationName))
+      .map(migrationName => {
+        console.log(`  ⇑ ${migrationName} will migrate 'up'...`);
+        return migrationSystem.run('up', migrationName)
+          .then(() => console.log('    ...OK'))
+          .catch((error) => console.error('    ...FAILED', error));
+      })
   ));
 })
   .then(() => console.log('Migrations complete.'))

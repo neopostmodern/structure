@@ -17,21 +17,27 @@ export default class MarkedTextarea extends React.Component {
   }
 
   componentWillMount() {
-    console.log(this.props.meta);
-    if (this.props.meta.initial.length === 0) {
+    if (this.props.input.value.length === 0) {
+      this.setState({ editDescription: true });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.input.value.length === 0) {
       this.setState({ editDescription: true });
     }
   }
 
   render() {
+    console.log(this.props.input);
     if (this.state.editDescription) {
       return (
         <div>
           <textarea
             {...this.props.input}
             className={this.props.className}
-            onBlur={() => this.setState({ editDescription: false })}
-            ref={(element) => element && element.focus()}
+            onBlur={() => (this.props.input.value.length > 0 && this.setState({ editDescription: false }))}
+            ref={(element) => element && this.props.input.value.length > 0 && element.focus()}
           />
         </div>
       );

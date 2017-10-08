@@ -3,6 +3,7 @@ import Moment from 'moment';
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
 import { makeExecutableSchema } from 'graphql-tools';
+import { scrapeWebsiteForLink } from './util';
 
 const rootSchema = [`
 scalar Date
@@ -86,6 +87,7 @@ type Link implements INote {
   
   createdAt: Date!
   archivedAt: Date
+  scrapedAt: Date
 
   # Comments posted about this repository
   # tags(limit: Int, offset: Int): [Tag]!
@@ -99,6 +101,7 @@ input InputLink {
   name: String
   description: String
   archivedAt: Date
+  scrapedAt: Date
 }
 
 union Note = Link | Text
@@ -141,6 +144,9 @@ type Mutation {
   ): Link
   updateLink(
     link: InputLink!
+  ): Link
+  scrapeLink(
+    linkId: ID!
   ): Link
   deleteLink(
     linkId: ID!
@@ -291,11 +297,22 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to submit links.');
       }
+
       return new context.Link({
         url,
         user: context.user,
         createdAt: new Date()
-      }).save();
+      }).save()
+        .then((link) => {
+          setTimeout(() => {
+            scrapeWebsiteForLink(link)
+              .catch(error => {
+                console.error('util/scrapeWebsite threw an error: ', error);
+                throw error;
+              });
+          }, 0);
+          return link;
+        });
     },
     updateLink(root, { link: { _id, ...props } }, context) {
       if (!context.user) {
@@ -310,6 +327,25 @@ const rootResolvers = {
           link[propName] = propValue;
         });
         return link.save();
+      });
+    },
+    scrapeLink(root, { linkId }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to scrape links.');
+      }
+      return context.Link.findOne({ _id: linkId, user: context.user }).then((link) => {
+        if (!link) {
+          throw new Error('Resource could not be found.');
+        }
+
+        setTimeout(() => {
+          scrapeWebsiteForLink(link, true)
+            .catch(error => {
+              console.error('util/scrapeWebsite threw an error: ', error);
+              throw error;
+            });
+        }, 0);
+        return link;
       });
     },
     deleteLink(root, { linkId }, context) {
@@ -374,11 +410,11 @@ const rootResolvers = {
         }
         return new context.Tag({ name, color: 'lightgray', user: context.user }).save();
       }).then((tag) => context.Note.findOneAndUpdate(
-          { _id: noteId },
-          { $addToSet: { tags: tag._id } }
-        )
-          .exec()
-          .then(({ _id }) => context.Note.findOne({ _id })));
+        { _id: noteId },
+        { $addToSet: { tags: tag._id } }
+      )
+        .exec()
+        .then(({ _id }) => context.Note.findOne({ _id })));
     },
     removeTagByIdFromNote(root, { noteId, tagId }, context) {
       if (!context.user) {
