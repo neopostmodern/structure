@@ -36,6 +36,16 @@ See [below](https://github.com/neopostmodern/structure#server) on how to do so.
 	- [x] Name suggestions (URLs only)
 	- [ ] Tag suggestions [#5](https://github.com/neopostmodern/structure/issues/5)
 
+## Keyboard shortcuts
+
+Key combinations are not customizable, *yet* ([#7](https://github.com/neopostmodern/structure/issues/7))
+
+| Key combination | Action |
+|-|-|
+| `[CTRL/CMD] + [n]` | Create new entry |
+| `[CTRL/CMD] + [t]` | Add tag |
+| `[CTRL/CMD] + [/]` | Back to default view (list of bookmarks) |
+
 
 ## Build / deploy
 
