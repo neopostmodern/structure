@@ -3,9 +3,10 @@ import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github';
 import ConnectMongoDbSession from 'connect-mongodb-session';
 
+import config from './config';
+
 const MongoDBSession = ConnectMongoDbSession(session);
 
-import config from './config.json';
 
 const store = new MongoDBSession({
   uri: 'mongodb://localhost:27017/structureApp',
