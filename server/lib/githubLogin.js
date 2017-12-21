@@ -7,7 +7,6 @@ import config from './config';
 
 const MongoDBSession = ConnectMongoDbSession(session);
 
-
 const store = new MongoDBSession({
   uri: 'mongodb://localhost:27017/structureApp',
   collection: 'sessions'

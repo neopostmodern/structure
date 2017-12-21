@@ -62,7 +62,7 @@ const migrationSystem = new MigrateMongoose({
   autosync: true,
 });
 
-const forceRerunMigration = null; // 'note-types';
+const forceRerunMigration = 'scrape-links'; // 'note-types';
 
 migrationSystem.list().then((migrations) => {
   console.log('Running migrations...');

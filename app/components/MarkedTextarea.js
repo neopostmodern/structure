@@ -29,6 +29,7 @@ export default class MarkedTextarea extends React.Component {
   }
 
   render() {
+    console.log(this.props.input);
     if (this.state.editDescription) {
       return (
         <div>
