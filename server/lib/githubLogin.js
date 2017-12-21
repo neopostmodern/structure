@@ -2,9 +2,10 @@ import session from 'express-session';
 import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github';
 import ConnectMongoDbSession from 'connect-mongodb-session';
-const MongoDBSession = ConnectMongoDbSession(session);
 
-import config from './config.json';
+import config from './config';
+
+const MongoDBSession = ConnectMongoDbSession(session);
 
 const store = new MongoDBSession({
   uri: 'mongodb://localhost:27017/structureApp',
