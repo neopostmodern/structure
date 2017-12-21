@@ -23,7 +23,7 @@ export class LinkPage extends React.Component {
   longPollInterval = null;
 
   startLongPoll() {
-    this.longPollInterval = setInterval(() => this.props.refetch(), 5);
+    this.longPollInterval = setInterval(() => this.props.refetch(), 5000);
   }
   stopLongPoll() {
     clearInterval(this.longPollInterval);
@@ -50,10 +50,12 @@ export class LinkPage extends React.Component {
       this.props.requestMetadata(nextProps.link.url);
     }
 
-    if (nextProps.link.scrapedAt === 0) {
-      this.startLongPoll();
-    } else {
-      this.stopLongPoll();
+    if (nextProps.link) {
+      if (nextProps.link.scrapedAt === 0) {
+        this.startLongPoll();
+      } else {
+        this.stopLongPoll();
+      }
     }
   }
 
@@ -76,11 +78,17 @@ export class LinkPage extends React.Component {
 
   render() {
     const { loading, link } = this.props;
-    if (loading) {
+    if (loading && !link) { // optimistically show data if something is on hold
+      console.log("Data while loading", link);
       return <Centered>Loading...</Centered>;
     }
 
     return (<div style={{ marginTop: 50 }}>
+      { loading
+        ? <div style={{ backgroundColor: '#eee', padding: '0.5rem', textAlign: 'center', marginBottom: '1rem' }}>
+          Refreshing...
+        </div>
+        : null}
       <LinkForm
         initialValues={link}
         metadata={this.props.metadata}
