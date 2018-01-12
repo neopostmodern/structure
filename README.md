@@ -20,15 +20,15 @@ See [below](https://github.com/neopostmodern/structure#server) on how to do so.
 ### ...and then...
 - [x] multi-tag
 	- [x] colored tags
-	- [ ] easy visual organization of tag-color-space
+	- [ ] easy visual organization of tag-color-space [#13](https://github.com/neopostmodern/structure/issues/13)
 - [ ] search and browse efficiently
 	- [x] full-text (URI, name, note & tags)
 	- [x] by tag
-	- [ ] by time-span
+	- [ ] by time-span [#14](https://github.com/neopostmodern/structure/issues/14)
 	
 
 ### ...and it will automatically...
-- [ ] Take a screenshot (where applicable)
+- [ ] Take a screenshot (where applicable) [#11](https://github.com/neopostmodern/structure/issues/11)
 	- [ ] Viewport
 	- [ ] Whole page
 - [ ] Take a source-code snapshot (URLs only, prevents future deadlinks) [#4](https://github.com/neopostmodern/structure/issues/4)
