@@ -20,21 +20,31 @@ See [below](https://github.com/neopostmodern/structure#server) on how to do so.
 ### ...and then...
 - [x] multi-tag
 	- [x] colored tags
-	- [ ] easy visual organization of tag-color-space
+	- [ ] easy visual organization of tag-color-space [#13](https://github.com/neopostmodern/structure/issues/13)
 - [ ] search and browse efficiently
 	- [x] full-text (URI, name, note & tags)
 	- [x] by tag
-	- [ ] by time-span
+	- [ ] by time-span [#14](https://github.com/neopostmodern/structure/issues/14)
 	
 
 ### ...and it will automatically...
-- [ ] Take a screenshot (where applicable)
+- [ ] Take a screenshot (where applicable) [#11](https://github.com/neopostmodern/structure/issues/11)
 	- [ ] Viewport
 	- [ ] Whole page
 - [ ] Take a source-code snapshot (URLs only, prevents future deadlinks) [#4](https://github.com/neopostmodern/structure/issues/4)
 - [ ] Ease metadata-entry
 	- [x] Name suggestions (URLs only)
 	- [ ] Tag suggestions [#5](https://github.com/neopostmodern/structure/issues/5)
+
+## Keyboard shortcuts
+
+Key combinations are not customizable, *yet* ([#7](https://github.com/neopostmodern/structure/issues/7))
+
+| Key combination | Action |
+|-|-|
+| `[CTRL/CMD] + [n]` | Create new entry |
+| `[CTRL/CMD] + [t]` | Add tag |
+| `[CTRL/CMD] + [/]` | Back to default view (list of bookmarks) |
 
 
 ## Build / deploy
