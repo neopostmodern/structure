@@ -1,11 +1,10 @@
 // @flow
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { gql, graphql, compose } from 'react-apollo';
-import { connect } from 'react-redux';
 
 import styles from './TagsPage.scss';
+import menuStyles from '../styles/menu.scss';
 import type { TagType } from '../types';
 
 export class TagsPage extends React.Component {
@@ -17,7 +16,15 @@ export class TagsPage extends React.Component {
   render() {
     let content;
     if (!this.props.loading) {
-      content = (
+      content = (<React.Fragment>
+        <div className={menuStyles.menu}>
+          <a
+            onClick={() => alert('This feature is not yet available')}
+            className={menuStyles.disabled}
+          >
+            Chaos view
+          </a>
+        </div>
         <div className={styles.tagContainer}>
           {this.props.tags.map((tag) => (
             <div
@@ -30,7 +37,7 @@ export class TagsPage extends React.Component {
             </div>
           ))}
         </div>
-      );
+      </React.Fragment>);
     } else {
       content = <i>Loading...</i>;
     }
