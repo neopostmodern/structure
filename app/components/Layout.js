@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { requestLogin } from '../actions/userInterface';
 import Centered from '../components/Centered';
 
-import styles from './Layout.css';
+import styles from './Layout.scss';
 
 export class Layout extends Component {
   props: {
@@ -54,7 +54,7 @@ export class Layout extends Component {
       content = <Centered text="Loading..." />;
     } else if (this.props.user.name) {
       content = this.props.children;
-      userIndicator = <b>{this.props.user.name}.</b>;
+      userIndicator = <Link to="/me" className={styles.username}>{this.props.user.name}.</Link>;
     } else {
       content = (<Centered>
         <button onClick={this.openLoginModal} className={styles.loginButton}>Log in</button>

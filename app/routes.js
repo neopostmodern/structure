@@ -8,6 +8,7 @@ import NotesPage from './containers/NotesPage';
 import LinkPage from './containers/LinkPage';
 import TextPage from './containers/TextPage';
 import AddNotePage from './containers/AddNotePage';
+import UserPage from './containers/UserPage';
 import TagsPage from './containers/TagsPage';
 import TagPage from './containers/TagPage';
 import MissingPage from './containers/MissingPage';
@@ -22,6 +23,8 @@ export default () => (
 
         <Route path="/texts/:textId" exact component={TextPage} />
         <Route path="/links/:linkId" exact component={LinkPage} />
+
+        <Route path="/me" exact component={UserPage} />
 
         <Route path="/tags" exact component={TagsPage} />
         <Route path="/tags/:tagId" exact component={TagPage} />

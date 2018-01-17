@@ -15,9 +15,10 @@ import {
   ArchiveStateType, ArchiveStates,
   LinkLayouts, LinkLayoutType, changeArchiveState
 } from '../actions/userInterface';
+import { type NoteObject } from '../reducers/links';
 
 import styles from './NotesPage.css';
-import { type NoteObject } from '../reducers/links';
+import menuStyles from '../styles/menu.scss';
 
 export function layoutToName(layout: LinkLayoutType) {
   switch (layout) {
@@ -251,7 +252,7 @@ export class NotesPage extends React.Component {
     }
     return (
       <div>
-        <div className={styles.menu}>
+        <div className={menuStyles.menu}>
           <Link to="/notes/add">Add new</Link>,&nbsp;
           <a onClick={this.toggleLayout}>
             {layoutToName(this.props.layout)}

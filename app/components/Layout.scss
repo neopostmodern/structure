@@ -26,3 +26,13 @@
   font-family: "Futura Std Medium", sans-serif;
   font-size: 2rem;
 }
+
+.username {
+  color: black;
+  opacity: 1;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,19 @@
+.menu {
+  display: flex;
+
+  font-family: "Futura", "Futura Std Medium", sans-serif;
+  font-size: 1.5rem;
+
+  a,
+  button {
+	color: black;
+	border: none;
+	background: none;
+
+	&:disabled, &.disabled {
+	  text-decoration: line-through;
+	  color: gray;
+	  cursor: default;
+	}
+  }
+}
