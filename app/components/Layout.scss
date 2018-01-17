@@ -36,3 +36,28 @@
     text-decoration: underline;
   }
 }
+
+.version {
+  padding: 1rem;
+  margin: 1rem 0 2rem;
+
+  color: whitesmoke;
+
+  &.warning {
+    background-color: darkred;
+  }
+  &.notice {
+    background-color: gray;
+  }
+
+  .headline {
+    font-size: 150%;
+    margin-bottom: 0.2em;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+

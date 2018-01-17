@@ -7,6 +7,12 @@ import { makeExecutableSchema } from 'graphql-tools';
 const rootSchema = [`
 scalar Date
 
+type Versions {
+  minimum: Int!
+  recommended: Int
+  maximum: Int
+}
+
 type User {
   _id: String!
   name: String!
@@ -106,6 +112,8 @@ union Note = Link | Text
 type Query {
   # Return the currently logged in user, or null if nobody is logged in
   currentUser: User
+  
+  versions: Versions
 
   links(
     # The number of items to skip, for pagination
@@ -219,6 +227,12 @@ const rootResolvers = {
   Query: {
     currentUser(root, args, context) {
       return context.user || null;
+    },
+    versions(root, args, context) {
+      return {
+        minimum: 1,
+        recommended: 1
+      };
     },
     notes(root, { offset, limit }, context) {
       if (!context.user) {

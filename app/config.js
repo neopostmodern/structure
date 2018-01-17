@@ -6,4 +6,7 @@ export default {
   // and the extracted_queries.json file in both the client and API server
   // must be the same.
   persistedQueries: false,
+
+  apiVersion: 1,
+  releaseUrl: 'https://github.com/neopostmodern/structure/releases/latest'
 };
