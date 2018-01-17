@@ -93,6 +93,7 @@ export class NotesPage extends React.Component {
       switch (event.key) {
         case 'f':
           this.searchInput.focus();
+          setTimeout(() => this.searchInput.select(0, this.props.searchQuery.length), 10);
           event.preventDefault();
           break;
       }
