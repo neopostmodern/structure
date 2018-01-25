@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "${BASH_SOURCE%/*}/server.sh"
+source "$1"
 
 echo "Deploying to $SERVER."
 

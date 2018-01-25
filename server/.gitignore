@@ -1,2 +1,2 @@
 config.json
-deploy/server.sh
+deploy/server*.sh
