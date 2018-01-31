@@ -16,13 +16,6 @@ export default class MarkedTextarea extends React.Component {
     };
   }
 
-  componentWillMount() {
-    console.log(this.props.meta);
-    if (this.props.meta.initial.length === 0) {
-      this.setState({ editDescription: true });
-    }
-  }
-
   render() {
     if (this.state.editDescription) {
       return (
@@ -39,7 +32,7 @@ export default class MarkedTextarea extends React.Component {
 
     return (
       <div
-        dangerouslySetInnerHTML={{ __html: marked(this.props.input.value || '') }}
+        dangerouslySetInnerHTML={{ __html: marked(this.props.input.value || '<small><i>Click to add a description</i></small>') }}
         onClick={() => this.setState({ editDescription: true })}
         style={{ fontSize: '1rem' }}
       />
