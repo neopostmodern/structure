@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
-import { gql, graphql, compose } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
+import gql from 'graphql-tag';
 
 import { withAddTagMutation, withRemoveTagMutation } from '../wrappers/tags';
 import Tags from '../components/Tags';

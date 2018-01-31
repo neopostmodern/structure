@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { gql, graphql, compose } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
+import gql from 'graphql-tag';
 
 import styles from './TagPage.scss';
 import type { TagType } from '../types';

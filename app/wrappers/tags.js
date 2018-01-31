@@ -1,4 +1,5 @@
-import { gql, graphql } from 'react-apollo';
+import { graphql } from 'react-apollo';
+import gql from 'graphql-tag';
 
 const ADD_TAG_MUTATION = gql`
   mutation addTagByNameToNote($noteId: ID!, $name: String!){

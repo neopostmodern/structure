@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
-import { gql, graphql, compose } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
+import gql from 'graphql-tag';
 
 import styles from './TagsPage.scss';
 import menuStyles from '../styles/menu.scss';

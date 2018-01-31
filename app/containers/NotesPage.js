@@ -2,7 +2,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import { gql, graphql, compose } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
+import gql from 'graphql-tag';
 import { connect } from 'react-redux';
 
 import {

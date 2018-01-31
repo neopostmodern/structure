@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { gql, graphql, compose } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
+import gql from 'graphql-tag';
 import AddLink from '../components/AddLink';
 
 import buttonStyles from '../styles/button.scss';

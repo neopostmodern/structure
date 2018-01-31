@@ -1,58 +1,52 @@
 import ApolloClient, { addTypename } from 'apollo-client';
-import { IntrospectionFragmentMatcher } from 'react-apollo';
-import { PersistedQueryNetworkInterface } from 'persistgraphql';
-
-import config from './config';
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
+import { createHttpLink } from 'apollo-link-http';
 
 // import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 // import addGraphQLSubscriptions from './helpers/subscriptions';
 
-const queryMap = null; // hack
+const link = createHttpLink({
+  uri: `${BACKEND_URL}/graphql`,
+  credentials: 'include'
+});
 
-function getNetworkInterface(host = '', headers = {}) {
-  return new PersistedQueryNetworkInterface({
-    queryMap,
-    uri: `${host}/graphql`,
-    opts: {
-      credentials: 'include', // 'same-origin',
-      headers,
-    },
-    enablePersistedQueries: config.persistedQueries,
-  });
-}
-
-const apolloFragmentMatcher = new IntrospectionFragmentMatcher({
-  introspectionQueryResultData: {
-    __schema: {
-      types: [
-        {
-          kind: 'INTERFACE',
-          name: 'INote',
-          possibleTypes: [
-            {
-              name: 'Link'
-            },
-            {
-              name: 'Text'
-            }
-          ]
-        },
-        {
-          kind: 'UNION',
-          name: 'Note',
-          possibleTypes: [
-            {
-              name: 'Link'
-            },
-            {
-              name: 'Text'
-            }
-          ]
-        },
-      ],
-    },
-  }
+const cache = new InMemoryCache({
+  dataIdFromObject: o => o._id, // eslint-disable-line no-underscore-dangle
+  addTypename: true,
+  cacheResolvers: {},
+  fragmentMatcher: new IntrospectionFragmentMatcher({
+    introspectionQueryResultData: {
+      __schema: {
+        types: [
+          {
+            kind: 'INTERFACE',
+            name: 'INote',
+            possibleTypes: [
+              {
+                name: 'Link'
+              },
+              {
+                name: 'Text'
+              }
+            ]
+          },
+          {
+            kind: 'UNION',
+            name: 'Note',
+            possibleTypes: [
+              {
+                name: 'Link'
+              },
+              {
+                name: 'Text'
+              }
+            ]
+          },
+        ],
+      },
+    }
+  }),
 });
 
 // webFrame.registerURLSchemeAsSecure('ws');
@@ -66,21 +60,13 @@ const apolloFragmentMatcher = new IntrospectionFragmentMatcher({
 // );
 // todo: investigate 'dataIdFromObject'
 const apolloOptions = {
-  networkInterface: getNetworkInterface(BACKEND_URL), // networkInterfaceWithSubscriptions,
-  initialState: window.__APOLLO_STATE__, // eslint-disable-line no-underscore-dangle
-  // ssrForceFetchDelay: 100,
-  connectToDevTools: true,
-  dataIdFromObject: o => o._id, // eslint-disable-line no-underscore-dangle
-  fragmentMatcher: apolloFragmentMatcher,
+  link,
+  cache: cache.restore(window.__APOLLO_CLIENT__),
+  ssrMode: false,
+  connectToDevTools: true
 };
 const client = new ApolloClient(Object.assign({}, {
   queryTransformer: addTypename,
-  dataIdFromObject: (result) => {
-    if (result.id && result.__typename) { // eslint-disable-line no-underscore-dangle
-      return result.__typename + result.id; // eslint-disable-line no-underscore-dangle
-    }
-    return null;
-  },
   // shouldBatch: true,
 }, apolloOptions));
 
