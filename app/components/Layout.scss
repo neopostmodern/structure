@@ -3,10 +3,6 @@
   margin: 2rem auto 5rem;
 }
 
-.container h2 {
-  font-size: 5rem;
-}
-
 .container a {
   /*font-size: 1.4rem;*/
 }
@@ -15,6 +11,12 @@
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  margin: 0;
+
+  font-size: 5rem;
+  font-weight: bold;
+  letter-spacing: -.025em;
 }
 
 .loginButton {

@@ -3,6 +3,22 @@
 import React from 'react';
 import marked from 'marked';
 
+const renderer = new marked.Renderer();
+renderer.listitem = function renderListItem(text) {
+  console.log(text);
+  if (/^\s*\[[x ]\]\s*/.test(text)) {
+    const textWithListItems = text
+      .replace(/^\s*\[ \]\s*/, '☐ ')
+      .replace(/^\s*\[x\]\s*/, '☑ ');
+    return `<li style="list-style: none; margin-left: -1.3rem;">${textWithListItems}</li>`;
+  }
+  return `<li>${text}</li>`;
+};
+marked.setOptions({
+  breaks: true,
+  renderer
+});
+
 export default class MarkedTextarea extends React.Component {
   state: {
     editDescription: boolean
