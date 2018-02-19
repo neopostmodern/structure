@@ -66,7 +66,6 @@ app.on('ready', async () => {
       throw new Error('"mainWindow" is not defined');
     }
     mainWindow.show();
-    mainWindow.focus();
 
     mainWindow.webContents.session.cookies.get({}, (error, cookies) => {
       if (cookies.some(({ name }) => name === 'logged_in')) {
