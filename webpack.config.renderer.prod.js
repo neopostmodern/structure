@@ -7,28 +7,20 @@ import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import BabiliPlugin from 'babili-webpack-plugin';
+import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 import baseConfig from './webpack.config.base';
-
-import config from './config.prod.json';
-const jsonifiedConfig = {};
-Object.keys(config).forEach((key) => {
-  jsonifiedConfig[key] = JSON.stringify(config[key]);
-});
-// jsonifiedConfig['VERSION'] = JSON.stringify(package_json.version);
-const configPlugin = new webpack.DefinePlugin(jsonifiedConfig);
 
 export default merge.smart(baseConfig, {
   devtool: 'source-map',
 
   target: 'electron-renderer',
 
-  entry: ['babel-polyfill', './app/index'],
+  entry: './app/index',
 
   output: {
     path: path.join(__dirname, 'app/dist'),
-    publicPath: '../dist/'
+    publicPath: './dist/',
+    filename: 'renderer.prod.js'
   },
 
   module: {
@@ -37,7 +29,13 @@ export default merge.smart(baseConfig, {
       {
         test: /\.global\.css$/,
         use: ExtractTextPlugin.extract({
-          use: 'css-loader',
+          publicPath: './',
+          use: {
+            loader: 'css-loader',
+            options: {
+              minimize: true,
+            }
+          },
           fallback: 'style-loader',
         })
       },
@@ -49,6 +47,7 @@ export default merge.smart(baseConfig, {
             loader: 'css-loader',
             options: {
               modules: true,
+              minimize: true,
               importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
             }
@@ -57,11 +56,14 @@ export default merge.smart(baseConfig, {
       },
       // Add SASS support  - compile all .global.scss files and pipe it to style.css
       {
-        test: /\.global\.scss$/,
+        test: /\.global\.(scss|sass)$/,
         use: ExtractTextPlugin.extract({
           use: [
             {
-              loader: 'css-loader'
+              loader: 'css-loader',
+              options: {
+                minimize: true,
+              }
             },
             {
               loader: 'sass-loader'
@@ -72,19 +74,20 @@ export default merge.smart(baseConfig, {
       },
       // Add SASS support  - compile all other .scss files and pipe it to style.css
       {
-        test: /^((?!\.global).)*\.scss$/,
+        test: /^((?!\.global).)*\.(scss|sass)$/,
         use: ExtractTextPlugin.extract({
           use: [{
             loader: 'css-loader',
             options: {
               modules: true,
+              minimize: true,
               importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
             }
           },
-          {
-            loader: 'sass-loader'
-          }]
+            {
+              loader: 'sass-loader'
+            }]
         }),
       },
       // WOFF Font
@@ -154,14 +157,14 @@ export default merge.smart(baseConfig, {
      * NODE_ENV should be production so that modules do not perform certain
      * development checks
      */
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'production'
     }),
 
-    /**
-     * Babli is an ES6+ aware minifier based on the Babel toolchain (beta)
-     */
-    new BabiliPlugin(),
+    new UglifyJSPlugin({
+      parallel: true,
+      sourceMap: true
+    }),
 
     new ExtractTextPlugin('style.css'),
 
@@ -169,15 +172,5 @@ export default merge.smart(baseConfig, {
       analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
     }),
-
-    /**
-     * Dynamically generate index.html page
-     */
-    new HtmlWebpackPlugin({
-      filename: 'app.html',
-      template: 'app/app.html'
-    }),
-
-    configPlugin
   ],
 });
