@@ -5,7 +5,6 @@ import marked from 'marked';
 
 const renderer = new marked.Renderer();
 renderer.listitem = function renderListItem(text) {
-  console.log(text);
   if (/^\s*\[[x ]\]\s*/.test(text)) {
     const textWithListItems = text
       .replace(/^\s*\[ \]\s*/, '☐ ')
@@ -14,6 +13,11 @@ renderer.listitem = function renderListItem(text) {
   }
   return `<li>${text}</li>`;
 };
+
+renderer.link = function renderLink(href, title, text) {
+  return `<a href="${href}" title="${title || href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+};
+
 marked.setOptions({
   breaks: true,
   renderer
