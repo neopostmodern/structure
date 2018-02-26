@@ -1,17 +1,30 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import ElectronCookies from '@exponent/electron-cookies';
-import { ipcRenderer } from 'electron';
 
 import apolloClient from './apollo';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './app.global.scss';
 
-ElectronCookies.enable({
-  origin: 'http://localhost:3010',
-});
+if (process.env.TARGET !== 'web') {
+  import('@exponent/electron-cookies')
+    .then(ElectronCookies => {
+      ElectronCookies.enable({
+        origin: 'http://localhost:3010',
+      });
+    });
+
+  import('electron')
+    .then(({ ipcRenderer }) => {
+      window.addEventListener('keydown', (event: KeyboardEvent) => {
+        if (event.key === 'F12') {
+          ipcRenderer.send('toggle-dev-tools');
+        }
+      });
+    });
+}
+
 
 window.addEventListener('keydown', (event: KeyboardEvent) => {
   if (event.ctrlKey) {
@@ -26,10 +39,6 @@ window.addEventListener('keydown', (event: KeyboardEvent) => {
         event.preventDefault();
         break;
     }
-  }
-
-  if (event.key === 'F12') {
-    ipcRenderer.send('toggle-dev-tools');
   }
 }, true);
 
