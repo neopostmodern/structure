@@ -10,7 +10,7 @@ import merge from 'webpack-merge';
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 import baseConfig from './webpack.config.base';
 
-import config from './config.dev.json';
+import config from './config.prod.json';
 
 const jsonifiedConfig = {};
 Object.keys(config).forEach((key) => {
