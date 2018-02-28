@@ -27,7 +27,7 @@ const installExtensions = async () => {
   ];
 
   return Promise
-    .all(extensions.map(name => installer.default(installer[name], forceDownload)))
+    .all(extensions.map(name => installer.default(installer[name].id, forceDownload)))
     .catch(console.log);
 };
 
@@ -54,10 +54,7 @@ app.on('ready', async () => {
     webPreferences: { webSecurity: false }
   });
 
-  const url = (process.env.NODE_ENV === 'development')
-    ? `http://localhost:${process.env.PORT || 1212}/dist/app.html`
-    : `file://${__dirname}/dist/app.html`;
-  mainWindow.loadURL(url);
+  mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event

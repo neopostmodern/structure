@@ -10,6 +10,15 @@ import merge from 'webpack-merge';
 import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 import baseConfig from './webpack.config.base';
 
+import config from './config.dev.json';
+
+const jsonifiedConfig = {};
+Object.keys(config).forEach((key) => {
+  jsonifiedConfig[key] = JSON.stringify(config[key]);
+});
+// jsonifiedConfig['VERSION'] = JSON.stringify(package_json.version);
+const configPlugin = new webpack.DefinePlugin(jsonifiedConfig);
+
 export default merge.smart(baseConfig, {
   devtool: 'source-map',
 
@@ -172,5 +181,8 @@ export default merge.smart(baseConfig, {
       analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
     }),
+
+    // define globals config
+    configPlugin
   ],
 });
