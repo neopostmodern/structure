@@ -183,6 +183,7 @@
     "graphql-tag": "^2.8.0",
     "history": "^4.7.2",
     "marked": "^0.3.16",
+    "mousetrap": "^1.6.1",
     "persistgraphql": "^0.3.11",
     "react": "^16.2.0",
     "react-apollo": "^2.0.4",

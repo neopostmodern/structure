@@ -3,6 +3,8 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import ElectronCookies from '@exponent/electron-cookies';
 import { ipcRenderer } from 'electron';
+import Mousetrap from 'mousetrap';
+import makeMousetrapGlobal from './utils/mousetrapGlobal';
 
 import apolloClient from './apollo';
 import Root from './containers/Root';
@@ -13,25 +15,17 @@ ElectronCookies.enable({
   origin: 'http://localhost:3010',
 });
 
-window.addEventListener('keydown', (event: KeyboardEvent) => {
-  if (event.ctrlKey) {
-    // eslint-disable-next-line default-case
-    switch (event.key) {
-      case '/':
-        history.push('/');
-        event.preventDefault();
-        break;
-      case 'n':
-        history.push('/notes/add');
-        event.preventDefault();
-        break;
-    }
-  }
 
-  if (event.key === 'F12') {
-    ipcRenderer.send('toggle-dev-tools');
-  }
-}, true);
+makeMousetrapGlobal(Mousetrap);
+Mousetrap.bindGlobal(['esc', 'ctrl+/', 'command+/'], () => {
+  history.push('/');
+});
+Mousetrap.bindGlobal(['ctrl+n', 'command+n'], () => {
+  history.push('/notes/add');
+});
+Mousetrap.bindGlobal('F12', () => {
+  ipcRenderer.send('toggle-dev-tools');
+});
 
 
 const store = configureStore();
