@@ -138,6 +138,11 @@ export class NotesPage extends React.Component {
     this.props.changeSearchQuery(this.searchInput.value);
   }
 
+  handleClearSearch = () => {
+    this.searchInput.value = '';
+    this.handleSearchInputChange();
+  }
+
   filteredNotes() {
     let notes = this.props.notes || [];
 
@@ -262,14 +267,24 @@ export class NotesPage extends React.Component {
           <a onClick={this.changeArchiveState}>
             {archiveStateToName(this.props.archiveState)}
           </a>
-          <div style={{ marginLeft: 'auto' }}>
+          <div className={menuStyles.searchFieldContainer}>
             <input
               type="text"
               placeholder="Filter"
               ref={(input) => { this.searchInput = input; }}
               onChange={this.handleSearchInputChange}
               defaultValue={this.props.searchQuery}
+              className={menuStyles.searchField}
             />
+            {this.props.searchQuery.length > 0
+              ? (
+                <button
+                  type="button"
+                  className={menuStyles.eraseSearchField}
+                  onClick={this.handleClearSearch}>
+                  ⌫
+                </button>
+              ): null}
             <div style={{ textAlign: 'right', fontSize: '50%', marginTop: '0.3em' }}>
               {this.noteCount(matchedNotes, archivedMatchedNotesCount)}
             </div>

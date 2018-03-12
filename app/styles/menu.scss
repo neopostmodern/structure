@@ -1,8 +1,12 @@
-.menu {
-  display: flex;
-
+%menu-typo {
   font-family: "Futura", "Futura Std Medium", sans-serif;
   font-size: 1.5rem;
+}
+
+.menu {
+  @extend %menu-typo;
+
+  display: flex;
 
   a,
   button {
@@ -16,4 +20,25 @@
 	  cursor: default;
 	}
   }
+}
+
+.searchFieldContainer {
+  margin-left: auto;
+  position: relative;
+}
+
+input[type="text"].searchField {
+  @extend %menu-typo;
+
+  margin-top: -0.3em;
+  padding-bottom: 3px;
+}
+
+.eraseSearchField {
+  @extend %menu-typo;
+
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
