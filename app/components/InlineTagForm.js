@@ -7,79 +7,168 @@ import { Field, reduxForm, formValueSelector } from 'redux-form';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
+import type { TagType } from '../types';
 import styles from './InlineTagForm.scss';
 import calculateFontColor from '../utils/calculateFontColor';
 
 const FORM_NAME = 'inline-tag';
 
 const notEmpty = value => (value && value.length > 0 ? undefined : 'No empty tags');
-const inputField = ({ input, label, type, meta: { touched, error, warning }, ...rest }) => (
+const inputField = ({
+  input, label, type, meta: { touched, error, warning }, ...rest
+}) => (
   <div>
-    {(touched && error) && <div style={{ color: 'darkred', position: 'absolute', bottom: '100%', right: 0, fontSize: '70%' }}>{error}</div>}
+    {(touched && error) && <div style={{
+ color: 'darkred', position: 'absolute', bottom: '100%', right: 0, fontSize: '70%'
+}}
+    >{error}
+                           </div>}
     <input {...input} placeholder={label} type={type} {...rest} />
   </div>
 );
 
-const InlineTagForm = props => {
-  const { handleSubmit, tags, tagsLoading, pristine, submitting, nameValue, change, submit } = props;
-  let tagAutocomplete;
-
-  if (!pristine) {
-    if (tagsLoading) {
-      tagAutocomplete = (
-        <div className={styles.tagAutocompleteContainer}>
-          Tags loading...
-        </div>
-      );
-    } else {
-      const matchingTagsForAutocomplete = tags.filter((tag) => tag.name.includes(nameValue));
-      tagAutocomplete = (
-        <div className={styles.tagAutocompleteContainer}>
-          {matchingTagsForAutocomplete.slice(0, 5).map((tag) => (
-            <div
-              key={tag._id}
-              className={styles.tagAutocomplete}
-              style={{ backgroundColor: tag.color }}
-              ref={calculateFontColor}
-              onClick={() => { change('name', tag.name); setTimeout(submit, 0); }}
-            >
-              {tag.name}
-            </div>
-          ))}
-          {matchingTagsForAutocomplete.length > 5 ? (
-            <div
-              key={'more'}
-              className={styles.tagAutocompleteMore}
-            >
-              +{matchingTagsForAutocomplete.length - 5}
-            </div>
-          ) : null}
-        </div>
-      );
-    }
+class InlineTagForm extends React.Component {
+  static MAX_AUTOCOMPLETE_LENGTH = 5;
+  state: {
+    focusedAutocompleteIndex: number,
+    autocompleteSuggestions: TagType[]
   }
 
-  const handleInputKeydown = (event: SyntheticKeyboardEvent) => {
-    if (event.key === 'Escape') {
-      props.onAbort();
-    }
-  };
+  constructor() {
+    super();
 
-  return (
-    <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
-      <Field
-        name="name"
-        component={inputField}
-        type="text"
-        placeholder="tag name"
-        autoFocus
-        validate={notEmpty}
-        onKeyDown={handleInputKeydown}
-      />
-      {tagAutocomplete}
-    </form>
-  );
-};
+    this.state = {
+      focusedAutocompleteIndex: 0
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.nameValue !== nextProps.nameValue) {
+      this.setState({
+        autocompleteSuggestions: this.props.tags.filter((tag) => tag.name.includes(nextProps.nameValue))
+      });
+    }
+  }
+  render() {
+    const {
+      handleSubmit, tagsLoading, pristine, submitting, nameValue, change, submit
+    } = this.props;
+    let tagAutocomplete;
+
+    if (!pristine) {
+      if (tagsLoading) {
+        tagAutocomplete = (
+          <div className={styles.tagAutocompleteContainer}>
+            Tags loading...
+          </div>
+        );
+      } else {
+        tagAutocomplete = (
+          <div className={styles.tagAutocompleteContainer}>
+            {this.state.autocompleteSuggestions
+              .slice(0, InlineTagForm.MAX_AUTOCOMPLETE_LENGTH)
+              .map((tag, tagIndex) => (
+                <div
+                  key={tag._id}
+                  className={styles.tagAutocomplete}
+                  style={{
+                    backgroundColor: tag.color,
+                    borderColor: tagIndex === this.state.focusedAutocompleteIndex
+                      ? 'black'
+                      : 'transparent'
+                  }}
+                  ref={calculateFontColor}
+                  onClick={() => { change('name', tag.name); setTimeout(submit, 0); }}
+                >
+                  {tag.name}
+                </div>
+              ))
+            }
+            {this.state.autocompleteSuggestions.length > InlineTagForm.MAX_AUTOCOMPLETE_LENGTH ? (
+              <div
+                key="more"
+                className={styles.tagAutocompleteMore}
+              >
+                +{this.state.autocompleteSuggestions.length - InlineTagForm.MAX_AUTOCOMPLETE_LENGTH}
+              </div>
+            ) : null}
+          </div>
+        );
+      }
+    }
+
+    const handleInputKeydown = (event: SyntheticKeyboardEvent<HTMLInputElement>) => {
+      let { focusedAutocompleteIndex } = this.state;
+
+      switch (event.key) {
+        case 'Escape':
+          this.props.onAbort();
+          break;
+        case 'Enter':
+          change(
+            'name',
+            this.state.autocompleteSuggestions[this.state.focusedAutocompleteIndex].name
+          );
+          setTimeout(submit, 0);
+          break;
+        case 'ArrowDown':
+          if (focusedAutocompleteIndex === null) {
+            this.setState({
+              focusedAutocompleteIndex: 0
+            });
+            return;
+          }
+
+          focusedAutocompleteIndex += 1;
+          break;
+        case 'ArrowUp':
+          if (focusedAutocompleteIndex === null) {
+            this.setState({
+              focusedAutocompleteIndex: InlineTagForm.MAX_AUTOCOMPLETE_LENGTH - 1
+            });
+            return;
+          }
+
+          focusedAutocompleteIndex -= 1;
+          break;
+        case 'ArrowLeft':
+          if (focusedAutocompleteIndex !== null) {
+            focusedAutocompleteIndex -= 1;
+          }
+          break;
+        case 'ArrowRight':
+          if (focusedAutocompleteIndex !== null) {
+            focusedAutocompleteIndex += 1;
+          }
+          break;
+      }
+
+      if (focusedAutocompleteIndex < 0
+        || focusedAutocompleteIndex >= InlineTagForm.MAX_AUTOCOMPLETE_LENGTH) {
+        focusedAutocompleteIndex = null;
+      }
+      if (this.state.focusedAutocompleteIndex !== focusedAutocompleteIndex) {
+        this.setState({ focusedAutocompleteIndex });
+        event.preventDefault();
+      }
+    };
+
+    return (
+      <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
+        <Field
+          name="name"
+          component={inputField}
+          type="text"
+          placeholder="tag name"
+          autoFocus
+          validate={notEmpty}
+          onKeyDown={handleInputKeydown}
+        />
+        {tagAutocomplete}
+      </form>
+    );
+  }
+}
 
 const selector = formValueSelector(FORM_NAME);
 
@@ -107,10 +196,4 @@ export default connect(state => {
   return {
     nameValue
   };
-})(
-  reduxForm({
-    form: FORM_NAME,
-  })(
-    compose(withData)(InlineTagForm)
-  )
-);
+})(reduxForm({ form: FORM_NAME })(compose(withData)(InlineTagForm)));
