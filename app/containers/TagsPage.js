@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react';
-import { bindActionCreators } from 'redux';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import styles from './TagsPage.scss';
 import menuStyles from '../styles/menu.scss';
 import type { TagType } from '../types';
+import calculateFontColor from '../utils/calculateFontColor';
 
 export class TagsPage extends React.Component {
   props: {
@@ -33,6 +33,7 @@ export class TagsPage extends React.Component {
               className={styles.tag}
               style={{ backgroundColor: tag.color }}
               onClick={() => this.props.history.push(`/tags/${tag._id}`)}
+              ref={calculateFontColor}
             >
               {tag.name}
             </div>
