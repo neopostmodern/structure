@@ -17,6 +17,8 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import baseConfig from './webpack.config.base';
 
 import config from './config.dev.json';
+// eslint-disable-next-line camelcase
+import package_json from './package.json';
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
@@ -27,7 +29,7 @@ const jsonifiedConfig = {};
 Object.keys(config).forEach((key) => {
   jsonifiedConfig[key] = JSON.stringify(config[key]);
 });
-// jsonifiedConfig['VERSION'] = JSON.stringify(package_json.version);
+jsonifiedConfig.VERSION = JSON.stringify(package_json.version);
 const configPlugin = new webpack.DefinePlugin(jsonifiedConfig);
 
 /**

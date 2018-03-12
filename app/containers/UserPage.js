@@ -15,6 +15,9 @@ class UserPage extends React.Component {
             Export my data
           </a>
         </div>
+        <div style={{marginTop: '2rem'}}>
+          Using Structure {VERSION}
+        </div>
       </div>
     );
   }

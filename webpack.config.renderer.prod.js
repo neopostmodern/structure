@@ -11,12 +11,14 @@ import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 import baseConfig from './webpack.config.base';
 
 import config from './config.prod.json';
+// eslint-disable-next-line camelcase
+import package_json from './package.json';
 
 const jsonifiedConfig = {};
 Object.keys(config).forEach((key) => {
   jsonifiedConfig[key] = JSON.stringify(config[key]);
 });
-// jsonifiedConfig['VERSION'] = JSON.stringify(package_json.version);
+jsonifiedConfig.VERSION = JSON.stringify(package_json.version);
 const configPlugin = new webpack.DefinePlugin(jsonifiedConfig);
 
 export default merge.smart(baseConfig, {
