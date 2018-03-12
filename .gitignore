@@ -51,6 +51,3 @@ npm-debug.log.*
 __snapshots__
 
 config.prod.json
-
-# annoying package-lock.json
-package-lock.json
