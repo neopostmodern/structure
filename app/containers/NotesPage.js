@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { connect } from 'react-redux';
+import Mousetrap from 'mousetrap';
 
 import {
   withAddTagMutation, withRemoveTagMutation,
@@ -47,6 +48,8 @@ export function archiveStateToName(archiveState: ArchiveStateType) {
   }
 }
 
+const searchFieldShortcutKeys = ['ctrl+f', 'command+f'];
+
 export class NotesPage extends React.Component {
   searchInput: HTMLInputElement;
   moreElement: HTMLElement;
@@ -80,25 +83,17 @@ export class NotesPage extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyboardEvent, true);
+    Mousetrap.bind(searchFieldShortcutKeys, this.handleSearchFieldShortcut);
     window.addEventListener('scroll', this.handleScrollEvent);
   }
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyboardEvent, true);
+    Mousetrap.unbind(searchFieldShortcutKeys);
     window.removeEventListener('scroll', this.handleScrollEvent);
   }
 
-  handleKeyboardEvent = (event: KeyboardEvent) => {
-    if (event.ctrlKey) {
-      // eslint-disable-next-line default-case
-      switch (event.key) {
-        case 'f':
-          this.searchInput.focus();
-          setTimeout(() => this.searchInput.select(0, this.props.searchQuery.length), 10);
-          event.preventDefault();
-          break;
-      }
-    }
+  handleSearchFieldShortcut = () => {
+    this.searchInput.focus();
+    setTimeout(() => this.searchInput.select(0, this.props.searchQuery.length), 10);
   }
 
   handleScrollEvent = (event: Event) => {

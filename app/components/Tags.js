@@ -2,11 +2,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import { findDOMNode } from 'react-dom';
+import Mousetrap from 'mousetrap';
+import makeMousetrapGlobal from '../utils/mousetrapGlobal';
+
 import type { TagType } from '../types';
 import styles from './Tags.scss';
 import InlineTagForm from './InlineTagForm';
 import calculateFontColor from '../utils/calculateFontColor';
+
+makeMousetrapGlobal(Mousetrap);
+
+const tagShortcutKeys = ['ctrl+t', 'command+t'];
 
 class Tags extends React.Component {
   props: {
@@ -36,11 +42,12 @@ class Tags extends React.Component {
 
   componentDidMount() {
     if (this.props.withShortcuts) {
-      window.addEventListener('keydown', (event: KeyboardEvent) => {
-        if (event.key === 't' && event.ctrlKey) {
-          this.showNewTagForm();
-        }
-      }, true);
+      Mousetrap.bindGlobal(tagShortcutKeys, this.showNewTagForm);
+    }
+  }
+  componentWillUnmount() {
+    if (this.props.withShortcuts) {
+      Mousetrap.unbind(tagShortcutKeys);
     }
   }
 
