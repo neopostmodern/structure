@@ -1,8 +1,9 @@
 // @flow
 import {
   REQUEST_LOGIN, COMPLETE_LOGIN, CHANGE_LINK_LAYOUT, CHANGE_SEARCH_QUERY,
-  INCREASE_INFINITE_SCROLL, LinkLayouts, LinkLayoutType, ArchiveStateType, ArchiveStates,
-  CHANGE_ARCHIVE_STATE, RECEIVED_METADATA, CLEAR_METADATA
+  INCREASE_INFINITE_SCROLL, LinkLayouts, ArchiveStates,
+  CHANGE_ARCHIVE_STATE, RECEIVED_METADATA, CLEAR_METADATA, TOGGLE_BATCH_EDITING,
+  TOGGLE_BATCH_SELECTION, type LinkLayoutType, type ArchiveStateType
 } from '../actions/userInterface';
 
 export type userInterfaceStateType = {
@@ -13,6 +14,10 @@ export type userInterfaceStateType = {
   infiniteScrollLimit: number,
   metadata?: {
     titles: [string]
+  },
+  batchEditing: boolean,
+  batchSelections: {
+    [string]: boolean
   }
 };
 
@@ -26,7 +31,9 @@ const initialState: userInterfaceStateType = {
   linkLayout: LinkLayouts.LIST_LAYOUT,
   archiveState: ArchiveStates.NO_ARCHIVE,
   searchQuery: '',
-  infiniteScrollLimit: 10
+  infiniteScrollLimit: 10,
+  batchEditing: false,
+  batchSelections: {}
 };
 
 export default function links(state: userInterfaceStateType = initialState, action: Action) {
@@ -51,6 +58,18 @@ export default function links(state: userInterfaceStateType = initialState, acti
       const nextState = Object.assign({}, state);
       delete nextState.metadata;
       return nextState;
+    case TOGGLE_BATCH_EDITING:
+      return Object.assign({}, state, { batchEditing: !state.batchEditing });
+    case TOGGLE_BATCH_SELECTION:
+      return Object.assign({}, state, {
+        batchSelections: Object.assign(
+          {},
+          state.batchSelections,
+          {
+            [action.payload]: !state.batchSelections[action.payload]
+          }
+        )
+      });
     default:
       return state;
   }

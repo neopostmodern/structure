@@ -3,6 +3,12 @@
 }
 .link {
   margin-bottom: 2rem;
+
+  display: flex;
+}
+.container {
+  min-width: 0;
+  width: 100%;
 }
 .archived {
   opacity: 0.5;
@@ -73,4 +79,17 @@
   background-color: #ddd;
   padding: 0.2em 0.7em;
   margin-right: 0.5em;
+}
+
+.checkbox {
+  display: none;
+}
+
+.checkbox ~ .checkboxLabel::after {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+  content: "☐";
+}
+.checkbox:checked ~ .checkboxLabel::after {
+  content: "☒";
 }

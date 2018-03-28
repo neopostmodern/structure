@@ -6,6 +6,7 @@ import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
+import makeMousetrapGlobal from '../utils/mousetrapGlobal';
 
 import {
   withAddTagMutation, withRemoveTagMutation,
@@ -14,13 +15,15 @@ import {
 import NotesList from '../components/NotesList';
 import {
   changeLinkLayout, changeSearchQuery, increaseInfiniteScroll,
-  ArchiveStateType, ArchiveStates,
-  LinkLayouts, LinkLayoutType, changeArchiveState
+  type ArchiveStateType, ArchiveStates,
+  LinkLayouts, type LinkLayoutType, changeArchiveState, toggleBatchEditing, toggleBatchSelection
 } from '../actions/userInterface';
 import { type NoteObject } from '../reducers/links';
 
 import styles from './NotesPage.css';
 import menuStyles from '../styles/menu.scss';
+
+makeMousetrapGlobal(Mousetrap);
 
 export function layoutToName(layout: LinkLayoutType) {
   switch (layout) {
@@ -49,6 +52,7 @@ export function archiveStateToName(archiveState: ArchiveStateType) {
 }
 
 const searchFieldShortcutKeys = ['ctrl+f', 'command+f'];
+const toggleBatchEditingShortcutKeys = ['ctrl+b', 'command+b'];
 
 export class NotesPage extends React.Component {
   searchInput: HTMLInputElement;
@@ -57,6 +61,10 @@ export class NotesPage extends React.Component {
   props: {
     loading: boolean,
     notes?: Array<NoteObject>,
+    batchEditing: boolean,
+    batchSelections: {
+      [string]: boolean
+    },
     layout: LinkLayoutType,
     archiveState: ArchiveStateType,
     searchQuery: string,
@@ -66,7 +74,8 @@ export class NotesPage extends React.Component {
     addTagByNameToNote: (linkId: string, tag: string) => void,
     removeTagByIdFromNote: (linkId: string, tagId: string) => void,
     toggleArchivedNote: (noteId: string) => void,
-
+    toggleBatchEditing: () => void,
+    toggleNoteSelected: (noteId: string) => void,
     changeLayout: (layout: LinkLayoutType) => void,
     changeArchiveState: (layout: ArchiveStateType) => void,
     changeSearchQuery: (query: string) => void,
@@ -84,10 +93,12 @@ export class NotesPage extends React.Component {
 
   componentDidMount() {
     Mousetrap.bind(searchFieldShortcutKeys, this.handleSearchFieldShortcut);
+    Mousetrap.bindGlobal(toggleBatchEditingShortcutKeys, this.props.toggleBatchEditing);
     window.addEventListener('scroll', this.handleScrollEvent);
   }
   componentWillUnmount() {
     Mousetrap.unbind(searchFieldShortcutKeys);
+    Mousetrap.unbind(toggleBatchEditingShortcutKeys);
     window.removeEventListener('scroll', this.handleScrollEvent);
   }
 
@@ -225,20 +236,41 @@ export class NotesPage extends React.Component {
         </div>
       );
     } else if (!this.props.loading) {
+      content = [];
+
+      if (this.props.batchEditing) {
+        const selectedNotesCount = Object.values(this.props.batchSelections)
+          .filter(selected => selected)
+          .length;
+
+        content.push(
+          <div
+            key="batch-operations-menu"
+            className={menuStyles.menu}
+            style={{ marginTop: '1rem' }}
+          >
+            {selectedNotesCount} selected
+          </div>
+        );
+      }
+
       if (this.props.layout === LinkLayouts.LIST_LAYOUT) {
         const currentLength = this.props.infiniteScrollLimit;
         const filteredNotes = this.filteredNotes();
         matchedNotes = filteredNotes.notes;
         archivedMatchedNotesCount = filteredNotes.archivedCount;
-        content = [
+        content.push(
           <NotesList
             key="notes-list"
             notes={matchedNotes.slice(0, currentLength)}
+            batchEditing={this.props.batchEditing}
+            batchSelections={this.props.batchSelections}
             addTagToNote={this.props.addTagByNameToNote}
             onRemoveTagFromNote={this.props.removeTagByIdFromNote}
             onToggleArchived={this.props.toggleArchivedNote}
+            onToggleBatchSelected={this.props.toggleNoteSelected}
           />
-        ];
+        );
         if (matchedNotes.length > currentLength) {
           content.push(
             <div key="more" className={styles.more} ref={(element) => this.moreElement = element}>
@@ -297,6 +329,8 @@ function mapStateToProps(state) {
     archiveState: state.userInterface.archiveState,
     searchQuery: state.userInterface.searchQuery,
     infiniteScrollLimit: state.userInterface.infiniteScrollLimit,
+    batchEditing: state.userInterface.batchEditing,
+    batchSelections: state.userInterface.batchSelections
   };
 }
 
@@ -305,7 +339,9 @@ function mapDispatchToProps(dispatch) {
     changeLayout: changeLinkLayout,
     changeArchiveState,
     changeSearchQuery,
-    increaseInfiniteScroll
+    increaseInfiniteScroll,
+    toggleBatchEditing,
+    toggleNoteSelected: toggleBatchSelection
   }, dispatch);
 }
 

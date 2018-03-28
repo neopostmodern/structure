@@ -21,6 +21,8 @@ export const INCREASE_INFINITE_SCROLL = 'INCREASE_INFINITE_SCROLL';
 export const REQUEST_METADATA = 'REQUEST_METADATA';
 export const RECEIVED_METADATA = 'RECEIVED_METADATA';
 export const CLEAR_METADATA = 'CLEAR_METADATA';
+export const TOGGLE_BATCH_EDITING = 'TOGGLE_BATCH_EDITING';
+export const TOGGLE_BATCH_SELECTION = 'TOGGLE_BATCH_SELECTION';
 
 export function requestLogin() {
   return {
@@ -72,5 +74,17 @@ export function receivedMetadata(metadata: Object) {
 export function clearMetadata() {
   return {
     type: CLEAR_METADATA
+  };
+}
+
+export function toggleBatchEditing() {
+  return {
+    type: TOGGLE_BATCH_EDITING
+  };
+}
+export function toggleBatchSelection(noteId: string) {
+  return {
+    type: TOGGLE_BATCH_SELECTION,
+    payload: noteId
   };
 }
