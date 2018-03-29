@@ -34,24 +34,60 @@ class InlineTagForm extends React.Component {
     autocompleteSuggestions: TagType[]
   }
 
-  constructor() {
+  props: {
+    tags: Array<TagType>,
+    tagsLoading: boolean,
+    handleSubmit: () => void,
+    onAbort: () => void,
+    // from form
+    nameValue: string,
+    pristine: boolean,
+    change: (string, any) => void,
+    submit: () => void
+  }
+
+  tagMap: {[string]: TagType};
+
+  constructor(props) {
     super();
 
+
+    this.tagMap = {};
+    if (props.tags) {
+      this.updateTagMap(props.tags);
+    }
+
     this.state = {
-      focusedAutocompleteIndex: 0
+      focusedAutocompleteIndex: 0,
+      autocompleteSuggestions: []
     };
+  }
+
+  updateTagMap(tags) {
+    tags.forEach(tag => {
+      this.tagMap[tag._id] = tag;
+    });
+    console.log(this.tagMap);
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.nameValue !== nextProps.nameValue) {
-      this.setState({
-        autocompleteSuggestions: this.props.tags.filter((tag) => tag.name.includes(nextProps.nameValue))
-      });
+      const autocompleteSuggestions = this.props.tags
+        .map(({ _id, name }) => ({ _id, index: name.indexOf(nextProps.nameValue) }))
+        .filter(({ index }) => index !== -1)
+        .sort((tag1, tag2) => tag1.index - tag2.index)
+        .map(({ _id }) => this.tagMap[_id]);
+
+      this.setState({ autocompleteSuggestions });
+    }
+
+    if (this.props.tags !== nextProps.tags) {
+      this.updateTagMap(nextProps.tags);
     }
   }
   render() {
     const {
-      handleSubmit, tagsLoading, pristine, submitting, nameValue, change, submit
+      handleSubmit, tagsLoading, pristine, change, submit // submitting, nameValue,
     } = this.props;
     let tagAutocomplete;
 
