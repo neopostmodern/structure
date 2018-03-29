@@ -92,7 +92,7 @@ export class Layout extends Component {
         <div className={styles.headline}>Your Structure is outdated.</div>
         <small>
           This Structure uses API version {config.apiVersion},
-          but {this.props.versions.minimum} is recommended by the server.<br />
+          but {this.props.versions.recommended} is recommended by the server.<br />
           You are probably safe for now but try to{' '}
           <a href={config.releaseUrl} target="_blank" rel="noopener noferrer">update soon</a>.
         </small>
