@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import ClassNames from 'classnames';
 
-import type NoteObject from '../reducers/links';
+import { type NoteObject } from '../reducers/links';
 import Tags from './Tags';
 import styles from './LinksList.css';
 

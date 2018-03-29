@@ -16,19 +16,17 @@ const tagShortcutKeys = ['ctrl+t', 'command+t'];
 
 class Tags extends React.Component {
   props: {
-    tags: [TagType],
-    existingTagsLoading: boolean,
-    existingTags?: [TagType],
+    tags: Array<TagType>,
     withShortcuts?: boolean,
     onAddTag: () => void,
     onRemoveTag: (string) => void,
-    onClickTag: (string) => void
+    navigateToTag: (string) => void
   };
   state: {
     addingNewTag: boolean
   }
 
-  defaultProps = {
+  static defaultProps = {
     withShortcuts: false
   };
 

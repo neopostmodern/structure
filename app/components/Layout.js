@@ -12,6 +12,15 @@ import config from '../config';
 
 import styles from './Layout.scss';
 
+type versionsLoadingType = {
+  loading: true
+};
+type versionsReadyType = {
+  loading: false,
+  minimum: number,
+  recommended?: number
+};
+
 export class Layout extends Component {
   props: {
     path: string,
@@ -23,11 +32,7 @@ export class Layout extends Component {
       name?: string,
       refetch: () => void
     },
-    versions: {
-      loading: boolean,
-      minimum: number,
-      recommended?: number
-    }
+    versions: versionsLoadingType | versionsReadyType
   };
 
   constructor() {

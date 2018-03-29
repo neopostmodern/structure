@@ -13,5 +13,5 @@ export type TagType = {
   _id: string,
   name: string,
   color: string,
-  links: Array<LinkType>
+  links?: Array<LinkType>
 };
