@@ -16,7 +16,8 @@ class UserPage extends React.Component {
           </a>
         </div>
         <div style={{marginTop: '2rem'}}>
-          Using Structure {VERSION}
+          Using Structure {VERSION}<br/>
+          Server running at <i>{BACKEND_URL}</i>
         </div>
       </div>
     );
