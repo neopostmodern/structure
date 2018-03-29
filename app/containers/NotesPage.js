@@ -186,6 +186,18 @@ export class NotesPage extends React.Component {
     this.handleSearchInputChange();
   }
 
+  handleBatchOpenNotes = () => {
+    this.props.notes.forEach(note => {
+      if (!this.props.batchSelections[note._id]) {
+        return;
+      }
+      if (note.type !== 'LINK') {
+        return;
+      }
+      window.open(note.url, '_blank', 'noopener, noreferrer');
+    });
+  }
+
   filteredNotes(): {notes: Array<NoteObject>, archivedCount?: number} {
     let notes = this.props.notes || [];
 
@@ -296,7 +308,10 @@ export class NotesPage extends React.Component {
             <a onClick={this.handleUnselectAll}>
               unselect all
             </a>
-            )
+            ):&nbsp;
+            <a onClick={this.handleBatchOpenNotes}>
+              Open in browser
+            </a>
           </div>
         );
       }
