@@ -16,8 +16,10 @@ import NotesList from '../components/NotesList';
 import {
   changeLinkLayout, changeSearchQuery, increaseInfiniteScroll,
   type ArchiveStateType, ArchiveStates,
-  LinkLayouts, type LinkLayoutType, changeArchiveState, toggleBatchEditing, toggleBatchSelection
+  LinkLayouts, type LinkLayoutType, changeArchiveState,
+  toggleBatchEditing, toggleBatchSelection, setBatchSelection
 } from '../actions/userInterface';
+import type { BatchSelectionType } from '../reducers/userInterface';
 import { type NoteObject } from '../reducers/links';
 
 import styles from './NotesPage.css';
@@ -53,6 +55,7 @@ export function archiveStateToName(archiveState: ArchiveStateType) {
 
 const searchFieldShortcutKeys = ['ctrl+f', 'command+f'];
 const toggleBatchEditingShortcutKeys = ['ctrl+b', 'command+b'];
+const selectAllShortcutKeys = ['ctrl+a', 'command+a'];
 
 export class NotesPage extends React.Component {
   searchInput: HTMLInputElement;
@@ -62,9 +65,7 @@ export class NotesPage extends React.Component {
     loading: boolean,
     notes?: Array<NoteObject>,
     batchEditing: boolean,
-    batchSelections: {
-      [string]: boolean
-    },
+    batchSelections: BatchSelectionType,
     layout: LinkLayoutType,
     archiveState: ArchiveStateType,
     searchQuery: string,
@@ -76,12 +77,23 @@ export class NotesPage extends React.Component {
     toggleArchivedNote: (noteId: string) => void,
     toggleBatchEditing: () => void,
     toggleNoteSelected: (noteId: string) => void,
+    setNotesSelected: (selection: BatchSelectionType) => void,
     changeLayout: (layout: LinkLayoutType) => void,
     changeArchiveState: (layout: ArchiveStateType) => void,
     changeSearchQuery: (query: string) => void,
     increaseInfiniteScroll: (by: number) => void,
     refetch: () => void
   };
+
+  handleSelectAll: () => void;
+  handleUnselectAll: () => void;
+
+  constructor () {
+    super();
+
+    this.handleSelectAll = this.selectUnselectAll.bind(this, true);
+    this.handleUnselectAll = this.selectUnselectAll.bind(this, false);
+  }
 
   static textIncludes(needle?: string, haystack?: string): boolean {
     if (!haystack || !needle) {
@@ -94,17 +106,42 @@ export class NotesPage extends React.Component {
   componentDidMount() {
     Mousetrap.bind(searchFieldShortcutKeys, this.handleSearchFieldShortcut);
     Mousetrap.bindGlobal(toggleBatchEditingShortcutKeys, this.props.toggleBatchEditing);
+    Mousetrap.bindGlobal(selectAllShortcutKeys, this.handleSelectAllShortcut);
     window.addEventListener('scroll', this.handleScrollEvent);
   }
   componentWillUnmount() {
     Mousetrap.unbind(searchFieldShortcutKeys);
     Mousetrap.unbind(toggleBatchEditingShortcutKeys);
+    Mousetrap.unbind(selectAllShortcutKeys);
     window.removeEventListener('scroll', this.handleScrollEvent);
   }
 
   handleSearchFieldShortcut = () => {
     this.searchInput.focus();
     setTimeout(() => this.searchInput.select(0, this.props.searchQuery.length), 10);
+  }
+  handleSelectAllShortcut = () => {
+    // if we're not already batch editing switch to batch editing mode
+    if (!this.props.batchEditing) {
+      this.props.toggleBatchEditing();
+    }
+
+    this.selectUnselectAll();
+
+    return false;
+  }
+  selectUnselectAll = (selected?: boolean) => {
+    let nextSelectedState = selected;
+    const selection:BatchSelectionType = {};
+    const filteredNotes = this.filteredNotes().notes;
+    if (typeof selected === 'undefined') {
+      // if no selected target is passed in and all notes are selected, unselect them instead
+      nextSelectedState = filteredNotes.length !== this.selectedNoteCount();
+    }
+    filteredNotes.forEach(note => {
+      selection[note._id] = nextSelectedState;
+    });
+    this.props.setNotesSelected(selection);
   }
 
   handleScrollEvent = (event: Event) => {
@@ -149,7 +186,7 @@ export class NotesPage extends React.Component {
     this.handleSearchInputChange();
   }
 
-  filteredNotes() {
+  filteredNotes(): {notes: Array<NoteObject>, archivedCount?: number} {
     let notes = this.props.notes || [];
 
     if (this.props.searchQuery.length !== 0) {
@@ -206,6 +243,12 @@ export class NotesPage extends React.Component {
     }
   }
 
+  selectedNoteCount() {
+    return Object.values(this.props.batchSelections)
+      .filter(selected => selected)
+      .length;
+  }
+
   render() {
     let content;
     let matchedNotes;
@@ -239,17 +282,21 @@ export class NotesPage extends React.Component {
       content = [];
 
       if (this.props.batchEditing) {
-        const selectedNotesCount = Object.values(this.props.batchSelections)
-          .filter(selected => selected)
-          .length;
-
         content.push(
           <div
             key="batch-operations-menu"
             className={menuStyles.menu}
             style={{ marginTop: '1rem' }}
           >
-            {selectedNotesCount} selected
+            {this.selectedNoteCount()} selected
+            (
+            <a onClick={this.handleSelectAll}>
+              select all
+            </a>,&nbsp;
+            <a onClick={this.handleUnselectAll}>
+              unselect all
+            </a>
+            )
           </div>
         );
       }
@@ -341,7 +388,8 @@ function mapDispatchToProps(dispatch) {
     changeSearchQuery,
     increaseInfiniteScroll,
     toggleBatchEditing,
-    toggleNoteSelected: toggleBatchSelection
+    toggleNoteSelected: toggleBatchSelection,
+    setNotesSelected: setBatchSelection
   }, dispatch);
 }
 

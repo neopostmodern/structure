@@ -1,5 +1,8 @@
 // @flow
 
+// todo: import breaks something -- circular dependency?
+// import type { BatchSelectionType } from '../reducers/userInterface';
+
 export const LinkLayouts = {
   LIST_LAYOUT: 'LIST_LAYOUT',
   GRID_LAYOUT: 'GRID_LAYOUT'
@@ -23,6 +26,7 @@ export const RECEIVED_METADATA = 'RECEIVED_METADATA';
 export const CLEAR_METADATA = 'CLEAR_METADATA';
 export const TOGGLE_BATCH_EDITING = 'TOGGLE_BATCH_EDITING';
 export const TOGGLE_BATCH_SELECTION = 'TOGGLE_BATCH_SELECTION';
+export const SET_BATCH_SELECTION = 'SET_BATCH_SELECTION';
 
 export function requestLogin() {
   return {
@@ -86,5 +90,12 @@ export function toggleBatchSelection(noteId: string) {
   return {
     type: TOGGLE_BATCH_SELECTION,
     payload: noteId
+  };
+}
+// todo: redundant type definition, but can't import -- see above
+export function setBatchSelection(selection: { [string]: boolean }) {
+  return {
+    type: SET_BATCH_SELECTION,
+    payload: selection
   };
 }

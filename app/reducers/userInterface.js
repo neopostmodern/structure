@@ -3,8 +3,13 @@ import {
   REQUEST_LOGIN, COMPLETE_LOGIN, CHANGE_LINK_LAYOUT, CHANGE_SEARCH_QUERY,
   INCREASE_INFINITE_SCROLL, LinkLayouts, ArchiveStates,
   CHANGE_ARCHIVE_STATE, RECEIVED_METADATA, CLEAR_METADATA, TOGGLE_BATCH_EDITING,
-  TOGGLE_BATCH_SELECTION, type LinkLayoutType, type ArchiveStateType
+  TOGGLE_BATCH_SELECTION, SET_BATCH_SELECTION,
+  type LinkLayoutType, type ArchiveStateType
 } from '../actions/userInterface';
+
+export type BatchSelectionType = {
+  [string]: boolean
+};
 
 export type userInterfaceStateType = {
   loggingIn: boolean,
@@ -16,9 +21,7 @@ export type userInterfaceStateType = {
     titles: [string]
   },
   batchEditing: boolean,
-  batchSelections: {
-    [string]: boolean
-  }
+  batchSelections: BatchSelectionType
 };
 
 type Action = {type: string};
@@ -70,6 +73,8 @@ export default function links(state: userInterfaceStateType = initialState, acti
           }
         )
       });
+    case SET_BATCH_SELECTION:
+      return Object.assign({}, state, { batchSelections: action.payload });
     default:
       return state;
   }
