@@ -22,6 +22,14 @@
   }
 }
 
+.menu.sticky {
+  position: sticky;
+  top: 0;
+  padding-top: 1em;
+  padding-bottom: 0.3em;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
 .searchFieldContainer {
   margin-left: auto;
   position: relative;
