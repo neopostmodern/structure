@@ -1,4 +1,4 @@
-# Structure <sup>![version badge](https://v.egoist.moe/gh/neopostmodern/structure.svg)</sup>
+# Structure <sup>![version badge](https://img.shields.io/github/release/neopostmodern/structure/all.svg?style=flat-square)</sup>
 
 Structure is a performance-at-interaction oriented and reasonably stylish bookmarking tool for (eventually) everything.
 
