@@ -9,6 +9,8 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import baseConfig from './webpack.config.base';
 
 export default merge.smart(baseConfig, {
+  mode: 'production',
+
   devtool: 'source-map',
 
   target: 'electron-main',

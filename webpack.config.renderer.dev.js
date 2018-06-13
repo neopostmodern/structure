@@ -41,6 +41,8 @@ if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
 }
 
 export default merge.smart(baseConfig, {
+  mode: 'development',
+
   devtool: 'inline-source-map',
 
   target: 'electron-renderer',
@@ -215,8 +217,6 @@ export default merge.smart(baseConfig, {
       multiStep: true
     }),
 
-    new webpack.NoEmitOnErrorsPlugin(),
-
     /**
      * Create global constants which can be configured at compile time.
      *
@@ -235,10 +235,6 @@ export default merge.smart(baseConfig, {
 
     new webpack.LoaderOptionsPlugin({
       debug: true
-    }),
-
-    new ExtractTextPlugin({
-      filename: '[name].css'
     }),
 
     // define globals config

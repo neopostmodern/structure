@@ -128,6 +128,6 @@ app.on('ready', async () => {
 
   // enable toggling dev-tools for production app
   ipcMain.on('toggle-dev-tools', () => {
-    mainWindow.toggleDevTools();
+    mainWindow.webContents.toggleDevTools();
   });
 });

@@ -23,7 +23,7 @@ Mousetrap.bindGlobal(['esc', 'ctrl+/', 'command+/'], () => {
 Mousetrap.bindGlobal(['ctrl+n', 'command+n'], () => {
   history.push('/notes/add');
 });
-Mousetrap.bindGlobal('F12', () => {
+Mousetrap.bindGlobal(['f12', 'ctrl+shift+i'], () => {
   ipcRenderer.send('toggle-dev-tools');
 });
 
