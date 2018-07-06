@@ -17,6 +17,12 @@ class AddLinkPage extends React.Component {
     }
   }
 
+  constructor() {
+    super();
+
+    (this: any).handleAbort = this.handleAbort.bind(this);
+  }
+
   handleSubmitLink = ({ url }) => {
     // todo: handle errors
     this.props.addLink(url)
@@ -28,10 +34,14 @@ class AddLinkPage extends React.Component {
       .then(({ _id }) => this.props.history.push(`/texts/${_id}`));
   };
 
+  handleAbort() {
+    this.props.history.push('/');
+  }
+
   render() {
     return (
       <div>
-        <AddLink onSubmit={this.handleSubmitLink} />
+        <AddLink onSubmit={this.handleSubmitLink} onAbort={this.handleAbort} />
         <button className={buttonStyles.textButton} onClick={this.handleCreateText}>
           Need just text?
         </button>

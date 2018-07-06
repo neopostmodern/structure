@@ -13,14 +13,12 @@ const urlValidator = (value) => (isUrlValid(value)
   ? undefined
   : 'Did you forget the protocol? (e.g. https://)'
 );
-const renderField = ({ input, autoFocus, placeholder, className, type, meta: { touched, error, warning } }) => (
+const renderField = ({ input, type, meta: { touched, error, warning }, ...rest }) => (
   <div>
     <input
       {...input}
-      autoFocus={autoFocus}
-      placeholder={placeholder}
       type={type}
-      className={className}
+      {...rest}
     />
     {touched && (
       (error &&
@@ -37,15 +35,28 @@ const renderField = ({ input, autoFocus, placeholder, className, type, meta: { t
 
 type AddLinkProps = {
   requestClipboard: () => void,
-  clearClipboard: () => void
+  clearClipboard: () => void,
+  onAbort: () => void
 };
 
 class AddLink extends Component<AddLinkProps> { // & FormProps
+  constructor() {
+    super();
+
+    (this: any).handleKeyDown = this.handleKeyDown.bind(this);
+  }
+
   componentWillMount() {
     this.props.requestClipboard();
   }
   componentWillUnmount() {
     this.props.clearClipboard();
+  }
+
+  handleKeyDown(event) {
+    if (event.key === 'Escape') {
+      this.props.onAbort();
+    }
   }
 
   render() {
@@ -60,6 +71,7 @@ class AddLink extends Component<AddLinkProps> { // & FormProps
             className={styles.urlInput}
             placeholder="URL here"
             validate={urlValidator}
+            onKeyDown={this.handleKeyDown}
           />
         </form>
       </div>
@@ -70,7 +82,7 @@ class AddLink extends Component<AddLinkProps> { // & FormProps
 function mapStateToProps(state) {
   if (isUrlValid(state.userInterface.clipboard)) {
     return {
-      initialValues: {url: state.userInterface.clipboard}
+      initialValues: { url: state.userInterface.clipboard }
     };
   }
 

@@ -106,8 +106,8 @@ export class NotesPage extends React.Component {
 
   componentDidMount() {
     Mousetrap.bind(searchFieldShortcutKeys, this.handleSearchFieldShortcut);
-    Mousetrap.bindGlobal(toggleBatchEditingShortcutKeys, this.props.toggleBatchEditing);
-    Mousetrap.bindGlobal(selectAllShortcutKeys, this.handleSelectAllShortcut);
+    Mousetrap.bind(toggleBatchEditingShortcutKeys, this.props.toggleBatchEditing);
+    Mousetrap.bind(selectAllShortcutKeys, this.handleSelectAllShortcut);
     window.addEventListener('scroll', this.handleScrollEvent);
   }
   componentWillUnmount() {
@@ -142,10 +142,11 @@ export class NotesPage extends React.Component {
     filteredNotes.forEach(note => {
       selection[note._id] = nextSelectedState;
     });
+    console.log(selection);
     this.props.setNotesSelected(selection);
   }
 
-  handleScrollEvent = (event: Event) => {
+  handleScrollEvent = () => {
     if (!this.moreElement) {
       return;
     }

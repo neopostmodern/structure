@@ -17,7 +17,11 @@ ElectronCookies.enable({
 
 
 makeMousetrapGlobal(Mousetrap);
-Mousetrap.bindGlobal(['esc', 'ctrl+/', 'command+/'], () => {
+Mousetrap.bindGlobal(['ctrl+.', 'command+.'], () => {
+  history.push('/');
+  return false;
+});
+Mousetrap.bind(['esc'], () => {
   history.push('/');
 });
 Mousetrap.bindGlobal(['ctrl+n', 'command+n'], () => {

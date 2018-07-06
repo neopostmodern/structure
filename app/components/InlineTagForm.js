@@ -138,6 +138,7 @@ class InlineTagForm extends React.Component {
       switch (event.key) {
         case 'Escape':
           this.props.onAbort();
+          event.preventPropagation();
           break;
         case 'Enter':
           // if either shift key is pressed or the input field itself is focused, let default input
