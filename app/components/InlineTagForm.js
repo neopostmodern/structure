@@ -2,14 +2,13 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Field, reduxForm, formValueSelector } from 'redux-form';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import type { TagType } from '../types';
 import styles from './InlineTagForm.scss';
-import calculateFontColor from '../utils/calculateFontColor';
+import calculateFontColor, { isCachedBackgroundLight } from '../utils/calculateFontColor';
 
 const FORM_NAME = 'inline-tag';
 
@@ -73,9 +72,9 @@ class InlineTagForm extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.nameValue !== nextProps.nameValue) {
       const autocompleteSuggestions = this.props.tags
-        .map(({ _id, name }) => ({ _id, index: name.indexOf(nextProps.nameValue) }))
+        .map(({ _id, name }) => ({ _id, index: name.indexOf(nextProps.nameValue), name }))
         .filter(({ index }) => index !== -1)
-        .sort((tag1, tag2) => tag1.index - tag2.index)
+        .sort((tag1, tag2) => (tag1.index + (tag1.name.length / 100)) - (tag2.index + (tag2.name.length / 100)))
         .map(({ _id }) => this.tagMap[_id]);
 
       this.setState({ autocompleteSuggestions });
@@ -110,7 +109,7 @@ class InlineTagForm extends React.Component {
                   style={{
                     backgroundColor: tag.color,
                     borderColor: tagIndex === this.state.focusedAutocompleteIndex
-                      ? 'black'
+                      ? (isCachedBackgroundLight(tag.color) ? '#eee' : 'black')
                       : 'transparent'
                   }}
                   ref={calculateFontColor}
@@ -141,11 +140,15 @@ class InlineTagForm extends React.Component {
           this.props.onAbort();
           break;
         case 'Enter':
-          change(
-            'name',
-            this.state.autocompleteSuggestions[this.state.focusedAutocompleteIndex].name
-          );
-          setTimeout(submit, 0);
+          // if either shift key is pressed or the input field itself is focused, let default input
+          // field behavior kick in (instead of using suggestion)
+          if (!event.shiftKey && focusedAutocompleteIndex !== null) {
+            change(
+              'name',
+              this.state.autocompleteSuggestions[focusedAutocompleteIndex].name
+            );
+            setTimeout(submit, 0);
+          }
           break;
         case 'ArrowDown':
           if (focusedAutocompleteIndex === null) {
@@ -199,6 +202,7 @@ class InlineTagForm extends React.Component {
           autoFocus
           validate={notEmpty}
           onKeyDown={handleInputKeydown}
+          style={this.state.focusedAutocompleteIndex === null ? { borderBottomStyle: 'dotted', borderBottomWidth: '2px' } : { marginBottom: '1px' }}
         />
         {tagAutocomplete}
       </form>
