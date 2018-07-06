@@ -8,7 +8,7 @@ import gql from 'graphql-tag';
 
 import type { TagType } from '../types';
 import styles from './InlineTagForm.scss';
-import calculateFontColor, { isCachedBackgroundLight } from '../utils/calculateFontColor';
+import colorTools, { ColorCache } from '../utils/colorTools';
 
 const FORM_NAME = 'inline-tag';
 
@@ -109,10 +109,10 @@ class InlineTagForm extends React.Component {
                   style={{
                     backgroundColor: tag.color,
                     borderColor: tagIndex === this.state.focusedAutocompleteIndex
-                      ? (isCachedBackgroundLight(tag.color) ? '#eee' : 'black')
+                      ? (ColorCache[tag.color].isDark ? '#eee' : 'black')
                       : 'transparent'
                   }}
-                  ref={calculateFontColor}
+                  ref={colorTools}
                   onClick={() => { change('name', tag.name); setTimeout(submit, 0); }}
                 >
                   {tag.name}

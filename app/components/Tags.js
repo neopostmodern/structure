@@ -8,7 +8,7 @@ import makeMousetrapGlobal from '../utils/mousetrapGlobal';
 import type { TagType } from '../types';
 import styles from './Tags.scss';
 import InlineTagForm from './InlineTagForm';
-import calculateFontColor from '../utils/calculateFontColor';
+import colorTools from '../utils/colorTools';
 
 makeMousetrapGlobal(Mousetrap);
 
@@ -100,7 +100,7 @@ class Tags extends React.Component {
           style={{ backgroundColor: tag.color }}
           onClick={this.props.navigateToTag.bind(null, tag._id)}
           onContextMenu={this.handleContextMenu.bind(this, tag._id)}
-          ref={calculateFontColor}
+          ref={colorTools}
         >
           {tag.name}
         </div>)

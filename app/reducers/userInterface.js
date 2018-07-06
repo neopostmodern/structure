@@ -1,11 +1,11 @@
 // @flow
 import {
-  REQUEST_LOGIN, COMPLETE_LOGIN, CHANGE_LINK_LAYOUT, CHANGE_SEARCH_QUERY,
-  INCREASE_INFINITE_SCROLL, LinkLayouts, ArchiveStates,
+  REQUEST_LOGIN, COMPLETE_LOGIN, CHANGE_LINK_LAYOUT, CHANGE_TAGS_LAYOUT, CHANGE_SEARCH_QUERY,
+  INCREASE_INFINITE_SCROLL, LinkLayouts, TagsLayouts, ArchiveStates,
   CHANGE_ARCHIVE_STATE, REQUEST_METADATA, RECEIVED_METADATA, CLEAR_METADATA, TOGGLE_BATCH_EDITING,
   TOGGLE_BATCH_SELECTION, SET_BATCH_SELECTION,
   CLEAR_CLIPBOARD, SET_CLIPBOARD,
-  type LinkLayoutType, type ArchiveStateType
+  type LinkLayoutType, type TagsLayoutsType, type ArchiveStateType
 } from '../actions/userInterface';
 
 export type BatchSelectionType = {
@@ -15,6 +15,7 @@ export type BatchSelectionType = {
 export type userInterfaceStateType = {
   loggingIn: boolean,
   linkLayout: LinkLayoutType,
+  tagsLayout: TagsLayoutsType,
   archiveState: ArchiveStateType,
   searchQuery: string,
   infiniteScrollLimit: number,
@@ -35,6 +36,7 @@ type Action = { type: string, payload?: any };
 const initialState: userInterfaceStateType = {
   loggingIn: false,
   linkLayout: LinkLayouts.LIST_LAYOUT,
+  tagsLayout: TagsLayouts.CHAOS_LAYOUT,
   archiveState: ArchiveStates.NO_ARCHIVE,
   searchQuery: '',
   infiniteScrollLimit: 10,
@@ -56,6 +58,8 @@ export default function links(state: userInterfaceStateType = initialState, acti
       return Object.assign({}, state, { loggingIn: false });
     case CHANGE_LINK_LAYOUT:
       return Object.assign({}, state, { linkLayout: action.payload });
+    case CHANGE_TAGS_LAYOUT:
+      return Object.assign({}, state, { tagsLayout: action.payload });
     case CHANGE_ARCHIVE_STATE:
       return Object.assign({}, state, { archiveState: action.payload });
     case CHANGE_SEARCH_QUERY:
