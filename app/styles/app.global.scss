@@ -1,5 +1,5 @@
-@import "~font-awesome/css/font-awesome.css";
 @import "config";
+@import "fonts";
 
 body {
   position: relative;
@@ -36,6 +36,9 @@ input[type="text"] {
   &:placeholder-shown {
 	border-bottom-color: lightgray;
   }
+}
+button {
+  font-family: $BASE_FONT;
 }
 
 textarea {
