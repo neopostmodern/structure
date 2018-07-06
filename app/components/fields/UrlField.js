@@ -3,7 +3,7 @@ import type { FormProps } from 'redux-form';
 
 import formStyles from '../NoteForm.scss';
 
-export default class UrlField extends React.Component<FormProps, void> {
+class UrlField extends React.Component<FormProps, void> {
   render() {
     return (
       <div style={{ display: 'flex' }}>
@@ -23,3 +23,5 @@ export default class UrlField extends React.Component<FormProps, void> {
     );
   }
 }
+
+export default UrlField;
