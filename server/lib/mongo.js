@@ -1,8 +1,8 @@
-import url from 'url';
 import mongoose, { Schema } from 'mongoose';
 import MigrateMongoose from 'migrate-mongoose';
 
 import config from './config.json';
+import urlAnalyzer from '../../util/urlAnalyzer';
 
 mongoose.connect(config.MONGO_URL);
 
@@ -36,12 +36,12 @@ const linkSchema = Schema({
   path: String,
 }, noteOptions);
 linkSchema.pre('save', function (next) {
-  const { hostname, pathname } = url.parse(this.url);
+  const { shortDomain, path, suggestedName } = urlAnalyzer(this.url);
+  this.domain = shortDomain;
+  this.path = path;
   if (typeof this.name === 'undefined' || this.name.length === 0) {
-    this.name = hostname + pathname;
+    this.name = suggestedName;
   }
-  this.domain = hostname;
-  this.path = pathname;
   next();
 });
 export const Link = Note.discriminator('Link', linkSchema);

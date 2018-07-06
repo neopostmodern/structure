@@ -2,7 +2,7 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 
-import formStyles from './NoteForm.css';
+import formStyles from './NoteForm.scss';
 import MarkedTextarea from './MarkedTextarea';
 
 // todo: can't export; break build?

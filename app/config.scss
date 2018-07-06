@@ -1,0 +1,7 @@
+$BASE_FONT: Lunchtype22, sans-serif;
+$MENU_FONT: Lunchtype25, sans-serif;
+$MENU_FONT_SIZE: 1.5rem;
+%menu-typo {
+  font-family: $MENU_FONT;
+  font-size: $MENU_FONT_SIZE;
+}

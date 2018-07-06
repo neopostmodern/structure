@@ -2,7 +2,7 @@
 import {
   REQUEST_LOGIN, COMPLETE_LOGIN, CHANGE_LINK_LAYOUT, CHANGE_SEARCH_QUERY,
   INCREASE_INFINITE_SCROLL, LinkLayouts, ArchiveStates,
-  CHANGE_ARCHIVE_STATE, RECEIVED_METADATA, CLEAR_METADATA, TOGGLE_BATCH_EDITING,
+  CHANGE_ARCHIVE_STATE, REQUEST_METADATA, RECEIVED_METADATA, CLEAR_METADATA, TOGGLE_BATCH_EDITING,
   TOGGLE_BATCH_SELECTION, SET_BATCH_SELECTION,
   type LinkLayoutType, type ArchiveStateType
 } from '../actions/userInterface';
@@ -18,8 +18,9 @@ export type userInterfaceStateType = {
   searchQuery: string,
   infiniteScrollLimit: number,
   metadata?: {
-    titles: [string]
+    titles: Array<string>
   },
+  metadataLoading: boolean,
   batchEditing: boolean,
   batchSelections: BatchSelectionType
 };
@@ -36,7 +37,8 @@ const initialState: userInterfaceStateType = {
   searchQuery: '',
   infiniteScrollLimit: 10,
   batchEditing: false,
-  batchSelections: {}
+  batchSelections: {},
+  metadataLoading: false
 };
 
 export default function links(state: userInterfaceStateType = initialState, action: Action) {
@@ -55,11 +57,14 @@ export default function links(state: userInterfaceStateType = initialState, acti
       return Object.assign({}, state, {
         infiniteScrollLimit: state.infiniteScrollLimit + action.payload
       });
+    case REQUEST_METADATA:
+      return Object.assign({}, state, { metadataLoading: true });
     case RECEIVED_METADATA:
-      return Object.assign({}, state, { metadata: action.payload });
+      return Object.assign({}, state, { metadataLoading: false, metadata: action.payload });
     case CLEAR_METADATA:
       const nextState = Object.assign({}, state);
       delete nextState.metadata;
+      nextState.metadataLoading = false;
       return nextState;
     case TOGGLE_BATCH_EDITING:
       return Object.assign({}, state, { batchEditing: !state.batchEditing });

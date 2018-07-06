@@ -1,5 +1,6 @@
 // @flow
 import { REQUEST_METADATA, receivedMetadata, clearMetadata } from '../actions/userInterface';
+import htmlDecode from '../utils/htmlDecode';
 
 export default store => next => action => {
   if (action.type === REQUEST_METADATA) {
@@ -13,15 +14,17 @@ export default store => next => action => {
             return name && name.includes('title');
           })
           .map(meta => meta.content);
-        // de-duplicate
-        metaTitles = metaTitles.filter(
-          (metaTitle, index) => metaTitles.indexOf(metaTitle) === index
-        );
 
-        const titles = [
+
+        const titleBag = [
           dom.querySelector('title').innerHTML,
           ...metaTitles
-        ];
+        ]
+          .map(rawTitle => htmlDecode(rawTitle));
+
+        const titles = titleBag
+          .filter((title, index) => titleBag.indexOf(title) === index); // de-duplicate
+
         next(receivedMetadata({ titles }));
       })
       .catch(clearMetadata);

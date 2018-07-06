@@ -14,15 +14,16 @@ import type { LinkType } from '../types';
 
 export class LinkPage extends React.Component {
   props: {
-    link: LinkType,
+    link?: LinkType,
+    metadataLoading: boolean,
     requestMetadata: (url: string) => void,
     clearMetadata: () => void
   }
 
-  componentDidMount() {
-    if (this.props.link) {
-      this.props.requestMetadata(this.props.link.url);
-    }
+  constructor() {
+    super();
+
+    this.handleRequestMetadata = this.handleRequestMetadata.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -48,8 +49,13 @@ export class LinkPage extends React.Component {
   };
 
   handleLinkChange = (data) => {
-    this.props.requestMetadata(data.url);
     this.props.updateLink(data);
+  }
+
+  handleRequestMetadata() {
+    if (this.props.link) {
+      this.props.requestMetadata(this.props.link.url);
+    }
   }
 
   render() {
@@ -58,28 +64,31 @@ export class LinkPage extends React.Component {
       return <i>Loading...</i>;
     }
     //    form={link._id}
-    return (<div style={{ marginTop: 50 }}>
-
-      <LinkForm
-        initialValues={link}
-        metadata={this.props.metadata}
-        onSubmit={this.props.updateLink}
-        onChange={this.handleLinkChange}
-      />
-      <div style={{ marginTop: 30 }}>
-        <Tags
-          tags={link.tags}
-          withShortcuts
-          onAddTag={this.props.addTagByNameToNote.bind(this, link._id)}
-          onRemoveTag={this.props.removeTagByIdFromNote.bind(null, link._id)}
+    return (
+      <div style={{ marginTop: 50 }}>
+        <LinkForm
+          initialValues={link}
+          metadata={this.props.metadata}
+          metadataLoading={this.props.metadataLoading}
+          onRequestMetadata={this.handleRequestMetadata}
+          onSubmit={this.props.updateLink}
+          onChange={this.handleLinkChange}
         />
+        <div style={{ marginTop: 30 }}>
+          <Tags
+            tags={link.tags}
+            withShortcuts
+            onAddTag={this.props.addTagByNameToNote.bind(this, link._id)}
+            onRemoveTag={this.props.removeTagByIdFromNote.bind(null, link._id)}
+          />
+        </div>
+        <div style={{ display: 'flex', marginTop: 50 }}>
+          <button type="button" style={{ marginLeft: 'auto' }} onClick={this.deleteLink}>
+            Delete
+          </button>
+        </div>
       </div>
-      <div style={{ display: 'flex', marginTop: 50 }}>
-        <button type="button" style={{ marginLeft: 'auto' }} onClick={this.deleteLink}>
-          Delete
-        </button>
-      </div>
-    </div>);
+    );
   }
 }
 
@@ -155,7 +164,7 @@ export default compose(
   withUpdateLink,
   withDeleteLink,
   connect(
-    ({ userInterface: { metadata } }) => ({ metadata }),
+    ({ userInterface: { metadata, metadataLoading } }) => ({ metadata, metadataLoading }),
     (dispatch) => bindActionCreators({ requestMetadata, clearMetadata }, dispatch)
   )
 )(LinkPage);

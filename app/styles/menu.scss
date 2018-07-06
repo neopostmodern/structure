@@ -1,7 +1,4 @@
-%menu-typo {
-  font-family: "Futura", "Futura Std Medium", sans-serif;
-  font-size: 1.5rem;
-}
+@import "../config";
 
 .menu {
   @extend %menu-typo;
@@ -36,7 +33,7 @@
 }
 
 input[type="text"].searchField {
-  @extend %menu-typo;
+  font-size: $MENU_FONT_SIZE;
 
   margin-top: -0.3em;
   padding-bottom: 3px;

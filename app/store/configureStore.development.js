@@ -46,7 +46,7 @@ const configureStore = (initialState: ?counterStateType) => {
   // Apply Middleware & Compose Enhancers
   enhancers.push(applyMiddleware(...middleware));
   // todo: const enhancer = composeEnhancers(...enhancers);
-  const enhancer = compose(...enhancers);
+  const enhancer = composeEnhancers(...enhancers);
 
   // Create Store
   const store = createStore(rootReducer, initialState, enhancer);
