@@ -2,6 +2,7 @@
 
 import React from 'react';
 import marked from 'marked';
+import Mousetrap from 'mousetrap';
 
 const renderer = new marked.Renderer();
 renderer.listitem = function renderListItem(text) {
@@ -23,6 +24,8 @@ marked.setOptions({
   renderer
 });
 
+const focusDescriptionShortcutKeys = ['ctrl+e', 'command+e'];
+
 export default class MarkedTextarea extends React.Component {
   state: {
     editDescription: boolean
@@ -36,6 +39,17 @@ export default class MarkedTextarea extends React.Component {
     };
   }
 
+  componentDidMount() {
+    Mousetrap.bind(focusDescriptionShortcutKeys, this.setEditDescription.bind(this, true));
+  }
+  componentWillUnmount() {
+    Mousetrap.unbind(focusDescriptionShortcutKeys);
+  }
+
+  setEditDescription(value: boolean) {
+    this.setState({ editDescription: value });
+  }
+
   render() {
     if (this.state.editDescription) {
       return (
@@ -43,7 +57,7 @@ export default class MarkedTextarea extends React.Component {
           <textarea
             {...this.props.input}
             className={this.props.className}
-            onBlur={() => this.setState({ editDescription: false })}
+            onBlur={this.setEditDescription.bind(this, false)}
             ref={(element) => element && element.focus()}
           />
         </div>
@@ -53,7 +67,7 @@ export default class MarkedTextarea extends React.Component {
     return (
       <div
         dangerouslySetInnerHTML={{ __html: marked(this.props.input.value || '<small><i>Click to add a description</i></small>') }}
-        onClick={() => this.setState({ editDescription: true })}
+        onClick={this.setEditDescription.bind(this, true)}
         style={{ fontSize: '1rem' }}
       />
     );
