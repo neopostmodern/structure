@@ -3,8 +3,9 @@
 .form input[type="text"] {
   width: 100%;
 }
-.name {
-  margin: 1rem 0;
+input[type="text"].name {
+  margin-bottom: 1rem;
+  padding-bottom: 0.1em;
   font-size: 200%;
 }
 .description {

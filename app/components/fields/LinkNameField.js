@@ -1,9 +1,9 @@
 import React from 'react';
 import { formValues } from 'redux-form';
 
-import buttonStyles from '../styles/button.scss';
-import formStyles from './NoteForm.scss';
-import urlAnalyzer from '../../util/urlAnalyzer';
+import buttonStyles from '../../styles/button.scss';
+import formStyles from '../NoteForm.scss';
+import urlAnalyzer from '../../../util/urlAnalyzer';
 
 type LinkNameFieldProps = {
   url: string,
