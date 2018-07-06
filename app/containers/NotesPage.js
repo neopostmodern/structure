@@ -7,7 +7,6 @@ import gql from 'graphql-tag';
 import { connect } from 'react-redux';
 import Classnames from 'classnames';
 import Mousetrap from 'mousetrap';
-import makeMousetrapGlobal from '../utils/mousetrapGlobal';
 
 import {
   withAddTagMutation, withRemoveTagMutation,
@@ -25,8 +24,6 @@ import { type NoteObject } from '../reducers/links';
 
 import styles from './NotesPage.css';
 import menuStyles from '../styles/menu.scss';
-
-makeMousetrapGlobal(Mousetrap);
 
 export function layoutToName(layout: LinkLayoutType) {
   switch (layout) {
@@ -106,8 +103,8 @@ export class NotesPage extends React.Component {
 
   componentDidMount() {
     Mousetrap.bind(searchFieldShortcutKeys, this.handleSearchFieldShortcut);
-    Mousetrap.bindGlobal(toggleBatchEditingShortcutKeys, this.props.toggleBatchEditing);
-    Mousetrap.bindGlobal(selectAllShortcutKeys, this.handleSelectAllShortcut);
+    Mousetrap.bind(toggleBatchEditingShortcutKeys, this.props.toggleBatchEditing);
+    Mousetrap.bind(selectAllShortcutKeys, this.handleSelectAllShortcut);
     window.addEventListener('scroll', this.handleScrollEvent);
   }
   componentWillUnmount() {
@@ -142,10 +139,11 @@ export class NotesPage extends React.Component {
     filteredNotes.forEach(note => {
       selection[note._id] = nextSelectedState;
     });
+    console.log(selection);
     this.props.setNotesSelected(selection);
   }
 
-  handleScrollEvent = (event: Event) => {
+  handleScrollEvent = () => {
     if (!this.moreElement) {
       return;
     }
