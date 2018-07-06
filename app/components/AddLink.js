@@ -1,10 +1,15 @@
 // @flow
 import React, { Component } from 'react';
+import { reduxForm, Field } from 'redux-form';
+// import type { FormProps } from 'redux-form';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import styles from './AddLink.css';
-import { reduxForm, Field } from 'redux-form';
+import { clearClipboard, requestClipboard } from '../actions/userInterface';
 
-const urlValidator = (value) => (value && value.indexOf('http') === 0
+const isUrlValid = (url) => url && url.indexOf('http') === 0;
+const urlValidator = (value) => (isUrlValid(value)
   ? undefined
   : 'Did you forget the protocol? (e.g. https://)'
 );
@@ -30,7 +35,19 @@ const renderField = ({ input, autoFocus, placeholder, className, type, meta: { t
   </div>
 );
 
-class AddLink extends Component {
+type AddLinkProps = {
+  requestClipboard: () => void,
+  clearClipboard: () => void
+};
+
+class AddLink extends Component<AddLinkProps> { // & FormProps
+  componentWillMount() {
+    this.props.requestClipboard();
+  }
+  componentWillUnmount() {
+    this.props.clearClipboard();
+  }
+
   render() {
     return (
       <div style={{ paddingTop: '20vh' }}>
@@ -50,4 +67,17 @@ class AddLink extends Component {
   }
 }
 
-export default reduxForm({ form: 'addLink' })(AddLink);
+function mapStateToProps(state) {
+  if (isUrlValid(state.userInterface.clipboard)) {
+    return {
+      initialValues: {url: state.userInterface.clipboard}
+    };
+  }
+
+  return {};
+}
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ requestClipboard, clearClipboard }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({ form: 'addLink', enableReinitialize: true })(AddLink));

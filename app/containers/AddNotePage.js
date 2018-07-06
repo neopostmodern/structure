@@ -3,8 +3,8 @@
 import React from 'react';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import AddLink from '../components/AddLink';
 
+import AddLink from '../components/AddLink';
 import buttonStyles from '../styles/button.scss';
 
 class AddLinkPage extends React.Component {

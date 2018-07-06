@@ -1,4 +1,4 @@
-import login from './login';
+import login from './electron';
 import metadata from './metadata';
 
 export default [

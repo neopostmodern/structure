@@ -27,6 +27,9 @@ export const CLEAR_METADATA = 'CLEAR_METADATA';
 export const TOGGLE_BATCH_EDITING = 'TOGGLE_BATCH_EDITING';
 export const TOGGLE_BATCH_SELECTION = 'TOGGLE_BATCH_SELECTION';
 export const SET_BATCH_SELECTION = 'SET_BATCH_SELECTION';
+export const REQUEST_CLIPBOARD = 'REQUEST_CLIPBOARD';
+export const SET_CLIPBOARD = 'SET_CLIPBOARD';
+export const CLEAR_CLIPBOARD = 'CLEAR_CLIPBOARD';
 
 export function requestLogin() {
   return {
@@ -97,5 +100,22 @@ export function setBatchSelection(selection: { [string]: boolean }) {
   return {
     type: SET_BATCH_SELECTION,
     payload: selection
+  };
+}
+
+export function requestClipboard() {
+  return {
+    type: REQUEST_CLIPBOARD
+  };
+}
+export function setClipboard(clipboard: string) {
+  return {
+    type: SET_CLIPBOARD,
+    payload: clipboard
+  };
+}
+export function clearClipboard() {
+  return {
+    type: CLEAR_CLIPBOARD
   };
 }

@@ -4,6 +4,7 @@ import {
   INCREASE_INFINITE_SCROLL, LinkLayouts, ArchiveStates,
   CHANGE_ARCHIVE_STATE, REQUEST_METADATA, RECEIVED_METADATA, CLEAR_METADATA, TOGGLE_BATCH_EDITING,
   TOGGLE_BATCH_SELECTION, SET_BATCH_SELECTION,
+  CLEAR_CLIPBOARD, SET_CLIPBOARD,
   type LinkLayoutType, type ArchiveStateType
 } from '../actions/userInterface';
 
@@ -22,10 +23,11 @@ export type userInterfaceStateType = {
   },
   metadataLoading: boolean,
   batchEditing: boolean,
-  batchSelections: BatchSelectionType
+  batchSelections: BatchSelectionType,
+  clipboard?: string
 };
 
-type Action = {type: string};
+type Action = { type: string, payload?: any };
 // | { type: REQUEST_LOGIN }
 // | { type: COMPLETE_LOGIN }
 // | { type: CHANGE_LINK_LAYOUT, payload: LinkLayoutType };
@@ -42,6 +44,11 @@ const initialState: userInterfaceStateType = {
 };
 
 export default function links(state: userInterfaceStateType = initialState, action: Action) {
+  function deleteFields(nextState, fields) {
+    // eslint-disable-next-line no-param-reassign
+    fields.forEach((field) => delete nextState[field]);
+    return nextState;
+  }
   switch (action.type) {
     case REQUEST_LOGIN:
       return Object.assign({}, state, { loggingIn: true });
@@ -62,10 +69,7 @@ export default function links(state: userInterfaceStateType = initialState, acti
     case RECEIVED_METADATA:
       return Object.assign({}, state, { metadataLoading: false, metadata: action.payload });
     case CLEAR_METADATA:
-      const nextState = Object.assign({}, state);
-      delete nextState.metadata;
-      nextState.metadataLoading = false;
-      return nextState;
+      return deleteFields(Object.assign({}, state, { metadataLoading: false }), ['metadata']);
     case TOGGLE_BATCH_EDITING:
       return Object.assign({}, state, { batchEditing: !state.batchEditing });
     case TOGGLE_BATCH_SELECTION:
@@ -80,6 +84,10 @@ export default function links(state: userInterfaceStateType = initialState, acti
       });
     case SET_BATCH_SELECTION:
       return Object.assign({}, state, { batchSelections: action.payload });
+    case SET_CLIPBOARD:
+      return Object.assign({}, state, { clipboard: action.payload });
+    case CLEAR_CLIPBOARD:
+      return deleteFields(Object.assign({}, state), ['clipboard']);
     default:
       return state;
   }
