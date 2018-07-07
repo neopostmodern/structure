@@ -20,3 +20,17 @@ input[type="text"].name {
   color: gray;
   margin-top: 0.5em;
 }
+
+.suggestions {
+  margin-bottom: 2rem;
+
+  opacity: 0;
+  max-height: 0;
+  transition-property: all;
+  transition-timing-function: ease-in-out;
+  transition-duration: .3s;
+}
+.suggestionsVisible {
+  opacity: 1;
+  max-height: 100px;
+}

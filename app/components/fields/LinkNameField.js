@@ -1,5 +1,6 @@
 import React from 'react';
 import { formValues } from 'redux-form';
+import ClassNames from 'classnames';
 
 import buttonStyles from '../../styles/button.scss';
 import formStyles from '../NoteForm.scss';
@@ -15,7 +16,8 @@ type LinkNameFieldProps = {
 };
 
 type LinkNameFieldState = {
-  nameFocused: false
+  nameFocused: boolean,
+  nameFocusedAnimation: boolean
 };
 
 class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldState> {
@@ -25,7 +27,8 @@ class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldSta
     super();
 
     this.state = {
-      nameFocused: false
+      nameFocused: false,
+      nameFocusedAnimation: false
     };
 
     this.handleFocusName = this.handleFocusName.bind(this);
@@ -38,15 +41,20 @@ class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldSta
     this.setState({
       nameFocused: true
     });
+    setTimeout(
+      () => this.setState({ nameFocusedAnimation: true }),
+      10
+    );
   }
   handleBlurName() {
     this.props.input.onBlur();
-    setTimeout(() => this.setState({ nameFocused: false }), 100);
+    this.setState({ nameFocusedAnimation: false });
+    setTimeout(() => this.setState({ nameFocused: false }), 300);
   }
 
   renderTitles() {
     return (
-      <div style={{ marginBottom: '2rem' }}>
+      <div className={ClassNames(formStyles.suggestions, { [formStyles.suggestionsVisible]: this.state.nameFocusedAnimation })}>
         <div className={formStyles.subheader}>Title suggestions</div>
         {this.props.metadataLoading
           ? <i>Loading metadata...</i>
@@ -66,7 +74,6 @@ class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldSta
   }
 
   render() {
-    console.log(this.props, this.state);
     return (
       <React.Fragment>
         <input
