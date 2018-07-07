@@ -11,6 +11,7 @@ export type LinkLayoutType = $Keys<typeof LinkLayouts>;
 export const TagsLayouts = {
   CHAOS_LAYOUT: 'CHAOS_LAYOUT',
   COLOR_LIST_LAYOUT: 'COLOR_LIST_LAYOUT',
+  COLOR_COLUMN_LAYOUT: 'COLOR_COLUMN_LAYOUT',
   COLOR_WHEEL_LAYOUT: 'COLOR_WHEEL_LAYOUT'
 };
 export type TagsLayoutsType = $Keys<typeof TagsLayouts>;

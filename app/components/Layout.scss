@@ -1,5 +1,7 @@
+@import "../styles/config";
+
 .container {
-  max-width: 50rem;
+  max-width: $CONTAINER_WIDTH;
   margin: 2rem auto 5rem;
 }
 
