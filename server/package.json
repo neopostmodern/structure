@@ -30,7 +30,6 @@
     "passport-github": "^1.1.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-node": "^6.5.3"
+    "babel-cli": "^6.26.0"
   }
 }
