@@ -43,8 +43,12 @@ export function setUpGitHubLogin(app, User) {
       });
     }));
 
-  passport.serializeUser((user, cb) => cb(null, user));
-  passport.deserializeUser((obj, cb) => cb(null, obj));
+  // todo: monitor if this is too resource heavy (it helps avoiding caching issues)
+  passport.serializeUser((user, cb) => cb(null, user._id));
+  passport.deserializeUser((userId, cb) => (
+    User.findOne({ _id: userId })
+      .then(user => cb(null, user))
+  ));
 
   app.use(session({
     secret: config.SESSION_SECRET,
