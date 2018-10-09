@@ -4,6 +4,8 @@ import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
 import { makeExecutableSchema } from 'graphql-tools';
 
+import { addTagByNameToNote, requestNewCredential, revokeCredential, submitLink } from './methods'
+
 const rootSchema = [`
 scalar Date
 
@@ -13,11 +15,15 @@ type Versions {
   maximum: Int
 }
 
+type Credentials {
+  bookmarklet: String
+}
 type User {
   _id: String!
   name: String!
   createdAt: Date!
   authenticationProvider: String
+  credentials: Credentials
 }
 
 type Tag {
@@ -175,6 +181,14 @@ type Mutation {
   toggleArchivedNote(
     noteId: ID!
   ): Note
+  
+  requestNewCredential(
+    purpose: String!
+  ): User
+  
+  revokeCredential(
+    purpose: String!
+  ): User
 }
 
 schema {
@@ -226,6 +240,7 @@ const rootResolvers = {
   },
   Query: {
     currentUser(root, args, context) {
+      console.log(context.user);
       return context.user || null;
     },
     versions(root, args, context) {
@@ -305,11 +320,7 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to submit links.');
       }
-      return new context.Link({
-        url,
-        user: context.user,
-        createdAt: new Date()
-      }).save();
+      return submitLink(context.user, url);
     },
     updateLink(root, { link: { _id, ...props } }, context) {
       if (!context.user) {
@@ -382,17 +393,8 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to tag notes.');
       }
-      return context.Tag.findOne({ name, user: context.user }).then((tag) => {
-        if (tag) {
-          return tag;
-        }
-        return new context.Tag({ name, color: 'lightgray', user: context.user }).save();
-      }).then((tag) => context.Note.findOneAndUpdate(
-          { _id: noteId },
-          { $addToSet: { tags: tag._id } }
-        )
-          .exec()
-          .then(({ _id }) => context.Note.findOne({ _id })));
+      return addTagByNameToNote(context.user, noteId, name)
+        .then(() => context.Note.findOne({ _id: noteId }));
     },
     removeTagByIdFromNote(root, { noteId, tagId }, context) {
       if (!context.user) {
@@ -422,7 +424,29 @@ const rootResolvers = {
 
           return note.save();
         });
-    }
+    },
+    requestNewCredential(root, { purpose }, { user }) {
+      if (!user) {
+        throw new Error('Need to be logged in to request new credentials.');
+      }
+
+      if (user.credentials[purpose]) {
+        throw new Error(`Credential for this purpose (${purpose}) already set.`);
+      }
+
+      return requestNewCredential(user._id, purpose);
+    },
+    revokeCredential(root, { purpose }, { user }) {
+      if (!user) {
+        throw new Error('Need to be logged in to revoke credentials.');
+      }
+
+      if (!user.credentials[purpose]) {
+        throw new Error(`Credential for this purpose (${purpose}) hasn't been created.`);
+      }
+
+      return revokeCredential(user._id, purpose);
+    },
   }
 };
 

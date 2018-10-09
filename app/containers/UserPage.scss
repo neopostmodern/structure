@@ -1,0 +1,20 @@
+.credentials {
+  display: flex;
+}
+
+.credentials__purpose {
+  width: 8em;
+}
+
+.credentials__value {
+  flex-grow: 1;
+
+  input {
+	width: 100%;
+  }
+}
+
+.credentials__request-revoke {
+  width: 10em;
+  text-align: right;
+}

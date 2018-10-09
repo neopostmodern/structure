@@ -5,12 +5,24 @@ import config from './config.json';
 import urlAnalyzer from '../../util/urlAnalyzer';
 
 mongoose.connect(config.MONGO_URL);
+mongoose.set('debug', config.MONGOOSE_DEBUG);
 
 const userSchema = Schema({
   _id: String,
   name: String,
   createdAt: Date,
-  authenticationProvider: String
+  authenticationProvider: String,
+  credentials: {
+    type: {
+      bookmarklet: {
+        type: String,
+        optional: true
+      }
+    },
+    default: {}
+  }
+}, {
+  minimize: false
 });
 export const User = mongoose.model('User', userSchema);
 
@@ -85,14 +97,14 @@ migrationSystem.list().then((migrations) => {
       }
     })
   ).then(migrationNames => Promise.all(
-      migrationNames
-        .filter(migrationName => Boolean(migrationName))
-        .map(migrationName => {
-          console.log(`  ⇑ ${migrationName} will migrate 'up'...`);
-          return migrationSystem.run('up', migrationName)
-            .then(() => console.log('    ...OK'))
-            .catch((error) => console.error('    ...FAILED', error));
-        })
+    migrationNames
+      .filter(migrationName => Boolean(migrationName))
+      .map(migrationName => {
+        console.log(`  ⇑ ${migrationName} will migrate 'up'...`);
+        return migrationSystem.run('up', migrationName)
+          .then(() => console.log('    ...OK'))
+          .catch((error) => console.error('    ...FAILED', error));
+      })
   ));
 })
   .then(() => console.log('Migrations complete.'))

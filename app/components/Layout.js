@@ -120,6 +120,7 @@ export class Layout extends Component {
 const PROFILE_QUERY = gql`
   query CurrentUserForLayout {
     currentUser {
+      _id
       name
     }
   }

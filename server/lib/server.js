@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import mongoSanitize from 'express-mongo-sanitize';
 import cors from 'cors';
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
 import { User, Note, Link, Text, Tag } from './mongo';
@@ -7,10 +8,12 @@ import { setUpGitHubLogin } from './githubLogin';
 import schema from './schema';
 
 import config from './config.json';
+import { addTagByNameToNote, submitLink } from './methods';
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(mongoSanitize());
 app.use(cors({ origin: 'http://localhost:1212', credentials: true }));
 setUpGitHubLogin(app, User);
 
@@ -57,6 +60,34 @@ if (config.GRAPHIQL) {
     `,
   }));
 }
+
+app.get('/bookmarklet', (request, result) => {
+  const { token, url } = request.query;
+  User.findOne({ 'credentials.bookmarklet': token })
+    .then(user => {
+      if (!user) {
+        throw Error('No user with provided credential (token) found.');
+      }
+      return submitLink(user, url)
+        .then(({ _id }) => addTagByNameToNote(user, _id, 'from:bookmarklet'));
+    })
+    .then(() => (
+      result.send(
+        `
+<html>
+<body>
+  <h1>Added to Structure!</h1>
+  You can close this window, if it doesn't do so itself.
+  <script>setTimeout(function () { window.close(); }, 3000);</script>
+</body>
+</html>`
+      )
+    ))
+    .catch((error) => {
+      console.error('Bookmarklet URL insert failed!', error);
+      request.status(500).send('<html><body><h1>Structure error.</h1>Failed to save your link :(</body></html>');
+    });
+});
 
 app.listen(config.PORT, () => {
   console.log(`Structure GraphQL Server running at ${config.PORT}...`);
