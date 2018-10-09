@@ -24,7 +24,7 @@ class UserPage extends React.Component {
   } & credentialsLoadingType | credentialsType;
 
   static bookmarkletCode(token) {
-    return `javascript:void(open('http://localhost:3001/bookmarklet?token=${token}&url='+encodeURIComponent(location.href)))`;
+    return `javascript:void(open('${BACKEND_URL}/bookmarklet?token=${token}&url='+encodeURIComponent(location.href)))`;
   }
 
   requestNewCredential(purpose) {
