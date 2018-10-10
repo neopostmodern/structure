@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-node lib/server.js",
-    "build": "babel lib -d ./dist && babel migrations -d ./dist/migrations",
+    "start": "rollup -c",
+    "build": "rollup -c rollup-bundle.config.js && babel migrations -d ./dist/migrations",
     "bundle": "npm run build && ./deploy/bundle.sh",
     "deploy": "npm run bundle && ./deploy/deploy.sh ./deploy/server2.sh "
   },
@@ -30,6 +30,12 @@
     "passport-github": "^1.1.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0"
+    "@babel/cli": "^7.1.2",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "rollup": "^0.66.5",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-run": "^1.1.0"
   }
 }

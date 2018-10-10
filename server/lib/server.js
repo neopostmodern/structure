@@ -7,7 +7,7 @@ import { User, Note, Link, Text, Tag } from './mongo';
 import { setUpGitHubLogin } from './githubLogin';
 import schema from './schema';
 
-import config from './config.json';
+import config from './config';
 import { addTagByNameToNote, submitLink } from './methods';
 
 const app = express();

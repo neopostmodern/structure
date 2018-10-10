@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import MigrateMongoose from 'migrate-mongoose';
 
-import config from './config.json';
+import config from './config';
 import urlAnalyzer from '../../util/urlAnalyzer';
 
 mongoose.connect(config.MONGO_URL);

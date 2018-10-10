@@ -8,6 +8,7 @@ echo "Copying files to server..."
 lftp -e "mirror --reverse dist backend; bye" "sftp://$USER:SSH@$SERVER"
 echo "OK"
 
+# todo: switch to npm
 echo "Installing dependencies on server..."
 ssh "$USER@$SERVER" "cd backend && yarn install --production"
 echo "OK"
