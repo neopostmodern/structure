@@ -10,7 +10,7 @@ echo "OK"
 
 # todo: switch to npm
 echo "Installing dependencies on server..."
-ssh "$USER@$SERVER" "cd backend && yarn install --production"
+ssh "$USER@$SERVER" "cd backend && npm install --production"
 echo "OK"
 
 echo "Starting backend service (as pm2-process '$PROCESS_NAME')..."
