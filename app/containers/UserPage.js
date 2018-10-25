@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom';
 import gql from 'graphql-tag';
 import { graphql, compose } from 'react-apollo';
 
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import menuStyles from '../styles/menu.scss';
 import userPageStyles from './UserPage.scss';
+import { setBackendUrl } from '../actions/configuration';
 
 // todo: create universal loading/not-loading type and inherit?
 type credentialsLoadingType = {
@@ -17,14 +20,25 @@ type credentialsType = {
   }
 };
 
+type configurationType = {
+  backendUrl: string,
+  backendUrlDefault: string
+};
+
 class UserPage extends React.Component {
   props: {
     requestNewCredential: (purpose: string) => void,
-    revokeCredential: (purpose: string) => void,
-  } & credentialsLoadingType | credentialsType;
+    revokeCredential: (purpose: string) => void
+  } | credentialsLoadingType | credentialsType | configurationType;
 
-  static bookmarkletCode(token) {
-    return `javascript:void(open('${BACKEND_URL}/bookmarklet?token=${token}&url='+encodeURIComponent(location.href)))`;
+  constructor() {
+    super();
+
+    this.setBackendUrl = this.setBackendUrl.bind(this);
+  }
+
+  bookmarkletCode(token) {
+    return `javascript:void(open('${this.props.backendUrl}/bookmarklet?token=${token}&url='+encodeURIComponent(location.href)))`;
   }
 
   requestNewCredential(purpose) {
@@ -33,6 +47,10 @@ class UserPage extends React.Component {
 
   revokeCredential(purpose) {
     this.props.revokeCredential(purpose);
+  }
+
+  setBackendUrl() {
+    this.props.setBackendUrl(document.getElementById('configuration__backend-url').value);
   }
 
   renderRequestOrRevoke(credentials, purpose) {
@@ -62,16 +80,16 @@ class UserPage extends React.Component {
 
     const { credentials } = this.props.user;
     return (
-      <div className={userPageStyles.credentials}>
-        <div className={userPageStyles.credentials__purpose}>
+      <div className={userPageStyles['settings-table']}>
+        <div className={userPageStyles['settings-table__purpose']}>
           Bookmarklet
         </div>
-        <div className={userPageStyles.credentials__value}>
+        <div className={userPageStyles['settings-table__value']}>
           {credentials.bookmarklet
-            ? <input type="text" readOnly={true} value={UserPage.bookmarkletCode(credentials.bookmarklet)} />
+            ? <input type="text" readOnly value={this.bookmarkletCode(credentials.bookmarklet)} />
             : <i>No token yet.</i>}
         </div>
-        <div className={userPageStyles['credentials__request-revoke']}>
+        <div className={userPageStyles['settings-table__action']}>
           {this.renderRequestOrRevoke(credentials, 'bookmarklet')}
         </div>
       </div>
@@ -79,33 +97,77 @@ class UserPage extends React.Component {
   }
 
   render() {
-    console.log(this.props, this.props.loading, this.props.user);
+    const { backendUrl, backendUrlDefault } = this.props;
 
     return (
       <div>
         <div className={menuStyles.menu}>
           <Link to="/tags">
             My tags
-          </Link>,&nbsp;
+          </Link>
+,&nbsp;
           <a onClick={() => alert('This feature is not yet available')} className={menuStyles.disabled}>
             Export my data
-          </a>,&nbsp;
+          </a>
+,&nbsp;
           <a onClick={() => alert('This feature is not yet available')} className={menuStyles.disabled}>
             Delete my account
           </a>
         </div>
-        <div style={{marginTop: '2rem'}}>
+        <div style={{ marginTop: '2rem' }}>
           <h2>Credentials</h2>
           {this.renderCredentials()}
+
+          <h2>Configuration</h2>
+          <div className={userPageStyles['settings-table']}>
+            <div className={userPageStyles['settings-table__purpose']}>
+              Server
+            </div>
+            <div className={userPageStyles['settings-table__value']}>
+              <input id="configuration__backend-url" type="text" defaultValue={backendUrl} placeholder={backendUrlDefault} />
+            </div>
+            <div className={userPageStyles['settings-table__action']}>
+              <button type="button" onClick={this.setBackendUrl}>
+                Update
+              </button>
+            </div>
+          </div>
+          <div className={userPageStyles['settings-table__comment']}>
+            The backend server is in charge of storing your data (username, notes, tags, et cetera).
+            You must trust this server (and/or the operator of it), since your data is only
+            encrypted during the transport to the server, not on the server. This means the operator
+            of the server can (theoretically) read and/or modify all your data.
+            <br />
+            Modifying the backend server URL causes a restart.
+            {' '}
+            <b>Setting an invalid value might make it impossible to restart the app.</b>
+            {' '}
+            Data is not migrated automatically when switching backend servers.
+            <br />
+            Default:
+            {' '}
+            {backendUrlDefault}
+          </div>
+
           <h2>About</h2>
-          You are using Structure {VERSION}<br/>
-          Your data is stored on the backend server <i>{BACKEND_URL}</i><br />
+          You are using Structure
+          {' '}
+          {VERSION}
           <br />
-          Structure uses (amongst other things) Electron, React, Redux, Redux-Forms, Apollo/GraphQL, Lunchtype22/Lunchtype25<br />
-          Written in JSX (stage-0, flow) and SCSS transpiled and bundled by Babel and Webpack<br />
-          The backend uses express, mongoose, passport.js on node.js with mongoDB<br />
           <br />
-          Find the Structure source code <a href="https://github.com/neopostmodern/structure" target="_blank" rel="noopener noreferrer">on GitHub</a>
+          Structure uses (amongst other things) Electron, React, Redux, Redux-Forms, Apollo/GraphQL,
+          Lunchtype22/
+          <wbr />
+          Lunchtype25
+          <br />
+          Written in JSX (stage-0, flow) and SCSS transpiled and bundled by Babel and Webpack
+          <br />
+          The backend uses express, mongoose, passport.js on node.js (rollup + Babel) with mongoDB
+          <br />
+          <br />
+          Find the Structure source code
+          {' '}
+          <a href="https://github.com/neopostmodern/structure" target="_blank" rel="noopener noreferrer">on GitHub</a>
         </div>
       </div>
     );
@@ -115,9 +177,9 @@ class UserPage extends React.Component {
 // todo: create common fragment for credentials
 const USER_QUERY = gql`
   query user {
-    currentUser { 
+    currentUser {
       _id
-      
+
       credentials {
         bookmarklet
       }
@@ -169,4 +231,12 @@ const withRevokeCredential = graphql(REVOKE_CREDENTIAL_MUTATION, {
   })
 });
 
-export default compose(withData, withRequestNewCredential, withRevokeCredential)(UserPage);
+export default compose(
+  withData,
+  withRequestNewCredential,
+  withRevokeCredential,
+  connect(
+    ({ configuration: { backendUrl, backendUrlDefault } }) => ({ backendUrl, backendUrlDefault }),
+    (dispatch) => bindActionCreators({ setBackendUrl }, dispatch)
+  )
+)(UserPage);

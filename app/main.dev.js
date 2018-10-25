@@ -130,4 +130,10 @@ app.on('ready', async () => {
   ipcMain.on('toggle-dev-tools', () => {
     mainWindow.webContents.toggleDevTools();
   });
+
+  ipcMain.on('restart', () => {
+    console.log('Restarting application...');
+    app.relaunch();
+    app.exit(0);
+  });
 });

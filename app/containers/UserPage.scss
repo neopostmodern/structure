@@ -1,12 +1,12 @@
-.credentials {
+.settings-table {
   display: flex;
 }
 
-.credentials__purpose {
+.settings-table__purpose {
   width: 8em;
 }
 
-.credentials__value {
+.settings-table__value {
   flex-grow: 1;
 
   input {
@@ -14,7 +14,12 @@
   }
 }
 
-.credentials__request-revoke {
+.settings-table__action {
   width: 10em;
   text-align: right;
+}
+
+.settings-table__comment {
+  font-size: small;
+  color: gray;
 }

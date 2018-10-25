@@ -9,6 +9,10 @@
     "browser": true,
     "node": true
   },
+  "globals": {
+    "BACKEND_URL": false,
+    "VERSION": false
+  },
   "rules": {
     "arrow-parens": ["off"],
     "compat/compat": "error",

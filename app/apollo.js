@@ -1,13 +1,16 @@
 import ApolloClient, { addTypename } from 'apollo-client';
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { createHttpLink } from 'apollo-link-http';
+import ElectronStore from 'electron-store';
 
 // import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 // import addGraphQLSubscriptions from './helpers/subscriptions';
 
+const electronStore = new ElectronStore();
+const backendUrl = electronStore.get('backend-url', BACKEND_URL);
 const link = createHttpLink({
-  uri: `${BACKEND_URL}/graphql`,
+  uri: `${backendUrl}/graphql`,
   credentials: 'include'
 });
 

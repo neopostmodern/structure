@@ -181,6 +181,7 @@
     "apollo-link-http": "^1.5.4",
     "classnames": "^2.2.6",
     "electron-debug": "^2.0.0",
+    "electron-store": "^2.0.0",
     "graphql-tag": "^2.9.2",
     "history": "^4.7.2",
     "marked": "^0.4.0",
