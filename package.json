@@ -27,10 +27,10 @@
     "postinstall": "concurrently \"npm run flow-typed\" \"npm run build-dll\" \"install-app-deps\" \"node node_modules/fbjs-scripts/node/check-dev-engines.js package.json\"",
     "package": "npm run build && build --publish never",
     "package-win": "npm run build && build --win --x64",
-    "package-macos": "npm run build && build --mac",
+    "package-macos": "npm run build && build --mac && npm run package-macos-fix",
     "package-macos-fix": "cd release/mac && tar czpf ../structure-mac-fix.tar.gz Structure.app/",
     "package-linux": "npm run build && build --linux",
-    "package-all": "npm run build && build -mwl",
+    "package-all": "npm run build && build -mwl && npm run package-macos-fix",
     "cleanup": "mop -v",
     "server": "(cd server && npm start)"
   },
