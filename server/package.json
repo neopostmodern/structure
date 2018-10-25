@@ -23,7 +23,6 @@
     "graphql-server-express": "^1.3.2",
     "graphql-tools": "^2.19.0",
     "lodash": "^4.17.4",
-    "migrate-mongoose": "^3.2.2",
     "moment": "^2.20.1",
     "mongoose": "^5.0.2",
     "passport": "^0.4.0",

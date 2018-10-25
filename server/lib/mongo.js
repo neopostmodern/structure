@@ -1,11 +1,16 @@
 import mongoose, { Schema } from 'mongoose';
-import MigrateMongoose from 'migrate-mongoose';
 
 import config from './config';
 import urlAnalyzer from '../../util/urlAnalyzer';
 
 mongoose.connect(config.MONGO_URL);
 mongoose.set('debug', config.MONGOOSE_DEBUG);
+
+const metaSchema = Schema({
+  _id: String,
+  value: {}
+});
+export const Meta = mongoose.model('Meta', metaSchema);
 
 const userSchema = Schema({
   _id: String,
@@ -64,48 +69,3 @@ const tagSchema = Schema({
   color: String
 });
 export const Tag = mongoose.model('Tag', tagSchema);
-
-
-const migrationSystem = new MigrateMongoose({
-  migrationsPath: config.MIGRATIONS_DIRECTORY,
-  dbConnectionUri: config.MONGO_URL,
-  es6Templates: true,
-  autosync: true,
-});
-
-const forceRerunMigration = null; // 'note-types';
-
-migrationSystem.list().then((migrations) => {
-  console.log('Running migrations...');
-  return Promise.all(
-    migrations.map((migration) => {
-      if (migration.state === 'up') {
-        if (migration.name === forceRerunMigration) {
-          console.log(`  ⇓ ${migration.name} forced migration 'down'...`);
-          return migrationSystem.run('down', migration.name)
-            .then(() => {
-              console.log('    ...OK');
-              return migration.name;
-            })
-            .catch((error) => console.error('    ...FAILED', error));
-        } else {
-          console.log(`  ⇒ ${migration.name} already migrated`);
-          return Promise.resolve();
-        }
-      } else {
-        return Promise.resolve(migration.name);
-      }
-    })
-  ).then(migrationNames => Promise.all(
-    migrationNames
-      .filter(migrationName => Boolean(migrationName))
-      .map(migrationName => {
-        console.log(`  ⇑ ${migrationName} will migrate 'up'...`);
-        return migrationSystem.run('up', migrationName)
-          .then(() => console.log('    ...OK'))
-          .catch((error) => console.error('    ...FAILED', error));
-      })
-  ));
-})
-  .then(() => console.log('Migrations complete.'))
-  .catch(() => console.error('Migration failed.'));
