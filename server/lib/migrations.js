@@ -10,6 +10,7 @@ migrations.set(
     name: 'change-migrations-system',
     async up() {
       const highestMigration = await mongoose.connection.db.collection('migrations').findOne({ state: 'up' }, { sort: { createdAt: -1 } });
+      console.log('Detected highest previously run migration:');
       console.log(highestMigration);
       let highestVersion = 0;
       migrations.forEach((migration, version) => {
@@ -19,6 +20,7 @@ migrations.set(
       });
 
       const migrationMetaEntry = new Meta({ _id: 'database-version', value: highestVersion });
+      console.log(`Database version set to ${highestVersion}`);
       console.log("Obsolete 'migrations' collection not deleted, you can do so manually.");
       return migrationMetaEntry.save();
     },
@@ -77,7 +79,7 @@ migrations.set(
 migrations.set(
   4,
   {
-    name: 'archivable-notes',
+    name: 'archiveable-notes',
     async up() {
       return Note.find()
         .then((notes) => Promise.all(notes.map((note) => {
@@ -132,8 +134,10 @@ export async function migrateTo(targetVersion) {
   let databaseVersion = await Meta.findOne({ _id: 'database-version' });
 
   if (databaseVersion === null) {
+    console.log('Setting up migrations system...');
     await migrations.get(0).up();
     databaseVersion = await Meta.findOne({ _id: 'database-version' });
+    console.log('  ...OK');
   }
 
   // todo: allow migrating down if necessary

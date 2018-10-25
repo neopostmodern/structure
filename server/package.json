@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "rollup -c",
-    "build": "rollup -c rollup-bundle.config.js && babel migrations -d ./dist/migrations",
+    "build": "rollup -c rollup-bundle.config.js",
     "bundle": "npm run build && ./deploy/bundle.sh",
     "deploy": "npm run bundle && ./deploy/deploy.sh ./deploy/server2.sh "
   },

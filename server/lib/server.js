@@ -102,4 +102,7 @@ migrateTo(5)
     console.log('Migrations complete.');
     runExpressServer();
   })
-  .catch(() => console.error('Migration failed.'));
+  .catch((error) => {
+    console.error('Migration failed.');
+    console.error(error);
+  });
