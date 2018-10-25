@@ -240,7 +240,6 @@ const rootResolvers = {
   },
   Query: {
     currentUser(root, args, context) {
-      console.log(context.user);
       return context.user || null;
     },
     versions(root, args, context) {
