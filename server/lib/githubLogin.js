@@ -8,7 +8,7 @@ import config from './config';
 const MongoDBSession = ConnectMongoDbSession(session);
 
 const store = new MongoDBSession({
-  uri: 'mongodb://localhost:27017/structureApp',
+  uri: config.MONGO_URL,
   collection: 'sessions'
 });
 
@@ -26,7 +26,6 @@ export function setUpGitHubLogin(app, User) {
 
   passport.use(new GitHubStrategy(gitHubStrategyOptions,
     (accessToken, refreshToken, profile, cb) => {
-      // console.log(profile);
       User.findOne({ _id: profile.id }).then((user) => {
         if (user) {
           cb(null, user);

@@ -8,7 +8,7 @@
     "start": "rollup -c",
     "build": "rollup -c rollup-bundle.config.js",
     "bundle": "npm run build && ./deploy/bundle.sh",
-    "deploy": "npm run bundle && ./deploy/deploy.sh ./deploy/server2.sh "
+    "deploy": "npm run bundle && ./deploy/deploy.sh"
   },
   "author": "",
   "license": "ISC",
