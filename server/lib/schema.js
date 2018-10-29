@@ -171,12 +171,12 @@ type Mutation {
   addTagByNameToNote(
     noteId: ID!
     name: String!
-  ): Link
+  ): Note
   
   removeTagByIdFromNote(
     noteId: ID!
     tagId: ID!
-  ): Link
+  ): Note
   
   toggleArchivedNote(
     noteId: ID!

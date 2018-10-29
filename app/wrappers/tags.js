@@ -4,11 +4,13 @@ import gql from 'graphql-tag';
 const ADD_TAG_MUTATION = gql`
   mutation addTagByNameToNote($noteId: ID!, $name: String!){
     addTagByNameToNote(noteId: $noteId, name: $name) {
-      _id
-      tags {
+      ... on INote {
         _id
-        name
-        color
+        tags {
+          _id
+          name
+          color
+        }
       }
     }
   }
@@ -16,11 +18,13 @@ const ADD_TAG_MUTATION = gql`
 const REMOVE_TAG_MUTATION = gql`
   mutation removeTagByIdFromNote($noteId: ID!, $tagId: ID!){
     removeTagByIdFromNote(noteId: $noteId, tagId: $tagId) {
-      _id
-      tags {
+      ... on INote {
         _id
-        name
-        color
+        tags {
+          _id
+          name
+          color
+        }
       }
     }
   }
