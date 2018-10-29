@@ -66,7 +66,6 @@ class InlineTagForm extends React.Component {
     tags.forEach(tag => {
       this.tagMap[tag._id] = tag;
     });
-    console.log(this.tagMap);
   }
 
   componentWillReceiveProps(nextProps) {
