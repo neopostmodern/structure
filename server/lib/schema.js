@@ -244,8 +244,8 @@ const rootResolvers = {
     },
     versions(root, args, context) {
       return {
-        minimum: 1,
-        recommended: 4
+        minimum: 5,
+        recommended: 5
       };
     },
     notes(root, { offset, limit }, context) {

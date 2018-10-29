@@ -7,6 +7,6 @@ export default {
   // must be the same.
   persistedQueries: false,
 
-  apiVersion: 4,
+  apiVersion: 5,
   releaseUrl: 'https://github.com/neopostmodern/structure/releases/latest'
 };
