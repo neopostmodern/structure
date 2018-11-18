@@ -4,6 +4,10 @@ import React from 'react';
 import marked from 'marked';
 import Mousetrap from 'mousetrap';
 
+import makeMousetrapGlobal from '../utils/mousetrapGlobal';
+
+makeMousetrapGlobal(Mousetrap);
+
 const renderer = new marked.Renderer();
 renderer.listitem = function renderListItem(text) {
   if (/^\s*\[[x ]\]\s*/.test(text)) {
@@ -26,39 +30,84 @@ marked.setOptions({
 
 const focusDescriptionShortcutKeys = ['ctrl+e', 'command+e'];
 
-export default class MarkedTextarea extends React.Component {
-  state: {
-    editDescription: boolean
-  }
+type MarkedTextareaProps = {
+  input: {
+    value: string
+  },
+  className: string
+}
+type MarkedTextareaStateType = {
+  editDescription: boolean,
+  editDescriptionFocused: boolean
+};
 
+export default class MarkedTextarea extends React.Component<MarkedTextareaProps, MarkedTextareaStateType> {
   constructor() {
     super();
 
     this.state = {
-      editDescription: false
+      editDescription: false,
+      editDescriptionFocused: false
     };
+
+    this.textareaRefCallback = this.textareaRefCallback.bind(this);
+    this.handleTextareaKeydown = this.handleTextareaKeydown.bind(this);
   }
 
   componentDidMount() {
-    Mousetrap.bind(focusDescriptionShortcutKeys, this.setEditDescription.bind(this, true));
+    Mousetrap.bindGlobal(focusDescriptionShortcutKeys, this.toggleEditDescription.bind(this));
   }
+
   componentWillUnmount() {
     Mousetrap.unbind(focusDescriptionShortcutKeys);
   }
 
-  setEditDescription(value: boolean) {
-    this.setState({ editDescription: value });
+  textareaElement: HTMLTextAreaElement | null = null;
+
+  toggleEditDescription() {
+    const currentEditDescriptionStatus = this.state.editDescription;
+    this.setState({ editDescription: !currentEditDescriptionStatus });
+
+    if (!currentEditDescriptionStatus) {
+      this.focusTextarea();
+    } else {
+      this.setState({ editDescriptionFocused: false });
+    }
+  }
+
+  textareaRefCallback(textarea: ?HTMLTextAreaElement) {
+    if (!textarea) {
+      return;
+    }
+
+    this.textareaElement = textarea;
+  }
+
+  focusTextarea() {
+    if (!this.state.editDescriptionFocused && this.textareaElement) {
+      this.textareaElement.focus();
+      this.setState({ editDescriptionFocused: true });
+    }
+  }
+
+  handleTextareaKeydown(event: SyntheticKeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === 'Escape') {
+      this.toggleEditDescription();
+    }
   }
 
   render() {
+    const { input, className } = this.props;
+
     if (this.state.editDescription) {
       return (
         <div>
           <textarea
-            {...this.props.input}
-            className={this.props.className}
-            onBlur={this.setEditDescription.bind(this, false)}
-            ref={(element) => element && element.focus()}
+            {...input}
+            className={className}
+            onBlur={() => this.setState({ editDescriptionFocused: false })}
+            onKeyDown={this.handleTextareaKeydown}
+            ref={this.textareaRefCallback}
           />
         </div>
       );
@@ -66,8 +115,7 @@ export default class MarkedTextarea extends React.Component {
 
     return (
       <div
-        dangerouslySetInnerHTML={{ __html: marked(this.props.input.value || '<small><i>Click to add a description</i></small>') }}
-        onClick={this.setEditDescription.bind(this, true)}
+        dangerouslySetInnerHTML={{ __html: marked(input.value || '<small><i>No content</i></small>') }}
         style={{ fontSize: '1rem' }}
       />
     );
