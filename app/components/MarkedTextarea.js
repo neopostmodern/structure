@@ -1,10 +1,15 @@
 // @flow
 
 import React from 'react';
+import ClassNames from 'classnames';
 import marked from 'marked';
 import Mousetrap from 'mousetrap';
 
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
+import shortcutKeysToString from '../utils/shortcutKeysToString';
+
+import styles from './MarkedTextarea.scss';
+import buttonStyles from '../styles/button.scss';
 
 makeMousetrapGlobal(Mousetrap);
 
@@ -52,6 +57,7 @@ export default class MarkedTextarea extends React.Component<MarkedTextareaProps,
 
     this.textareaRefCallback = this.textareaRefCallback.bind(this);
     this.handleTextareaKeydown = this.handleTextareaKeydown.bind(this);
+    this.toggleEditDescription = this.toggleEditDescription.bind(this);
   }
 
   componentDidMount() {
@@ -98,9 +104,11 @@ export default class MarkedTextarea extends React.Component<MarkedTextareaProps,
 
   render() {
     const { input, className } = this.props;
+    const { editDescription } = this.state;
 
-    if (this.state.editDescription) {
-      return (
+    let content;
+    if (editDescription) {
+      content = (
         <div>
           <textarea
             {...input}
@@ -111,13 +119,32 @@ export default class MarkedTextarea extends React.Component<MarkedTextareaProps,
           />
         </div>
       );
+    } else if (input.value) {
+      content = (
+        <div
+          dangerouslySetInnerHTML={{__html: marked(input.value)}}
+          style={{fontSize: '1rem'}}
+        />
+      );
+    } else {
+      content = (
+        <div className={styles.emptyTextarea}>
+          No content
+        </div>
+      );
     }
 
     return (
-      <div
-        dangerouslySetInnerHTML={{ __html: marked(input.value || '<small><i>No content</i></small>') }}
-        style={{ fontSize: '1rem' }}
-      />
+      <div className={styles.textareaContainer}>
+        <button
+          type="button"
+          onClick={this.toggleEditDescription}
+          title={shortcutKeysToString(focusDescriptionShortcutKeys)}
+          className={ClassNames(styles.editButton, buttonStyles.inlineButton)}>
+          {editDescription ? 'Done' : 'Edit'}
+        </button>
+        {content}
+      </div>
     );
   }
 }
