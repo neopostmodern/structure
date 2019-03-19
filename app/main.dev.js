@@ -98,26 +98,34 @@ app.on('ready', async () => {
       }
     });
 
+    const extractCookiesAndClose = () => {
+      loginWindow.webContents.session.cookies.get({}, (error, cookies) => {
+        cookies.forEach((cookie) => {
+          cookie.url = `http://${cookie.domain}`;
+          delete cookie.domain;
+          mainWindow.webContents.session.cookies.set(cookie, (error) => {
+            if (error) {
+              console.error("Can't set cookie.", error, error.message, error.toString());
+            }
+          });
+        });
+      });
+
+      loginWindow.close();
+      mainWindow.send('login-closed');
+    };
+
     loginWindow.loadURL(`${backendUrl}/login/github`);
     loginWindow.once('ready-to-show', () => {
       loginWindow.show();
+      if (loginWindow.webContents.getURL().endsWith('success')) {
+        extractCookiesAndClose();
+      }
     });
     loginWindow.webContents.on('did-get-redirect-request', (event, url) => {
+      console.log('redirect', url);
       if (url.includes('login/github/callback')) {
-        loginWindow.webContents.session.cookies.get({}, (error, cookies) => {
-          cookies.forEach((cookie) => {
-            cookie.url = `http://${cookie.domain}`;
-            delete cookie.domain;
-            mainWindow.webContents.session.cookies.set(cookie, (error) => {
-              if (error) {
-                console.error("Can't set cookie.", error, error.message, error.toString());
-              }
-            });
-          });
-        });
-
-        loginWindow.close();
-        mainWindow.send('login-closed');
+        extractCookiesAndClose();
       }
     });
     loginWindow.on('closed', () => {
