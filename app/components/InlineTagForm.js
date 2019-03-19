@@ -26,23 +26,23 @@ const inputField = ({
   </div>
 );
 
-class InlineTagForm extends React.Component {
+type InlineTagFormProps = {
+  tags: Array<TagType>,
+  tagsLoading: boolean,
+  handleSubmit: () => void,
+  onAbort: () => void,
+  // from form
+  nameValue: string,
+  pristine: boolean,
+  change: (string, any) => void,
+  submit: () => void
+};
+
+class InlineTagForm extends React.Component<InlineTagFormProps> {
   static MAX_AUTOCOMPLETE_LENGTH = 5;
   state: {
     focusedAutocompleteIndex: number,
     autocompleteSuggestions: TagType[]
-  }
-
-  props: {
-    tags: Array<TagType>,
-    tagsLoading: boolean,
-    handleSubmit: () => void,
-    onAbort: () => void,
-    // from form
-    nameValue: string,
-    pristine: boolean,
-    change: (string, any) => void,
-    submit: () => void
   }
 
   tagMap: {[string]: TagType};

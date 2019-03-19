@@ -7,16 +7,16 @@ import { connect } from 'react-redux';
 
 import { requestLogin } from '../actions/userInterface';
 
-export class UserIndicator extends Component {
-  props: {
-    requestLogin: () => void,
-    loggingIn: boolean,
+type UserIndicatorProps = {
+  requestLogin: () => void,
+  loggingIn: boolean,
 
-    loading: boolean,
-    name: string,
-    refetch: () => void
-  };
+  loading: boolean,
+  name: string,
+  refetch: () => void
+};
 
+export class UserIndicator extends Component<UserIndicatorProps> {
   constructor() {
     super();
 

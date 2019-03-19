@@ -8,19 +8,20 @@ import { type NoteObject } from '../reducers/links';
 import Tags from './Tags';
 import styles from './LinksList.css';
 
-export default class NotesList extends Component {
-  props: {
-    notes: Array<NoteObject>,
-    batchEditing?: boolean,
-    batchSelections: {
-      [string]: boolean
-    },
+type NotesListProps = {
+  notes: Array<NoteObject>,
+  batchEditing?: boolean,
+  batchSelections: {
+    [string]: boolean
+  },
 
-    addTagToNote: (linkId: string, tag: string) => void,
-    onRemoveTagFromNote: (linkId: string, tagId: string) => void,
-    onToggleArchived: (noteId: string) => void,
-    onToggleBatchSelected: (noteId: string) => void
-  };
+  addTagToNote: (linkId: string, tag: string) => void,
+  onRemoveTagFromNote: (linkId: string, tagId: string) => void,
+  onToggleArchived: (noteId: string) => void,
+  onToggleBatchSelected: (noteId: string) => void
+};
+
+export default class NotesList extends Component<NotesListProps> {
   static defaultProps = {
     batchEditing: false
   }

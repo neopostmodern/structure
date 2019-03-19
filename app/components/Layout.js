@@ -20,20 +20,20 @@ type versionsReadyType = {
   minimum: number,
   recommended?: number
 };
+type LayoutProps = {
+  path: string,
 
-export class Layout extends Component {
-  props: {
-    path: string,
+  requestLogin: () => void,
+  user: {
+    loggingIn: boolean,
+    loading: boolean,
+    name: ?string,
+    refetch: () => void
+  },
+  versions: versionsLoadingType | versionsReadyType
+};
 
-    requestLogin: () => void,
-    user: {
-      loggingIn: boolean,
-      loading: boolean,
-      name?: string,
-      refetch: () => void
-    },
-    versions: versionsLoadingType | versionsReadyType
-  };
+export class Layout extends Component<LayoutProps> {
 
   constructor() {
     super();
@@ -41,7 +41,7 @@ export class Layout extends Component {
     this.openLoginModal = this.openLoginModal.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: LayoutProps) {
     if (this.props.user.loggingIn !== prevProps.user.loggingIn) {
       this.props.user.refetch();
     }

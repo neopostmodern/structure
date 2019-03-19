@@ -55,33 +55,33 @@ const searchFieldShortcutKeys = ['ctrl+f', 'command+f'];
 const toggleBatchEditingShortcutKeys = ['ctrl+b', 'command+b'];
 const selectAllShortcutKeys = ['ctrl+a', 'command+a'];
 
-export class NotesPage extends React.Component {
-  searchInput: HTMLInputElement;
-  moreElement: HTMLElement;
+type NotesPageProps = {
+  loading: boolean,
+  notes?: Array<NoteObject>,
+  batchEditing: boolean,
+  batchSelections: BatchSelectionType,
+  layout: LinkLayoutType,
+  archiveState: ArchiveStateType,
+  searchQuery: string,
+  infiniteScrollLimit: number,
+  graphQlError?: Object,
 
-  props: {
-    loading: boolean,
-    notes?: Array<NoteObject>,
-    batchEditing: boolean,
-    batchSelections: BatchSelectionType,
-    layout: LinkLayoutType,
-    archiveState: ArchiveStateType,
-    searchQuery: string,
-    infiniteScrollLimit: number,
-    graphQlError?: Object,
+  addTagByNameToNote: (linkId: string, tag: string) => void,
+  removeTagByIdFromNote: (linkId: string, tagId: string) => void,
+  toggleArchivedNote: (noteId: string) => void,
+  toggleBatchEditing: () => void,
+  toggleNoteSelected: (noteId: string) => void,
+  setNotesSelected: (selection: BatchSelectionType) => void,
+  changeLayout: (layout: LinkLayoutType) => void,
+  changeArchiveState: (layout: ArchiveStateType) => void,
+  changeSearchQuery: (query: string) => void,
+  increaseInfiniteScroll: (by: number) => void,
+  refetch: () => void
+};
 
-    addTagByNameToNote: (linkId: string, tag: string) => void,
-    removeTagByIdFromNote: (linkId: string, tagId: string) => void,
-    toggleArchivedNote: (noteId: string) => void,
-    toggleBatchEditing: () => void,
-    toggleNoteSelected: (noteId: string) => void,
-    setNotesSelected: (selection: BatchSelectionType) => void,
-    changeLayout: (layout: LinkLayoutType) => void,
-    changeArchiveState: (layout: ArchiveStateType) => void,
-    changeSearchQuery: (query: string) => void,
-    increaseInfiniteScroll: (by: number) => void,
-    refetch: () => void
-  };
+export class NotesPage extends React.Component<NotesPageProps> {
+  searchInput: ?HTMLInputElement;
+  moreElement: ?HTMLElement;
 
   handleSelectAll: () => void;
   handleUnselectAll: () => void;

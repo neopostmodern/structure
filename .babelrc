@@ -1,11 +1,11 @@
 {
   "presets": [
-	["env", {
+	["@babel/preset-env", {
 	  "targets": { "node": 7 },
-	  "useBuiltIns": true
+	  "useBuiltIns": "usage"
 	}],
-	"stage-0",
-	"react"
+	"@babel/react",
+    "@babel/preset-flow"
   ],
   "plugins": ["add-module-exports"],
   "env": {
@@ -15,8 +15,9 @@
 	},
 	"development": {
 	  "plugins": [
-		"transform-class-properties",
-		"transform-es2015-classes",
+		["@babel/plugin-proposal-decorators", { "legacy": true }],
+		["@babel/plugin-proposal-class-properties", { "loose": true }],
+		"@babel/plugin-transform-classes",
 		["flow-runtime", {
 		  "assert": true,
 		  "annotate": true

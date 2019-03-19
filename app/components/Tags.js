@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 import Mousetrap from 'mousetrap';
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
 
@@ -14,17 +14,18 @@ makeMousetrapGlobal(Mousetrap);
 
 const tagShortcutKeys = ['ctrl+t', 'command+t'];
 
-class Tags extends React.Component {
-  props: {
-    tags: Array<TagType>,
-    withShortcuts?: boolean,
-    onAddTag: () => void,
-    onRemoveTag: (string) => void,
-    navigateToTag: (string) => void
-  };
-  state: {
-    addingNewTag: boolean
-  }
+type TagsProps = {
+  tags: Array<TagType>,
+  withShortcuts?: boolean,
+  onAddTag: () => void,
+  onRemoveTag: (string) => void,
+  navigateToTag: (string) => void
+};
+type TagsState = {
+  addingNewTag: boolean
+};
+
+class Tags extends React.Component<TagsProps, TagsState> {
 
   static defaultProps = {
     withShortcuts: false

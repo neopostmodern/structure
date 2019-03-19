@@ -11,15 +11,14 @@ import LinkForm from '../components/LinkForm';
 import { clearMetadata, requestMetadata } from '../actions/userInterface';
 import type { LinkType } from '../types';
 
+type LinkPageProps = {
+  link?: LinkType,
+  metadataLoading: boolean,
+  requestMetadata: (url: string) => void,
+  clearMetadata: () => void
+};
 
-export class LinkPage extends React.Component {
-  props: {
-    link?: LinkType,
-    metadataLoading: boolean,
-    requestMetadata: (url: string) => void,
-    clearMetadata: () => void
-  }
-
+export class LinkPage extends React.Component<LinkPageProps> {
   constructor() {
     super();
 

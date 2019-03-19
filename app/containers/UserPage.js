@@ -25,12 +25,12 @@ type configurationType = {
   backendUrlDefault: string
 };
 
-class UserPage extends React.Component {
-  props: {
-    requestNewCredential: (purpose: string) => void,
-    revokeCredential: (purpose: string) => void
-  } | credentialsLoadingType | credentialsType | configurationType;
+type UserPageProps = {
+  requestNewCredential: (purpose: string) => void,
+  revokeCredential: (purpose: string) => void
+} | credentialsLoadingType | credentialsType | configurationType;
 
+class UserPage extends React.Component<UserPageProps> {
   constructor() {
     super();
 
