@@ -7,7 +7,7 @@ import formStyles from '../NoteForm.scss';
 import urlAnalyzer from '../../../util/urlAnalyzer';
 
 type LinkNameFieldProps = {
-  url: string,
+  url: ?string,
   metadata?: {
     titles: Array<string>
   },
@@ -74,6 +74,11 @@ class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldSta
   }
 
   render() {
+    // guard against initial render without `formValues`: https://github.com/erikras/redux-form/issues/3570
+    if (this.props.url === undefined) {
+      return null;
+    }
+
     return (
       <React.Fragment>
         <input
