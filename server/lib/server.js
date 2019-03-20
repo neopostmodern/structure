@@ -121,7 +121,6 @@ const runExpressServer = () => {
           .exec()
           .then((links) => {
             links.forEach(link => {
-              console.log(link);
               feed.addItem({
                 title: link.name,
                 guid: link._id.toString(),
