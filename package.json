@@ -199,7 +199,6 @@
     "connected-react-router": "^6.3.2",
     "electron-debug": "^2.1.0",
     "electron-store": "^2.0.0",
-    "feed": "^2.0.4",
     "graphql-tag": "^2.10.1",
     "history": "^4.9.0",
     "marked": "^0.6.1",
