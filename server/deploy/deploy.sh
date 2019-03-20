@@ -20,9 +20,10 @@ echo "Copying files to server..."
 lftp -e "mirror --reverse dist $SERVER_FOLDER; bye" "sftp://$USER:SSH@$SERVER"
 echo "OK"
 
-# todo: switch to npm
 echo "Installing dependencies on server..."
 ssh "$USER@$SERVER" "cd $SERVER_FOLDER && npm install --production"
+# currently using fork of 'feed' package, needs build (which happens upon `npm install`)
+ssh "$USER@$SERVER" "cd $SERVER_FOLDER/node_modules/feed && npm install"
 echo "OK"
 
 echo "Starting backend service (as pm2-process '$PROCESS_NAME')..."
