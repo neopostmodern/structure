@@ -22,6 +22,10 @@ const userSchema = Schema({
       bookmarklet: {
         type: String,
         optional: true
+      },
+      rss: {
+        type: String,
+        optional: true
       }
     },
     default: {}

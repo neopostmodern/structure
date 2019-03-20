@@ -3,6 +3,8 @@ import bodyParser from 'body-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import cors from 'cors';
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
+import { Feed } from 'feed';
+
 import { User, Note, Link, Text, Tag } from './mongo';
 import { setUpGitHubLogin } from './githubLogin';
 import schema from './schema';
@@ -10,6 +12,7 @@ import schema from './schema';
 import config from './config';
 import { addTagByNameToNote, submitLink } from './methods';
 import { migrateTo } from './migrations';
+import { rssFeedUrl } from '../../util/linkGenerator'
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,7 +66,7 @@ const runExpressServer = () => {
     }));
   }
 
-  app.get('/bookmarklet', (request, result) => {
+  app.get('/bookmarklet', (request, response) => {
     const { token, url } = request.query;
     User.findOne({ 'credentials.bookmarklet': token })
       .then(user => {
@@ -74,7 +77,7 @@ const runExpressServer = () => {
           .then(({ _id }) => addTagByNameToNote(user, _id, 'from:bookmarklet'));
       })
       .then(() => (
-        result.send(
+        response.send(
           `
 <html>
 <body>
@@ -87,7 +90,58 @@ const runExpressServer = () => {
       ))
       .catch((error) => {
         console.error('Bookmarklet URL insert failed!', error);
-        request.status(500).send('<html><body><h1>Structure error.</h1>Failed to save your link :(</body></html>');
+        response.status(500).send('<html><body><h1>Structure error.</h1>Failed to save your link :(</body></html>');
+      });
+  });
+
+  app.get('/rss', (request, response) => {
+    const { token } = request.query;
+    User.findOne({ 'credentials.rss': token })
+      .then(user => {
+        if (!user) {
+          throw Error('No feed with provided credential (token) found.');
+        }
+
+        const feed = new Feed({
+          title: `Structure - ${user.name}`,
+          description: `Automatically generated Structure-feed of all links by ${user.name}`,
+          id: 'http://example.com/',
+          link: rssFeedUrl(config.BACKEND_URL, user.credentials.rss),
+          favicon: `${config.BACKEND_URL}/favicon.ico`,
+          copyright: `Rights possibly reserved by ${user.name}`,
+          author: {
+            name: user.name,
+            link: `https://github.com/${user.name}`
+          }
+        });
+
+        return Link.find({ user })
+          .sort({ createdAt: -1 })
+          .limit(10)
+          .exec()
+          .then((links) => {
+            links.forEach(link => {
+              console.log(link);
+              feed.addItem({
+                title: link.name,
+                guid: link._id.toString(),
+                guidIsPermaLink: false,
+                link: link.url,
+                description: link.description,
+                date: link.createdAt
+              });
+            });
+          })
+          .then(() => {
+            response.set('Content-Type', 'application/rss+xml');
+            response
+              .status(200)
+              .send(feed.rss2());
+          });
+      })
+      .catch((error) => {
+        console.error('Generating RSS feed failed!', error);
+        response.status(500).send('<html><body><h1>Structure error.</h1>Failed to generate your RSS feed :(</body></html>');
       });
   });
 
@@ -105,4 +159,5 @@ migrateTo(5)
   .catch((error) => {
     console.error('Migration failed.');
     console.error(error);
+    process.exit(1);
   });

@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import menuStyles from '../styles/menu.scss';
 import userPageStyles from './UserPage.scss';
 import { setBackendUrl } from '../actions/configuration';
+import { bookmarkletCode, rssFeedUrl } from '../../util/linkGenerator'
 
 // todo: create universal loading/not-loading type and inherit?
 type credentialsLoadingType = {
@@ -16,7 +17,8 @@ type credentialsLoadingType = {
 type credentialsType = {
   loading: false,
   credentials: {
-    bookmarklet: string
+    bookmarklet: string,
+    rss: string
   }
 };
 
@@ -37,10 +39,6 @@ class UserPage extends React.Component<UserPageProps> {
     this.setBackendUrl = this.setBackendUrl.bind(this);
   }
 
-  bookmarkletCode(token) {
-    return `javascript:void(open('${this.props.backendUrl}/bookmarklet?token=${token}&url='+encodeURIComponent(location.href)))`;
-  }
-
   requestNewCredential(purpose) {
     this.props.requestNewCredential(purpose);
   }
@@ -56,14 +54,14 @@ class UserPage extends React.Component<UserPageProps> {
   renderRequestOrRevoke(credentials, purpose) {
     if (credentials[purpose]) {
       return (
-        <button type="button" onClick={this.revokeCredential.bind(this, 'bookmarklet')}>
+        <button type="button" onClick={this.revokeCredential.bind(this, purpose)}>
           Revoke token
         </button>
       );
     }
 
     return (
-      <button type="button" onClick={this.requestNewCredential.bind(this, 'bookmarklet')}>
+      <button type="button" onClick={this.requestNewCredential.bind(this, purpose)}>
         Request token
       </button>
     );
@@ -79,21 +77,34 @@ class UserPage extends React.Component<UserPageProps> {
     }
 
     const { credentials } = this.props.user;
-    return (
+    return <>
       <div className={userPageStyles['settings-table']}>
         <div className={userPageStyles['settings-table__purpose']}>
           Bookmarklet
         </div>
         <div className={userPageStyles['settings-table__value']}>
           {credentials.bookmarklet
-            ? <input type="text" readOnly value={this.bookmarkletCode(credentials.bookmarklet)} />
+            ? <input type="text" readOnly value={bookmarkletCode(this.props.backendUrl, credentials.bookmarklet)} />
             : <i>No token yet.</i>}
         </div>
         <div className={userPageStyles['settings-table__action']}>
           {this.renderRequestOrRevoke(credentials, 'bookmarklet')}
         </div>
       </div>
-    );
+      <div className={userPageStyles['settings-table']}>
+        <div className={userPageStyles['settings-table__purpose']}>
+          RSS-Feed
+        </div>
+        <div className={userPageStyles['settings-table__value']}>
+          {credentials.rss
+            ? <input type="text" readOnly value={rssFeedUrl(this.props.backendUrl, credentials.rss)} />
+            : <i>No token yet.</i>}
+        </div>
+        <div className={userPageStyles['settings-table__action']}>
+          {this.renderRequestOrRevoke(credentials, 'rss')}
+        </div>
+      </div>
+    </>;
   }
 
   render() {
@@ -182,6 +193,7 @@ const USER_QUERY = gql`
 
       credentials {
         bookmarklet
+        rss
       }
     }
   }
@@ -192,6 +204,7 @@ const REQUEST_NEW_CREDENTIAL_MUTATION = gql`
       _id
 
       credentials {
+        rss
         bookmarklet
       }
     }
@@ -203,15 +216,15 @@ const REVOKE_CREDENTIAL_MUTATION = gql`
       _id
 
       credentials {
+        rss
         bookmarklet
       }
     }
   }
 `;
 const withData = graphql(USER_QUERY, {
-  options: ({ match }) => ({
-    fetchPolicy: 'cache-and-network',
-    variables: { tagId: match.params.tagId }
+  options: () => ({
+    fetchPolicy: 'cache-and-network'
   }),
   props: ({ data: { loading, currentUser, refetch } }) => ({
     loading,

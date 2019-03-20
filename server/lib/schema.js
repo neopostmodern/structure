@@ -17,6 +17,7 @@ type Versions {
 
 type Credentials {
   bookmarklet: String
+  rss: String
 }
 type User {
   _id: String!
