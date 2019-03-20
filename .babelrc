@@ -10,8 +10,17 @@
   "plugins": ["add-module-exports"],
   "env": {
 	"production": {
-	  "presets": ["react-optimize"],
-	  "plugins": ["dev-expression"]
+	  "presets": [
+	  ],
+	  "plugins": [
+		"dev-expression",
+		["@babel/plugin-proposal-decorators", { "legacy": true }],
+		["@babel/plugin-proposal-class-properties", { "loose": true }],
+		"@babel/plugin-transform-classes",
+		"@babel/plugin-transform-react-constant-elements",
+		"@babel/plugin-transform-react-inline-elements",
+		"babel-plugin-transform-react-remove-prop-types"
+	  ]
 	},
 	"development": {
 	  "plugins": [

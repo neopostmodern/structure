@@ -8,7 +8,6 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
-import UglifyJSPlugin from 'uglifyjs-webpack-plugin';
 import baseConfig from './webpack.config.base';
 
 import config from './config.prod.json';
@@ -44,49 +43,55 @@ export default merge.smart(baseConfig, {
         test: /\.global\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: './'
+            }
           },
           {
             loader: 'css-loader',
             options: {
-              minimize: true,
+              sourceMap: true
             }
           }
-        ],
+        ]
       },
       // Pipe other styles through css modules and append to style.css
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: MiniCssExtractPlugin.loader
           },
           {
             loader: 'css-loader',
             options: {
               modules: true,
-              minimize: true,
-              importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
+              sourceMap: true
             }
           }
-        ],
+        ]
       },
       // Add SASS support  - compile all .global.scss files and pipe it to style.css
       {
         test: /\.global\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader',
+            loader: MiniCssExtractPlugin.loader
           },
           {
             loader: 'css-loader',
             options: {
-              minimize: true,
+              sourceMap: true,
+              importLoaders: 1
             }
           },
           {
-            loader: 'sass-loader'
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
           }
         ]
       },
@@ -95,19 +100,22 @@ export default merge.smart(baseConfig, {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader',
+            loader: MiniCssExtractPlugin.loader
           },
           {
             loader: 'css-loader',
             options: {
               modules: true,
-              minimize: true,
               importLoaders: 1,
               localIdentName: '[name]__[local]__[hash:base64:5]',
-            },
+              sourceMap: true
+            }
           },
           {
-            loader: 'sass-loader'
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
           }
         ]
       },
@@ -180,11 +188,6 @@ export default merge.smart(baseConfig, {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production'
-    }),
-
-    new UglifyJSPlugin({
-      parallel: true,
-      sourceMap: true
     }),
 
     new MiniCssExtractPlugin({
