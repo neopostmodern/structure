@@ -7,16 +7,22 @@ import webpack from 'webpack';
 
 export default {
   module: {
-    rules: [{
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          cacheDirectory: true
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true
+          }
         }
+      },
+      {
+        test: /\.js\.flow$/,
+        loader: 'babel-loader'
       }
-    }]
+    ]
   },
 
   output: {
@@ -29,7 +35,7 @@ export default {
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
-    extensions: ['.js', '.jsx', '.json'],
+    extensions: ['.js', '.jsx', '.json', '.js.flow'],
     modules: [
       path.join(__dirname, 'app'),
       'node_modules',
