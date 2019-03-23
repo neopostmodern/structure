@@ -6,6 +6,7 @@ import path from 'path';
 import webpack from 'webpack';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
@@ -176,6 +177,12 @@ export default merge.smart(baseConfig, {
     ]
   },
 
+  optimization: {
+    minimizer: [
+      new OptimizeCSSAssetsPlugin({})
+    ]
+  },
+
   plugins: [
     /**
      * Create global constants which can be configured at compile time.
@@ -191,7 +198,7 @@ export default merge.smart(baseConfig, {
     }),
 
     new MiniCssExtractPlugin({
-      filename: 'dist/style.css'
+      filename: 'style.css'
     }),
 
     new BundleAnalyzerPlugin({
