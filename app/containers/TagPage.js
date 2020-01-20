@@ -27,21 +27,23 @@ class TagPage extends React.Component {
   render() {
     let content;
     if (!this.props.loading) {
-      content = (<div className={styles.container}>
-        <TagForm
-          initialValues={this.props.tag}
-          form={this.props.tag._id}
-          onSubmit={this.props.updateTag}
-          onChange={this.props.updateTag}
-        />
+      content = (
+        <div className={styles.container}>
+          <TagForm
+            initialValues={this.props.tag}
+            form={this.props.tag._id}
+            onSubmit={this.props.updateTag}
+            onChange={this.props.updateTag}
+          />
 
-        <NotesList
-          notes={this.props.tag.notes}
-          addTagToNote={this.props.addTagByNameToNote}
-          onRemoveTagFromNote={this.props.removeTagByIdFromNote}
-          onToggleArchived={this.props.toggleArchivedNote}
-        />
-      </div>);
+          <NotesList
+            notes={this.props.tag.notes}
+            addTagToNote={this.props.addTagByNameToNote}
+            onRemoveTagFromNote={this.props.removeTagByIdFromNote}
+            onToggleArchived={this.props.toggleArchivedNote}
+          />
+        </div>
+      );
     } else {
       content = <i>Loading...</i>;
     }

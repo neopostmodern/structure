@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import menuStyles from '../styles/menu.scss';
 import userPageStyles from './UserPage.scss';
 import { setBackendUrl } from '../actions/configuration';
-import { bookmarkletCode, rssFeedUrl } from '../../util/linkGenerator'
+import { bookmarkletCode, rssFeedUrl } from '../../util/linkGenerator';
 
 // todo: create universal loading/not-loading type and inherit?
 type credentialsLoadingType = {
@@ -77,34 +77,36 @@ class UserPage extends React.Component<UserPageProps> {
     }
 
     const { credentials } = this.props.user;
-    return <>
-      <div className={userPageStyles['settings-table']}>
-        <div className={userPageStyles['settings-table__purpose']}>
+    return (
+      <>
+        <div className={userPageStyles['settings-table']}>
+          <div className={userPageStyles['settings-table__purpose']}>
           Bookmarklet
+          </div>
+          <div className={userPageStyles['settings-table__value']}>
+            {credentials.bookmarklet
+              ? <input type="text" readOnly value={bookmarkletCode(this.props.backendUrl, credentials.bookmarklet)} />
+              : <i>No token yet.</i>}
+          </div>
+          <div className={userPageStyles['settings-table__action']}>
+            {this.renderRequestOrRevoke(credentials, 'bookmarklet')}
+          </div>
         </div>
-        <div className={userPageStyles['settings-table__value']}>
-          {credentials.bookmarklet
-            ? <input type="text" readOnly value={bookmarkletCode(this.props.backendUrl, credentials.bookmarklet)} />
-            : <i>No token yet.</i>}
-        </div>
-        <div className={userPageStyles['settings-table__action']}>
-          {this.renderRequestOrRevoke(credentials, 'bookmarklet')}
-        </div>
-      </div>
-      <div className={userPageStyles['settings-table']}>
-        <div className={userPageStyles['settings-table__purpose']}>
+        <div className={userPageStyles['settings-table']}>
+          <div className={userPageStyles['settings-table__purpose']}>
           RSS-Feed
+          </div>
+          <div className={userPageStyles['settings-table__value']}>
+            {credentials.rss
+              ? <input type="text" readOnly value={rssFeedUrl(this.props.backendUrl, credentials.rss)} />
+              : <i>No token yet.</i>}
+          </div>
+          <div className={userPageStyles['settings-table__action']}>
+            {this.renderRequestOrRevoke(credentials, 'rss')}
+          </div>
         </div>
-        <div className={userPageStyles['settings-table__value']}>
-          {credentials.rss
-            ? <input type="text" readOnly value={rssFeedUrl(this.props.backendUrl, credentials.rss)} />
-            : <i>No token yet.</i>}
-        </div>
-        <div className={userPageStyles['settings-table__action']}>
-          {this.renderRequestOrRevoke(credentials, 'rss')}
-        </div>
-      </div>
-    </>;
+      </>
+    );
   }
 
   render() {

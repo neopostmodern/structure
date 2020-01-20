@@ -28,6 +28,7 @@ class AddLinkPage extends React.Component {
     this.props.addLink(url)
       .then(({ _id }) => this.props.history.push(`/links/${_id}`));
   };
+
   handleCreateText = () => {
     // todo: handle errors
     this.props.addText()

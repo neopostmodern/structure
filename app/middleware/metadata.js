@@ -8,7 +8,7 @@ export default store => next => action => {
       .then(response => response.text())
       .then(html => {
         const dom = new DOMParser().parseFromString(html, 'text/html');
-        let metaTitles = Array.from(dom.querySelectorAll('meta'))
+        const metaTitles = Array.from(dom.querySelectorAll('meta'))
           .filter(meta => {
             const name = meta.getAttribute('name');
             return name && name.includes('title');

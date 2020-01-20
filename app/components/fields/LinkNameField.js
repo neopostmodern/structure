@@ -1,5 +1,6 @@
 import React from 'react';
 import { formValues } from 'redux-form';
+import { type FieldProps } from 'redux-form/es/FieldProps.types.js.flow';
 import ClassNames from 'classnames';
 
 import buttonStyles from '../../styles/button.scss';
@@ -13,7 +14,7 @@ type LinkNameFieldProps = {
   },
   metadataLoading: boolean,
   onRequestMetadata: () => void
-};
+} & FieldProps;
 
 type LinkNameFieldState = {
   nameFocused: boolean,
@@ -46,6 +47,7 @@ class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldSta
       10
     );
   }
+
   handleBlurName() {
     this.props.input.onBlur();
     this.setState({ nameFocusedAnimation: false });
@@ -62,7 +64,9 @@ class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldSta
             <button
               type="button"
               className={buttonStyles.textButton}
-              style={{ fontStyle: 'italic', fontSize: '80%', display: 'block', marginTop: '0.3em' }}
+              style={{
+                fontStyle: 'italic', fontSize: '80%', display: 'block', marginTop: '0.3em'
+              }}
               key={index}
               onClick={() => this.props.input.onChange(title)}
             >
@@ -79,16 +83,18 @@ class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldSta
       return null;
     }
 
+    const { input, url } = this.props;
+
     return (
       <React.Fragment>
         <input
           type="text"
           className={formStyles.name}
-          autoFocus={this.props.input.value === urlAnalyzer(this.props.url).suggestedName}
+          autoFocus={input.value === urlAnalyzer(url).suggestedName}
           onFocus={this.handleFocusName}
           onBlur={this.handleBlurName}
-          onChange={this.props.input.onChange}
-          value={this.props.input.value}
+          onChange={input.onChange}
+          value={input.value}
           placeholder="Title"
         />
         {this.state.nameFocused ? this.renderTitles() : null}

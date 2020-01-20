@@ -52,29 +52,37 @@ export default class NotesList extends Component<NotesListProps> {
 
     return (
       <div className={styles.links}>
-        {this.props.notes.map((note) =>
-          (<div key={note._id} className={ClassNames(styles.link, { [styles.archived]: Boolean(note.archivedAt) })}>
+        {this.props.notes.map((note) => (
+          <div key={note._id} className={ClassNames(styles.link, { [styles.archived]: Boolean(note.archivedAt) })}>
             {this.props.batchEditing ? this.renderBatchOperationCheckbox(note) : null}
             <div className={styles.container}>
               <div className={styles.title}>
                 <Link className={styles.name} to={`/${note.type.toLowerCase()}s/${note._id}`}>
                   {note.name}
                 </Link>
-                {note.type !== 'LINK' ? <div className={styles.type}>&lt;{note.type.toLowerCase()}&gt;</div> : null}
+                {note.type !== 'LINK' ? (
+                  <div className={styles.type}>
+&lt;
+                    {note.type.toLowerCase()}
+&gt;
+                  </div>
+                ) : null}
                 <div className={styles.date}>
                   <TimeAgo date={note.createdAt} />
                 </div>
               </div>
               <div className={styles.info}>
-                {note.url ?
-                  <a
-                    href={note.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.domain}
-                  >
-                    {note.domain}
-                  </a> : null}
+                {note.url
+                  ? (
+                    <a
+                      href={note.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.domain}
+                    >
+                      {note.domain}
+                    </a>
+                  ) : null}
                 <div className={styles.description}>{note.description}</div>
               </div>
               <div className={styles.actions}>
@@ -92,9 +100,9 @@ export default class NotesList extends Component<NotesListProps> {
                 </div>
               </div>
             </div>
-          </div>))}
+          </div>
+        ))}
       </div>
     );
   }
 }
-

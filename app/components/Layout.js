@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { requestLogin } from '../actions/userInterface';
-import Centered from '../components/Centered';
+import Centered from './Centered';
 import config from '../config';
 
 import styles from './Layout.scss';
@@ -34,7 +34,6 @@ type LayoutProps = {
 };
 
 export class Layout extends Component<LayoutProps> {
-
   constructor() {
     super();
 
@@ -54,7 +53,12 @@ export class Layout extends Component<LayoutProps> {
   render() {
     let headline = 'Structure';
     if (this.props.path !== '/') {
-      headline = <span><Link to="/">/</Link>{this.props.path.substr(1)}</span>;
+      headline = (
+        <span>
+          <Link to="/">/</Link>
+          {this.props.path.substr(1)}
+        </span>
+      );
     }
 
     let content;
@@ -66,37 +70,68 @@ export class Layout extends Component<LayoutProps> {
       content = <Centered text="Loading..." />;
     } else if (this.props.user.name) {
       content = this.props.children;
-      userIndicator = <Link to="/me" className={styles.username}>{this.props.user.name}.</Link>;
+      userIndicator = (
+        <Link to="/me" className={styles.username}>
+          {this.props.user.name}
+.
+        </Link>
+      );
     } else {
-      content = (<Centered>
-        <button onClick={this.openLoginModal} className={styles.loginButton}>Log in</button>
-      </Centered>);
+      content = (
+        <Centered>
+          <button onClick={this.openLoginModal} className={styles.loginButton}>Log in</button>
+        </Centered>
+      );
     }
 
     let versionMarks;
     if (this.props.versions.loading) {
       versionMarks = <i>Checking for new versions...</i>;
     } else if (this.props.versions.minimum > config.apiVersion) {
-      versionMarks = (<div className={`${styles.version} ${styles.warning}`}>
-        <div className={styles.headline}>Your Structure is obsolete.</div>
-        <small>
-          This Structure uses API version {config.apiVersion},
-          but {this.props.versions.minimum} is required on the server.<br />
+      versionMarks = (
+        <div className={`${styles.version} ${styles.warning}`}>
+          <div className={styles.headline}>Your Structure is obsolete.</div>
+          <small>
+          This Structure uses API version
+            {' '}
+            {config.apiVersion}
+,
+          but
+            {' '}
+            {this.props.versions.minimum}
+            {' '}
+is required on the server.
+            <br />
           Functionality is no longer guaranteed,
-          use at your own risk or{' '}
-          <a href={config.releaseUrl} target="_blank" rel="noopener noferrer">update now</a>.
-        </small>
-      </div>);
+          use at your own risk or
+            {' '}
+            <a href={config.releaseUrl} target="_blank" rel="noopener noferrer">update now</a>
+.
+          </small>
+        </div>
+      );
     } else if (this.props.versions.recommended > config.apiVersion) {
-      versionMarks = (<div className={`${styles.version} ${styles.notice}`}>
-        <div className={styles.headline}>Your Structure is outdated.</div>
-        <small>
-          This Structure uses API version {config.apiVersion},
-          but {this.props.versions.recommended} is recommended by the server.<br />
-          You are probably safe for now but try to{' '}
-          <a href={config.releaseUrl} target="_blank" rel="noopener noferrer">update soon</a>.
-        </small>
-      </div>);
+      versionMarks = (
+        <div className={`${styles.version} ${styles.notice}`}>
+          <div className={styles.headline}>Your Structure is outdated.</div>
+          <small>
+          This Structure uses API version
+            {' '}
+            {config.apiVersion}
+,
+          but
+            {' '}
+            {this.props.versions.recommended}
+            {' '}
+is recommended by the server.
+            <br />
+          You are probably safe for now but try to
+            {' '}
+            <a href={config.releaseUrl} target="_blank" rel="noopener noferrer">update soon</a>
+.
+          </small>
+        </div>
+      );
     }
 
     return (

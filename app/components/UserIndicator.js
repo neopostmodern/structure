@@ -37,10 +37,15 @@ export class UserIndicator extends Component<UserIndicatorProps> {
     console.log(this.props);
     if (this.props.loggingIn) {
       return <i>Logging in...</i>;
-    } else if (this.props.loading) {
+    } if (this.props.loading) {
       return <i>Loading...</i>;
-    } else if (this.props.name) {
-      return <b>{this.props.name}.</b>;
+    } if (this.props.name) {
+      return (
+        <b>
+          {this.props.name}
+.
+        </b>
+      );
     }
     return <button onClick={this.openLoginModal}>Log in</button>;
   }

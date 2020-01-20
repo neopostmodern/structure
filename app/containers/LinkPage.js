@@ -147,8 +147,15 @@ const withData = graphql(LINK_QUERY, {
 });
 const withUpdateLink = graphql(UPDATE_LINK_MUTATION, {
   props: ({ mutate }) => ({
-    updateLink: ({ _id, url, domain, path, name, description }) =>
-      mutate({ variables: { link: { _id, url, domain, path, name, description } } })
+    updateLink: ({
+      _id, url, domain, path, name, description
+    }) => mutate({
+      variables: {
+        link: {
+          _id, url, domain, path, name, description
+        }
+      }
+    })
   })
 });
 const withDeleteLink = graphql(DELETE_LINK_MUTATION, {

@@ -1,12 +1,12 @@
 // @flow
 
+import { ipcRenderer, clipboard } from 'electron';
 import {
   REQUEST_LOGIN,
   completeLogin,
   requestLogin,
   REQUEST_CLIPBOARD, setClipboard
 } from '../actions/userInterface';
-import { ipcRenderer, clipboard } from 'electron';
 import { REQUEST_RESTART } from '../actions/configuration';
 
 export default store => {

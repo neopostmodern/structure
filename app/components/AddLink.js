@@ -13,7 +13,9 @@ const urlValidator = (value) => (isUrlValid(value)
   ? undefined
   : 'Did you forget the protocol? (e.g. https://)'
 );
-const renderField = ({ input, type, meta: { touched, error, warning }, ...rest }) => (
+const renderField = ({
+  input, type, meta: { touched, error, warning }, ...rest
+}) => (
   <div>
     <input
       {...input}
@@ -21,13 +23,15 @@ const renderField = ({ input, type, meta: { touched, error, warning }, ...rest }
       {...rest}
     />
     {touched && (
-      (error &&
+      (error
+        && (
         <div style={{ marginTop: '0.5em', color: 'darkred' }}>
           {error}
         </div>
-      ) ||
-      (warning &&
-        <span>{warning}</span>
+        )
+      )
+      || (warning
+        && <span>{warning}</span>
       )
     )}
   </div>
@@ -49,6 +53,7 @@ class AddLink extends Component<AddLinkProps> { // & FormProps
   componentWillMount() {
     this.props.requestClipboard();
   }
+
   componentWillUnmount() {
     this.props.clearClipboard();
   }

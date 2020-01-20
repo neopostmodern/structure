@@ -81,12 +81,14 @@ type NotesPageProps = {
 
 export class NotesPage extends React.Component<NotesPageProps> {
   searchInput: ?HTMLInputElement;
+
   moreElement: ?HTMLElement;
 
   handleSelectAll: () => void;
+
   handleUnselectAll: () => void;
 
-  constructor () {
+  constructor() {
     super();
 
     this.handleSelectAll = this.selectUnselectAll.bind(this, true);
@@ -107,6 +109,7 @@ export class NotesPage extends React.Component<NotesPageProps> {
     Mousetrap.bind(selectAllShortcutKeys, this.handleSelectAllShortcut);
     window.addEventListener('scroll', this.handleScrollEvent);
   }
+
   componentWillUnmount() {
     Mousetrap.unbind(searchFieldShortcutKeys);
     Mousetrap.unbind(toggleBatchEditingShortcutKeys);
@@ -118,6 +121,7 @@ export class NotesPage extends React.Component<NotesPageProps> {
     this.searchInput.focus();
     setTimeout(() => this.searchInput.select(0, this.props.searchQuery.length), 10);
   }
+
   handleSelectAllShortcut = () => {
     // if we're not already batch editing switch to batch editing mode
     if (!this.props.batchEditing) {
@@ -128,9 +132,10 @@ export class NotesPage extends React.Component<NotesPageProps> {
 
     return false;
   }
+
   selectUnselectAll = (selected?: boolean) => {
     let nextSelectedState = selected;
-    const selection:BatchSelectionType = {};
+    const selection: BatchSelectionType = {};
     const filteredNotes = this.filteredNotes().notes;
     if (typeof selected === 'undefined') {
       // if no selected target is passed in and all notes are selected, unselect them instead
@@ -160,6 +165,7 @@ export class NotesPage extends React.Component<NotesPageProps> {
       this.props.changeLayout(LinkLayouts.LIST_LAYOUT);
     }
   };
+
   changeArchiveState = () => {
     switch (this.props.archiveState) {
       case ArchiveStates.ONLY_ARCHIVE:
@@ -201,11 +207,9 @@ export class NotesPage extends React.Component<NotesPageProps> {
     let notes = this.props.notes || [];
 
     if (this.props.searchQuery.length !== 0) {
-      notes = notes.filter((note) =>
-        NotesPage.textIncludes(this.props.searchQuery, note.url)
+      notes = notes.filter((note) => NotesPage.textIncludes(this.props.searchQuery, note.url)
         || NotesPage.textIncludes(this.props.searchQuery, note.name)
-        || note.tags.some((tag) => NotesPage.textIncludes(this.props.searchQuery, tag.name))
-      );
+        || note.tags.some((tag) => NotesPage.textIncludes(this.props.searchQuery, tag.name)));
     }
 
     const completeCount = notes.length;
@@ -298,11 +302,14 @@ export class NotesPage extends React.Component<NotesPageProps> {
             key="batch-operations-menu"
             className={Classnames(menuStyles.menu, menuStyles.sticky)}
           >
-            {this.selectedNoteCount()} selected
+            {this.selectedNoteCount()}
+            {' '}
+selected
             (
             <a onClick={this.handleSelectAll}>
               select all
-            </a>,&nbsp;
+            </a>
+,&nbsp;
             <a onClick={this.handleUnselectAll}>
               unselect all
             </a>
@@ -334,7 +341,10 @@ export class NotesPage extends React.Component<NotesPageProps> {
         if (matchedNotes.length > currentLength) {
           content.push(
             <div key="more" className={styles.more} ref={(element) => this.moreElement = element}>
-                ({matchedNotes.length - currentLength} remaining)
+                (
+              {matchedNotes.length - currentLength}
+              {' '}
+remaining)
             </div>
           );
         }
@@ -347,10 +357,12 @@ export class NotesPage extends React.Component<NotesPageProps> {
     return (
       <div>
         <div className={menuStyles.menu}>
-          <Link to="/notes/add">Add new</Link>,&nbsp;
+          <Link to="/notes/add">Add new</Link>
+,&nbsp;
           <a onClick={this.toggleLayout}>
             {layoutToName(this.props.layout)}
-          </a>,&nbsp;
+          </a>
+,&nbsp;
           <a onClick={this.changeArchiveState}>
             {archiveStateToName(this.props.archiveState)}
           </a>
@@ -368,10 +380,11 @@ export class NotesPage extends React.Component<NotesPageProps> {
                 <button
                   type="button"
                   className={menuStyles.eraseSearchField}
-                  onClick={this.handleClearSearch}>
+                  onClick={this.handleClearSearch}
+                >
                   ⌫
                 </button>
-              ): null}
+              ) : null}
             <div style={{ textAlign: 'right', fontSize: '50%', marginTop: '0.3em' }}>
               {this.noteCount(matchedNotes, archivedMatchedNotesCount)}
             </div>
@@ -433,7 +446,11 @@ const withData = graphql(PROFILE_QUERY, {
   options: {
     fetchPolicy: 'cache-and-network',
   },
-  props: ({ data: { loading, notes, refetch, error } }) => ({
+  props: ({
+    data: {
+      loading, notes, refetch, error
+    }
+  }) => ({
     loading,
     notes,
     refetch,

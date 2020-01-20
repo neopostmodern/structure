@@ -17,11 +17,14 @@ const inputField = ({
   input, label, type, meta: { touched, error, warning }, ...rest
 }) => (
   <div>
-    {(touched && error) && <div style={{
- color: 'darkred', position: 'absolute', bottom: '100%', right: 0, fontSize: '70%'
-}}
-    >{error}
-                           </div>}
+    {(touched && error) && (
+    <div style={{
+      color: 'darkred', position: 'absolute', bottom: '100%', right: 0, fontSize: '70%'
+    }}
+    >
+      {error}
+    </div>
+    )}
     <input {...input} placeholder={label} type={type} {...rest} />
   </div>
 );
@@ -40,6 +43,7 @@ type InlineTagFormProps = {
 
 class InlineTagForm extends React.Component<InlineTagFormProps> {
   static MAX_AUTOCOMPLETE_LENGTH = 5;
+
   state: {
     focusedAutocompleteIndex: number,
     autocompleteSuggestions: TagType[]
@@ -83,6 +87,7 @@ class InlineTagForm extends React.Component<InlineTagFormProps> {
       this.updateTagMap(nextProps.tags);
     }
   }
+
   render() {
     const {
       handleSubmit, tagsLoading, pristine, change, submit // submitting, nameValue,
@@ -123,7 +128,8 @@ class InlineTagForm extends React.Component<InlineTagFormProps> {
                 key="more"
                 className={styles.tagAutocompleteMore}
               >
-                +{this.state.autocompleteSuggestions.length - InlineTagForm.MAX_AUTOCOMPLETE_LENGTH}
+                +
+                {this.state.autocompleteSuggestions.length - InlineTagForm.MAX_AUTOCOMPLETE_LENGTH}
               </div>
             ) : null}
           </div>

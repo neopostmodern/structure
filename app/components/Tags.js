@@ -26,7 +26,6 @@ type TagsState = {
 };
 
 class Tags extends React.Component<TagsProps, TagsState> {
-
   static defaultProps = {
     withShortcuts: false
   };
@@ -44,6 +43,7 @@ class Tags extends React.Component<TagsProps, TagsState> {
       Mousetrap.bindGlobal(tagShortcutKeys, this.showNewTagForm);
     }
   }
+
   componentWillUnmount() {
     if (this.props.withShortcuts) {
       Mousetrap.unbind(tagShortcutKeys);
@@ -53,6 +53,7 @@ class Tags extends React.Component<TagsProps, TagsState> {
   showNewTagForm = () => {
     this.setState({ addingNewTag: true });
   };
+
   hideNewTagForm = () => {
     this.setState({ addingNewTag: false });
   };
@@ -93,21 +94,23 @@ class Tags extends React.Component<TagsProps, TagsState> {
         </div>
       );
     }
-    return (<div className={styles.tags}>
-      {this.props.tags.map((tag) =>
-        (<div
-          key={tag._id}
-          className={styles.tag}
-          style={{ backgroundColor: tag.color }}
-          onClick={this.props.navigateToTag.bind(null, tag._id)}
-          onContextMenu={this.handleContextMenu.bind(this, tag._id)}
-          ref={colorTools}
-        >
-          {tag.name}
-        </div>)
-      )}
-      {newTagForm}
-    </div>);
+    return (
+      <div className={styles.tags}>
+        {this.props.tags.map((tag) => (
+          <div
+            key={tag._id}
+            className={styles.tag}
+            style={{ backgroundColor: tag.color }}
+            onClick={this.props.navigateToTag.bind(null, tag._id)}
+            onContextMenu={this.handleContextMenu.bind(this, tag._id)}
+            ref={colorTools}
+          >
+            {tag.name}
+          </div>
+        ))}
+        {newTagForm}
+      </div>
+    );
   }
 }
 

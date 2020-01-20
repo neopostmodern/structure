@@ -22,27 +22,29 @@ export class TextPage extends React.Component {
     if (loading) {
       return <i>Loading...</i>;
     }
-    return (<div style={{ marginTop: 50 }}>
-      <TextForm
-        form={text._id}
-        initialValues={text}
-        onSubmit={this.props.updateText}
-        onChange={this.props.updateText}
-      />
-      <div style={{ marginTop: 30 }}>
-        <Tags
-          tags={text.tags}
-          withShortcuts
-          onAddTag={this.props.addTagByNameToNote.bind(this, text._id)}
-          onRemoveTag={this.props.removeTagByIdFromNote.bind(null, text._id)}
+    return (
+      <div style={{ marginTop: 50 }}>
+        <TextForm
+          form={text._id}
+          initialValues={text}
+          onSubmit={this.props.updateText}
+          onChange={this.props.updateText}
         />
-      </div>
-      <div style={{ display: 'flex', marginTop: 50 }}>
-        <button type="button" style={{ marginLeft: 'auto' }} onClick={this.deleteText}>
+        <div style={{ marginTop: 30 }}>
+          <Tags
+            tags={text.tags}
+            withShortcuts
+            onAddTag={this.props.addTagByNameToNote.bind(this, text._id)}
+            onRemoveTag={this.props.removeTagByIdFromNote.bind(null, text._id)}
+          />
+        </div>
+        <div style={{ display: 'flex', marginTop: 50 }}>
+          <button type="button" style={{ marginLeft: 'auto' }} onClick={this.deleteText}>
           Delete
-        </button>
+          </button>
+        </div>
       </div>
-    </div>);
+    );
   }
 }
 
@@ -98,8 +100,7 @@ const withData = graphql(TEXT_QUERY, {
 });
 const withUpdateText = graphql(UPDATE_TEXT_MUTATION, {
   props: ({ mutate }) => ({
-    updateText: ({ _id, name, description }) =>
-      mutate({ variables: { text: { _id, name, description } } })
+    updateText: ({ _id, name, description }) => mutate({ variables: { text: { _id, name, description } } })
   })
 });
 const withDeleteText = graphql(DELETE_TEXT_MUTATION, {

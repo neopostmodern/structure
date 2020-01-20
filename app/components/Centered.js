@@ -8,7 +8,12 @@ export default function Centered({ text, children }) {
     content = children;
   }
 
-  return (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-    <div>{content}</div>
-  </div>);
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh'
+    }}
+    >
+      <div>{content}</div>
+    </div>
+  );
 }

@@ -40,7 +40,7 @@ type MarkedTextareaProps = {
     value: string
   },
   className: string
-}
+};
 type MarkedTextareaStateType = {
   editDescription: boolean,
   editDescriptionFocused: boolean
@@ -122,8 +122,8 @@ export default class MarkedTextarea extends React.Component<MarkedTextareaProps,
     } else if (input.value) {
       content = (
         <div
-          dangerouslySetInnerHTML={{__html: marked(input.value)}}
-          style={{fontSize: '1rem'}}
+          dangerouslySetInnerHTML={{ __html: marked(input.value) }}
+          style={{ fontSize: '1rem' }}
         />
       );
     } else {
@@ -140,7 +140,8 @@ export default class MarkedTextarea extends React.Component<MarkedTextareaProps,
           type="button"
           onClick={this.toggleEditDescription}
           title={shortcutKeysToString(focusDescriptionShortcutKeys)}
-          className={ClassNames(styles.editButton, buttonStyles.inlineButton)}>
+          className={ClassNames(styles.editButton, buttonStyles.inlineButton)}
+        >
           {editDescription ? 'Done' : 'Edit'}
         </button>
         {content}

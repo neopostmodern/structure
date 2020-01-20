@@ -3,7 +3,7 @@ import ElectronStore from 'electron-store';
 
 export type configurationStateType = {
   backendUrl: string,
-  backendUrlDefault: string,
+  backendUrlDefault: string
 };
 
 type Action = { type: string, payload?: any };

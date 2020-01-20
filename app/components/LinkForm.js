@@ -9,7 +9,7 @@ import formStyles from './NoteForm.scss';
 import LinkNameField from './fields/LinkNameField';
 import UrlField from './fields/UrlField';
 
-const LINK_FORM_NAME:string = 'link_form';
+const LINK_FORM_NAME: string = 'link_form';
 
 type LinkFormProps = {
   metadata?: {

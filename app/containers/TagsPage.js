@@ -3,14 +3,14 @@ import * as React from 'react';
 import { graphql, compose } from 'react-apollo';
 import ClassNames from 'classnames';
 import gql from 'graphql-tag';
-import { bindActionCreators } from "redux";
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import type { TagsLayoutsType } from '../actions/userInterface';
 
 import styles from './TagsPage.scss';
 import menuStyles from '../styles/menu.scss';
 import type { TagType } from '../types';
-import colorTools, { ColorCache } from '../utils/colorTools'
+import colorTools, { ColorCache } from '../utils/colorTools';
 import {
   changeTagsLayout,
   TagsLayouts
@@ -61,15 +61,18 @@ export class TagsPage extends React.Component {
     event.dataTransfer.dropEffect = 'copy';
     this.setState({ draggedTag: tag });
   }
+
   handleDragOver(color, event) {
     this.setState({ droppableColor: color });
     event.preventDefault();
   }
+
   handleDragLeave() {
     this.setState({ droppableColor: null });
   }
+
   handleDrop() {
-    const recoloredTag = Object.assign({}, this.state.draggedTag, { color: this.state.droppableColor});
+    const recoloredTag = Object.assign({}, this.state.draggedTag, { color: this.state.droppableColor });
     this.props.updateTag(recoloredTag);
     this.setState({ droppableColor: null });
   }
@@ -152,16 +155,18 @@ export class TagsPage extends React.Component {
   render() {
     let content;
     if (!this.props.loading) {
-      content = (<React.Fragment>
-        <div className={menuStyles.menu}>
-          <a
-            onClick={this.selectNextLayout}
-          >
-            {layoutToName(this.props.layout)}
-          </a>
-        </div>
-        {this.renderTags()}
-      </React.Fragment>);
+      content = (
+        <React.Fragment>
+          <div className={menuStyles.menu}>
+            <a
+              onClick={this.selectNextLayout}
+            >
+              {layoutToName(this.props.layout)}
+            </a>
+          </div>
+          {this.renderTags()}
+        </React.Fragment>
+      );
     } else {
       content = <i>Loading...</i>;
     }
