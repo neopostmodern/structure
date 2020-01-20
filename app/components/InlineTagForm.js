@@ -30,8 +30,10 @@ const inputField = ({
 );
 
 type InlineTagFormProps = {
+  tagsLoading: true
+} | {
   tags: Array<TagType>,
-  tagsLoading: boolean,
+  tagsLoading: false,
   handleSubmit: () => void,
   onAbort: () => void,
   // from form
@@ -74,11 +76,18 @@ class InlineTagForm extends React.Component<InlineTagFormProps> {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.nameValue !== nextProps.nameValue) {
-      const autocompleteSuggestions = this.props.tags
-        .map(({ _id, name }) => ({ _id, index: name.indexOf(nextProps.nameValue), name }))
-        .filter(({ index }) => index !== -1)
-        .sort((tag1, tag2) => (tag1.index + (tag1.name.length / 100)) - (tag2.index + (tag2.name.length / 100)))
-        .map(({ _id }) => this.tagMap[_id]);
+      let autocompleteSuggestions = this.props.tags;
+      if (nextProps.nameValue !== undefined) {
+        autocompleteSuggestions = autocompleteSuggestions
+          .map(({ _id, name }) => (
+            { _id, index: name.toLowerCase().indexOf(nextProps.nameValue.toLowerCase()), name }
+          ))
+          .filter(({ index }) => index !== -1)
+          .sort((tag1, tag2) => (
+            (tag1.index + (tag1.name.length / 100)) - (tag2.index + (tag2.name.length / 100))
+          ))
+          .map(({ _id }) => this.tagMap[_id]);
+      }
 
       this.setState({ autocompleteSuggestions });
     }
@@ -143,7 +152,6 @@ class InlineTagForm extends React.Component<InlineTagFormProps> {
       switch (event.key) {
         case 'Escape':
           this.props.onAbort();
-          event.preventPropagation();
           break;
         case 'Enter':
           // if either shift key is pressed or the input field itself is focused, let default input
