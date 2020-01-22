@@ -11,7 +11,7 @@
     "deploy": "npm run bundle && ./deploy/deploy.sh"
   },
   "author": "",
-  "license": "ISC",
+  "license": "AGPL-3.0",
   "dependencies": {
     "body-parser": "^1.19.0",
     "connect-mongodb-session": "^2.3.0",
