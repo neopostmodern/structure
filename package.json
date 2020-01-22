@@ -1,7 +1,7 @@
 {
   "name": "structure",
   "productName": "Structure",
-  "version": "0.17.4+1",
+  "version": "0.17.5",
   "description": "Structure. For bookmarks, notes and soon everything else.",
   "main": "app/main.prod.js",
   "scripts": {
