@@ -68,9 +68,10 @@ const apolloOptions = {
   ssrMode: false,
   connectToDevTools: true
 };
-const client = new ApolloClient(Object.assign({}, {
+const client = new ApolloClient({
   queryTransformer: addTypename,
   // shouldBatch: true,
-}, apolloOptions));
+  ...apolloOptions
+});
 
 export default client;

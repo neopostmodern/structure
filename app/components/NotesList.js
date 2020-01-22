@@ -33,7 +33,7 @@ export default class NotesList extends Component<NotesListProps> {
 
   renderBatchOperationCheckbox(note) {
     return (
-      <React.Fragment>
+      <>
         <input
           type="checkbox"
           className={styles.checkbox}
@@ -42,7 +42,7 @@ export default class NotesList extends Component<NotesListProps> {
           onChange={() => this.props.onToggleBatchSelected(note._id)}
         />
         <label htmlFor={`checkbox-${note._id}`} className={styles.checkboxLabel} />
-      </React.Fragment>
+      </>
     );
   }
 

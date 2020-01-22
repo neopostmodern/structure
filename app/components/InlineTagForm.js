@@ -131,8 +131,7 @@ class InlineTagForm extends React.Component<InlineTagFormProps> {
                 >
                   {tag.name}
                 </div>
-              ))
-            }
+              ))}
             {this.state.autocompleteSuggestions.length > InlineTagForm.MAX_AUTOCOMPLETE_LENGTH ? (
               <div
                 key="more"

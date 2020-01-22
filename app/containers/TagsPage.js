@@ -73,7 +73,7 @@ export class TagsPage extends React.Component {
   }
 
   handleDrop() {
-    const recoloredTag = Object.assign({}, this.state.draggedTag, { color: this.state.droppableColor });
+    const recoloredTag = { ...this.state.draggedTag, color: this.state.droppableColor };
     this.props.updateTag(recoloredTag);
     this.setState({ droppableColor: null });
   }
@@ -157,7 +157,7 @@ export class TagsPage extends React.Component {
     let content;
     if (!this.props.loading) {
       content = (
-        <React.Fragment>
+        <>
           <div className={menuStyles.menu}>
             <a
               onClick={this.selectNextLayout}
@@ -166,7 +166,7 @@ export class TagsPage extends React.Component {
             </a>
           </div>
           {this.renderTags()}
-        </React.Fragment>
+        </>
       );
     } else {
       content = <i>Loading...</i>;

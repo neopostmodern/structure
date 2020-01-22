@@ -37,7 +37,7 @@ export default function links(state: Array<NoteObject> = [], action: actionType)
       const linkIndex = state.findIndex(({ id }) => id === action.payload.linkId);
       return [
         ...state.slice(0, linkIndex),
-        Object.assign({}, state[linkIndex], { tags: [...state[linkIndex].tags, action.payload.tag] }),
+        { ...state[linkIndex], tags: [...state[linkIndex].tags, action.payload.tag] },
         ...state.slice(linkIndex + 1)
       ];
     default:

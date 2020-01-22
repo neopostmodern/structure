@@ -86,7 +86,7 @@ class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldSta
     const { input, url } = this.props;
 
     return (
-      <React.Fragment>
+      <>
         <input
           type="text"
           className={formStyles.name}
@@ -98,7 +98,7 @@ class LinkNameField extends React.Component<LinkNameFieldProps, LinkNameFieldSta
           placeholder="Title"
         />
         {this.state.nameFocused ? this.renderTitles() : null}
-      </React.Fragment>
+      </>
     );
   }
 }

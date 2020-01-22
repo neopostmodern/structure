@@ -53,45 +53,42 @@ export default function links(state: userInterfaceStateType = initialState, acti
   }
   switch (action.type) {
     case REQUEST_LOGIN:
-      return Object.assign({}, state, { loggingIn: true });
+      return { ...state, loggingIn: true };
     case COMPLETE_LOGIN:
-      return Object.assign({}, state, { loggingIn: false });
+      return { ...state, loggingIn: false };
     case CHANGE_LINK_LAYOUT:
-      return Object.assign({}, state, { linkLayout: action.payload });
+      return { ...state, linkLayout: action.payload };
     case CHANGE_TAGS_LAYOUT:
-      return Object.assign({}, state, { tagsLayout: action.payload });
+      return { ...state, tagsLayout: action.payload };
     case CHANGE_ARCHIVE_STATE:
-      return Object.assign({}, state, { archiveState: action.payload });
+      return { ...state, archiveState: action.payload };
     case CHANGE_SEARCH_QUERY:
-      return Object.assign({}, state, { searchQuery: action.payload });
+      return { ...state, searchQuery: action.payload };
     case INCREASE_INFINITE_SCROLL:
-      return Object.assign({}, state, {
-        infiniteScrollLimit: state.infiniteScrollLimit + action.payload
-      });
+      return { ...state, infiniteScrollLimit: state.infiniteScrollLimit + action.payload };
     case REQUEST_METADATA:
-      return Object.assign({}, state, { metadataLoading: true });
+      return { ...state, metadataLoading: true };
     case RECEIVED_METADATA:
-      return Object.assign({}, state, { metadataLoading: false, metadata: action.payload });
+      return { ...state, metadataLoading: false, metadata: action.payload };
     case CLEAR_METADATA:
-      return deleteFields(Object.assign({}, state, { metadataLoading: false }), ['metadata']);
+      return deleteFields({ ...state, metadataLoading: false }, ['metadata']);
     case TOGGLE_BATCH_EDITING:
-      return Object.assign({}, state, { batchEditing: !state.batchEditing });
+      return { ...state, batchEditing: !state.batchEditing };
     case TOGGLE_BATCH_SELECTION:
-      return Object.assign({}, state, {
-        batchSelections: Object.assign(
-          {},
-          state.batchSelections,
-          {
-            [action.payload]: !state.batchSelections[action.payload]
-          }
-        )
-      });
+      return {
+        ...state,
+        batchSelections: {
+
+          ...state.batchSelections,
+          [action.payload]: !state.batchSelections[action.payload]
+        }
+      };
     case SET_BATCH_SELECTION:
-      return Object.assign({}, state, { batchSelections: action.payload });
+      return { ...state, batchSelections: action.payload };
     case SET_CLIPBOARD:
-      return Object.assign({}, state, { clipboard: action.payload });
+      return { ...state, clipboard: action.payload };
     case CLEAR_CLIPBOARD:
-      return deleteFields(Object.assign({}, state), ['clipboard']);
+      return deleteFields({ ...state }, ['clipboard']);
     default:
       return state;
   }

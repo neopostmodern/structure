@@ -177,11 +177,12 @@ const withProfileData = graphql(PROFILE_QUERY, {
     fetchPolicy: 'cache-and-network',
   },
   props: ({ data: { loading, currentUser, refetch }, ownProps }) => ({
-    user: Object.assign({}, ownProps.user, {
+    user: {
+      ...ownProps.user,
       loading,
       name: currentUser && currentUser.name,
       refetch
-    })
+    }
   }),
 });
 
@@ -190,10 +191,11 @@ const withVersionsData = graphql(VERSIONS_QUERY, {
     fetchPolicy: 'cache-and-network',
   },
   props: ({ data: { loading, versions, refetch }, ownProps }) => ({
-    versions: Object.assign({}, versions, {
+    versions: {
+      ...versions,
       loading,
       refetch
-    })
+    }
   }),
 });
 
