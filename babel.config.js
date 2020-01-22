@@ -5,8 +5,9 @@ module.exports = (api) => {
   return {
     presets: [
       ['@babel/preset-env', {
-        targets: { node: 7 },
-        useBuiltIns: 'usage'
+        targets: { electron: require('electron/package.json').version },
+        useBuiltIns: 'usage',
+        corejs: 3
       }],
       '@babel/react',
       '@babel/preset-flow'

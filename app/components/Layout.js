@@ -20,6 +20,9 @@ type versionsReadyType = {
   minimum: number,
   recommended?: number
 };
+type versionsInformationType = {
+  refetch: () => void
+} & (versionsLoadingType | versionsReadyType);
 type LayoutProps = {
   path: string,
 
@@ -30,7 +33,7 @@ type LayoutProps = {
     name: ?string,
     refetch: () => void
   },
-  versions: versionsLoadingType | versionsReadyType
+  versions: versionsInformationType
 };
 
 export class Layout extends Component<LayoutProps> {

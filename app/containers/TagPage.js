@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
+import { flowRight as compose } from 'lodash';
 import gql from 'graphql-tag';
 
 import styles from './TagPage.scss';
@@ -61,7 +62,7 @@ const TAG_QUERY = gql`
       _id
       name
       color
-      
+
       notes {
         ... on INote {
           type
@@ -89,7 +90,7 @@ const UPDATE_TAG_MUTATION = gql`
       _id
       name
       color
-      
+
       notes {
         ... on INote {
           type

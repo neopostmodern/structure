@@ -53,7 +53,10 @@ app.on('ready', async () => {
     width: 1024,
     height: 728,
     icon: '/home/neopostmodern/Code/Structure2/resources/icon.png',
-    webPreferences: { webSecurity: false }
+    webPreferences: {
+      webSecurity: false,
+      nodeIntegration: true // todo: seems necessary to get 'process' into app.html -- investigate
+    }
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);

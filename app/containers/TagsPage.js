@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
+import { flowRight as compose } from 'lodash';
 import ClassNames from 'classnames';
 import gql from 'graphql-tag';
 import { bindActionCreators } from 'redux';
@@ -203,7 +204,7 @@ const UPDATE_TAG_MUTATION = gql`
       _id
       name
       color
-      
+
       notes {
         ... on INote {
           type
