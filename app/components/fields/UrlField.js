@@ -2,6 +2,7 @@ import React from 'react';
 import type { FormProps } from 'redux-form';
 
 import formStyles from '../NoteForm.scss';
+import buttonStyles from '../../styles/button.scss';
 
 class UrlField extends React.Component<FormProps, void> {
   render() {
@@ -14,7 +15,8 @@ class UrlField extends React.Component<FormProps, void> {
         />
         <button
           type="button"
-          style={{ textAlign: 'center', height: '1.5rem', marginLeft: '1rem' }}
+          className={buttonStyles.inlineButton}
+          style={{ marginLeft: '1rem' }}
           onClick={() => window.open(this.props.input.value, '_blank', 'noopener, noreferrer')}
         >
           Open

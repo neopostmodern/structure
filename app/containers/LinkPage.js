@@ -12,6 +12,8 @@ import LinkForm from '../components/LinkForm';
 import { clearMetadata, requestMetadata } from '../actions/userInterface';
 import type { LinkType } from '../types';
 
+import buttonStyles from '../styles/button.scss';
+
 type LinkPageProps = {
   link?: LinkType,
   metadataLoading: boolean,
@@ -83,7 +85,12 @@ export class LinkPage extends React.Component<LinkPageProps> {
           />
         </div>
         <div style={{ display: 'flex', marginTop: 50 }}>
-          <button type="button" style={{ marginLeft: 'auto' }} onClick={this.deleteLink}>
+          <button
+            type="button"
+            style={{ marginLeft: 'auto' }}
+            onClick={this.deleteLink}
+            className={buttonStyles.inlineButton}
+          >
             Delete
           </button>
         </div>

@@ -7,6 +7,7 @@ import ClassNames from 'classnames';
 import { type NoteObject } from '../reducers/links';
 import Tags from './Tags';
 import styles from './LinksList.css';
+import buttonStyles from '../styles/button.scss';
 
 type NotesListProps = {
   notes: Array<NoteObject>,
@@ -96,7 +97,9 @@ export default class NotesList extends Component<NotesListProps> {
                   onClick={() => this.props.onToggleArchived(note._id)}
                 >
                   <div className={styles.status}>{note.archivedAt ? 'Archived' : null}</div>
-                  <button type="button" className={styles.change}>{note.archivedAt ? 'Unarchive' : 'Archive'}</button>
+                  <button type="button" className={`${styles.change} ${buttonStyles.inlineButton}`}>
+                    {note.archivedAt ? 'Unarchive' : 'Archive'}
+                  </button>
                 </div>
               </div>
             </div>
