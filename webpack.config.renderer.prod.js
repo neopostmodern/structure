@@ -2,18 +2,17 @@
  * Build config for electron renderer process
  */
 
-import path from 'path';
-import webpack from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import merge from 'webpack-merge';
-import baseConfig from './webpack.config.base';
+import path from 'path'
+import webpack from 'webpack'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+import merge from 'webpack-merge'
+import baseConfig from './webpack.config.base'
 
-import config from './config.prod.json';
+import config from './config.prod.json'
 // eslint-disable-next-line camelcase
-import package_json from './package.json';
+import package_json from './package.json'
 
 const jsonifiedConfig = {};
 Object.keys(config).forEach((key) => {
@@ -26,12 +25,12 @@ const fontRules = [
   // WOFF Font
   {
     test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-    mimetype: 'application/font-woff'
+    mimetype: 'font/woff'
   },
   // WOFF2 Font
   {
     test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-    mimetype: 'application/font-woff'
+    mimetype: 'woff/woff2'
   },
   // TTF Font
   {
@@ -41,7 +40,7 @@ const fontRules = [
   // EOT Font
   {
     test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-    loader: 'file-loader',
+    mimetype: 'application/vnd.ms-fontobject'
   },
   // SVG Font
   {
@@ -50,22 +49,14 @@ const fontRules = [
   },
 ];
 
-const fontRuleGenerator = ({ test, mimetype, loader = 'url-loader' }) => {
-  const rule = {
-    test,
-    loader,
-    options: {
-      mimetype,
-      publicPath: './'
-    }
-  };
-
-  if (loader === 'url-loader') {
-    rule.options.limit = 10000;
+const fontRuleGenerator = ({ test, mimetype }) => ({
+  test,
+  loader: 'file-loader',
+  options: {
+    mimetype,
+    publicPath: './'
   }
-
-  return rule;
-}
+});
 
 export default merge.smart(baseConfig, {
   mode: 'production',
