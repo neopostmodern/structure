@@ -123,9 +123,10 @@ app.on('ready', async () => {
 
     loginWindow.loadURL(`${backendUrl}/login/github`);
     loginWindow.once('ready-to-show', () => {
-      loginWindow.show();
-      if (loginWindow.webContents.getURL().endsWith('success')) {
+      if (loginWindow.webContents.getURL().endsWith('/')) {
         extractCookiesAndClose();
+      } else {
+        loginWindow.show();
       }
     });
     loginWindow.webContents.on('did-get-redirect-request', (event, url) => {

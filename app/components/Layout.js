@@ -8,9 +8,10 @@ import { Link } from 'react-router-dom';
 
 import { requestLogin } from '../actions/userInterface';
 import Centered from './Centered';
-import config from '../config';
 
 import styles from './Layout.scss';
+import LoginView from './LoginView'
+import VersionMarks from './VersionMarks'
 
 type versionsLoadingType = {
   loading: true
@@ -23,6 +24,7 @@ type versionsReadyType = {
 type versionsInformationType = {
   refetch: () => void
 } & (versionsLoadingType | versionsReadyType);
+
 type LayoutProps = {
   path: string,
 
@@ -54,12 +56,19 @@ export class Layout extends Component<LayoutProps> {
   }
 
   render() {
+    const {
+      path,
+      versions,
+      user,
+      children
+    } = this.props;
+
     let headline = 'Structure';
-    if (this.props.path !== '/') {
+    if (path !== '/') {
       headline = (
         <span>
           <Link to="/">/</Link>
-          {this.props.path.substr(1)}
+          {path.substr(1)}
         </span>
       );
     }
@@ -67,74 +76,20 @@ export class Layout extends Component<LayoutProps> {
     let content;
     let userIndicator;
 
-    if (this.props.user.loggingIn) {
+    if (user.loggingIn) {
       content = <Centered text="Logging in..." />;
-    } else if (this.props.user.loading) {
+    } else if (user.loading) {
       content = <Centered text="Loading..." />;
-    } else if (this.props.user.name) {
-      content = this.props.children;
+    } else if (user.name) {
+      content = children;
       userIndicator = (
         <Link to="/me" className={styles.username}>
-          {this.props.user.name}
+          {user.name}
 .
         </Link>
       );
     } else {
-      content = (
-        <Centered>
-          <button onClick={this.openLoginModal} className={styles.loginButton}>Log in</button>
-        </Centered>
-      );
-    }
-
-    let versionMarks;
-    if (this.props.versions.loading) {
-      versionMarks = <i>Checking for new versions...</i>;
-    } else if (this.props.versions.minimum > config.apiVersion) {
-      versionMarks = (
-        <div className={`${styles.version} ${styles.warning}`}>
-          <div className={styles.headline}>Your Structure is obsolete.</div>
-          <small>
-          This Structure uses API version
-            {' '}
-            {config.apiVersion}
-,
-          but
-            {' '}
-            {this.props.versions.minimum}
-            {' '}
-is required on the server.
-            <br />
-          Functionality is no longer guaranteed,
-          use at your own risk or
-            {' '}
-            <a href={config.releaseUrl} target="_blank" rel="noopener noferrer">update now</a>
-.
-          </small>
-        </div>
-      );
-    } else if (this.props.versions.recommended > config.apiVersion) {
-      versionMarks = (
-        <div className={`${styles.version} ${styles.notice}`}>
-          <div className={styles.headline}>Your Structure is outdated.</div>
-          <small>
-          This Structure uses API version
-            {' '}
-            {config.apiVersion}
-,
-          but
-            {' '}
-            {this.props.versions.recommended}
-            {' '}
-is recommended by the server.
-            <br />
-          You are probably safe for now but try to
-            {' '}
-            <a href={config.releaseUrl} target="_blank" rel="noopener noferrer">update soon</a>
-.
-          </small>
-        </div>
-      );
+      content = <LoginView openLoginModal={this.openLoginModal} />;
     }
 
     return (
@@ -146,7 +101,7 @@ is recommended by the server.
               {userIndicator}
             </div>
           </div>
-          {versionMarks}
+          <VersionMarks versions={versions} />
           {content}
         </div>
       </div>

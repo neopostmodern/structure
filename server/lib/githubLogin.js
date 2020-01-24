@@ -65,13 +65,13 @@ export function setUpGitHubLogin(app, User) {
   app.get('/login/github/callback',
     passport.authenticate('github', { failureRedirect: '/failure' }),
     (req, res) => {
-      res.redirect(`${config.FRONTEND_HOST}`);
+      res.redirect(config.WEB_FRONTEND_HOST);
     }
   );
 
   app.get('/logout', (req, res) => {
     req.logout();
-    res.redirect(`${config.FRONTEND_HOST}`);
+    res.redirect(config.WEB_FRONTEND_HOST);
   });
 }
 
