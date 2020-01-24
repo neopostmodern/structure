@@ -22,6 +22,51 @@ Object.keys(config).forEach((key) => {
 jsonifiedConfig.VERSION = JSON.stringify(package_json.version);
 const configPlugin = new webpack.DefinePlugin(jsonifiedConfig);
 
+const fontRules = [
+  // WOFF Font
+  {
+    test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+    mimetype: 'application/font-woff'
+  },
+  // WOFF2 Font
+  {
+    test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+    mimetype: 'application/font-woff'
+  },
+  // TTF Font
+  {
+    test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+    mimetype: 'application/octet-stream'
+  },
+  // EOT Font
+  {
+    test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+    loader: 'file-loader',
+  },
+  // SVG Font
+  {
+    test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+    mimetype: 'image/svg+xml',
+  },
+];
+
+const fontRuleGenerator = ({ test, mimetype, loader = 'url-loader' }) => {
+  const rule = {
+    test,
+    loader,
+    options: {
+      mimetype,
+      publicPath: './'
+    }
+  };
+
+  if (loader === 'url-loader') {
+    rule.options.limit = 10000;
+  }
+
+  return rule;
+}
+
 export default merge.smart(baseConfig, {
   mode: 'production',
 
@@ -122,60 +167,12 @@ export default merge.smart(baseConfig, {
           }
         ]
       },
-      // WOFF Font
-      {
-        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/font-woff',
-          }
-        },
-      },
-      // WOFF2 Font
-      {
-        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/font-woff',
-          }
-        }
-      },
-      // TTF Font
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/octet-stream'
-          }
-        }
-      },
-      // EOT Font
-      {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader',
-      },
-      // SVG Font
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'image/svg+xml',
-          }
-        }
-      },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
-      }
+      },
+      ...fontRules.map(fontRuleGenerator)
     ]
   },
 
