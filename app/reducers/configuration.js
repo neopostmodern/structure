@@ -1,5 +1,4 @@
 // @flow
-import ElectronStore from 'electron-store';
 
 export type configurationStateType = {
   backendUrl: string,
@@ -8,9 +7,16 @@ export type configurationStateType = {
 
 type Action = { type: string, payload?: any };
 
-
-const electronStore = new ElectronStore();
-const backendUrl = electronStore.get('backend-url', BACKEND_URL);
+let backendUrl;
+if (process.env.TARGET === 'web') {
+  // no backend customization for web, other backends should host their own frontends
+  backendUrl = BACKEND_URL;
+} else {
+  // eslint-disable-next-line global-require
+  const ElectronStore = require('electron-store');
+  const electronStore = new ElectronStore();
+  backendUrl = electronStore.get('backend-url', BACKEND_URL);
+}
 
 const initialState: configurationStateType = {
   backendUrl,

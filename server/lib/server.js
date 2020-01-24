@@ -20,10 +20,10 @@ app.use(bodyParser.json());
 app.use(mongoSanitize());
 app.use(cors({
   origin(origin, callback) {
-    if (['http://localhost:1212', config.FRONTEND_HOST].includes(origin)) {
+    if ([undefined, config.WEB_FRONTEND_HOST, config.ELECTRON_FRONTEND_HOST].includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Host disallowed by CORS'));
+      callback(new Error(`Host disallowed by CORS: ${origin}`));
     }
   },
   credentials: true

@@ -127,7 +127,7 @@ class UserPage extends React.Component<UserPageProps> {
           <a onClick={() => alert('This feature is not yet available')} className={menuStyles.disabled}>
             Delete my account
           </a>
-          {process.ENV.TARGET === 'web'
+          {process.env.TARGET === 'web'
             ? (
               <React.Fragment>
                 ,&nbsp;

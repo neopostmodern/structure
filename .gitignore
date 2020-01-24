@@ -42,6 +42,7 @@ app/bundle.js.map
 app/style.css
 app/style.css.map
 dist
+web/
 dll
 main.prod.js
 main.prod.js.map

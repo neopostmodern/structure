@@ -1,14 +1,21 @@
 import ApolloClient, { addTypename } from 'apollo-client';
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { createHttpLink } from 'apollo-link-http';
-import ElectronStore from 'electron-store';
 
 // import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 // import addGraphQLSubscriptions from './helpers/subscriptions';
 
-const electronStore = new ElectronStore();
-const backendUrl = electronStore.get('backend-url', BACKEND_URL);
+let backendUrl;
+if (process.env.TARGET === 'web') {
+  // no backend customization for web, other backends should host their own frontends
+  backendUrl = BACKEND_URL;
+} else {
+  // eslint-disable-next-line global-require
+  const ElectronStore = require('electron-store');
+  const electronStore = new ElectronStore();
+  backendUrl = electronStore.get('backend-url', BACKEND_URL);
+}
 const link = createHttpLink({
   uri: `${backendUrl}/graphql`,
   credentials: 'include'

@@ -1,12 +1,16 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { createHashHistory as createHistory } from 'history';
 import { routerMiddleware, push } from 'connected-react-router';
 import { createLogger } from 'redux-logger';
 import createRootReducer from '../reducers';
 import middlewares from '../middleware';
 
-
+let createHistory;
+if (process.env.TARGET === 'web') {
+  createHistory = require('history').createBrowserHistory;
+} else {
+  createHistory = require('history').createHashHistory;
+}
 const history = createHistory();
 
 const configureStore = (initialState: ?counterStateType) => {
