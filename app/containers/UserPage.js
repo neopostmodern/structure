@@ -127,6 +127,16 @@ class UserPage extends React.Component<UserPageProps> {
           <a onClick={() => alert('This feature is not yet available')} className={menuStyles.disabled}>
             Delete my account
           </a>
+          {process.ENV.TARGET === 'web'
+            ? (
+              <React.Fragment>
+                ,&nbsp;
+                <a href={`${BACKEND_URL}/logout`}>
+                  Logout
+                </a>
+              </React.Fragment>
+            )
+            : null}
         </div>
         <div style={{ marginTop: '2rem' }}>
           <h2>Credentials</h2>

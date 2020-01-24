@@ -1,8 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import ElectronCookies from '@exponent/electron-cookies';
-import { ipcRenderer } from 'electron';
 import Mousetrap from 'mousetrap';
 import makeMousetrapGlobal from './utils/mousetrapGlobal';
 
@@ -11,10 +9,14 @@ import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './styles/app.global.scss';
 
-ElectronCookies.enable({
-  origin: 'http://localhost:3010',
-});
-
+if (process.env.TARGET !== 'web') {
+  import('@exponent/electron-cookies')
+    .then(ElectronCookies => {
+      ElectronCookies.enable({
+        origin: 'http://localhost:3010',
+      });
+    });
+}
 
 makeMousetrapGlobal(Mousetrap);
 Mousetrap.bindGlobal(['ctrl+.', 'command+.'], () => {
@@ -27,10 +29,14 @@ Mousetrap.bind(['esc'], () => {
 Mousetrap.bindGlobal(['ctrl+n', 'command+n'], () => {
   history.push('/notes/add');
 });
-Mousetrap.bindGlobal(['f12', 'ctrl+shift+i'], () => {
-  ipcRenderer.send('toggle-dev-tools');
-});
-
+if (process.env.TARGET !== 'web') {
+  import('electron')
+    .then(({ ipcRenderer }) => {
+      Mousetrap.bindGlobal(['f12', 'ctrl+shift+i'], () => {
+        ipcRenderer.send('toggle-dev-tools');
+      });
+    });
+}
 
 const store = configureStore();
 

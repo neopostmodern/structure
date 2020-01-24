@@ -1,9 +1,9 @@
-import login from './electron';
+import electron from './electron';
 import metadata from './metadata';
 import configuration from './configuration';
 
 export default [
-  login,
+  electron,
   metadata,
   configuration
 ];
