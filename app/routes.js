@@ -1,6 +1,5 @@
 /* eslint flowtype-errors/show-errors: 0 */
 import React from 'react';
-import { HashRouter as Router } from 'react-router-dom';
 import { Switch, Route } from 'react-router';
 
 import Layout from './components/Layout';
@@ -15,22 +14,20 @@ import MissingPage from './containers/MissingPage';
 
 export default () => (
   <Layout>
-    <Router>
-      <Switch>
-        <Route path="/" exact component={NotesPage} />
-        <Route path="/notes" exact component={NotesPage} />
-        <Route path="/notes/add" exact component={AddNotePage} />
+    <Switch>
+      <Route path="/" exact component={NotesPage} />
+      <Route path="/notes" exact component={NotesPage} />
+      <Route path="/notes/add" exact component={AddNotePage} />
 
-        <Route path="/texts/:textId" exact component={TextPage} />
-        <Route path="/links/:linkId" exact component={LinkPage} />
+      <Route path="/texts/:textId" exact component={TextPage} />
+      <Route path="/links/:linkId" exact component={LinkPage} />
 
-        <Route path="/me" exact component={UserPage} />
+      <Route path="/me" exact component={UserPage} />
 
-        <Route path="/tags" exact component={TagsPage} />
-        <Route path="/tags/:tagId" exact component={TagPage} />
+      <Route path="/tags" exact component={TagsPage} />
+      <Route path="/tags/:tagId" exact component={TagPage} />
 
-        <Route component={MissingPage} />
-      </Switch>
-    </Router>
+      <Route component={MissingPage} />
+    </Switch>
   </Layout>
 );

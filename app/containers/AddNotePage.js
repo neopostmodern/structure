@@ -9,14 +9,12 @@ import AddLink from '../components/AddLink';
 import buttonStyles from '../styles/button.scss';
 
 class AddLinkPage extends React.Component {
-  props: {
-    addLink: (url: string) => { _id: string },
-    addText: () => { _id: string },
-
-    history: {
-      push: (path: string) => void
-    }
-  }
+  // todo: prop-types break app
+  // props: {
+  //   addLink: (url: string) => { _id: string },
+  //   addText: () => { _id: string },
+  //   push: (path: string) => void
+  // }
 
   constructor() {
     super();

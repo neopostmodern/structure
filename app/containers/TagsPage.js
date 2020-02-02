@@ -34,12 +34,13 @@ export function layoutToName(layout: TagsLayoutsType) {
 }
 
 export class TagsPage extends React.Component {
-  props: {
-    loading: boolean,
-    tags?: Array<TagType>,
-    layout: TagsLayoutsType,
-    changeLayout: (newLayout: TagsLayoutsType) => void
-  };
+  // todo: proptypes break app
+  // props: {
+  //   loading: boolean,
+  //   tags?: Array<TagType>,
+  //   layout: TagsLayoutsType,
+  //   changeLayout: (newLayout: TagsLayoutsType) => void
+  // };
 
   constructor() {
     super();
