@@ -95,12 +95,12 @@ export class Layout extends Component<LayoutProps> {
     return (
       <div>
         <div className={styles.container}>
-          <div style={{ display: 'flex' }}>
+          <header>
             <h2 className={styles.title}>{headline}</h2>
-            <div style={{ marginLeft: 'auto' }}>
+            <div className={styles.userIndicator}>
               {userIndicator}
             </div>
-          </div>
+          </header>
           <VersionMarks versions={versions} />
           {content}
         </div>

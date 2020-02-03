@@ -4,6 +4,7 @@
   @extend %menu-typo;
 
   display: flex;
+  flex-wrap: wrap;
 
   a,
   button {
@@ -30,6 +31,12 @@
 .searchFieldContainer {
   margin-left: auto;
   position: relative;
+
+  @media (max-width: $BREAK_POINT_MOBILE) {
+	margin-left: 0;
+	margin-top: 1.5rem;
+	width: 100%;
+  }
 }
 
 input[type="text"].searchField {
@@ -37,6 +44,10 @@ input[type="text"].searchField {
 
   margin-top: -0.3em;
   padding-bottom: 3px;
+
+  @media (min-width: $BREAK_POINT_MOBILE) {
+	width: 17rem;
+  }
 }
 
 .eraseSearchField {

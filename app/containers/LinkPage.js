@@ -12,6 +12,7 @@ import LinkForm from '../components/LinkForm';
 import { clearMetadata, requestMetadata } from '../actions/userInterface';
 import type { LinkType } from '../types';
 
+import styles from './LinkPage.scss';
 import buttonStyles from '../styles/button.scss';
 
 type LinkPageProps = {
@@ -67,7 +68,7 @@ export class LinkPage extends React.Component<LinkPageProps> {
     }
     //    form={link._id}
     return (
-      <div style={{ marginTop: 50 }}>
+      <div className={styles.container}>
         <LinkForm
           initialValues={link}
           metadata={this.props.metadata}

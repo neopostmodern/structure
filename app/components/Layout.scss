@@ -3,22 +3,51 @@
 .container {
   max-width: $CONTAINER_WIDTH;
   margin: 2rem auto 5rem;
+
+  @media (max-width: $BREAK_POINT_MOBILE) {
+	margin-top: 0;
+  }
 }
 
 .container a {
   /*font-size: 1.4rem;*/
 }
 
+header {
+  display: flex;
+
+  @media (max-width: $BREAK_POINT_MOBILE) {
+	flex-direction: column;
+  }
+}
+
 .title {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 
   margin: 0;
 
   font-size: 5rem;
   font-weight: bold;
   letter-spacing: -.025em;
+
+  @media (max-width: $BREAK_POINT_MOBILE) {
+	font-size: 15vw;
+  }
+
+  a {
+	color: blue;
+  }
+}
+
+.userIndicator {
+  margin-left: auto;
+
+  @media (max-width: $BREAK_POINT_MOBILE) {
+	order: -1;
+  }
 }
 
 .loginButton {
