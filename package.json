@@ -2,7 +2,7 @@
   "name": "structure",
   "productName": "Structure",
   "version": "0.17.5",
-  "description": "Structure. For bookmarks, notes and soon everything else.",
+  "description": "A performance-at-interaction oriented and reasonably stylish bookmarking tool for (eventually) everything.",
   "main": "app/main.prod.js",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",

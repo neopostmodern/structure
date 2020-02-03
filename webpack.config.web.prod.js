@@ -30,7 +30,9 @@ export default merge.smart(rendererProdConfig, {
       TARGET: 'web'
     }),
     new CopyWebpackPlugin([
-      { from: path.join(__dirname, 'resources/icon.ico'), to: 'favicon.ico' },
+      { from: path.join(__dirname, 'app/manifest.webmanifest'), to: 'manifest.webmanifest' },
+      { from: path.join(__dirname, 'resources/icons/192x192.png'), to: 'icons/192x192.png' },
+      { from: path.join(__dirname, 'resources/icons/256x256.png'), to: 'icons/256x256.png' },
     ]),
     new HtmlWebpackPlugin({
       title: package_json.productName,
