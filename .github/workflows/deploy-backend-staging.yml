@@ -31,4 +31,5 @@ jobs:
       - name: Bundle
         run: ./server/deploy/bundle.sh
       - name: Deploy
+        working-directory: server
         run: ./server/deploy/deploy.sh
