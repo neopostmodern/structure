@@ -29,7 +29,8 @@ jobs:
         working-directory: server
         run: npm run build
       - name: Bundle
-        run: ./server/deploy/bundle.sh
+        working-directory: server
+        run: ./deploy/bundle.sh
       - name: Deploy
         working-directory: server
-        run: ./server/deploy/deploy.sh
+        run: ./deploy/deploy.sh
