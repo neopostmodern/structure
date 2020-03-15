@@ -6,7 +6,11 @@ jobs:
   deploy_production:
     name: Deploy backend to staging server
     runs-on: ubuntu-latest
+    env:
+      CONFIG_FILE: config-staging.json
     steps:
+      - name: Install required packages
+        run: sudo apt-get install -y lftp
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install dependencies
@@ -16,8 +20,15 @@ jobs:
         run: ./server/deploy/decrypt-config.sh
         env:
           CONFIG_DECRYPT_PASSPHRASE: ${{ secrets.CONFIG_DECRYPT_PASSPHRASE }}
-      - name: Build / bundle / deploy
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Build
         working-directory: server
-        run: npm run deploy
-        env:
-          CONFIG_FILE: config-staging.json
+        run: npm run build
+      - name: Bundle
+        run: ./server/deploy/bundle.sh
+      - name: Deploy
+        run: ./server/deploy/deploy.sh
