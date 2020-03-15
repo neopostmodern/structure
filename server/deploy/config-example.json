@@ -1,0 +1,19 @@
+{
+  "PORT": 3030,
+  "GRAPHIQL": false,
+  "MONGO_URL": "mongodb://localhost/structureApp",
+  "MIGRATIONS_DIRECTORY": "/home/structure/backend/migrations",
+  "GITHUB_CLIENT_ID": "YOUR_CLIENT_ID_HERE",
+  "GITHUB_CLIENT_SECRET": "YOUR_CLIENT_SECRET_HERE",
+  "GITHUB_LOGIN_CALLBACK": "https://backend.structure.neopostmodern.com/login/github/callback",
+  "WEB_FRONTEND_HOST": "https://structure.neopostmodern.com",
+  "ELECTRON_FRONTEND_HOST": "file://",
+  "SESSION_SECRET": "YOUR_SESSION_SECRET_HERE",
+  "USER": "YOU_SERVER_USERNAME_HERE",
+  "SERVER": "YOUR_SERVER_URL_HERE",
+  "SERVER_FOLDER": "YOUR_SERVER_FOLDERNAME_HERE",
+  "PROCESS_NAME": "YOUR_PM2_PROCESSNAME_HERE",
+  "NODE_ARGS": "",
+  "RUN_PREFLIGHT": "./deploy/clone-database-staging.sh",
+  "BACKUP_DIR": "YOUR_LOCAL_BACKUP_FOLDERNAME_HERE"
+}

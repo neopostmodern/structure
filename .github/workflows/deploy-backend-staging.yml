@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+      - staging
+jobs:
+  deploy_production:
+    name: Deploy backend to staging server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        working-directory: server
+        run: npm ci
+      - name: Decrypt configuration
+        run: ./server/deploy/decrypt-config.sh
+        env:
+          CONFIG_DECRYPT_PASSPHRASE: ${{ secrets.CONFIG_DECRYPT_PASSPHRASE }}
+      - name: Build / bundle / deploy
+        working-directory: server
+        run: npm run deploy
+        env:
+          CONFIG_FILE: config-staging.json
