@@ -13,23 +13,15 @@ import webpack from 'webpack';
 import chalk from 'chalk';
 import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
-import baseConfig from './webpack.config.base';
-
-import config from './config.dev.json';
-// eslint-disable-next-line camelcase
-import package_json from './package.json';
+import baseConfig, { createConfigPlugin } from './webpack.config.base';
+import config from './server/lib/config';
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
 const dll = path.resolve(process.cwd(), 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 
-const jsonifiedConfig = {};
-Object.keys(config).forEach((key) => {
-  jsonifiedConfig[key] = JSON.stringify(config[key]);
-});
-jsonifiedConfig.VERSION = JSON.stringify(package_json.version);
-const configPlugin = new webpack.DefinePlugin(jsonifiedConfig);
+const configPlugin = createConfigPlugin(config);
 
 /**
  * Warn if the DLL is not built

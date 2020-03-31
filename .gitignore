@@ -50,5 +50,3 @@ main.prod.js.map
 .idea
 npm-debug.log.*
 __snapshots__
-
-config.prod.json

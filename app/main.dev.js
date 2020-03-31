@@ -81,6 +81,9 @@ app.on('ready', async () => {
   });
 
   mainWindow.webContents.on('new-window', (event, targetUrl) => {
+    if (targetUrl.endsWith('/login/github')) {
+      return;
+    }
     event.preventDefault();
     shell.openExternal(targetUrl);
   });
@@ -91,55 +94,6 @@ app.on('ready', async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
-
-  // login logic
-  ipcMain.on('login-modal', (event, backendUrl) => {
-    let loginWindow = new BrowserWindow({
-      parent: mainWindow,
-      modal: true,
-      show: false,
-      width: 400,
-      webPreferences: {
-        nodeIntegration: false,
-      }
-    });
-
-    const extractCookiesAndClose = () => {
-      loginWindow.webContents.session.cookies.get({}, (error, cookies) => {
-        cookies.forEach((cookie) => {
-          cookie.url = `http://${cookie.domain}`;
-          delete cookie.domain;
-          mainWindow.webContents.session.cookies.set(cookie, (error) => {
-            if (error) {
-              console.error("Can't set cookie.", error, error.message, error.toString());
-            }
-          });
-        });
-      });
-
-      loginWindow.close();
-      mainWindow.send('login-closed');
-    };
-
-    loginWindow.loadURL(`${backendUrl}/login/github`);
-    loginWindow.once('ready-to-show', () => {
-      if (loginWindow.webContents.getURL().endsWith('/')) {
-        extractCookiesAndClose();
-      } else {
-        loginWindow.show();
-      }
-    });
-    loginWindow.webContents.on('did-get-redirect-request', (event, url) => {
-      console.log('redirect', url);
-      if (url.includes('login/github/callback')) {
-        extractCookiesAndClose();
-      }
-    });
-    loginWindow.on('closed', () => {
-      loginWindow = null;
-      mainWindow.send('login-closed');
-    }, false);
-  });
 
   // enable toggling dev-tools for production app
   ipcMain.on('toggle-dev-tools', () => {

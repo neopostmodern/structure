@@ -21,7 +21,7 @@ export function setUpGitHubLogin(app, User) {
   const gitHubStrategyOptions = {
     clientID: config.GITHUB_CLIENT_ID,
     clientSecret: config.GITHUB_CLIENT_SECRET,
-    callbackURL: config.GITHUB_LOGIN_CALLBACK
+    callbackURL: `${config.BACKEND_URL}/login/github/callback`
   };
 
   passport.use(new GitHubStrategy(gitHubStrategyOptions,
@@ -65,7 +65,18 @@ export function setUpGitHubLogin(app, User) {
   app.get('/login/github/callback',
     passport.authenticate('github', { failureRedirect: '/failure' }),
     (req, res) => {
-      res.redirect(config.WEB_FRONTEND_HOST);
+      res.send(`
+<!doctype html>
+<html lang="en">
+<body>
+<h1>You're logged in!</h1>
+<main>This window should close itself.</main>
+<script>
+    window.close();
+</script>
+</body>
+</html>
+`);
     }
   );
 

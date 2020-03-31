@@ -8,12 +8,27 @@ import {
 } from '../actions/userInterface';
 import { REQUEST_RESTART } from '../actions/configuration';
 
+const handleLogin = (backendUrl: string, popUpOptions: string, dispatch) => {
+  const loginPopup = window.open(
+    `${backendUrl}/login/github`,
+    'Log in with GitHub',
+    popUpOptions
+  );
+  const onCloseWatcher = setInterval(() => {
+    if (loginPopup.closed) {
+      dispatch(completeLogin());
+      clearInterval(onCloseWatcher);
+    }
+  }, 100);
+};
+
+
 let electronMiddleware;
 
 if (process.env.TARGET === 'web') {
   electronMiddleware = store => next => action => {
     if (action.type === REQUEST_LOGIN) {
-      window.location = `${BACKEND_URL}/login/github`;
+      handleLogin(BACKEND_URL, 'height=600,width=400,modal=yes,alwaysRaised=yes', store.dispatch);
     }
     if (action.type === REQUEST_CLIPBOARD) {
       navigator.permissions.query({ name: 'clipboard-read' })
@@ -49,7 +64,11 @@ if (process.env.TARGET === 'web') {
 
     return next => action => {
       if (action.type === REQUEST_LOGIN) {
-        ipcRenderer.send('login-modal', store.getState().configuration.backendUrl);
+        handleLogin(
+          store.getState().configuration.backendUrl,
+          'nodeIntegration=no',
+          store.dispatch
+        );
       }
       if (action.type === REQUEST_CLIPBOARD) {
         next(setClipboard(clipboard.readText()));

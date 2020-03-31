@@ -8,18 +8,10 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import merge from 'webpack-merge'
-import baseConfig from './webpack.config.base'
+import baseConfig, { createConfigPlugin } from './webpack.config.base'
+import config from './server/deploy/config.json'
 
-import config from './config.prod.json'
-// eslint-disable-next-line camelcase
-import package_json from './package.json'
-
-const jsonifiedConfig = {};
-Object.keys(config).forEach((key) => {
-  jsonifiedConfig[key] = JSON.stringify(config[key]);
-});
-jsonifiedConfig.VERSION = JSON.stringify(package_json.version);
-const configPlugin = new webpack.DefinePlugin(jsonifiedConfig);
+const configPlugin = createConfigPlugin(config);
 
 const fontRules = [
   // WOFF Font

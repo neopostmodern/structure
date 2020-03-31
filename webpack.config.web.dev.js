@@ -9,12 +9,18 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 import rendererProdConfig from './webpack.config.renderer.prod';
+import { createConfigPlugin } from './webpack.config.base'
+// eslint-disable-next-line camelcase
 import package_json from './package.json';
+import config from './server/lib/config'
+import MiniCssExtractPlugin from "mini-css-extract-plugin"
 
 const port = 3000;
 const publicPath = `http://localhost:${port}/`;
 
-export default merge.smart(rendererProdConfig, {
+const configPlugin = createConfigPlugin(config);
+
+export default merge.smartStrategy({ plugins: 'replace' })(rendererProdConfig, {
   target: 'web',
 
   entry: './app/index.js',
@@ -35,7 +41,11 @@ export default merge.smart(rendererProdConfig, {
     new HtmlWebpackPlugin({
       title: package_json.productName,
       template: path.join(__dirname, 'app/web.html')
-    })
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'style.css'
+    }),
+    configPlugin
   ],
 
   devServer: {

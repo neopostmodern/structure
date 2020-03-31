@@ -5,7 +5,7 @@
   "MIGRATIONS_DIRECTORY": "/home/structure/backend/migrations",
   "GITHUB_CLIENT_ID": "YOUR_CLIENT_ID_HERE",
   "GITHUB_CLIENT_SECRET": "YOUR_CLIENT_SECRET_HERE",
-  "GITHUB_LOGIN_CALLBACK": "https://backend.structure.neopostmodern.com/login/github/callback",
+  "BACKEND_URL": "https://backend.structure.neopostmodern.com",
   "WEB_FRONTEND_HOST": "https://structure.neopostmodern.com",
   "ELECTRON_FRONTEND_HOST": "file://",
   "SESSION_SECRET": "YOUR_SESSION_SECRET_HERE",
