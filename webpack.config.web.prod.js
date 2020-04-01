@@ -10,8 +10,9 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 import rendererProdConfig from './webpack.config.renderer.prod';
 import package_json from './package.json';
+import { createConfigPlugin } from './webpack.config.base'
 
-export default merge.smart(rendererProdConfig, {
+const webpackConfig = merge.smart(rendererProdConfig, {
   target: 'web',
 
   entry: './app/index.js',
@@ -40,3 +41,17 @@ export default merge.smart(rendererProdConfig, {
     })
   ],
 });
+
+if (process.env.STAGING) {
+  const config = require('./server/deploy/config-staging.json');
+
+  webpackConfig.plugins = webpackConfig.plugins.map(plugin => {
+    if (plugin.definitions && plugin.definitions.BACKEND_URL) {
+      return createConfigPlugin(config);
+    }
+
+    return plugin;
+  })
+}
+
+export default webpackConfig;

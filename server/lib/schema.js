@@ -30,15 +30,15 @@ type User {
 type Tag {
   _id: ID!
   user: User!
-  
+
   name: String!
   color: String!
-  
+
   notes: [Note]
 }
 input InputTag {
   _id: ID!
-  
+
   name: String!
   color: String!
 }
@@ -55,7 +55,7 @@ interface INote {
 
   name: String!
   description: String!
-  
+
   createdAt: Date!
   archivedAt: Date
 
@@ -71,7 +71,7 @@ type Text implements INote {
 
   name: String!
   description: String!
-  
+
   createdAt: Date!
   archivedAt: Date
 
@@ -90,13 +90,13 @@ type Link implements INote {
   type: NoteType!
   _id: ID!
   user: User!
-  
+
   url: String!
   domain: String!
   path: String!
   name: String!
   description: String!
-  
+
   createdAt: Date!
   archivedAt: Date
 
@@ -119,7 +119,7 @@ union Note = Link | Text
 type Query {
   # Return the currently logged in user, or null if nobody is logged in
   currentUser: User
-  
+
   versions: Versions
 
   links(
@@ -129,20 +129,20 @@ type Query {
     # The number of items to fetch starting from the offset, for pagination
     limit: Int
   ): [Link]
-  
+
   notes(
     offset: Int,
     limit: Int
   ): [Note]
-  
+
   link(linkId: ID): Link
   text(textId: ID): Text
-  
+
   tags(
     offset: Int,
     limit: Int
   ): [Tag]
-  
+
   tag(tagId: ID): Tag
 }
 
@@ -150,7 +150,7 @@ type Mutation {
   updateTag(
     tag: InputTag!
   ): Tag
-  
+
   submitLink(
     url: String!
   ): Link
@@ -160,7 +160,7 @@ type Mutation {
   deleteLink(
     linkId: ID!
   ): Link
-  
+
   createText: Text
   updateText(
     text: InputText!
@@ -168,25 +168,25 @@ type Mutation {
   deleteText(
     textId: ID!
   ): Text
-  
+
   addTagByNameToNote(
     noteId: ID!
     name: String!
   ): Note
-  
+
   removeTagByIdFromNote(
     noteId: ID!
     tagId: ID!
   ): Note
-  
+
   toggleArchivedNote(
     noteId: ID!
   ): Note
-  
+
   requestNewCredential(
     purpose: String!
   ): User
-  
+
   revokeCredential(
     purpose: String!
   ): User
@@ -245,8 +245,8 @@ const rootResolvers = {
     },
     versions(root, args, context) {
       return {
-        minimum: 5,
-        recommended: 6
+        minimum: 7,
+        recommended: 7
       };
     },
     notes(root, { offset, limit }, context) {

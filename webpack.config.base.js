@@ -4,6 +4,15 @@
 
 import path from 'path';
 import webpack from 'webpack';
+// eslint-disable-next-line camelcase
+import package_json from './package'
+
+export const createConfigPlugin = (config) => {
+  const jsonifiedConfig = {};
+  jsonifiedConfig.BACKEND_URL = JSON.stringify(config.BACKEND_URL);
+  jsonifiedConfig.VERSION = JSON.stringify(package_json.version);
+  return new webpack.DefinePlugin(jsonifiedConfig);
+};
 
 export default {
   module: {

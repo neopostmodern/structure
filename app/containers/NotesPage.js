@@ -25,6 +25,7 @@ import { type NoteObject } from '../reducers/links';
 
 import styles from './NotesPage.css';
 import menuStyles from '../styles/menu.scss';
+import Centered from '../components/Centered'
 
 export function layoutToName(layout: LinkLayoutType) {
   switch (layout) {
@@ -353,7 +354,7 @@ remaining)
         content = <i>Unsupported layout</i>;
       }
     } else {
-      content = <i>Loading...</i>;
+      content = <Centered>Loading...</Centered>;
     }
     return (
       <div>

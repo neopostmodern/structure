@@ -1,0 +1,36 @@
+on:
+  push:
+    branches:
+      - staging
+jobs:
+  deploy_production:
+    name: Deploy backend to staging server
+    runs-on: ubuntu-latest
+    env:
+      CONFIG_FILE: config-staging.json
+    steps:
+      - name: Install required packages
+        run: sudo apt-get install -y lftp
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        working-directory: server
+        run: npm ci
+      - name: Decrypt configuration
+        run: ./server/deploy/decrypt-config.sh
+        env:
+          CONFIG_DECRYPT_PASSPHRASE: ${{ secrets.CONFIG_DECRYPT_PASSPHRASE }}
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Build
+        working-directory: server
+        run: npm run build
+      - name: Bundle
+        working-directory: server
+        run: ./deploy/bundle.sh
+      - name: Deploy
+        working-directory: server
+        run: ./deploy/deploy.sh

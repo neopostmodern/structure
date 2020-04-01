@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-source "$1"
+if [ -n "$CONFIG_FILE" ]; then
+	  eval "$( jq -r '. | to_entries[] | "\(.key)=\(@sh "\(.value)")"' "${BASH_SOURCE%/*}/$CONFIG_FILE" )"
+fi
 
 echo "Creating and compressing database dump..."
-ssh "$USER@$SERVER" -i "$SSH_IDENT_FILE" <<-'SSH'
+ssh "$USER@$SERVER" <<-'SSH'
 	mongodump --db structureApp --out structureAppDump
 	tar -cjf structureAppDump.tar.bz2 structureAppDump
 	rm -rf structureAppDump
@@ -11,7 +13,7 @@ SSH
 echo "OK"
 
 echo "Downloading dump..."
-lftp -c "set sftp:connect-program \"ssh -i $SSH_IDENT_FILE\"; connect sftp://$USER:SSH@$SERVER; get structureAppDump.tar.bz2 -o $BACKUP_DIR/structureAppDump.`date +%s`.tar.bz2"
+lftp -e "get structureAppDump.tar.bz2 -o $BACKUP_DIR/structureAppDump.`date +%s`.tar.bz2; exit" "sftp://$USER:SSH@$SERVER"
 echo "OK"
 
 echo "Removing old backups..."

@@ -23,6 +23,7 @@
     "graphql": "^14.5.8",
     "graphql-server-express": "^1.4.1",
     "graphql-tools": "^4.0.6",
+    "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "mongoose": "^5.8.9",
     "passport": "^0.4.1",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.7",
     "@babel/node": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "rollup": "^1.29.1",
