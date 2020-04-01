@@ -13,7 +13,7 @@ SSH
 echo "OK"
 
 echo "Downloading dump..."
-lftp -c "set sftp:connect-program \"connect sftp://$USER:SSH@$SERVER; get structureAppDump.tar.bz2 -o $BACKUP_DIR/structureAppDump.`date +%s`.tar.bz2"
+lftp -e "get structureAppDump.tar.bz2 -o $BACKUP_DIR/structureAppDump.`date +%s`.tar.bz2; exit" "sftp://$USER:SSH@$SERVER"
 echo "OK"
 
 echo "Removing old backups..."
