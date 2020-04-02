@@ -30,7 +30,7 @@
     "package": "npm run build && electron-builder build --publish never",
     "package-win": "npm run build && electron-builder build --win --x64",
     "package-macos": "npm run build && electron-builder build --mac && npm run package-macos-fix",
-    "package-macos-fix": "cd release/mac && tar czpf ../structure-mac-fix.tar.gz Structure.app/",
+    "package-macos-fix": "deploy/macos-package-fix.sh",
     "package-linux": "npm run build && electron-builder build --linux",
     "package-all": "npm run build && electron-builder build -mwl && npm run package-macos-fix",
     "cleanup": "mop -v",
