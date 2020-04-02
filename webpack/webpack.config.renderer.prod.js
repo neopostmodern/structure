@@ -9,7 +9,7 @@ import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import merge from 'webpack-merge'
 import baseConfig, { createConfigPlugin } from './webpack.config.base'
-import config from './server/deploy/config.json'
+import config from '../server/deploy/config.json'
 
 const configPlugin = createConfigPlugin(config);
 
@@ -60,7 +60,7 @@ export default merge.smart(baseConfig, {
   entry: './app/index',
 
   output: {
-    path: path.join(__dirname, 'app/dist'),
+    path: path.join(__dirname, '../app/dist'),
     publicPath: './dist/',
     filename: 'renderer.prod.js'
   },

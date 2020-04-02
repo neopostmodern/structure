@@ -14,7 +14,7 @@ import chalk from 'chalk';
 import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
 import baseConfig, { createConfigPlugin } from './webpack.config.base';
-import config from './server/lib/config';
+import config from '../server/lib/config';
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
@@ -42,7 +42,7 @@ export default merge.smart(baseConfig, {
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${port}/`,
     'webpack/hot/only-dev-server',
-    path.join(__dirname, 'app/index.js'),
+    path.join(__dirname, '../app/index.js'),
   ],
 
   output: {
@@ -257,7 +257,7 @@ export default merge.smart(baseConfig, {
     lazy: false,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, 'dist'),
+    contentBase: path.join(__dirname, '../dist'),
     watchOptions: {
       aggregateTimeout: 300,
       ignored: /node_modules/,

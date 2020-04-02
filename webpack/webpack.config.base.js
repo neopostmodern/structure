@@ -5,7 +5,7 @@
 import path from 'path';
 import webpack from 'webpack';
 // eslint-disable-next-line camelcase
-import package_json from './package'
+import package_json from '../package'
 
 export const createConfigPlugin = (config) => {
   const jsonifiedConfig = {};
@@ -35,7 +35,7 @@ export default {
   },
 
   output: {
-    path: path.join(__dirname, 'app'),
+    path: path.join(__dirname, '../app'),
     // https://github.com/webpack/webpack/issues/1114
     libraryTarget: 'commonjs2'
   },
@@ -46,7 +46,7 @@ export default {
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.js.flow'],
     modules: [
-      path.join(__dirname, 'app'),
+      path.join(__dirname, '../app'),
       'node_modules',
     ],
   },

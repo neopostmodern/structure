@@ -9,7 +9,8 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 import rendererProdConfig from './webpack.config.renderer.prod';
-import package_json from './package.json';
+// eslint-disable-next-line camelcase
+import package_json from '../package.json';
 import { createConfigPlugin } from './webpack.config.base'
 
 const webpackConfig = merge.smart(rendererProdConfig, {
@@ -18,7 +19,7 @@ const webpackConfig = merge.smart(rendererProdConfig, {
   entry: './app/index.js',
 
   output: {
-    path: path.join(__dirname, 'web'),
+    path: path.join(__dirname, '../web'),
     publicPath: './',
     filename: 'index.js',
     libraryTarget: 'var',
@@ -31,19 +32,19 @@ const webpackConfig = merge.smart(rendererProdConfig, {
       TARGET: 'web'
     }),
     new CopyWebpackPlugin([
-      { from: path.join(__dirname, 'app/manifest.webmanifest'), to: 'manifest.webmanifest' },
-      { from: path.join(__dirname, 'resources/icons/192x192.png'), to: 'icons/192x192.png' },
-      { from: path.join(__dirname, 'resources/icons/256x256.png'), to: 'icons/256x256.png' },
+      { from: path.join(__dirname, '../app/manifest.webmanifest'), to: 'manifest.webmanifest' },
+      { from: path.join(__dirname, '../resources/icons/192x192.png'), to: 'icons/192x192.png' },
+      { from: path.join(__dirname, '../resources/icons/256x256.png'), to: 'icons/256x256.png' },
     ]),
     new HtmlWebpackPlugin({
       title: package_json.productName,
-      template: path.join(__dirname, 'app/web.html')
+      template: path.join(__dirname, '../app/web.html')
     })
   ],
 });
 
 if (process.env.STAGING) {
-  const config = require('./server/deploy/config-staging.json');
+  const config = require('../server/deploy/config-staging.json');
 
   webpackConfig.plugins = webpackConfig.plugins.map(plugin => {
     if (plugin.definitions && plugin.definitions.BACKEND_URL) {
