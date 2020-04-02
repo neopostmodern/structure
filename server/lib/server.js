@@ -14,13 +14,20 @@ import { addTagByNameToNote, submitLink } from './methods';
 import { migrateTo } from './migrations';
 import { rssFeedUrl } from '../../util/linkGenerator'
 
+const corsAllowedOrigins = [
+  undefined,
+  'null',
+  config.WEB_FRONTEND_HOST,
+  config.ELECTRON_FRONTEND_HOST
+];
+
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(mongoSanitize());
 app.use(cors({
   origin(origin, callback) {
-    if ([undefined, config.WEB_FRONTEND_HOST, config.ELECTRON_FRONTEND_HOST].includes(origin)) {
+    if (corsAllowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error(`Host disallowed by CORS: ${origin}`));
