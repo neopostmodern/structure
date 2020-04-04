@@ -6,7 +6,7 @@ export default {
   input: 'lib/server.js',
   output: {
     format: 'cjs',
-    file: 'lib/server_rollup.js',
+    file: 'rollup/server.js',
   },
   plugins: [
     json(),
