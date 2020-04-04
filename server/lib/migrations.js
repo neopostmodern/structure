@@ -13,11 +13,13 @@ migrations.set(
       console.log('Detected highest previously run migration:');
       console.log(highestMigration);
       let highestVersion = 0;
-      migrations.forEach((migration, version) => {
-        if (migration.name === highestMigration.name) {
-          highestVersion = version;
-        }
-      });
+      if (highestMigration !== null) {
+        migrations.forEach((migration, version) => {
+          if (migration.name === highestMigration.name) {
+            highestVersion = version;
+          }
+        });
+      }
 
       const migrationMetaEntry = new Meta({ _id: 'database-version', value: highestVersion });
       console.log(`Database version set to ${highestVersion}`);
@@ -65,9 +67,18 @@ migrations.set(
   {
     name: 'note-types',
     async up() {
-      const linkCollection = mongoose.connection.db.collection('links');
-      return linkCollection.updateMany({}, { $set: { type: 'Link' } })
-        .then(() => linkCollection.rename('notes'));
+      mongoose.connection.db.listCollections({ name: 'links' })
+        .toArray((error, collectionNames) => {
+          if (error) {
+            throw error;
+          }
+
+          if (collectionNames) {
+            const linkCollection = mongoose.connection.db.collection('links');
+            return linkCollection.updateMany({}, { $set: { type: 'Link' } })
+              .then(() => linkCollection.rename('notes'));
+          }
+        });
     },
     async down() {
       return Text.find().remove()
