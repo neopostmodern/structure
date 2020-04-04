@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "rollup -c",
+    "start": "rollup -w -c",
     "build": "rollup -c rollup-bundle.config.js",
     "bundle": "npm run build && ./deploy/bundle.sh",
     "deploy": "npm run bundle && ./deploy/deploy.sh"
