@@ -3,7 +3,7 @@ import mongoose, { Schema } from 'mongoose';
 import config from './config';
 import urlAnalyzer from '../../util/urlAnalyzer';
 
-mongoose.connect(config.MONGO_URL);
+mongoose.connect(config.MONGO_URL, { useNewUrlParser: true });
 mongoose.set('debug', config.MONGOOSE_DEBUG);
 
 const metaSchema = Schema({
