@@ -8,47 +8,10 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import merge from 'webpack-merge'
-import baseConfig, { createConfigPlugin } from './webpack.config.base'
+import baseConfig, { createConfigPlugin, fontRules } from './webpack.config.base';
 import config from '../server/deploy/config.json'
 
 const configPlugin = createConfigPlugin(config);
-
-const fontRules = [
-  // WOFF Font
-  {
-    test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-    mimetype: 'font/woff'
-  },
-  // WOFF2 Font
-  {
-    test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-    mimetype: 'woff/woff2'
-  },
-  // TTF Font
-  {
-    test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-    mimetype: 'application/octet-stream'
-  },
-  // EOT Font
-  {
-    test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-    mimetype: 'application/vnd.ms-fontobject'
-  },
-  // SVG Font
-  {
-    test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-    mimetype: 'image/svg+xml',
-  },
-];
-
-const fontRuleGenerator = ({ test, mimetype }) => ({
-  test,
-  loader: 'file-loader',
-  options: {
-    mimetype,
-    publicPath: './'
-  }
-});
 
 export default merge.smart(baseConfig, {
   mode: 'production',
@@ -155,7 +118,7 @@ export default merge.smart(baseConfig, {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
       },
-      ...fontRules.map(fontRuleGenerator)
+      ...fontRules({ publicPath: './' })
     ]
   },
 

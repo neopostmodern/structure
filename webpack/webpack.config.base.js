@@ -14,6 +14,48 @@ export const createConfigPlugin = (config) => {
   return new webpack.DefinePlugin(jsonifiedConfig);
 };
 
+
+const fontTypes = [
+  // WOFF Font
+  {
+    test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+    mimetype: 'font/woff'
+  },
+  // WOFF2 Font
+  {
+    test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+    mimetype: 'woff/woff2'
+  },
+  // TTF Font
+  {
+    test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+    mimetype: 'application/octet-stream'
+  },
+  // EOT Font
+  {
+    test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+    mimetype: 'application/vnd.ms-fontobject'
+  },
+  // SVG Font
+  {
+    test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+    mimetype: 'image/svg+xml',
+  },
+];
+
+const fontRuleGenerator = ({ test, mimetype, publicPath = undefined }) => ({
+  test,
+  loader: 'file-loader',
+  options: {
+    mimetype,
+    publicPath
+  }
+});
+
+export const fontRules = ({ publicPath = undefined } = {}) => fontTypes.map(
+  ({ test, mimetype }) => fontRuleGenerator({ test, mimetype, publicPath })
+);
+
 export default {
   module: {
     rules: [
