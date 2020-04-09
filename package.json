@@ -4,6 +4,7 @@
   "version": "0.18.0",
   "description": "A performance-at-interaction oriented and reasonably stylish bookmarking tool for (eventually) everything.",
   "main": "app/main.prod.js",
+  "type": "module",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r @babel/register ./node_modules/webpack/bin/webpack --config webpack/webpack.config.renderer.dev.dll.js --colors",

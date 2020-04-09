@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import {
   Meta, User, Link, Note
-} from './mongo';
+} from './mongo.js';
 
 export const migrations = new Map();
 migrations.set(

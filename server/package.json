@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "rollup -w -c",
+    "start": "node lib/server.js",
     "build": "rollup -c rollup-bundle.config.js",
     "bundle": "npm run build && ./deploy/bundle.sh",
     "deploy": "npm run bundle && ./deploy/deploy.sh"

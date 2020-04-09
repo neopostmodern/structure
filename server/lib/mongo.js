@@ -1,7 +1,10 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 
-import config from './config';
-import urlAnalyzer from '../../util/urlAnalyzer';
+import config from './config.js';
+import urlAnalyzer from '../../util/urlAnalyzer.js';
+
+// named import isn't working at the moment
+const { Schema } = mongoose;
 
 mongoose.connect(config.MONGO_URL, { useNewUrlParser: true });
 mongoose.set('debug', config.MONGOOSE_DEBUG);

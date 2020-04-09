@@ -1,10 +1,14 @@
-import { merge } from 'lodash';
+import lodash from 'lodash';
 import Moment from 'moment';
-import { GraphQLScalarType } from 'graphql';
-import { Kind } from 'graphql/language';
-import { makeExecutableSchema } from 'graphql-tools';
+import GraphQL from 'graphql';
+import GraphQLTools from 'graphql-tools';
 
-import { addTagByNameToNote, requestNewCredential, revokeCredential, submitLink } from './methods'
+import { addTagByNameToNote, requestNewCredential, revokeCredential, submitLink } from './methods.js'
+
+// named import isn't working at the moment
+const { merge } = lodash;
+const { GraphQLScalarType, Kind } = GraphQL;
+const { makeExecutableSchema } = GraphQLTools;
 
 const rootSchema = [`
 scalar Date
