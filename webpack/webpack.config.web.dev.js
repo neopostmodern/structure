@@ -23,11 +23,11 @@ const configPlugin = createConfigPlugin(config);
 export default merge.smartStrategy({ plugins: 'replace' })(rendererProdConfig, {
   target: 'web',
 
-  entry: './app/index.js',
+  entry: './app/index.tsx',
 
   output: {
     publicPath,
-    filename: 'index.js',
+    filename: 'index.tsx',
     libraryTarget: 'var',
   },
 

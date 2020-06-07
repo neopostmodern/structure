@@ -1,16 +1,9 @@
 @import "../styles/config";
-@import "../styles/tag";
 
 .tagContainer {
   margin-top: 2rem;
   display: flex;
   flex-wrap: wrap;
-}
-
-.tag {
-  @extend .base-tag;
-
-  margin-bottom: $tag-margin;
 }
 
 .columnsContainer {
@@ -23,6 +16,7 @@
   .tagContainer {
 	align-items: flex-start;
 
+	// todo: doesn't exist anymore!
 	.tag {
 	  width: fit-content;
 	  max-width: 7em;

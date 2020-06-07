@@ -6,3 +6,9 @@ dll
 __snapshots__
 release/
 server/dist/
+app/generated/
+webpack/
+babel.config.ts
+
+# temporarily
+server/

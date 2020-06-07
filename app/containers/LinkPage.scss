@@ -1,9 +1,0 @@
-@import "../styles/config";
-
-.container {
-  margin-top: 1rem;
-
-  @media (min-width: $BREAK_POINT_MOBILE) {
-	margin-top: 3rem;
-  }
-}
