@@ -9,7 +9,7 @@ export default {
     file: 'dist/server.js',
   },
   external: [
-    path.resolve(__dirname, 'lib/config.js')
+    path.resolve(__dirname, 'lib/config.ts')
   ],
   plugins: [
     json(),
