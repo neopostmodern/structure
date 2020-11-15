@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory } from 'react-router'
+import { useHistory, useParams } from 'react-router'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
@@ -57,11 +57,11 @@ const DELETE_TEXT_MUTATION = gql`
 `
 
 const TextPage: React.FC<{}> = () => {
+  const { textId } = useParams()
   const history = useHistory()
-  const {
-    loading,
-    data: { text },
-  } = useQuery<TextQuery>(TEXT_QUERY)
+  const { loading, data } = useQuery<TextQuery>(TEXT_QUERY, {
+    variables: { textId },
+  })
   const [updateText] = useMutation<
     UpdateTextMutation,
     UpdateTextMutationVariables
@@ -73,7 +73,7 @@ const TextPage: React.FC<{}> = () => {
   >(DELETE_TEXT_MUTATION)
 
   const handleDeleteText = () => {
-    deleteText({ variables: { textId: text._id } }).then((result) => {
+    deleteText({ variables: { textId: data.text._id } }).then((result) => {
       history.push('/')
       return result
     })
@@ -82,6 +82,7 @@ const TextPage: React.FC<{}> = () => {
   if (loading) {
     return <i>Loading...</i>
   }
+  const { text } = data
   return (
     <div style={{ marginTop: 50 }}>
       <TextForm
