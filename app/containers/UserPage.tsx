@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
@@ -23,40 +22,33 @@ import Credentials from '../components/Credentials'
 import SettingsEntry from '../components/SettingsEntry'
 import { InternalLink, TextField } from '../components/CommonStyles'
 
-// todo: create common fragment for credentials
+const userCredentialsFragment = `
+currentUser {
+	_id
+
+	credentials {
+		bookmarklet
+		rss
+	}
+}
+`
+
 const USER_CREDENTIALS_QUERY = gql`
   query UserCredentialsQuery {
-    currentUser {
-      _id
-
-      credentials {
-        bookmarklet
-        rss
-      }
-    }
+    ${userCredentialsFragment}
   }
 `
 const REQUEST_NEW_CREDENTIAL_MUTATION = gql`
   mutation RequestNewCredentialMutation($purpose: String!) {
     requestNewCredential(purpose: $purpose) {
-      _id
-
-      credentials {
-        rss
-        bookmarklet
-      }
-    }
+			${userCredentialsFragment}
+		}
   }
 `
 const REVOKE_CREDENTIAL_MUTATION = gql`
   mutation RevokeCredentialMutation($purpose: String!) {
     revokeCredential(purpose: $purpose) {
-      _id
-
-      credentials {
-        rss
-        bookmarklet
-      }
+			${userCredentialsFragment}
     }
   }
 `
@@ -179,12 +171,11 @@ const UserPage: React.FC<{}> = () => {
         You are using Structure {VERSION}
         <br />
         <br />
-        Structure uses (amongst other things) Electron, React, Redux,
-        Redux-Forms, Apollo/GraphQL, Lunchtype22
+        Structure uses (amongst other things) Electron, React, Redux, React Hook
+        Form, Apollo/GraphQL, Lunchtype22
         <br />
         {/* todo: ! */}
-        Written in JSX (stage-0, flow) and SCSS transpiled and bundled by Babel
-        and Webpack
+        Written in TypeScript, transpiled and bundled by Babel and Webpack
         <br />
         The backend uses express, mongoose, passport.js on node.js with mongoDB
         <br />
