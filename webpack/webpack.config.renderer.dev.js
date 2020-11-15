@@ -14,13 +14,14 @@ import chalk from 'chalk';
 import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
 import baseConfig, { createConfigPlugin, fontRules } from './webpack.config.base';
+import config from '../server/lib/config.json'
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
 const dll = path.resolve(process.cwd(), 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 
-const configPlugin = createConfigPlugin('../server/lib/config.json');
+const configPlugin = createConfigPlugin(config);
 
 /**
  * Warn if the DLL is not built

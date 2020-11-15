@@ -215,6 +215,7 @@
     "core-js": "^3.6.4",
     "electron-debug": "^3.0.1",
     "electron-store": "^5.1.0",
+    "graphql": "^15.4.0",
     "graphql-tag": "^2.10.1",
     "history": "^4.10.1",
     "lodash": "^4.17.15",

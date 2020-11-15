@@ -8,11 +8,9 @@ import webpack from 'webpack';
 // eslint-disable-next-line camelcase
 import package_json from '../package'
 
-export const createConfigPlugin = (configFilePath) => {
-  const configFile =  JSON.parse(fs.readFileSync(path.join(__dirname, configFilePath)))
-
+export const createConfigPlugin = (config) => {
   const jsonifiedConfig = {};
-  jsonifiedConfig.BACKEND_URL = JSON.stringify(configFile.BACKEND_URL);
+  jsonifiedConfig.BACKEND_URL = JSON.stringify(config.BACKEND_URL);
   jsonifiedConfig.VERSION = JSON.stringify(package_json.version);
   return new webpack.DefinePlugin(jsonifiedConfig);
 };
