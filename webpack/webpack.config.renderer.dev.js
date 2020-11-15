@@ -14,14 +14,13 @@ import chalk from 'chalk';
 import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
 import baseConfig, { createConfigPlugin, fontRules } from './webpack.config.base';
-import config from '../server/lib/config';
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
 const dll = path.resolve(process.cwd(), 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
 
-const configPlugin = createConfigPlugin(config);
+const configPlugin = createConfigPlugin('../server/lib/config.json');
 
 /**
  * Warn if the DLL is not built
@@ -42,7 +41,7 @@ export default merge.smart(baseConfig, {
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${port}/`,
     'webpack/hot/only-dev-server',
-    path.join(__dirname, '../app/index.js'),
+    path.join(__dirname, '../app/index.tsx'),
   ],
 
   output: {
@@ -53,7 +52,7 @@ export default merge.smart(baseConfig, {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',

@@ -1,0 +1,157 @@
+{
+  "extends": [
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:eslint-comments/recommended",
+    "airbnb",
+    "prettier",
+    "prettier/react"
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "lodash",
+    "prettier"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
+    }
+  },
+  "globals": {
+    "window": true,
+    "navigator": true,
+    "document": true,
+    "fetch": true,
+    "XMLHttpRequest": true,
+    "FileReader": true,
+    "ServiceWorkerRegistration": true,
+    "BACKEND_URL": true
+  },
+  "rules": {
+    "semi": [
+      "error",
+      "never"
+    ],
+    "semi-style": [
+      "error",
+      "first"
+    ],
+    "no-unexpected-multiline": "error",
+    "no-console": [
+      "warn",
+      {
+        "allow": [
+          "warn",
+          "error"
+        ]
+      }
+    ],
+    "comma-dangle": "off",
+    "no-underscore-dangle": ["error", { "allow": ["_id", "__typename"] }],
+    "arrow-parens": "off",
+    "no-confusing-arrow": "off",
+    "operator-linebreak": [
+      "error",
+      "after",
+      {
+        "overrides": {
+          "?": "before",
+          ":": "before"
+        }
+      }
+    ],
+    "object-property-newline": [
+      "error",
+      {
+        "allowAllPropertiesOnSameLine": true
+      }
+    ],
+    "object-curly-newline": [
+      "error",
+      {
+        "multiline": true,
+        "consistent": true
+      }
+    ],
+    "implicit-arrow-linebreak": "off",
+    "react/jsx-filename-extension": "off",
+    "react/jsx-wrap-multilines": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-closing-tag-location": "off",
+    "react/destructuring-assignment": "off",
+    "react/state-in-constructor": [
+      "error",
+      "never"
+    ],
+    "import/no-extraneous-dependencies": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "mjs": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "react/prop-types": "off",
+    "max-len": [
+      "error",
+      160
+    ],
+    "jsx-quotes": [
+      "error",
+      "prefer-single"
+    ],
+    "lodash/import-scope": [
+      "error",
+      "method"
+    ],
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/no-autofocus": "off",
+    "no-alert": "off",
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "none"
+        },
+        "singleline": {
+          "delimiter": "semi"
+        }
+      }
+    ],
+    "prettier/prettier": [
+      "error"
+    ],
+    "eslint-comments/no-unused-disable": [
+      "error"
+    ],
+    "eslint-comments/disable-enable-pair": [
+      "error",
+      {
+        "allowWholeFile": true
+      }
+    ],
+    "@typescript-eslint/ban-ts-ignore": "off"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.test.*"
+      ],
+      "env": {
+        "jest": true
+      }
+    }
+  ],
+  "parser": "@typescript-eslint/parser"
+}

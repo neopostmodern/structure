@@ -68,3 +68,9 @@ Example files coming soon ([#6](https://github.com/neopostmodern/structure/issue
 cd server
 npm run deploy
 ```
+
+## TODO:
+```
+apollo client:codegen --target typescript --includes='app/**/*.{ts,tsx}' --outputFlat app/generated
+```
+

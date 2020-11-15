@@ -25,7 +25,7 @@ export default merge.smart(baseConfig, {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.([jt])sx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',

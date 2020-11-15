@@ -16,12 +16,12 @@ import { createConfigPlugin } from './webpack.config.base'
 const webpackConfig = merge.smart(rendererProdConfig, {
   target: 'web',
 
-  entry: './app/index.js',
+  entry: './app/index.tsx',
 
   output: {
     path: path.join(__dirname, '../web'),
     publicPath: './',
-    filename: 'index.js',
+    filename: 'index.tsx',
     libraryTarget: 'var',
   },
 

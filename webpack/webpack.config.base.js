@@ -2,14 +2,17 @@
  * Base webpack config used across other specific configs
  */
 
+import fs from 'fs';
 import path from 'path';
 import webpack from 'webpack';
 // eslint-disable-next-line camelcase
 import package_json from '../package'
 
-export const createConfigPlugin = (config) => {
+export const createConfigPlugin = (configFilePath) => {
+  const configFile =  JSON.parse(fs.readFileSync(path.join(__dirname, configFilePath)))
+
   const jsonifiedConfig = {};
-  jsonifiedConfig.BACKEND_URL = JSON.stringify(config.BACKEND_URL);
+  jsonifiedConfig.BACKEND_URL = JSON.stringify(configFile.BACKEND_URL);
   jsonifiedConfig.VERSION = JSON.stringify(package_json.version);
   return new webpack.DefinePlugin(jsonifiedConfig);
 };
@@ -60,7 +63,7 @@ export default {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -86,7 +89,7 @@ export default {
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.js.flow'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     modules: [
       path.join(__dirname, '../app'),
       'node_modules',
