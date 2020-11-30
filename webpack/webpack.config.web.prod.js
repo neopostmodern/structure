@@ -21,7 +21,7 @@ const webpackConfig = merge.smart(rendererProdConfig, {
   output: {
     path: path.join(__dirname, '../web'),
     publicPath: './',
-    filename: 'index.tsx',
+    filename: 'index.js',
     libraryTarget: 'var',
   },
 
