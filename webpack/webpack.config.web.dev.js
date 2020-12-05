@@ -13,7 +13,7 @@ import rendererProdConfig from './webpack.config.renderer.prod';
 import { createConfigPlugin } from './webpack.config.base'
 // eslint-disable-next-line camelcase
 import package_json from '../package.json';
-import config from '../server/lib/config'
+import config from '../server/lib/config.json'
 
 const port = 3000;
 const publicPath = `http://localhost:${port}/`;
@@ -27,7 +27,7 @@ export default merge.smartStrategy({ plugins: 'replace' })(rendererProdConfig, {
 
   output: {
     publicPath,
-    filename: 'index.tsx',
+    filename: 'index.js',
     libraryTarget: 'var',
   },
 
