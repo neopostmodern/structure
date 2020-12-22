@@ -18,6 +18,7 @@ jobs:
         run: npm ci
       - name: Decrypt configuration
         run: ./server/deploy/decrypt-config.sh
+        shell: bash
         env:
           CONFIG_DECRYPT_PASSPHRASE: ${{ secrets.CONFIG_DECRYPT_PASSPHRASE }}
       - name: Build/release Electron app
@@ -27,6 +28,6 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Installer
+          name: Installer ${{ runner.os }}
           path: release/structure-*
           if-no-files-found: error
