@@ -67,7 +67,13 @@
       "buildResources": "resources",
       "output": "release"
     },
-    "publish": "always"
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "neopostmodern",
+        "repo": "structure"
+      }
+    ]
   },
   "repository": {
     "type": "git",
