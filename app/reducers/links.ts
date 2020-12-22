@@ -14,4 +14,3 @@ export type NoteObject = {
   createdAt: number // todo: Date
   archivedAt: number | null // todo: Date
 }
-

@@ -170,16 +170,6 @@ const UserPage: React.FC<{}> = () => {
         <h2>About</h2>
         You are using Structure {VERSION}
         <br />
-        <br />
-        Structure uses (amongst other things) Electron, React, Redux, React Hook
-        Form, Apollo/GraphQL, Lunchtype22
-        <br />
-        {/* todo: ! */}
-        Written in TypeScript, transpiled and bundled by Babel and Webpack
-        <br />
-        The backend uses express, mongoose, passport.js on node.js with mongoDB
-        <br />
-        <br />
         Find the Structure source code{' '}
         <a
           href='https://github.com/neopostmodern/structure'

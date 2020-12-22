@@ -1,6 +1,5 @@
 import url from 'url'
 
-// todo: deduplicate -- server.js:61
 export default function (urlString) {
   const { hostname, pathname } = url.parse(urlString)
 
