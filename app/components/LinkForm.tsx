@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormContext, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
 import MarkedTextarea from './MarkedTextarea'
 import { FormSubheader } from './formComponents'
@@ -29,7 +29,7 @@ const LinkForm: React.FC<LinkFormProps> = ({ link, onSubmit }) => {
   const { handleSubmit, watch } = formProps
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormContext {...formProps}>
+    <FormProvider {...formProps}>
       <form onSubmit={handleSubmit(submitLink)}>
         <UrlField name='url' />
 
@@ -38,7 +38,7 @@ const LinkForm: React.FC<LinkFormProps> = ({ link, onSubmit }) => {
         <FormSubheader>Description / notes</FormSubheader>
         <MarkedTextarea name='description' />
       </form>
-    </FormContext>
+    </FormProvider>
   )
 }
 

@@ -4,36 +4,11 @@ module.exports = (api) => {
 
   return {
     presets: [
-      [
-        '@babel/preset-env',
-        {
-          targets: { electron: require('electron/package.json').version },
-          useBuiltIns: 'usage',
-          corejs: 3,
-        },
-      ],
+      ['@babel/preset-env'],
       '@babel/react',
       '@babel/preset-typescript',
     ],
-    // overrides: [
-    //   {
-    //     test: ['./app/**/*.ts', './app/**/*.tsx'],
-    //     presets: [
-    //       [
-    //         '@babel/preset-env',
-    //         {
-    //           modules: 'cjs',
-    //           targets: {
-    //             electron: require('electron/package.json').version,
-    //           },
-    //         },
-    //       ],
-    //       '@babel/preset-react',
-    //       '@babel/preset-typescript',
-    //     ],
-    //   },
-    // ],
-    plugins: ['add-module-exports', '@babel/plugin-transform-modules-commonjs'],
+    plugins: ['add-module-exports'],
     env: {
       production: {
         plugins: [

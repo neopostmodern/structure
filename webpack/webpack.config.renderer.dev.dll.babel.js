@@ -5,12 +5,12 @@
 import webpack from 'webpack';
 import path from 'path';
 import merge from 'webpack-merge';
-import baseConfig, { fontRules } from './webpack.config.base';
+import baseConfig, { fontRules } from './webpack.config.base.babel';
 import { dependencies } from '../package.json';
 
 const dist = path.resolve(process.cwd(), 'dll');
 
-export default merge.smart(baseConfig, {
+export default merge(baseConfig, {
   context: process.cwd(),
 
   devtool: 'eval',
@@ -20,7 +20,7 @@ export default merge.smart(baseConfig, {
   externals: ['fsevents', 'crypto-browserify'],
 
   /**
-   * Use `module` from `webpack.config.renderer.dev.js`
+   * Use `module` from `webpack.config.renderer.dev.babel.js`
    */
   module: {
     rules: [

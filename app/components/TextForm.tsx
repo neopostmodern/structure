@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormContext, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
 import MarkedTextarea from './MarkedTextarea'
 import { NameInput } from './formComponents'
@@ -18,13 +18,13 @@ const TextForm: React.FC<TextFormProps> = ({ text, onSubmit }) => {
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormContext {...formProps}>
+    <FormProvider {...formProps}>
       <form onSubmit={handleSubmit((data) => onSubmit(data))}>
         <NameInput name='name' type='text' ref={register({ required: true })} />
 
         <MarkedTextarea name='description' />
       </form>
-    </FormContext>
+    </FormProvider>
   )
 }
 

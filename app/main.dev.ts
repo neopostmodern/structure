@@ -53,6 +53,7 @@ app.on('ready', async () => {
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true, // todo: seems necessary to get 'process' into app.html -- investigate
+      enableRemoteModule: true,
     },
     titleBarStyle: 'hidden',
   })

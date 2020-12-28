@@ -7,7 +7,7 @@ import makeMousetrapGlobal from './utils/mousetrapGlobal'
 import apolloClient from './apollo'
 import Root from './containers/Root'
 import { configureStore, history } from './store/configureStore'
-import './styles/fonts.global.scss'
+import './styles/fonts.global.css'
 
 if (process.env.TARGET !== 'web') {
   import('@exponent/electron-cookies').then((ElectronCookies) => {

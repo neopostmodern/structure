@@ -7,31 +7,38 @@
  * https://webpack.js.org/concepts/hot-module-replacement/
  */
 
-import path from 'path';
-import fs from 'fs';
-import webpack from 'webpack';
-import chalk from 'chalk';
-import merge from 'webpack-merge';
-import { spawn, execSync } from 'child_process';
-import baseConfig, { createConfigPlugin, fontRules } from './webpack.config.base';
+import path from 'path'
+import fs from 'fs'
+import webpack from 'webpack'
+import chalk from 'chalk'
+import merge from 'webpack-merge'
+import { spawn, execSync } from 'child_process'
+import baseConfig, {
+  createConfigPlugin,
+  fontRules,
+} from './webpack.config.base.babel'
 import config from '../server/lib/config.json'
 
-const port = process.env.PORT || 1212;
-const publicPath = `http://localhost:${port}/dist`;
-const dll = path.resolve(process.cwd(), 'dll');
-const manifest = path.resolve(dll, 'renderer.json');
+const port = process.env.PORT || 1212
+const publicPath = `http://localhost:${port}/dist`
+const dll = path.resolve(process.cwd(), 'dll')
+const manifest = path.resolve(dll, 'renderer.json')
 
-const configPlugin = createConfigPlugin(config);
+const configPlugin = createConfigPlugin(config)
 
 /**
  * Warn if the DLL is not built
  */
 if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
-  console.log(chalk.black.bgYellow.bold('The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'));
-  execSync('npm run build-dll');
+  console.log(
+    chalk.black.bgYellow.bold(
+      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"',
+    ),
+  )
+  execSync('npm run build-dll')
 }
 
-export default merge.smart(baseConfig, {
+export default merge(baseConfig, {
   mode: 'development',
 
   devtool: 'inline-source-map',
@@ -47,7 +54,7 @@ export default merge.smart(baseConfig, {
 
   output: {
     publicPath,
-    filename: 'renderer.dev.js'
+    filename: 'renderer.dev.js',
   },
 
   module: {
@@ -63,32 +70,32 @@ export default merge.smart(baseConfig, {
               // Here, we include babel plugins that are only required for the
               // renderer process. The 'transform-*' plugins must be included
               // before react-hot-loader/babel
-              ['@babel/plugin-proposal-class-properties', { 'loose': true }],
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
               '@babel/plugin-transform-classes',
-              'react-hot-loader/babel'
+              'react-hot-loader/babel',
             ],
-          }
-        }
+          },
+        },
       },
       {
         test: /\.global\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
             options: {
               sourceMap: true,
             },
-          }
-        ]
+          },
+        ],
       },
       {
         test: /^((?!\.global).)*\.css$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
@@ -98,16 +105,16 @@ export default merge.smart(baseConfig, {
               },
               sourceMap: true,
               importLoaders: 1,
-            }
+            },
           },
-        ]
+        ],
       },
       // SASS support - compile all .global.scss files and pipe it to style.css
       {
         test: /\.global\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
@@ -116,16 +123,16 @@ export default merge.smart(baseConfig, {
             },
           },
           {
-            loader: 'sass-loader'
-          }
-        ]
+            loader: 'sass-loader',
+          },
+        ],
       },
       // SASS support - compile all other .scss files and pipe it to style.css
       {
         test: /^((?!\.global).)*\.(scss|sass)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
@@ -135,26 +142,26 @@ export default merge.smart(baseConfig, {
               },
               sourceMap: true,
               importLoaders: 1,
-            }
+            },
           },
           {
-            loader: 'sass-loader'
-          }
-        ]
+            loader: 'sass-loader',
+          },
+        ],
       },
       // Common Image Formats
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
       },
-      ...fontRules()
-    ]
+      ...fontRules(),
+    ],
   },
 
   resolve: {
     alias: {
-      'react-dom': '@hot-loader/react-dom'
-    }
+      'react-dom': '@hot-loader/react-dom',
+    },
   },
 
   plugins: [
@@ -165,7 +172,7 @@ export default merge.smart(baseConfig, {
     }),
 
     new webpack.HotModuleReplacementPlugin({
-      multiStep: true
+      multiStep: true,
     }),
 
     new webpack.NoEmitOnErrorsPlugin(),
@@ -183,20 +190,20 @@ export default merge.smart(baseConfig, {
      * 'staging', for example, by changing the ENV variables in the npm scripts
      */
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
     }),
 
     new webpack.LoaderOptionsPlugin({
-      debug: true
+      debug: true,
     }),
 
     // define globals config
-    configPlugin
+    configPlugin,
   ],
 
   node: {
     __dirname: false,
-    __filename: false
+    __filename: false,
   },
 
   devServer: {
@@ -213,7 +220,7 @@ export default merge.smart(baseConfig, {
     watchOptions: {
       aggregateTimeout: 300,
       ignored: /node_modules/,
-      poll: 100
+      poll: 100,
     },
     historyApiFallback: {
       verbose: true,
@@ -221,15 +228,15 @@ export default merge.smart(baseConfig, {
     },
     before() {
       if (process.env.START_HOT) {
-        console.log('Starting Main Process...');
-        spawn(
-          'npm',
-          ['run', 'start-main-dev'],
-          { shell: true, env: process.env, stdio: 'inherit' }
-        )
-          .on('close', code => process.exit(code))
-          .on('error', spawnError => console.error(spawnError));
+        console.log('Starting Main Process...')
+        spawn('npm', ['run', 'start-main-dev'], {
+          shell: true,
+          env: process.env,
+          stdio: 'inherit',
+        })
+          .on('close', (code) => process.exit(code))
+          .on('error', (spawnError) => console.error(spawnError))
       }
-    }
+    },
   },
-});
+})

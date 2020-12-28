@@ -8,12 +8,12 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import merge from 'webpack-merge'
-import baseConfig, { createConfigPlugin, fontRules } from './webpack.config.base';
+import baseConfig, { createConfigPlugin, fontRules } from './webpack.config.base.babel';
 import config from '../server/deploy/config.json'
 
 const configPlugin = createConfigPlugin(config);
 
-export default merge.smart(baseConfig, {
+export default merge(baseConfig, {
   mode: 'production',
 
   devtool: 'source-map',
