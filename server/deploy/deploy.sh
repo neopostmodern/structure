@@ -13,7 +13,7 @@ if [ -n "$RUN_PREFLIGHT" ]; then
 fi
 
 echo "Cloning on server..."
-if [ -n "$RUN_PREFLIGHT" ]; then
+if [ -n "$GIT_BRANCH" ]; then
    GIT_ARGUMENTS="--branch $GIT_BRANCH"
 fi
 ssh "$USER@$SERVER" "rm -rf $SERVER_FOLDER_BACKEND; git clone $GIT_ARGUMENTS https://github.com/neopostmodern/structure $SERVER_FOLDER_BACKEND"
@@ -30,7 +30,10 @@ ssh "$USER@$SERVER" "cd $SERVER_FOLDER_BACKEND/server/node_modules/feed && npm i
 echo "OK"
 
 echo "Starting backend service (as pm2-process '$PROCESS_NAME')..."
-ssh "$USER@$SERVER" "pm2 restart \"$PROCESS_NAME\" $NODE_ARGS || pm2 start $SERVER_FOLDER_BACKEND/server/lib/server.js --name \"$PROCESS_NAME\" $NODE_ARGS"
+if [ -n "$NODE_ARGS" ]; then
+	 PM2_NODE_ARGS="--node_args=\"$NODE_ARGS\""
+fi
+ssh "$USER@$SERVER" "pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start $SERVER_FOLDER_BACKEND/server/lib/server.js --name \"$PROCESS_NAME\" $PM2_NODE_ARGS"
 echo "OK"
 
 echo -e "\nDeploy finished at $(date)"
