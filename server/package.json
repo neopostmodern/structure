@@ -6,10 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --experimental-json-modules lib/server.js",
-    "build": "rollup -c rollup-bundle.config.js",
-    "bundle": "npm run build && ./deploy/bundle.sh",
-    "deploy": "npm run bundle && ./deploy/deploy.sh"
+    "start": "node --experimental-json-modules lib/server.js"
   },
   "author": "",
   "license": "AGPL-3.0",
@@ -30,14 +27,5 @@
     "passport": "^0.4.1",
     "passport-github": "^1.1.0"
   },
-  "devDependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.12.10",
-    "@babel/node": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "@rollup/plugin-babel": "^5.2.2",
-    "rollup": "^2.35.1",
-    "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-run": "^1.1.0"
-  }
+  "devDependencies": {}
 }
