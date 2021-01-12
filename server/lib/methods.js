@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { User, Note, Link, Text, Tag } from './mongo';
+import { User, Note, Link, Text, Tag } from './mongo.js';
 
 export function submitLink(user, url) {
   return new Link({

@@ -1,9 +1,12 @@
 import session from 'express-session';
 import passport from 'passport';
-import { Strategy as GitHubStrategy } from 'passport-github';
+import PassportGithub from 'passport-github';
 import ConnectMongoDbSession from 'connect-mongodb-session';
 
-import config from './config';
+import config from './config.js';
+
+// named import isn't working at the moment
+const GitHubStrategy = PassportGithub.Strategy
 
 const MongoDBSession = ConnectMongoDbSession(session);
 

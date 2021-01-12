@@ -1,6 +1,6 @@
 import path from 'path';
 import json from 'rollup-plugin-json';
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 
 export default {
   input: 'lib/server.js',
@@ -9,7 +9,7 @@ export default {
     file: 'dist/server.js',
   },
   external: [
-    path.resolve(__dirname, 'lib/config.js')
+    path.resolve(__dirname, 'lib/config.ts')
   ],
   plugins: [
     json(),

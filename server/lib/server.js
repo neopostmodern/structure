@@ -2,17 +2,32 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import cors from 'cors';
-import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
-import { Feed } from 'feed';
+import GraphQLServerExpress from 'graphql-server-express';
+import feed from 'feed';
 
-import { User, Note, Link, Text, Tag } from './mongo';
-import { setUpGitHubLogin } from './githubLogin';
-import schema from './schema';
+import { User, Note, Link, Text, Tag } from './mongo.js';
+import { setUpGitHubLogin } from './githubLogin.js';
+import schema from './schema.js';
 
-import config from './config';
-import { addTagByNameToNote, submitLink } from './methods';
-import { migrateTo } from './migrations';
-import { rssFeedUrl } from '../../util/linkGenerator'
+import config from './config.js';
+import { addTagByNameToNote, submitLink } from './methods.js';
+import { migrateTo } from './migrations.js';
+import { rssFeedUrl } from '../../util/linkGenerator.js'
+
+// named import isn't working at the moment
+const { graphqlExpress, graphiqlExpress } = GraphQLServerExpress;
+const { Feed } = feed;
+
+let corsAllowedOrigins = [
+  undefined,
+  'null',
+  config.WEB_FRONTEND_HOST,
+  config.ELECTRON_FRONTEND_HOST
+];
+if (process.env.NODE_ENV === 'development') {
+  // allow access to GraphiQL in development
+  corsAllowedOrigins.push(config.BACKEND_URL)
+}
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,7 +35,7 @@ app.use(bodyParser.json());
 app.use(mongoSanitize());
 app.use(cors({
   origin(origin, callback) {
-    if ([undefined, config.WEB_FRONTEND_HOST, config.ELECTRON_FRONTEND_HOST].includes(origin)) {
+    if (corsAllowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error(`Host disallowed by CORS: ${origin}`));

@@ -1,3 +1,4 @@
 config*.json
 !config-example.json
 deploy/server*.sh
+rollup/
