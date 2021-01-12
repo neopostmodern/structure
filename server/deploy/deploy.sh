@@ -31,7 +31,7 @@ echo "OK"
 
 echo "Starting backend service (as pm2-process '$PROCESS_NAME')..."
 if [ -n "$NODE_ARGS" ]; then
-	 PM2_NODE_ARGS="--node_args=\"$NODE_ARGS\""
+	 PM2_NODE_ARGS="--node-args=\"$NODE_ARGS\""
 fi
 ssh "$USER@$SERVER" "pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start $SERVER_FOLDER_BACKEND/server/lib/server.js --name \"$PROCESS_NAME\" $PM2_NODE_ARGS"
 echo "OK"
