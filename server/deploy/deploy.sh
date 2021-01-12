@@ -13,7 +13,10 @@ if [ -n "$RUN_PREFLIGHT" ]; then
 fi
 
 echo "Cloning on server..."
-ssh "$USER@$SERVER" "git clone https://github.com/neopostmodern/structure $SERVER_FOLDER_BACKEND"
+if [ -n "$RUN_PREFLIGHT" ]; then
+   GIT_ARGUMENTS="--branch $GIT_BRANCH"
+fi
+ssh "$USER@$SERVER" "git clone $GIT_ARGUMENTS https://github.com/neopostmodern/structure $SERVER_FOLDER_BACKEND"
 echo "OK"
 
 echo "Copy decrypted config file to server..."
