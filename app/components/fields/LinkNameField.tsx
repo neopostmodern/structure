@@ -58,11 +58,12 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name }) => {
 
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    return (): void => {
+  useEffect(
+    () => (): void => {
       dispatch(clearMetadata())
-    }
-  }, [])
+    },
+    [],
+  )
 
   return (
     <>
@@ -103,7 +104,9 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name }) => {
                 key={index}
                 onClick={(): void => {
                   inputElement.current.value = title
-                  setValue(name, title, true)
+                  setValue(name, title, {
+                    shouldValidate: true,
+                  })
                 }}
               >
                 {title}

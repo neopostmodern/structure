@@ -20,7 +20,7 @@ const LinkForm: React.FC<LinkFormProps> = ({ link, onSubmit }) => {
   const formProps = useForm<LinkType>({
     defaultValues: link,
     mode: 'onBlur',
-    validationResolver: (formValues) => {
+    resolver: (formValues) => {
       // todo: validate
       submitLink(formValues)
       return { values: formValues, errors: {} }
