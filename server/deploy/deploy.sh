@@ -33,7 +33,7 @@ echo "Starting backend service (as pm2-process '$PROCESS_NAME')..."
 if [ -n "$NODE_ARGS" ]; then
 	 PM2_NODE_ARGS="--node-args=\"$NODE_ARGS\""
 fi
-ssh "$USER@$SERVER" "pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start --cwd $SERVER_FOLDER_BACKEND/server/ --name \"$PROCESS_NAME\" $PM2_NODE_ARGS npm -- start"
+ssh "$USER@$SERVER" "pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start --cwd $SERVER_FOLDER_BACKEND/server/ --name \"$PROCESS_NAME\" $PM2_NODE_ARGS $(which npm) -- start"
 echo "OK"
 
 echo -e "\nDeploy finished at $(date)"
