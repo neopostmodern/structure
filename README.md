@@ -63,7 +63,7 @@ AppImage (Linux), .exe (NSIS-Installer for Windows) and .tar.gz (macOS) are plac
 
 Deployment script variables are stored in `server/deploy/server.sh`, 
 environment variables for server are stored in `server/deploy/config.json`.
-Example files coming soon ([#6](https://github.com/neopostmodern/structure/issues/6)).
+Example config file located at ([server/deploy/config-example.json](https://github.com/neopostmodern/structure/blob/master/server/deploy/config-example.json)).
 ```bash
 cd server
 npm run deploy

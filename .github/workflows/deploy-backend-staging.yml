@@ -13,9 +13,6 @@ jobs:
         run: sudo apt-get install -y lftp
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install dependencies
-        working-directory: server
-        run: npm ci
       - name: Decrypt configuration
         run: ./server/deploy/decrypt-config.sh
         env:
@@ -25,12 +22,13 @@ jobs:
         with:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Build
-        working-directory: server
-        run: npm run build
-      - name: Bundle
-        working-directory: server
-        run: ./deploy/bundle.sh
       - name: Deploy
         working-directory: server
         run: ./deploy/deploy.sh
+      - name: Check HTTP status code
+        shell: bash
+        run: |
+          BACKEND_URL=$(jq -r '.BACKEND_URL' "./server/deploy/$CONFIG_FILE")
+          RESPONSE_CODE=$(curl -sL -w "%{http_code}" -I "$BACKEND_URL/hello" -o /dev/null)
+          echo "HTTP response code from $BACKEND_URL/hello: $RESPONSE_CODE"
+          [ "$RESPONSE_CODE" == "200" ]

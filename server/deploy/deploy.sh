@@ -12,18 +12,28 @@ if [ -n "$RUN_PREFLIGHT" ]; then
    echo "Preflight complete."
 fi
 
-echo "Copying files to server..."
-lftp -e "mirror --reverse dist $SERVER_FOLDER_BACKEND; bye" "sftp://$USER:SSH@$SERVER"
+echo "Cloning on server..."
+if [ -n "$GIT_BRANCH" ]; then
+   GIT_ARGUMENTS="--branch $GIT_BRANCH"
+fi
+ssh "$USER@$SERVER" "rm -rf $SERVER_FOLDER_BACKEND; git clone $GIT_ARGUMENTS https://github.com/neopostmodern/structure $SERVER_FOLDER_BACKEND"
+echo "OK"
+
+echo "Copy decrypted config file to server..."
+lftp -c "open sftp://$USER:SSH@$SERVER; put -O $SERVER_FOLDER_BACKEND/server/lib/ ${BASH_SOURCE%/*}/$CONFIG_FILE -o config.json"
 echo "OK"
 
 echo "Installing dependencies on server..."
-ssh "$USER@$SERVER" "cd $SERVER_FOLDER_BACKEND && npm ci --only=production"
+ssh "$USER@$SERVER" "cd $SERVER_FOLDER_BACKEND/server && npm ci --only=production"
 # currently using fork of 'feed' package, needs build (which happens upon `npm install`)
-ssh "$USER@$SERVER" "cd $SERVER_FOLDER_BACKEND/node_modules/feed && npm install"
+ssh "$USER@$SERVER" "cd $SERVER_FOLDER_BACKEND/server/node_modules/feed && npm install"
 echo "OK"
 
 echo "Starting backend service (as pm2-process '$PROCESS_NAME')..."
-ssh "$USER@$SERVER" "pm2 restart \"$PROCESS_NAME\" $NODE_ARGS || pm2 start $SERVER_FOLDER_BACKEND/server.js --name \"$PROCESS_NAME\" $NODE_ARGS"
+if [ -n "$NODE_ARGS" ]; then
+	 PM2_NODE_ARGS="--node-args=\"$NODE_ARGS\""
+fi
+ssh "$USER@$SERVER" "pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start --cwd $SERVER_FOLDER_BACKEND/server/ --name \"$PROCESS_NAME\" $PM2_NODE_ARGS npm -- start"
 echo "OK"
 
 echo -e "\nDeploy finished at $(date)"
