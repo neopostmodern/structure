@@ -29,8 +29,8 @@ import { RootState } from '../../reducers'
 
 import NetworkError from '../../components/NetworkError'
 
-// export const NOTE_FRAGMENT = gql`
-//   fragment NoteFragment on Note {
+// export const BASE_NOTE_FRAGMENT = gql`
+//   fragment BaseNote on Note {
 //     ... on INote {
 //       type
 //       _id
@@ -50,36 +50,32 @@ import NetworkError from '../../components/NetworkError'
 //     }
 //   }
 // `
-//
-// export const NOTES_QUERY = gql`
-// 	query NotesForList {
-// 		notes {
-// 			...NoteFragment
-// 		}
-// 	}
-// 	${NOTE_FRAGMENT}
-// `
+
+export const NOTE_IMPLICIT_FRAGMENT = `
+	... on INote {
+		# type
+		_id
+		name
+		createdAt
+		archivedAt
+		description
+		tags {
+			_id
+			name
+			color
+		}
+	}
+	... on Link {
+		url
+		domain
+	}
+`
 
 export const NOTES_QUERY = gql`
   query NotesForList {
     notes {
-      ... on INote {
-        type
-        _id
-        name
-        createdAt
-        archivedAt
-        description
-        tags {
-          _id
-          name
-          color
-        }
-      }
-      ... on Link {
-        url
-        domain
-      }
+      #...BaseNote
+			${NOTE_IMPLICIT_FRAGMENT}
     }
   }
 `

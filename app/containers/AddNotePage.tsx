@@ -11,27 +11,14 @@ import {
   AddLinkMutationVariables,
 } from '../generated/AddLinkMutation'
 import { NotesForList } from '../generated/NotesForList'
-import { NOTES_QUERY } from './NotesPage/NotesPage'
+import { NOTE_IMPLICIT_FRAGMENT, NOTES_QUERY } from './NotesPage/NotesPage'
 
-const ADD_LINK_FRAGMENT = gql`
-  fragment AddLinkFragement on Link {
-    _id
-    createdAt
-    url
-    tags {
-      _id
-      name
-      color
-    }
-  }
-`
 const ADD_LINK_MUTATION = gql`
   mutation AddLinkMutation($url: String!) {
     submitLink(url: $url) {
-      ...AddLinkFragement
+      ${NOTE_IMPLICIT_FRAGMENT}
     }
   }
-  ${ADD_LINK_FRAGMENT}
 `
 const ADD_TEXT_MUTATION = gql`
   mutation AddTextMutation {
@@ -47,7 +34,7 @@ const ADD_TEXT_MUTATION = gql`
   }
 `
 
-const AddLinkPage: React.FC<{}> = () => {
+const AddLinkPage: React.FC<never> = () => {
   const history = useHistory()
 
   const [addLink] = useMutation<AddLinkMutation, AddLinkMutationVariables>(
@@ -56,11 +43,20 @@ const AddLinkPage: React.FC<{}> = () => {
       onCompleted: ({ submitLink }) => {
         history.push(`/links/${submitLink._id}`)
       },
+      onError: (error) => {
+        console.error(error)
+      },
       update: (cache, { data: { submitLink } }) => {
-        const { notes } = cache.readQuery<NotesForList>({ query: NOTES_QUERY })
+        const cacheValue = cache.readQuery<NotesForList>({ query: NOTES_QUERY })
+
+        if (!cacheValue) {
+          return
+        }
+
+        const { notes } = cacheValue
         cache.writeQuery({
           query: NOTES_QUERY,
-          data: { notes: [...notes, submitLink] },
+          data: { notes: [...notes, { ...submitLink, type: 'LINK' }] },
         })
       },
     },
