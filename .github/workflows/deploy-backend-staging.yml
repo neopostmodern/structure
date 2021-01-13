@@ -28,7 +28,8 @@ jobs:
       - name: Check HTTP status code
         shell: bash
         run: |
+          sleep 10
           BACKEND_URL=$(jq -r '.BACKEND_URL' "./server/deploy/$CONFIG_FILE")
           RESPONSE_CODE=$(curl -sL -w "%{http_code}" -I "$BACKEND_URL/hello" -o /dev/null)
-          echo "HTTP response code from $BACKEND_URL/hello: $RESPONSE_CODE"
+          echo "HTTP response code from $BACKEND_URL/hello : $RESPONSE_CODE"
           [ "$RESPONSE_CODE" == "200" ]
