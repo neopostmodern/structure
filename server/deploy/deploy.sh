@@ -20,7 +20,7 @@ ssh "$USER@$SERVER" "rm -rf $SERVER_FOLDER_BACKEND; git clone $GIT_ARGUMENTS htt
 echo "OK"
 
 echo "Copy decrypted config file to server..."
-lftp -c "open sftp://$USER:SSH@$SERVER; put -O $SERVER_FOLDER_BACKEND/server/lib/ ${BASH_SOURCE%/*}/$CONFIG_FILE"
+lftp -c "open sftp://$USER:SSH@$SERVER; put -O $SERVER_FOLDER_BACKEND/server/lib/ ${BASH_SOURCE%/*}/$CONFIG_FILE -o config.json"
 echo "OK"
 
 echo "Installing dependencies on server..."
