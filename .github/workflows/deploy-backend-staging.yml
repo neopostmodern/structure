@@ -25,3 +25,9 @@ jobs:
       - name: Deploy
         working-directory: server
         run: ./deploy/deploy.sh
+      - name: Check HTTP status code
+        shell: bash
+        run: |
+          BACKEND_URL=$(jq -r '.BACKEND_URL' "./server/deploy/$CONFIG_FILE")
+          RESPONSE_CODE=$(curl -sL -w "%{http_code}" -I "$BACKEND_URL/hello" -o /dev/null)
+          [ "$RESPONSE_CODE" == "200" ]

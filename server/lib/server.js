@@ -168,6 +168,10 @@ const runExpressServer = () => {
       });
   });
 
+  app.use('/hello', (request, response) => {
+    response.status(200).send('OK');
+  });
+
   app.listen(config.PORT, () => {
     console.log(`Structure GraphQL Server running at ${config.PORT}...`);
   });
