@@ -15,7 +15,7 @@ import { createConfigPlugin } from './webpack.config.base.babel'
 import package_json from '../package.json'
 import config from '../server/lib/config.json'
 
-const port = 3000
+const port = 8000
 const publicPath = `http://localhost:${port}/`
 
 const configPlugin = createConfigPlugin(config)
