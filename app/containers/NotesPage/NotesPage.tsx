@@ -264,7 +264,7 @@ const NotesPage: React.FC<{}> = () => {
       toggleLayout={toggleLayout}
       matchedNotes={matchedNotes}
       nextArchiveState={nextArchiveState}
-      notes={matchedNotes}
+      notes={data.notes}
       searchQuery={searchQuery}
       searchInput={searchInput}
       archivedMatchedNotesCount={archivedMatchedNotesCount}
