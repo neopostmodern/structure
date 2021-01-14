@@ -33,7 +33,7 @@ const NoteCount: React.FC<NoteCountProps> = ({
       } (+${archivedNotesCount})`
     }
     if (matchedNotes.length === displayableNoteCount) {
-      return totalNotes
+      return <>{totalNotes}</>
     }
 
     let matchedNotesCount = matchedNotes.length.toString()
@@ -47,7 +47,11 @@ const NoteCount: React.FC<NoteCountProps> = ({
       }
     }
 
-    return `${matchedNotesCount} / ${totalNotes}`
+    return (
+      <>
+        {matchedNotesCount} / {totalNotes}
+      </>
+    )
   }
   return null
 }

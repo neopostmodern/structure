@@ -33,7 +33,7 @@ const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
   const { register, handleSubmit } = useForm<TagType>({
     defaultValues: tag,
     mode: 'onBlur',
-    validationResolver: (formValues) => {
+    resolver: (formValues) => {
       // todo: validate
       submitTag(formValues)
       return { values: formValues, errors: {} }

@@ -20,7 +20,11 @@ import {
 import { UserCredentialsQuery } from '../generated/UserCredentialsQuery'
 import Credentials from '../components/Credentials'
 import SettingsEntry from '../components/SettingsEntry'
-import { InternalLink, TextField } from '../components/CommonStyles'
+import {
+  InternalLink,
+  ExternalLink,
+  TextField,
+} from '../components/CommonStyles'
 
 const userCredentialsFragment = `
 currentUser {
@@ -114,7 +118,7 @@ const UserPage: React.FC<{}> = () => {
         {process.env.TARGET === 'web' && (
           <>
             ,&nbsp;
-            <a href={`${BACKEND_URL}/logout`}>Logout</a>
+            <ExternalLink href={`${BACKEND_URL}/logout`}>Logout</ExternalLink>
           </>
         )}
       </Menu>
