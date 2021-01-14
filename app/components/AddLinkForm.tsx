@@ -22,7 +22,7 @@ type AddLinkFormProps = {
 
 const AddLinkForm: React.FC<AddLinkFormProps> = ({ onSubmit, onAbort }) => {
   const dispatch = useDispatch()
-  const { register, errors, handleSubmit } = useForm()
+  const { register, errors, handleSubmit, setValue } = useForm()
 
   useEffect(() => {
     dispatch(requestClipboard())
@@ -35,7 +35,7 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({ onSubmit, onAbort }) => {
     (state) => state.userInterface.clipboard,
   )
   if (isUrlValid(clipboard)) {
-    // todo: display default
+    setValue('uri', clipboard)
   }
 
   return (
