@@ -1,6 +1,6 @@
 {
   "name": "structure-server",
-  "version": "0.19.0",
+  "version": "0.19.1-alpha",
   "description": "",
   "main": "server.js",
   "type": "module",
