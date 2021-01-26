@@ -1,4 +1,5 @@
 declare const BACKEND_URL: string
+declare const WEB_FRONTEND_HOST: string
 declare const VERSION: string
 
 declare interface NodeModule {

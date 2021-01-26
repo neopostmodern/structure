@@ -45,6 +45,12 @@
       "app/main.prod.js",
       "app/app.html"
     ],
+    "protocols": [{
+      "name": "Structure",
+      "schemes": [
+        "structure"
+      ]
+    }],
     "mac": {
       "target": [
         "tar.gz"

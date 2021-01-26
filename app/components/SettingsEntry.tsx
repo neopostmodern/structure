@@ -27,14 +27,17 @@ export const SettingsTableAction = styled.div`
 export const SettingsTableComments = styled.div`
   font-size: small;
   color: gray;
+  margin-bottom: 0.8rem;
 `
 
-interface SettingsEntryProps {
-  title: string
+type SettingsEntryAction = {
   actionTitle: string
   actionHandler: () => void
-  comment?: JSX.Element
 }
+type SettingsEntryProps = {
+  title: string | JSX.Element
+  comment?: string | JSX.Element
+} & (SettingsEntryAction | never)
 
 const SettingsEntry: React.FC<SettingsEntryProps> = ({
   title,
@@ -47,16 +50,18 @@ const SettingsEntry: React.FC<SettingsEntryProps> = ({
     <SettingsTable>
       <SettingsTablePurpose>{title}</SettingsTablePurpose>
       <SettingsTableValue>{children}</SettingsTableValue>
-      <SettingsTableAction>
-        <InlineButton
-          type='button'
-          onClick={(): void => {
-            actionHandler()
-          }}
-        >
-          {actionTitle}
-        </InlineButton>
-      </SettingsTableAction>
+      {actionTitle && (
+        <SettingsTableAction>
+          <InlineButton
+            type='button'
+            onClick={(): void => {
+              actionHandler()
+            }}
+          >
+            {actionTitle}
+          </InlineButton>
+        </SettingsTableAction>
+      )}
     </SettingsTable>
 
     <SettingsTableComments>{comment}</SettingsTableComments>

@@ -114,8 +114,28 @@ const runExpressServer = () => {
       ))
       .catch((error) => {
         console.error('Bookmarklet URL insert failed!', error);
-        response.status(500).send('<html><body><h1>Structure error.</h1>Failed to save your link :(</body></html>');
+        response.status(500).send('<!DOCTYPE html><html lang="en"><body><h1>Structure error.</h1>Failed to save your link :(</body></html>');
       });
+  });
+
+  app.get('/desktop/add', (request, response) => {
+    const { url } = request.query;
+
+    response.send(
+      `
+<html>
+<body>
+  <h1>Adding to Structure...</h1>
+  Structure should open now.<br/>
+  The first time this window appears you might have to configure your browser to open Structure.<br />
+  You can close this window, if it doesn't do so itself.
+  <script>
+    window.location = 'structure:///notes/add?url=${url}&autoSubmit';
+    setTimeout(function () { window.close(); }, 100);
+  </script>
+</body>
+</html>`
+    )
   });
 
   app.get('/rss', (request, response) => {

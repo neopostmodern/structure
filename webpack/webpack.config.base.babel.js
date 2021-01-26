@@ -10,6 +10,7 @@ import package_json from '../package'
 export const createConfigPlugin = (config) => {
   const jsonifiedConfig = {}
   jsonifiedConfig.BACKEND_URL = JSON.stringify(config.BACKEND_URL)
+  jsonifiedConfig.WEB_FRONTEND_HOST = JSON.stringify(config.WEB_FRONTEND_HOST)
   jsonifiedConfig.VERSION = JSON.stringify(package_json.version)
   return new webpack.DefinePlugin(jsonifiedConfig)
 }
