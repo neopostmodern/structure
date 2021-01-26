@@ -6,6 +6,7 @@ import styled from 'styled-components'
 
 import Tags from '../components/Tags'
 import LinkForm from '../components/LinkForm'
+import Centered from '../components/Centered'
 
 import { InlineButton } from '../components/CommonStyles'
 import { LinkQuery, LinkQueryVariables } from '../generated/LinkQuery'
@@ -101,8 +102,8 @@ const LinkPage: React.FC<{}> = () => {
     },
   })
 
-  if (linkQuery.loading) {
-    return <i>Loading...</i>
+  if (linkQuery.loading && !linkQuery.data) {
+    return <Centered>Loading...</Centered>
   }
 
   const { link } = linkQuery.data
