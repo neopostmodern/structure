@@ -20,7 +20,6 @@ const AutocompleteTag = styled(BaseTag)<{
   border: 2px dotted
     ${({ tag, autocompleteFocused }): string =>
       autocompleteTagBorderColor(tag, autocompleteFocused)};
-  margin-top: 0.5em;
   display: inline-block;
 `
 

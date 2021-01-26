@@ -55,6 +55,7 @@ const tagShortcutKeys = ['ctrl+t', 'command+t']
 
 const TagContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
 `
 
 interface TagsProps {
