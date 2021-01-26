@@ -252,10 +252,13 @@ const NotesPage: React.FC<{}> = () => {
     return <Centered>Loading...</Centered>
   }
 
+  const allNotes = [...data.notes] // unfreeze
+  allNotes.sort((noteA, noteB) => noteB.createdAt - noteA.createdAt)
+
   const {
     notes: matchedNotes,
     archivedCount: archivedMatchedNotesCount,
-  } = filterNotes(data.notes, searchQuery, archiveState)
+  } = filterNotes(allNotes, searchQuery, archiveState)
 
   const content = [
     <NotesMenu
@@ -267,7 +270,7 @@ const NotesPage: React.FC<{}> = () => {
       toggleLayout={toggleLayout}
       matchedNotes={matchedNotes}
       nextArchiveState={nextArchiveState}
-      notes={data.notes}
+      notes={allNotes}
       searchQuery={searchQuery}
       searchInput={searchInput}
       archivedMatchedNotesCount={archivedMatchedNotesCount}
