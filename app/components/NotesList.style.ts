@@ -41,7 +41,7 @@ export const NoteAddedDate = styled.div`
 export const NoteInfo = styled.div`
   display: flex;
   color: gray;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.2em;
 `
 
 export const NoteDescription = styled.div`

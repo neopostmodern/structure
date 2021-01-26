@@ -11,6 +11,7 @@ export const tagMargin = '0.5rem'
 export const BaseTag = styled.div<{ tag?: TagObject }>`
   padding: 0.2em 0.4em 0.1em;
   margin-right: ${tagMargin};
+  margin-top: ${tagMargin};
   cursor: pointer;
   background-color: ${({ tag }): string => tag?.color || '#ddd'};
 `
