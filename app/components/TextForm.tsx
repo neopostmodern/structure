@@ -13,6 +13,12 @@ interface TextFormProps {
 const TextForm: React.FC<TextFormProps> = ({ text, onSubmit }) => {
   const formProps = useForm<NoteObject>({
     defaultValues: text,
+    mode: 'onBlur',
+    resolver: (formValues) => {
+      // todo: validate
+      onSubmit({ _id: text._id, ...formValues })
+      return { values: formValues, errors: {} }
+    },
   })
   const { register, handleSubmit } = formProps
 
