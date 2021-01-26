@@ -12,13 +12,14 @@ const Credentials = ({
     return <i>Loading...</i>
   }
 
-  return credentials.map(({ name, displayName, purpose, value }) => (
+  return credentials.map(({ name, displayName, purpose, value, comment }) => (
     <SettingsEntry
       title={displayName}
       actionHandler={() =>
         (value ? revokeCredential : requestNewCredential)(purpose)
       }
       actionTitle={value ? 'Revoke token' : 'Request token'}
+      comment={comment}
       key={name}
     >
       {value ? (

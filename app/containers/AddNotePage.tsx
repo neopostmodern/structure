@@ -1,6 +1,6 @@
 import React from 'react'
 import gql from 'graphql-tag'
-import { useHistory } from 'react-router'
+import { useHistory, useLocation } from 'react-router'
 import { useMutation } from '@apollo/client'
 
 import AddLinkForm from '../components/AddLinkForm'
@@ -66,13 +66,14 @@ const AddLinkPage: React.FC<never> = () => {
       history.push(`/texts/${createText._id}`)
     },
   })
+  const urlSearchParams = new URLSearchParams(useLocation().search)
 
   return (
     <div>
       <AddLinkForm
-        onSubmit={(url): void => {
-          addLink({ variables: { url } })
-        }}
+        defaultValue={urlSearchParams.get('url')}
+        autoSubmit={urlSearchParams.has('autoSubmit')}
+        onSubmit={(url): void => addLink({ variables: { url } })}
         onAbort={(): void => {
           history.push('/')
         }}

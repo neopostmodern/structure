@@ -79,7 +79,7 @@ const UserPage: React.FC<{}> = () => {
     ? 'loading'
     : [
         {
-          displayName: 'Bookmarklet',
+          displayName: 'Bookmarklet (standalone)',
           name: 'bookmarklet',
           value:
             userQuery.data.currentUser.credentials.bookmarklet &&
@@ -87,6 +87,8 @@ const UserPage: React.FC<{}> = () => {
               backendUrl,
               userQuery.data.currentUser.credentials.bookmarklet,
             ),
+          comment:
+            'This bookmarklet will save links in the background. You will not be able to change the title or tag it immediately. The bookmarklet uses an authentication token.',
         },
         {
           displayName: 'RSS-Feed',
@@ -123,7 +125,33 @@ const UserPage: React.FC<{}> = () => {
         )}
       </Menu>
       <div style={{ marginTop: '2rem' }}>
-        <h2>Credentials</h2>
+        <h2>Integrations</h2>
+        <SettingsEntry
+          title='Bookmarklet (desktop app)'
+          comment='This bookmarklet will save links via the desktop app. To use it, the desktop app must be running (or it will be opened) and you must be logged in. The bookmarklet contains no authentication token.'
+        >
+          <TextField
+            type='text'
+            readOnly
+            value={`javascript:void(open('${BACKEND_URL}/desktop/add?url='+encodeURIComponent(location.href)))`}
+          />
+        </SettingsEntry>
+        <SettingsEntry
+          title={
+            <>
+              Bookmarklet
+              <br />
+              (web app)
+            </>
+          }
+          comment='This bookmarklet will save links via the web app. The web app will open in a new tab and you must be logged in. The bookmarklet contains no authentication token.'
+        >
+          <TextField
+            type='text'
+            readOnly
+            value={`javascript:void(open('${WEB_FRONTEND_HOST}/notes/add?url='+encodeURIComponent(location.href)+'&autoSubmit'))`}
+          />
+        </SettingsEntry>
         <Credentials
           credentials={credentialsConfiguration}
           requestNewCredential={(purpose): void => {

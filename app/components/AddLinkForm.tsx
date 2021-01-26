@@ -16,13 +16,33 @@ const AddLinkInput = styled(TextField)`
 const isUrlValid = (url): boolean => url?.startsWith('http')
 
 type AddLinkFormProps = {
+  defaultValue?: string
+  autoSubmit?: boolean
   onSubmit: (url: string) => void
   onAbort: () => void
 }
 
-const AddLinkForm: React.FC<AddLinkFormProps> = ({ onSubmit, onAbort }) => {
+const AddLinkForm: React.FC<AddLinkFormProps> = ({
+  defaultValue,
+  autoSubmit,
+  onSubmit,
+  onAbort,
+}) => {
   const dispatch = useDispatch()
-  const { register, errors, handleSubmit, setValue } = useForm()
+  const { register, errors, handleSubmit, setValue, getValues } = useForm({
+    defaultValues: {
+      uri: defaultValue,
+    },
+  })
+  const submitHandler = handleSubmit(({ uri }) => {
+    onSubmit(uri)
+  })
+
+  useEffect(() => {
+    if (autoSubmit) {
+      submitHandler()
+    }
+  }, [getValues, autoSubmit])
 
   useEffect(() => {
     dispatch(requestClipboard())
@@ -40,11 +60,7 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({ onSubmit, onAbort }) => {
 
   return (
     <div style={{ paddingTop: '20vh' }}>
-      <form
-        onSubmit={handleSubmit(({ uri }) => {
-          onSubmit(uri)
-        })}
-      >
+      <form onSubmit={submitHandler}>
         <AddLinkInput
           name='uri'
           autoFocus
