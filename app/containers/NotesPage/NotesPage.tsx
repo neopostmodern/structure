@@ -83,6 +83,7 @@ export const NOTES_QUERY = gql`
 const searchFieldShortcutKeys = ['ctrl+f', 'command+f']
 const toggleBatchEditingShortcutKeys = ['ctrl+b', 'command+b']
 const selectAllShortcutKeys = ['ctrl+a', 'command+a']
+const reloadShortcutKeys = ['ctrl+r', 'command+r']
 
 const textIncludes = (needle?: string, haystack?: string): boolean => {
   if (!haystack || !needle) {
@@ -194,12 +195,14 @@ const NotesPage: React.FC<{}> = () => {
 
       return false
     })
+    Mousetrap.bind(reloadShortcutKeys, () => refetch())
     window.addEventListener('scroll', handleScrollEvent)
 
     return (): void => {
       Mousetrap.unbind(searchFieldShortcutKeys)
       Mousetrap.unbind(toggleBatchEditingShortcutKeys)
       Mousetrap.unbind(selectAllShortcutKeys)
+      Mousetrap.unbind(reloadShortcutKeys)
       window.removeEventListener('scroll', handleScrollEvent)
     }
   }, [])
