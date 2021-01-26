@@ -17,6 +17,7 @@
     "jsx": "react",
     "typeRoots": [
       "./typings"
-    ]
+    ],
+    "moduleResolution": "node"
   }
 }
