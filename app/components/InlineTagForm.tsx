@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import styled from 'styled-components'
 
@@ -31,9 +31,10 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
 }) => {
   const { handleSubmit, register, errors, watch } = useForm()
   const nameValue = watch('tagName')
-  const [focusedAutocompleteIndex, setFocusedAutocompleteIndex] = useState<
-    number
-  >(0)
+  const [
+    focusedAutocompleteIndex,
+    setFocusedAutocompleteIndex,
+  ] = useState<number>(0)
   const [touched, setTouched] = useState(false)
 
   const tagMap = useMemo<{ [x: string]: TagType }>(() => {
@@ -72,6 +73,30 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
       .map(({ _id }) => tagMap[_id])
   }, [nameValue, tags])
 
+  const lastAutocompleteSuggestionsLength = useRef<number>(
+    autocompleteSuggestions.length,
+  )
+
+  useEffect(() => {
+    if (
+      autocompleteSuggestions.length === 0 &&
+      focusedAutocompleteIndex !== null
+    ) {
+      setFocusedAutocompleteIndex(null)
+    } else if (focusedAutocompleteIndex > autocompleteSuggestions.length) {
+      setFocusedAutocompleteIndex(autocompleteSuggestions.length - 1)
+    }
+
+    if (
+      focusedAutocompleteIndex === null &&
+      lastAutocompleteSuggestionsLength.current === 0 &&
+      autocompleteSuggestions.length > 0
+    ) {
+      setFocusedAutocompleteIndex(0)
+    }
+    lastAutocompleteSuggestionsLength.current = autocompleteSuggestions.length
+  }, [autocompleteSuggestions, focusedAutocompleteIndex])
+
   const handleInputKeydown = (event): void => {
     let nextFocusedAutocompleteIndex = focusedAutocompleteIndex
     switch (event.key) {
@@ -87,19 +112,17 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
         break
       case 'ArrowDown':
         if (focusedAutocompleteIndex === null) {
-          setFocusedAutocompleteIndex(0)
-          return
+          nextFocusedAutocompleteIndex = 0
+        } else {
+          nextFocusedAutocompleteIndex += 1
         }
-
-        nextFocusedAutocompleteIndex += 1
         break
       case 'ArrowUp':
         if (focusedAutocompleteIndex === null) {
-          setFocusedAutocompleteIndex(MAX_AUTOCOMPLETE_LENGTH - 1)
-          return
+          nextFocusedAutocompleteIndex = MAX_AUTOCOMPLETE_LENGTH - 1
+        } else {
+          nextFocusedAutocompleteIndex -= 1
         }
-
-        nextFocusedAutocompleteIndex -= 1
         break
       case 'ArrowLeft':
         if (focusedAutocompleteIndex !== null) {
