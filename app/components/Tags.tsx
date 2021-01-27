@@ -73,7 +73,25 @@ const Tags: React.FC<TagsProps> = ({ tags, noteId, withShortcuts = false }) => {
   const [addTagToNote] = useMutation<
     AddTagByNameToNote,
     AddTagByNameToNoteVariables
-  >(ADD_TAG_MUTATION)
+  >(ADD_TAG_MUTATION, {
+    update: (cache, { data: { addTagByNameToNote } }) => {
+      const cacheValue = cache.readQuery<TagsQuery>({ query: TAGS_QUERY })
+
+      if (!cacheValue) {
+        return
+      }
+      const { tags: tagsInCache } = cacheValue
+
+      const newTags = addTagByNameToNote.tags.filter(
+        (tag) => !tagsInCache.some(({ _id }) => _id === tag._id),
+      )
+
+      cache.writeQuery({
+        query: TAGS_QUERY,
+        data: { tags: [...tagsInCache, ...newTags] },
+      })
+    },
+  })
 
   const [removeTagFromNote] = useMutation<
     RemoveTagByIdFromNote,
