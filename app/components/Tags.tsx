@@ -133,7 +133,13 @@ const Tags: React.FC<TagsProps> = ({ tags, noteId, withShortcuts = false }) => {
   if (addingNew) {
     newTagForm = (
       <InlineTagForm
-        tags={tagsQuery.loading ? 'loading' : tagsQuery.data.tags}
+        tags={
+          tagsQuery.loading
+            ? 'loading'
+            : tagsQuery.data.tags.filter(
+                (tag) => !tags.some(({ _id }) => _id === tag._id),
+              )
+        }
         onAddTag={handleAddTag}
         onAbort={hideNewTagForm}
       />
