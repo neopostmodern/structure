@@ -11,6 +11,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
 import rendererProdConfig from './webpack.config.renderer.prod.babel'
 import { createConfigPlugin } from './webpack.config.base.babel'
+import { fileCopyPatterns } from './webpack.config.web.prod.babel'
 // eslint-disable-next-line camelcase
 import package_json from '../package.json'
 import config from '../server/lib/config.json'
@@ -37,20 +38,7 @@ const webpackConfig = mergeWithRules({ plugins: 'replace' })(
         TARGET: 'web',
       }),
       new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: path.join(__dirname, '../resources/icons/192x192.png'),
-            to: 'icons/192x192.png',
-          },
-          {
-            from: path.join(__dirname, '../resources/icons/256x256.png'),
-            to: 'icons/256x256.png',
-          },
-          {
-            from: path.join(__dirname, '../app/serviceworker/serviceworker.js'),
-            to: 'serviceworker.js'
-          }
-        ],
+        patterns: fileCopyPatterns,
       }),
       new HtmlWebpackPlugin({
         title: package_json.productName,

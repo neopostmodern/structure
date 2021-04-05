@@ -13,6 +13,25 @@ import rendererProdConfig from './webpack.config.renderer.prod.babel'
 import package_json from '../package.json'
 import { createConfigPlugin } from './webpack.config.base.babel'
 
+export const fileCopyPatterns = [
+  {
+    from: path.join(__dirname, '../app/manifest.webmanifest'),
+    to: 'manifest.webmanifest',
+  },
+  {
+    from: path.join(__dirname, '../resources/icons/192x192.png'),
+    to: 'icons/192x192.png',
+  },
+  {
+    from: path.join(__dirname, '../resources/icons/256x256.png'),
+    to: 'icons/256x256.png',
+  },
+  {
+    from: path.join(__dirname, '../app/serviceworker/serviceworker.js'),
+    to: 'serviceworker.js'
+  },
+]
+
 const webpackConfig = merge(rendererProdConfig, {
   target: 'web',
 
@@ -31,24 +50,7 @@ const webpackConfig = merge(rendererProdConfig, {
       TARGET: 'web',
     }),
     new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.join(__dirname, '../app/manifest.webmanifest'),
-          to: 'manifest.webmanifest',
-        },
-        {
-          from: path.join(__dirname, '../resources/icons/192x192.png'),
-          to: 'icons/192x192.png',
-        },
-        {
-          from: path.join(__dirname, '../resources/icons/256x256.png'),
-          to: 'icons/256x256.png',
-        },
-        {
-          from: path.join(__dirname, '../app/serviceworker/serviceworker.js'),
-          to: 'serviceworker.js'
-        },
-      ],
+      patterns: fileCopyPatterns,
     }),
     new HtmlWebpackPlugin({
       title: package_json.productName,
