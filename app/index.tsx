@@ -9,6 +9,8 @@ import Root from './containers/Root'
 import { configureStore, history } from './store/configureStore'
 import './styles/fonts.global.css'
 
+import './serviceworker/register' // registers service worker
+
 if (process.env.TARGET !== 'web') {
   import('@exponent/electron-cookies').then((ElectronCookies) => {
     ElectronCookies.enable({

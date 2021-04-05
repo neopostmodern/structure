@@ -39,9 +39,17 @@ const webpackConfig = mergeWithRules({ plugins: 'replace' })(
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: path.join(__dirname, '../resources/icon.ico'),
-            to: 'favicon.ico',
+            from: path.join(__dirname, '../resources/icons/192x192.png'),
+            to: 'icons/192x192.png',
           },
+          {
+            from: path.join(__dirname, '../resources/icons/256x256.png'),
+            to: 'icons/256x256.png',
+          },
+          {
+            from: path.join(__dirname, '../app/serviceworker/serviceworker.js'),
+            to: 'serviceworker.js'
+          }
         ],
       }),
       new HtmlWebpackPlugin({
