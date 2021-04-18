@@ -7,6 +7,7 @@ import webpack from 'webpack'
 import merge from 'webpack-merge'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
+import { GenerateSW } from 'workbox-webpack-plugin'
 
 import rendererProdConfig from './webpack.config.renderer.prod.babel'
 // eslint-disable-next-line camelcase
@@ -52,6 +53,7 @@ const webpackConfig = merge(rendererProdConfig, {
       title: package_json.productName,
       template: path.join(__dirname, '../app/web.html'),
     }),
+    new GenerateSW(),
   ],
 })
 
