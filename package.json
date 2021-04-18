@@ -45,12 +45,14 @@
       "app/main.prod.js",
       "app/app.html"
     ],
-    "protocols": [{
-      "name": "Structure",
-      "schemes": [
-        "structure"
-      ]
-    }],
+    "protocols": [
+      {
+        "name": "Structure",
+        "schemes": [
+          "structure"
+        ]
+      }
+    ],
     "mac": {
       "target": [
         "tar.gz"
@@ -222,6 +224,7 @@
   "dependencies": {
     "@apollo/client": "^3.3.6",
     "@exponent/electron-cookies": "^2.0.0",
+    "apollo3-cache-persist": "^0.9.1",
     "classnames": "^2.2.6",
     "connected-react-router": "^6.8.0",
     "core-js": "^3.8.1",

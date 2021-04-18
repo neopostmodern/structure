@@ -145,7 +145,10 @@ const NotesPage: React.FC<{}> = () => {
   const dispatch = useDispatch()
   const searchInput = useRef(null)
   const moreElement = useRef(null)
-  const { loading, error, data, refetch } = useQuery<NotesForList>(NOTES_QUERY)
+  const { loading, error, data, refetch } = useQuery<NotesForList>(
+    NOTES_QUERY,
+    { fetchPolicy: 'cache-and-network' },
+  )
 
   const selectedNoteCount = (): number =>
     Object.values(batchSelections).filter((selected) => selected).length
@@ -248,7 +251,9 @@ const NotesPage: React.FC<{}> = () => {
   if (error) {
     return <NetworkError error={error} refetch={refetch} />
   }
-  if (loading) {
+
+  // todo: indicate background (re) fetch somewhere
+  if (!data && loading) {
     return <Centered>Loading...</Centered>
   }
 
