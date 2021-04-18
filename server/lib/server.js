@@ -128,10 +128,15 @@ const runExpressServer = () => {
   <h1>Adding to Structure...</h1>
   Structure should open now.<br/>
   The first time this window appears you might have to configure your browser to open Structure.<br />
-  You can close this window, if it doesn't do so itself.
+  You can close this window, if it doesn't do so itself.<br />
+  <button type="button" onclick="localStorage.setItem('auto-close-desktop-add', 'true')">
+    Automatically close in the future.
+  </button>
   <script>
     window.location = 'structure:///notes/add?url=${url}&autoSubmit';
-    setTimeout(function () { window.close(); }, 100);
+    if (localStorage.getItem('auto-close-desktop-add')) {
+      setTimeout(function () { window.close(); }, 100);
+    }
   </script>
 </body>
 </html>`
