@@ -7,11 +7,27 @@ import webpack from 'webpack'
 import merge from 'webpack-merge'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
+import { GenerateSW } from 'workbox-webpack-plugin'
 
 import rendererProdConfig from './webpack.config.renderer.prod.babel'
 // eslint-disable-next-line camelcase
 import package_json from '../package.json'
 import { createConfigPlugin } from './webpack.config.base.babel'
+
+export const fileCopyPatterns = [
+  {
+    from: path.join(__dirname, '../app/manifest.webmanifest'),
+    to: 'manifest.webmanifest',
+  },
+  {
+    from: path.join(__dirname, '../resources/icons/192x192.png'),
+    to: 'icons/192x192.png',
+  },
+  {
+    from: path.join(__dirname, '../resources/icons/256x256.png'),
+    to: 'icons/256x256.png',
+  },
+]
 
 const webpackConfig = merge(rendererProdConfig, {
   target: 'web',
@@ -31,24 +47,21 @@ const webpackConfig = merge(rendererProdConfig, {
       TARGET: 'web',
     }),
     new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.join(__dirname, '../app/manifest.webmanifest'),
-          to: 'manifest.webmanifest',
-        },
-        {
-          from: path.join(__dirname, '../resources/icons/192x192.png'),
-          to: 'icons/192x192.png',
-        },
-        {
-          from: path.join(__dirname, '../resources/icons/256x256.png'),
-          to: 'icons/256x256.png',
-        },
-      ],
+      patterns: fileCopyPatterns,
     }),
     new HtmlWebpackPlugin({
       title: package_json.productName,
       template: path.join(__dirname, '../app/web.html'),
+    }),
+    new GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+      additionalManifestEntries: [
+        {
+          url: '/index.html',
+          revision: '1',
+        }
+      ]
     }),
   ],
 })

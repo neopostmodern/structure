@@ -3,8 +3,6 @@ import { useHistory, useParams } from 'react-router'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
-import Tags from '../components/Tags'
-import TextForm from '../components/TextForm'
 import { TextQuery } from '../generated/TextQuery'
 import {
   UpdateTextMutation,
@@ -14,7 +12,10 @@ import {
   DeleteTextMutation,
   DeleteTextMutationVariables,
 } from '../generated/DeleteTextMutation'
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy'
 import { InlineButton } from '../components/CommonStyles'
+import Tags from '../components/Tags'
+import TextForm from '../components/TextForm'
 
 const TEXT_QUERY = gql`
   query TextQuery($textId: ID) {
@@ -60,6 +61,7 @@ const TextPage: React.FC<{}> = () => {
   const { textId } = useParams()
   const history = useHistory()
   const { loading, data } = useQuery<TextQuery>(TEXT_QUERY, {
+    fetchPolicy: gracefulNetworkPolicy(),
     variables: { textId },
   })
   const [updateText] = useMutation<

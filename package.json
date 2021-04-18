@@ -1,7 +1,7 @@
 {
   "name": "structure",
   "productName": "Structure",
-  "version": "0.19.1",
+  "version": "0.19.2",
   "description": "A performance-at-interaction oriented and reasonably stylish bookmarking tool for (eventually) everything.",
   "main": "app/main.prod.js",
   "scripts": {
@@ -45,12 +45,14 @@
       "app/main.prod.js",
       "app/app.html"
     ],
-    "protocols": [{
-      "name": "Structure",
-      "schemes": [
-        "structure"
-      ]
-    }],
+    "protocols": [
+      {
+        "name": "Structure",
+        "schemes": [
+          "structure"
+        ]
+      }
+    ],
     "mac": {
       "target": [
         "tar.gz"
@@ -217,11 +219,13 @@
     "webpack-bundle-analyzer": "^4.3.0",
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^5.7.3"
+    "webpack-merge": "^5.7.3",
+    "workbox-webpack-plugin": "^6.1.5"
   },
   "dependencies": {
     "@apollo/client": "^3.3.6",
     "@exponent/electron-cookies": "^2.0.0",
+    "apollo3-cache-persist": "^0.9.1",
     "classnames": "^2.2.6",
     "connected-react-router": "^6.8.0",
     "core-js": "^3.8.1",

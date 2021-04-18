@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import Mousetrap from 'mousetrap'
 import styled from 'styled-components'
 
-import NotesList from '../../components/NotesList'
 import {
   ArchiveState,
   changeArchiveState,
@@ -20,13 +19,14 @@ import {
   BatchSelectionType,
   UserInterfaceStateType,
 } from '../../reducers/userInterface'
+import { RootState } from '../../reducers'
+import gracefulNetworkPolicy from '../../utils/gracefulNetworkPolicy'
+import { NotesForList } from '../../generated/NotesForList'
 
 import Centered from '../../components/Centered'
 import NotesMenu from '../../components/NotesMenu'
 import { StickyMenu } from '../../components/Menu'
-import { NotesForList } from '../../generated/NotesForList'
-import { RootState } from '../../reducers'
-
+import NotesList from '../../components/NotesList'
 import NetworkError from '../../components/NetworkError'
 
 // export const BASE_NOTE_FRAGMENT = gql`
@@ -145,7 +145,10 @@ const NotesPage: React.FC<{}> = () => {
   const dispatch = useDispatch()
   const searchInput = useRef(null)
   const moreElement = useRef(null)
-  const { loading, error, data, refetch } = useQuery<NotesForList>(NOTES_QUERY)
+  const { loading, error, data, refetch } = useQuery<NotesForList>(
+    NOTES_QUERY,
+    { fetchPolicy: gracefulNetworkPolicy() },
+  )
 
   const selectedNoteCount = (): number =>
     Object.values(batchSelections).filter((selected) => selected).length
@@ -248,7 +251,9 @@ const NotesPage: React.FC<{}> = () => {
   if (error) {
     return <NetworkError error={error} refetch={refetch} />
   }
-  if (loading) {
+
+  // todo: indicate background (re) fetch somewhere
+  if (!data && loading) {
     return <Centered>Loading...</Centered>
   }
 
