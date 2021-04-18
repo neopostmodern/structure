@@ -1,7 +1,7 @@
 {
   "name": "structure",
   "productName": "Structure",
-  "version": "0.19.2-alpha",
+  "version": "0.19.2",
   "description": "A performance-at-interaction oriented and reasonably stylish bookmarking tool for (eventually) everything.",
   "main": "app/main.prod.js",
   "scripts": {
