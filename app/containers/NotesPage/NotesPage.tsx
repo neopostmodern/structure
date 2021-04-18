@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import Mousetrap from 'mousetrap'
 import styled from 'styled-components'
 
-import NotesList from '../../components/NotesList'
 import {
   ArchiveState,
   changeArchiveState,
@@ -20,13 +19,14 @@ import {
   BatchSelectionType,
   UserInterfaceStateType,
 } from '../../reducers/userInterface'
+import { RootState } from '../../reducers'
+import gracefulNetworkPolicy from '../../utils/gracefulNetworkPolicy'
+import { NotesForList } from '../../generated/NotesForList'
 
 import Centered from '../../components/Centered'
 import NotesMenu from '../../components/NotesMenu'
 import { StickyMenu } from '../../components/Menu'
-import { NotesForList } from '../../generated/NotesForList'
-import { RootState } from '../../reducers'
-
+import NotesList from '../../components/NotesList'
 import NetworkError from '../../components/NetworkError'
 
 // export const BASE_NOTE_FRAGMENT = gql`
@@ -147,7 +147,7 @@ const NotesPage: React.FC<{}> = () => {
   const moreElement = useRef(null)
   const { loading, error, data, refetch } = useQuery<NotesForList>(
     NOTES_QUERY,
-    { fetchPolicy: 'cache-and-network' },
+    { fetchPolicy: gracefulNetworkPolicy() },
   )
 
   const selectedNoteCount = (): number =>

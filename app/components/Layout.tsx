@@ -62,8 +62,9 @@ const Layout: React.FC<{}> = ({ children }) => {
   let userIndicator
 
   if (
-    versions.networkStatus === NetworkStatus.error ||
-    user.networkStatus === NetworkStatus.error
+    navigator.onLine &&
+    (versions.networkStatus === NetworkStatus.error ||
+      user.networkStatus === NetworkStatus.error)
   ) {
     return (
       <Styled.Container>
@@ -104,6 +105,7 @@ const Layout: React.FC<{}> = ({ children }) => {
 
   return (
     <Styled.Container>
+      {!navigator.onLine && <i>Offline</i>}
       <Styled.Header>
         <Styled.Title>{headline}</Styled.Title>
         <Styled.UserIndicator>{userIndicator}</Styled.UserIndicator>

@@ -19,6 +19,7 @@ import {
   UpdateLinkMutation,
   UpdateLinkMutationVariables,
 } from '../generated/UpdateLinkMutation'
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy'
 import { breakPointMobile } from '../styles/constants'
 import { NOTES_QUERY } from './NotesPage/NotesPage'
 
@@ -77,7 +78,7 @@ const LinkPage: React.FC<{}> = () => {
   const { linkId } = useParams()
   const history = useHistory()
   const linkQuery = useQuery<LinkQuery, LinkQueryVariables>(LINK_QUERY, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: gracefulNetworkPolicy(),
     variables: { linkId },
   })
 
