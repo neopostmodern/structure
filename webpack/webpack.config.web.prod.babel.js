@@ -53,7 +53,16 @@ const webpackConfig = merge(rendererProdConfig, {
       title: package_json.productName,
       template: path.join(__dirname, '../app/web.html'),
     }),
-    new GenerateSW(),
+    new GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+      additionalManifestEntries: [
+        {
+          url: '/index.html',
+          revision: '1',
+        }
+      ]
+    }),
   ],
 })
 

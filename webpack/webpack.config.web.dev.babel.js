@@ -49,7 +49,16 @@ const webpackConfig = mergeWithRules({ plugins: 'replace' })(
         filename: 'style.css',
       }),
       configPlugin,
-      new GenerateSW()
+      new GenerateSW({
+        clientsClaim: true,
+        skipWaiting: true,
+        additionalManifestEntries: [
+          {
+            url: '/index.html',
+            revision: '1',
+          }
+        ]
+      })
     ],
 
     devServer: {
