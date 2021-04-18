@@ -26,10 +26,6 @@ export const fileCopyPatterns = [
     from: path.join(__dirname, '../resources/icons/256x256.png'),
     to: 'icons/256x256.png',
   },
-  {
-    from: path.join(__dirname, '../app/serviceworker/serviceworker.js'),
-    to: 'serviceworker.js'
-  },
 ]
 
 const webpackConfig = merge(rendererProdConfig, {
