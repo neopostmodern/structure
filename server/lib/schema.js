@@ -1,14 +1,10 @@
-import lodash from 'lodash';
 import Moment from 'moment';
-import GraphQL from 'graphql';
-import GraphQLTools from 'graphql-tools';
+import { GraphQLScalarType, Kind } from 'graphql';
+import { makeExecutableSchema } from 'apollo-server';
 
+import { Note, Link, Text, Tag } from './mongo.js'
 import { addTagByNameToNote, requestNewCredential, revokeCredential, submitLink } from './methods.js'
 
-// named import isn't working at the moment
-const { merge } = lodash;
-const { GraphQLScalarType, Kind } = GraphQL;
-const { makeExecutableSchema } = GraphQLTools;
 
 const rootSchema = [`
 scalar Date
@@ -204,7 +200,7 @@ schema {
 
 const INoteResolvers = {
   tags(note, args, context) {
-    return context.Tag.find({ _id: { $in: note.tags } });
+    return Tag.find({ _id: { $in: note.tags } });
   }
 };
 const typeEnumFixer = (notes) => (
@@ -239,7 +235,7 @@ const rootResolvers = {
   Text: INoteResolvers,
   Tag: {
     notes(tag, args, context) {
-      return context.Note.find({ tags: tag })
+      return Note.find({ tags: tag })
         .then(typeEnumFixer);
     }
   },
@@ -258,7 +254,7 @@ const rootResolvers = {
         throw new Error('Need to be logged in to fetch links.');
       }
       const protectedLimit = (limit < 1 || limit > 10) ? 10 : limit;
-      return context.Note.find({ user: context.user })
+      return Note.find({ user: context.user })
         .sort({ createdAt: -1 })
         .limit(protectedLimit)
         .exec()
@@ -268,14 +264,14 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch a link.');
       }
-      return context.Link.findById(linkId);
+      return Link.findById(linkId);
     },
     links(root, { offset, limit }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch links.');
       }
       const protectedLimit = (limit < 1 || limit > 10) ? 10 : limit;
-      return context.Link.find({ user: context.user })
+      return Link.find({ user: context.user })
         .sort({ createdAt: -1 })
         .limit(protectedLimit)
         .exec();
@@ -284,20 +280,20 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch a text.');
       }
-      return context.Text.findById(textId);
+      return Text.findById(textId);
     },
     tag(root, { tagId }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch a tag.');
       }
-      return context.Tag.findById(tagId);
+      return Tag.findById(tagId);
     },
     tags(root, { offset, limit }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch links.');
       }
       const protectedLimit = (limit < 1 || limit > 10) ? 10 : limit;
-      return context.Tag.find({ user: context.user })
+      return Tag.find({ user: context.user })
       // .sort({ createdAt: -1 })
         .limit(protectedLimit)
         // .populate("tags")
@@ -309,7 +305,7 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to update tags.');
       }
-      return context.Tag.findOne({ _id, user: context.user }).then((tag) => {
+      return Tag.findOne({ _id, user: context.user }).then((tag) => {
         if (!tag) {
           throw new Error('Resource could not be found.');
         }
@@ -330,7 +326,7 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to update links.');
       }
-      return context.Link.findOne({ _id, user: context.user }).then((link) => {
+      return Link.findOne({ _id, user: context.user }).then((link) => {
         if (!link) {
           throw new Error('Resource could not be found.');
         }
@@ -345,7 +341,7 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to delete links.');
       }
-      return context.Link.findOne({ _id: linkId, user: context.user }).then((link) => {
+      return Link.findOne({ _id: linkId, user: context.user }).then((link) => {
         if (!link) {
           throw new Error('Resource could not be found.');
         }
@@ -369,7 +365,7 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to update texts.');
       }
-      return context.Text.findOne({ _id, user: context.user }).then((text) => {
+      return Text.findOne({ _id, user: context.user }).then((text) => {
         if (!text) {
           throw new Error('Resource could not be found.');
         }
@@ -384,7 +380,7 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to delete texts.');
       }
-      return context.Text.findOne({ _id: textId, user: context.user }).then((text) => {
+      return Text.findOne({ _id: textId, user: context.user }).then((text) => {
         if (!text) {
           throw new Error('Resource could not be found.');
         }
@@ -398,25 +394,25 @@ const rootResolvers = {
         throw new Error('Need to be logged in to tag notes.');
       }
       return addTagByNameToNote(context.user, noteId, name)
-        .then(() => context.Note.findOne({ _id: noteId }));
+        .then(() => Note.findOne({ _id: noteId }));
     },
     removeTagByIdFromNote(root, { noteId, tagId }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to untag notes.');
       }
-      return context.Note.findOneAndUpdate(
+      return Note.findOneAndUpdate(
         { _id: noteId, user: context.user },
         { $pull: { tags: tagId } }
       )
         .exec()
-        .then(({ _id }) => context.Note.findOne({ _id }));
+        .then(({ _id }) => Note.findOne({ _id }));
     },
     toggleArchivedNote(root, { noteId }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to change archive status of notes.');
       }
 
-      return context.Note.findOne({ _id: noteId, user: context.user })
+      return Note.findOne({ _id: noteId, user: context.user })
         .then((note) => {
           if (note.archivedAt) {
             // eslint-disable-next-line no-param-reassign
@@ -456,11 +452,11 @@ const rootResolvers = {
 
 // Put schema together into one array of schema strings
 // and one map of resolvers, like makeExecutableSchema expects
-const schema = [...rootSchema];
-const resolvers = merge(rootResolvers);
+export const typeDefs = [...rootSchema];
+export const resolvers = rootResolvers;
 
 const executableSchema = makeExecutableSchema({
-  typeDefs: schema,
+  typeDefs,
   resolvers,
 });
 

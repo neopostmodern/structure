@@ -11,21 +11,20 @@
   "author": "",
   "license": "AGPL-3.0",
   "dependencies": {
+    "apollo-server": "^2.24.1",
+    "apollo-server-express": "^2.24.1",
     "body-parser": "^1.19.0",
     "connect-mongodb-session": "^2.4.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "express-mongo-sanitize": "^2.0.1",
-    "express-session": "^1.17.1",
+    "express-mongo-sanitize": "^2.1.0",
+    "express-session": "^1.17.2",
     "feed": "github:neopostmodern/feed",
-    "graphql": "^15.4.0",
-    "graphql-server-express": "^1.4.1",
-    "graphql-tools": "^7.0.2",
-    "lodash": "^4.17.20",
+    "graphql": "^15.5.0",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "mongoose": "^5.11.8",
+    "mongoose": "^5.12.10",
     "passport": "^0.4.1",
     "passport-github": "^1.1.0"
-  },
-  "devDependencies": {}
+  }
 }

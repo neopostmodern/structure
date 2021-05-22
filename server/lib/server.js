@@ -2,25 +2,23 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import cors from 'cors';
-import GraphQLServerExpress from 'graphql-server-express';
-import feed from 'feed';
+import { ApolloServer } from 'apollo-server-express'
+import { Feed } from 'feed';
 
-import { User, Note, Link, Text, Tag } from './mongo.js';
+import { User, Link } from './mongo.js';
 import { setUpGitHubLogin } from './githubLogin.js';
-import schema from './schema.js';
+import { resolvers, typeDefs } from './schema.js';
 
 import config from './config.js';
 import { addTagByNameToNote, submitLink } from './methods.js';
 import { migrateTo } from './migrations.js';
 import { rssFeedUrl } from '../../util/linkGenerator.js'
-
-// named import isn't working at the moment
-const { graphqlExpress, graphiqlExpress } = GraphQLServerExpress;
-const { Feed } = feed;
+import { createServer } from "http";
 
 let corsAllowedOrigins = [
   undefined,
   'null',
+  config.BACKEND_URL,
   config.WEB_FRONTEND_HOST,
   config.ELECTRON_FRONTEND_HOST
 ];
@@ -28,12 +26,7 @@ if (process.env.NODE_ENV === 'development') {
   // allow access to GraphiQL in development
   corsAllowedOrigins.push(config.BACKEND_URL)
 }
-
-const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(mongoSanitize());
-app.use(cors({
+const corsOptions = {
   origin(origin, callback) {
     if (corsAllowedOrigins.includes(origin)) {
       callback(null, true);
@@ -42,53 +35,33 @@ app.use(cors({
     }
   },
   credentials: true
-}));
+};
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(mongoSanitize());
+app.use(cors(corsOptions));
 setUpGitHubLogin(app, User);
 
-const runExpressServer = () => {
-  app.use('/graphql', graphqlExpress((req) => {
-    // Get the query, the same way express-graphql does it
-    // https://github.com/graphql/express-graphql/blob/3fa6e68582d6d933d37fa9e841da5d2aa39261cd/src/index.js#L257
-    const query = req.query.query || req.body.query;
-    if (query && query.length > 2000) {
-      // None of our app's queries are this long
-      // Probably indicates someone trying to send an overly expensive query
-      throw new Error('Query too large.');
-    }
-
-    return {
-      schema,
-      context: {
-        user: req.user,
-        Tag,
-        Note,
-        Link,
-        Text,
-      },
-    };
-  }));
-
-  if (config.GRAPHIQL) {
-    app.use('/graphiql', graphiqlExpress({
-      endpointURL: '/graphql',
-      query: `# Structure Example Query
-{
-  notes(limit: 5, offset: 0) {
-    ... on INote {
-      _id
-      name
-      tags {
-        name
+const runExpressServer = async () => {
+  // todo: basic protection against malicious queries (e.g. body length)
+  const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req: { user } }) => {
+      return { user }
+    },
+    playground: {
+      settings: {
+        "request.credentials": "same-origin",
       }
     }
-    ... on Link {
-      url
-    }
-  }
-}
-    `,
-    }));
-  }
+  })
+
+  apolloServer.applyMiddleware({ app, cors: corsOptions })
+
+  const server = createServer(app)
 
   app.get('/bookmarklet', (request, response) => {
     const { token, url } = request.query;
@@ -197,9 +170,11 @@ const runExpressServer = () => {
     response.status(200).send('OK');
   });
 
-  app.listen(config.PORT, () => {
-    console.log(`Structure GraphQL Server running at ${config.PORT}...`);
-  });
+  await new Promise((resolve) => server.listen(config.PORT, resolve))
+  console.log(`REST Server running at http://localhost:${config.PORT}...`)
+  console.log(
+    `GraphQL Server running at http://localhost:${config.PORT}${apolloServer.graphqlPath}...`,
+  )
 };
 
 console.log('Running migrations...');
