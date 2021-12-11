@@ -13,11 +13,9 @@ SSH
 echo "OK"
 
 echo "Downloading dump..."
-lftp -e "get structureAppDump.tar.bz2 -o $BACKUP_DIR/structureAppDump.`date +%s`.tar.bz2; exit" "sftp://$USER:SSH@$SERVER"
+lftp -e "get structureAppDump.tar.bz2 -o $BACKUP_DIR/structureAppDump.`date --iso-8601=seconds`.tar.bz2; rm structureAppDump.tar.bz2; exit" "sftp://$USER:SSH@$SERVER"
 echo "OK"
 
 echo "Removing old backups..."
-pushd "$BACKUP_DIR"
-ls -tp | grep -v '/$' | tail -n +15 | xargs -d '\n' rm --
-popd
+rotate-backups --daily 7 --monthly always --prefer-recent "$BACKUP_DIR"
 echo "OK"
