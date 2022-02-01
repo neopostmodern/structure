@@ -1,0 +1,5 @@
+schema: './lib/schema.js'
+generates:
+  ../schema.graphql:
+    plugins:
+      - schema-ast

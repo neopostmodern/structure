@@ -1,0 +1,9 @@
+{
+  "packages": [
+    "client",
+    "common",
+    "config",
+    "server"
+  ],
+  "version": "0.0.0"
+}

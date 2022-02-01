@@ -1,0 +1,119 @@
+type Credentials {
+  bookmarklet: String
+  rss: String
+}
+
+scalar Date
+
+interface INote {
+  _id: ID!
+  archivedAt: Date
+  createdAt: Date!
+  description: String!
+  name: String!
+  tags: [Tag]!
+  type: NoteType!
+  user: User!
+}
+
+input InputLink {
+  _id: ID!
+  archivedAt: Date
+  description: String
+  domain: String
+  name: String
+  path: String
+  url: String
+}
+
+input InputTag {
+  _id: ID!
+  color: String!
+  name: String!
+}
+
+input InputText {
+  _id: ID!
+  description: String
+  name: String
+}
+
+type Link implements INote {
+  _id: ID!
+  archivedAt: Date
+  createdAt: Date!
+  description: String!
+  domain: String!
+  name: String!
+  path: String!
+  tags: [Tag]!
+  type: NoteType!
+  url: String!
+  user: User!
+}
+
+type Mutation {
+  addTagByNameToNote(name: String!, noteId: ID!): Note
+  createText: Text
+  deleteLink(linkId: ID!): Link
+  deleteText(textId: ID!): Text
+  removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note
+  requestNewCredential(purpose: String!): User
+  revokeCredential(purpose: String!): User
+  submitLink(url: String!): Link
+  toggleArchivedNote(noteId: ID!): Note
+  updateLink(link: InputLink!): Link
+  updateTag(tag: InputTag!): Tag
+  updateText(text: InputText!): Text
+}
+
+union Note = Link | Text
+
+enum NoteType {
+  LINK
+  TEXT
+}
+
+type Query {
+  currentUser: User
+  link(linkId: ID): Link
+  links(limit: Int, offset: Int): [Link]
+  notes(limit: Int, offset: Int): [Note]
+  tag(tagId: ID): Tag
+  tags(limit: Int, offset: Int): [Tag]
+  text(textId: ID): Text
+  versions: Versions
+}
+
+type Tag {
+  _id: ID!
+  color: String!
+  name: String!
+  notes: [Note]
+  user: User!
+}
+
+type Text implements INote {
+  _id: ID!
+  archivedAt: Date
+  createdAt: Date!
+  description: String!
+  name: String!
+  tags: [Tag]!
+  type: NoteType!
+  user: User!
+}
+
+type User {
+  _id: String!
+  authenticationProvider: String
+  createdAt: Date!
+  credentials: Credentials
+  name: String!
+}
+
+type Versions {
+  maximum: Int
+  minimum: Int!
+  recommended: Int
+}

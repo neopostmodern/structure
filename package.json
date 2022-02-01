@@ -1,0 +1,19 @@
+{
+  "name": "structure",
+  "private": true,
+  "scripts": {
+    "client:build:electron": "(cd client && npm run package)",
+    "client:build:web": "(cd client && npm run build:web)",
+    "client:start:electron": "(cd client && npm run start)",
+    "client:start:web": "(cd client && npm run start:web)",
+    "common:build": "(cd common && npm run build)",
+    "server:start": "(cd server && npm run start)",
+    "generate-types": "(cd server && npm run generate-schema) && (cd client && npm run generate-graphql-types)"
+  },
+  "devDependencies": {
+    "lerna": "^4.0.0",
+    "prettier": "^2.5.1",
+    "prettier-plugin-organize-imports": "^2.3.4",
+    "typescript": "^4.5.5"
+  }
+}
