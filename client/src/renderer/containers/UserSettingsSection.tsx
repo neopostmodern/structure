@@ -2,15 +2,9 @@ import { useMutation, useQuery } from '@apollo/client';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
 import gql from 'graphql-tag';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setBackendUrl } from '../actions/configuration';
-import {
-  ExternalLink,
-  InternalLink,
-  TextField,
-} from '../components/CommonStyles';
+import { useSelector } from 'react-redux';
+import { TextField } from '../components/CommonStyles';
 import Credentials from '../components/Credentials';
-import { Menu, MenuButton } from '../components/Menu';
 import SettingsEntry from '../components/SettingsEntry';
 import {
   RequestNewCredentialMutation,
@@ -23,7 +17,6 @@ import {
 import { UserCredentialsQuery } from '../generated/UserCredentialsQuery';
 import { RootState } from '../reducers';
 import { ConfigurationStateType } from '../reducers/configuration';
-import ComplexLayout from './ComplexLayout';
 
 const userCredentialsFragment = gql`
   fragment UserCredentialsFragment on User {
@@ -61,12 +54,10 @@ const REVOKE_CREDENTIAL_MUTATION = gql`
   }
 `;
 
-const UserPage: React.FC<{}> = () => {
-  const { backendUrl, backendUrlDefault } = useSelector<
-    RootState,
-    ConfigurationStateType
-  >((state) => state.configuration);
-  const dispatch = useDispatch();
+const UserSettingsSection: React.FC<{}> = () => {
+  const { backendUrl } = useSelector<RootState, ConfigurationStateType>(
+    (state) => state.configuration
+  );
   const userQuery = useQuery<UserCredentialsQuery>(USER_CREDENTIALS_QUERY, {
     fetchPolicy: 'cache-and-network',
   });
@@ -104,30 +95,7 @@ const UserPage: React.FC<{}> = () => {
       ];
 
   return (
-    <ComplexLayout
-      primaryActions={
-        <Menu>
-          <InternalLink to="/tags">My tags</InternalLink>
-          <MenuButton
-            onClick={(): void => alert('This feature is not yet available')}
-            disabled
-          >
-            Export my data
-          </MenuButton>
-          <MenuButton
-            onClick={(): void => alert('This feature is not yet available')}
-            disabled
-          >
-            Delete my account
-          </MenuButton>
-          {process.env.TARGET === 'web' && (
-            <>
-              <ExternalLink href={`${BACKEND_URL}/logout`}>Logout</ExternalLink>
-            </>
-          )}
-        </Menu>
-      }
-    >
+    <>
       <h2>Integrations</h2>
       <SettingsEntry
         title="Bookmarklet (desktop app)"
@@ -136,7 +104,7 @@ const UserPage: React.FC<{}> = () => {
         <TextField
           type="text"
           readOnly
-          value={`javascript:void(open('${BACKEND_URL}/desktop/add?url='+encodeURIComponent(location.href)))`}
+          value={`javascript:void(open('${backendUrl}/desktop/add?url='+encodeURIComponent(location.href)))`}
         />
       </SettingsEntry>
       <SettingsEntry
@@ -161,61 +129,11 @@ const UserPage: React.FC<{}> = () => {
           requestNewCredential({ variables: { purpose } });
         }}
         revokeCredential={(purpose): void => {
-          console.log(purpose);
           revokeCredential({ variables: { purpose } });
         }}
       />
-      <h2>Configuration</h2>
-      <SettingsEntry
-        title="Server"
-        actionTitle="Update"
-        actionHandler={(): void => {
-          dispatch(
-            setBackendUrl(
-              document.getElementById('configuration__backend-url').value
-            )
-          );
-        }}
-        comment={
-          <>
-            The backend server is in charge of storing your data (username,
-            notes, tags, et cetera). You must trust this server (and/or the
-            operator of it), since your data is only encrypted during the
-            transport to the server, not on the server. This means the operator
-            of the server can (theoretically) read and/or modify all your data.
-            <br />
-            Modifying the backend server URL causes a restart.{' '}
-            <b>
-              Setting an invalid value might make it impossible to restart the
-              app.
-            </b>{' '}
-            Data is not migrated automatically when switching backend servers.
-            <br />
-            Default: {backendUrlDefault}
-          </>
-        }
-      >
-        <TextField
-          id="configuration__backend-url"
-          type="text"
-          defaultValue={backendUrl}
-          placeholder={backendUrlDefault}
-          disabled={process.env.TARGET === 'web'}
-        />
-      </SettingsEntry>
-      <h2>About</h2>
-      You are using Structure {VERSION}
-      <br />
-      Find the Structure source code{' '}
-      <a
-        href="https://github.com/neopostmodern/structure"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        on GitHub
-      </a>
-    </ComplexLayout>
+    </>
   );
 };
 
-export default UserPage;
+export default UserSettingsSection;

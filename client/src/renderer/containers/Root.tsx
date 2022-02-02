@@ -11,10 +11,10 @@ import LegacyLayout from './LegacyLayout';
 import LinkPage from './LinkPage';
 import MissingPage from './MissingPage';
 import NotesPage from './NotesPage';
+import SettingsPage from './SettingsPage';
 import TagPage from './TagPage';
 import TagsPage from './TagsPage';
 import TextPage from './TextPage';
-import UserPage from './UserPage';
 
 type RootType = {
   store: Store<RootState>;
@@ -49,7 +49,7 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
             />
             <Route path="/links/:linkId" element={<LinkPage />} />
 
-            <Route path="/me" element={<UserPage />} />
+            <Route path="/me" element={<SettingsPage />} />
 
             <Route
               path="/tags"
