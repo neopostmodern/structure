@@ -1,5 +1,4 @@
 import { NetworkStatus, useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestLogin } from '../actions/userInterface';
@@ -10,26 +9,15 @@ import VersionMarks from '../components/VersionMarks';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
 import { Versions } from '../generated/Versions';
 import { RootState } from '../reducers';
-import * as Styled from './LegacyLayout.style';
+import * as Styled from './ComplexLayout.style';
+import { PROFILE_QUERY, VERSIONS_QUERY } from './LegacyLayout';
 
-export const PROFILE_QUERY = gql`
-  query CurrentUserForLayout {
-    currentUser {
-      _id
-      name
-    }
-  }
-`;
-export const VERSIONS_QUERY = gql`
-  query Versions {
-    versions {
-      minimum
-      recommended
-    }
-  }
-`;
-
-const LegacyLayout: React.FC<{}> = ({ children }) => {
+const ComplexLayout: React.FC<
+  React.PropsWithChildren<{
+    primaryActions?: JSX.Element;
+    secondaryActions?: JSX.Element;
+  }>
+> = ({ children, primaryActions, secondaryActions }) => {
   const dispatch = useDispatch();
   const user = useQuery<CurrentUserForLayout>(PROFILE_QUERY);
 
@@ -55,9 +43,9 @@ const LegacyLayout: React.FC<{}> = ({ children }) => {
       </span>
     );
   }
+  const isSettingsPage = path === '/me';
 
   let content;
-  let userIndicator;
 
   if (
     navigator.onLine &&
@@ -65,7 +53,7 @@ const LegacyLayout: React.FC<{}> = ({ children }) => {
       user.networkStatus === NetworkStatus.error)
   ) {
     return (
-      <Styled.Container>
+      <Styled.PrimaryContent>
         <Centered>
           <h2>Network error.</h2>
           This really should not have happened.
@@ -78,19 +66,18 @@ const LegacyLayout: React.FC<{}> = ({ children }) => {
             Give it another try.
           </InlineButton>
         </Centered>
-      </Styled.Container>
+      </Styled.PrimaryContent>
     );
   }
 
+  let username = '...';
   if (isUserLoggingIn) {
     content = <Centered>Logging in...</Centered>;
   } else if (user.loading) {
     content = <Centered>Loading...</Centered>;
   } else if (user.data.currentUser?.name) {
     content = children;
-    userIndicator = (
-      <Styled.Username to="/me">{user.data.currentUser.name}.</Styled.Username>
-    );
+    username = user.data.currentUser.name;
   } else {
     content = (
       <LoginView
@@ -99,21 +86,36 @@ const LegacyLayout: React.FC<{}> = ({ children }) => {
         }}
       />
     );
+    username = 'Settings';
   }
 
   return (
     <Styled.Container>
-      {!navigator.onLine && <i>Offline</i>}
-      <Styled.Header>
+      {!navigator.onLine && (
+        <Styled.OfflineBanner>Offline</Styled.OfflineBanner>
+      )}
+      <Styled.Navigation>
         <Styled.Title>{headline}</Styled.Title>
-        <Styled.UserIndicator>{userIndicator}</Styled.UserIndicator>
-      </Styled.Header>
-      <VersionMarks
-        versions={versions.loading ? 'loading' : versions.data.versions}
-      />
-      {content}
+      </Styled.Navigation>
+      <Styled.PrimaryContent>
+        <VersionMarks
+          versions={versions.loading ? 'loading' : versions.data.versions}
+        />
+        {content}
+      </Styled.PrimaryContent>
+      {primaryActions && (
+        <Styled.PrimaryActions>{primaryActions}</Styled.PrimaryActions>
+      )}
+      {secondaryActions && (
+        <Styled.SecondaryActions>{secondaryActions}</Styled.SecondaryActions>
+      )}
+      <Styled.UserAndMenuIndicator>
+        {!isSettingsPage && (
+          <Styled.Username to="/me">{username}</Styled.Username>
+        )}
+      </Styled.UserAndMenuIndicator>
     </Styled.Container>
   );
 };
 
-export default LegacyLayout;
+export default ComplexLayout;

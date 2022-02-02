@@ -23,16 +23,16 @@ const NotesMenu = ({
   searchInput,
 }) => (
   <Menu>
-    <InternalLink to="/notes/add">Add new</InternalLink>
-    ,&nbsp;
+    <InternalLink to="/notes/add" style={{ paddingRight: '1em' }}>
+      Add new
+    </InternalLink>
     <MenuButton type="button" onClick={toggleLayout}>
       {layoutToName(layout)}
     </MenuButton>
-    ,&nbsp;
     <MenuButton onClick={nextArchiveState}>
       {archiveStateToName(archiveState)}
     </MenuButton>
-    <MenuSearchFieldContainer>
+    <MenuSearchFieldContainer style={{ marginTop: '1rem' }}>
       <MenuSearchField
         type="text"
         placeholder="Filter"

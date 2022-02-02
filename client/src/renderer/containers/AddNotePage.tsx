@@ -11,6 +11,7 @@ import {
 } from '../generated/AddLinkMutation';
 import { AddTextMutation } from '../generated/AddTextMutation';
 import { NotesForList } from '../generated/NotesForList';
+import ComplexLayout from './ComplexLayout';
 import { BASE_NOTE_FRAGMENT, NOTES_QUERY } from './NotesPage/NotesPage';
 
 const ADD_LINK_MUTATION = gql`
@@ -72,7 +73,7 @@ const AddLinkPage: React.FC<{}> = () => {
   const urlSearchParams = new URLSearchParams(useLocation().search);
 
   return (
-    <div>
+    <ComplexLayout>
       <AddLinkForm
         defaultValue={urlSearchParams.get('url')}
         autoSubmit={urlSearchParams.has('autoSubmit')}
@@ -84,7 +85,7 @@ const AddLinkPage: React.FC<{}> = () => {
       <TextButton type="button" onClick={addText}>
         Need just text?
       </TextButton>
-    </div>
+    </ComplexLayout>
   );
 };
 

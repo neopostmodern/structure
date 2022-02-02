@@ -4,10 +4,9 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
 import { push } from 'redux-first-history';
-import styled from 'styled-components';
 import Centered from '../components/Centered';
-import { InlineButton } from '../components/CommonStyles';
 import LinkForm from '../components/LinkForm';
+import { Menu, MenuButton } from '../components/Menu';
 import Tags from '../components/Tags';
 import {
   DeleteLinkMutation,
@@ -19,8 +18,8 @@ import {
   UpdateLinkMutation,
   UpdateLinkMutationVariables,
 } from '../generated/UpdateLinkMutation';
-import { breakPointMobile } from '../styles/constants';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
+import ComplexLayout from './ComplexLayout';
 import { NOTES_QUERY } from './NotesPage/NotesPage';
 
 const LINK_QUERY = gql`
@@ -66,14 +65,6 @@ const DELETE_LINK_MUTATION = gql`
   }
 `;
 
-const LinkPageContainer = styled.div`
-  margin-top: 1rem;
-
-  @media (min-width: ${breakPointMobile}) {
-    margin-top: 3rem;
-  }
-`;
-
 const LinkPage: React.FC<{}> = () => {
   const { linkId } = useParams();
   const dispatch = useDispatch();
@@ -110,28 +101,28 @@ const LinkPage: React.FC<{}> = () => {
   const { link } = linkQuery.data;
 
   return (
-    <LinkPageContainer>
+    <ComplexLayout
+      primaryActions={<Tags tags={link.tags} withShortcuts noteId={link._id} />}
+      secondaryActions={
+        <Menu>
+          <MenuButton
+            type="button"
+            onClick={(): void => {
+              deleteLink({ variables: { linkId: link._id } });
+            }}
+          >
+            Delete note
+          </MenuButton>
+        </Menu>
+      }
+    >
       <LinkForm
         link={link}
         onSubmit={(updatedLink): void => {
           updateLink({ variables: { link: updatedLink } });
         }}
       />
-      <div style={{ marginTop: 30 }}>
-        <Tags tags={link.tags} withShortcuts noteId={link._id} />
-      </div>
-      <div style={{ display: 'flex', marginTop: 50 }}>
-        <InlineButton
-          type="button"
-          style={{ marginLeft: 'auto' }}
-          onClick={(): void => {
-            deleteLink({ variables: { linkId: link._id } });
-          }}
-        >
-          Delete
-        </InlineButton>
-      </div>
-    </LinkPageContainer>
+    </ComplexLayout>
   );
 };
 

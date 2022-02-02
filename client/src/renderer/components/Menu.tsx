@@ -1,12 +1,22 @@
 import styled from 'styled-components';
-import { breakPointMobile } from '../styles/constants';
+import { breakpointDesktop } from '../styles/constants';
 import { TextButton, TextField } from './CommonStyles';
 
 const menuFontSize = '1.5rem';
 
 export const Menu = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  @media (min-width: ${breakpointDesktop}rem) {
+    flex-direction: column;
+  }
+  @media (max-width: ${breakpointDesktop}rem) {
+    align-items: baseline;
+    flex-wrap: wrap;
+    button {
+      align-self: unset;
+    }
+  }
+
   font-size: ${menuFontSize};
 
   a,
@@ -26,6 +36,7 @@ export const Menu = styled.div`
 
 export const MenuButton = styled(TextButton)`
   align-self: flex-start;
+  padding: 0.3em 1em 0.3em 0;
 `;
 
 export const StickyMenu = styled(Menu)`
@@ -37,13 +48,11 @@ export const StickyMenu = styled(Menu)`
 `;
 
 export const MenuSearchFieldContainer = styled.div`
-  margin-left: auto;
   position: relative;
 
-  @media (max-width: ${breakPointMobile}) {
-    margin-left: 0;
+  @media (max-width: ${breakpointDesktop}rem) {
     margin-top: 1.5rem;
-    width: 100%;
+    margin-left: auto;
   }
 `;
 
@@ -52,10 +61,6 @@ export const MenuSearchField = styled(TextField)`
 
   margin-top: -0.3em;
   padding-bottom: 3px;
-
-  @media (min-width: ${breakPointMobile}) {
-    width: 17rem;
-  }
 `;
 
 export const MenuSearchFieldEraseButton = styled.button`

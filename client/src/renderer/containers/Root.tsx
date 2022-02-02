@@ -28,14 +28,7 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
       <Provider store={store}>
         <HistoryRouter history={history}>
           <Routes>
-            <Route
-              path="/"
-              element={
-                <LegacyLayout>
-                  <NotesPage />
-                </LegacyLayout>
-              }
-            />
+            <Route path="/" element={<NotesPage />} />
             <Route
               path="/notes"
               element={
@@ -44,14 +37,7 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
                 </LegacyLayout>
               }
             />
-            <Route
-              path="/notes/add"
-              element={
-                <LegacyLayout>
-                  <AddNotePage />
-                </LegacyLayout>
-              }
-            />
+            <Route path="/notes/add" element={<AddNotePage />} />
 
             <Route
               path="/texts/:textId"
@@ -61,23 +47,9 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
                 </LegacyLayout>
               }
             />
-            <Route
-              path="/links/:linkId"
-              element={
-                <LegacyLayout>
-                  <LinkPage />
-                </LegacyLayout>
-              }
-            />
+            <Route path="/links/:linkId" element={<LinkPage />} />
 
-            <Route
-              path="/me"
-              element={
-                <LegacyLayout>
-                  <UserPage />
-                </LegacyLayout>
-              }
-            />
+            <Route path="/me" element={<UserPage />} />
 
             <Route
               path="/tags"

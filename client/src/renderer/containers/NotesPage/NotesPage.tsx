@@ -26,6 +26,7 @@ import {
   UserInterfaceStateType,
 } from '../../reducers/userInterface';
 import gracefulNetworkPolicy from '../../utils/gracefulNetworkPolicy';
+import ComplexLayout from '../ComplexLayout';
 
 export const BASE_NOTE_FRAGMENT = gql`
   fragment BaseNote on INote {
@@ -246,23 +247,7 @@ const NotesPage: React.FC<{}> = () => {
 
   console.log(matchedNotes[0]);
 
-  const content = [
-    <NotesMenu
-      archiveState={archiveState}
-      onChangeSearchQuery={(value): void => {
-        dispatch(changeSearchQuery(value));
-      }}
-      layout={layout}
-      toggleLayout={toggleLayout}
-      matchedNotes={matchedNotes}
-      nextArchiveState={nextArchiveState}
-      notes={allNotes}
-      searchQuery={searchQuery}
-      searchInput={searchInput}
-      archivedMatchedNotesCount={archivedMatchedNotesCount}
-      key="notes-menu"
-    />,
-  ];
+  const content = [];
 
   if (batchEditing) {
     content.push(
@@ -300,7 +285,29 @@ const NotesPage: React.FC<{}> = () => {
       );
     }
   }
-  return <>{[...content]}</>;
+
+  return (
+    <ComplexLayout
+      primaryActions={
+        <NotesMenu
+          archiveState={archiveState}
+          onChangeSearchQuery={(value): void => {
+            dispatch(changeSearchQuery(value));
+          }}
+          layout={layout}
+          toggleLayout={toggleLayout}
+          matchedNotes={matchedNotes}
+          nextArchiveState={nextArchiveState}
+          notes={allNotes}
+          searchQuery={searchQuery}
+          searchInput={searchInput}
+          archivedMatchedNotesCount={archivedMatchedNotesCount}
+        />
+      }
+    >
+      {[...content]}
+    </ComplexLayout>
+  );
 };
 
 export default NotesPage;
