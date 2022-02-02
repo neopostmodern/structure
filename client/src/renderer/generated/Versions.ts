@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface Versions_versions {
-  __typename: 'Versions';
+  __typename: "Versions";
   minimum: number;
   recommended: number | null;
 }

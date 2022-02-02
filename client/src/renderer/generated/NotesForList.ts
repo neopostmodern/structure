@@ -8,14 +8,14 @@
 // ====================================================
 
 export interface NotesForList_notes_Text_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface NotesForList_notes_Text {
-  __typename: 'Text';
+  __typename: "Text";
   _id: string;
   name: string;
   createdAt: any;
@@ -25,14 +25,14 @@ export interface NotesForList_notes_Text {
 }
 
 export interface NotesForList_notes_Link_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface NotesForList_notes_Link {
-  __typename: 'Link';
+  __typename: "Link";
   _id: string;
   name: string;
   createdAt: any;
@@ -43,9 +43,7 @@ export interface NotesForList_notes_Link {
   domain: string;
 }
 
-export type NotesForList_notes =
-  | NotesForList_notes_Text
-  | NotesForList_notes_Link;
+export type NotesForList_notes = NotesForList_notes_Text | NotesForList_notes_Link;
 
 export interface NotesForList {
   notes: (NotesForList_notes | null)[] | null;

@@ -8,14 +8,14 @@
 // ====================================================
 
 export interface AddLinkMutation_submitLink_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface AddLinkMutation_submitLink {
-  __typename: 'Link';
+  __typename: "Link";
   _id: string;
   name: string;
   createdAt: any;

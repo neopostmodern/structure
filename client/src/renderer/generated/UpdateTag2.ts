@@ -3,14 +3,14 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { InputTag } from './globalTypes';
+import { InputTag } from "./globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: UpdateTag2
 // ====================================================
 
 export interface UpdateTag2_updateTag {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;

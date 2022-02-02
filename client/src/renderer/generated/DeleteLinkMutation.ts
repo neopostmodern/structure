@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface DeleteLinkMutation_deleteLink {
-  __typename: 'Link';
+  __typename: "Link";
   _id: string;
 }
 

@@ -8,13 +8,13 @@
 // ====================================================
 
 export interface RevokeCredentialMutation_revokeCredential_credentials {
-  __typename: 'Credentials';
+  __typename: "Credentials";
   bookmarklet: string | null;
   rss: string | null;
 }
 
 export interface RevokeCredentialMutation_revokeCredential {
-  __typename: 'User';
+  __typename: "User";
   _id: string;
   credentials: RevokeCredentialMutation_revokeCredential_credentials | null;
 }

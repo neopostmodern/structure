@@ -8,8 +8,8 @@
 //==============================================================
 
 export enum NoteType {
-  LINK = 'LINK',
-  TEXT = 'TEXT',
+  LINK = "LINK",
+  TEXT = "TEXT",
 }
 
 export interface InputLink {

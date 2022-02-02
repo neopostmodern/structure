@@ -8,14 +8,14 @@
 // ====================================================
 
 export interface AddTextMutation_createText_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface AddTextMutation_createText {
-  __typename: 'Text';
+  __typename: "Text";
   _id: string;
   createdAt: any;
   tags: (AddTextMutation_createText_tags | null)[];

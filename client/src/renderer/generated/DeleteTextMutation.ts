@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface DeleteTextMutation_deleteText {
-  __typename: 'Text';
+  __typename: "Text";
   _id: string;
 }
 

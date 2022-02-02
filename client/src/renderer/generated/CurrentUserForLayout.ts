@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface CurrentUserForLayout_currentUser {
-  __typename: 'User';
+  __typename: "User";
   _id: string;
   name: string;
 }

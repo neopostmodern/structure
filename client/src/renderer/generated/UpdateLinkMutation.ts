@@ -3,21 +3,21 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { InputLink } from './globalTypes';
+import { InputLink } from "./globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: UpdateLinkMutation
 // ====================================================
 
 export interface UpdateLinkMutation_updateLink_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface UpdateLinkMutation_updateLink {
-  __typename: 'Link';
+  __typename: "Link";
   _id: string;
   createdAt: any;
   url: string;

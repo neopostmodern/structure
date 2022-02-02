@@ -8,13 +8,13 @@
 // ====================================================
 
 export interface UserCredentialsQuery_currentUser_credentials {
-  __typename: 'Credentials';
+  __typename: "Credentials";
   bookmarklet: string | null;
   rss: string | null;
 }
 
 export interface UserCredentialsQuery_currentUser {
-  __typename: 'User';
+  __typename: "User";
   _id: string;
   credentials: UserCredentialsQuery_currentUser_credentials | null;
 }

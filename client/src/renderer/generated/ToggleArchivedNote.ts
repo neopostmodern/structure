@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface ToggleArchivedNote_toggleArchivedNote {
-  __typename: 'Link' | 'Text';
+  __typename: "Link" | "Text";
   _id: string;
   archivedAt: any | null;
 }

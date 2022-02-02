@@ -3,21 +3,21 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { InputTag, NoteType } from './globalTypes';
+import { InputTag, NoteType } from "./globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: UpdateTagMutation
 // ====================================================
 
 export interface UpdateTagMutation_updateTag_notes_Text_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface UpdateTagMutation_updateTag_notes_Text {
-  __typename: 'Text';
+  __typename: "Text";
   type: NoteType;
   _id: string;
   name: string;
@@ -28,14 +28,14 @@ export interface UpdateTagMutation_updateTag_notes_Text {
 }
 
 export interface UpdateTagMutation_updateTag_notes_Link_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface UpdateTagMutation_updateTag_notes_Link {
-  __typename: 'Link';
+  __typename: "Link";
   type: NoteType;
   _id: string;
   name: string;
@@ -47,12 +47,10 @@ export interface UpdateTagMutation_updateTag_notes_Link {
   domain: string;
 }
 
-export type UpdateTagMutation_updateTag_notes =
-  | UpdateTagMutation_updateTag_notes_Text
-  | UpdateTagMutation_updateTag_notes_Link;
+export type UpdateTagMutation_updateTag_notes = UpdateTagMutation_updateTag_notes_Text | UpdateTagMutation_updateTag_notes_Link;
 
 export interface UpdateTagMutation_updateTag {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;

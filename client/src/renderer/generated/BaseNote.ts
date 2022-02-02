@@ -8,14 +8,14 @@
 // ====================================================
 
 export interface BaseNote_Text_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface BaseNote_Text {
-  __typename: 'Text';
+  __typename: "Text";
   _id: string;
   name: string;
   createdAt: any;
@@ -25,14 +25,14 @@ export interface BaseNote_Text {
 }
 
 export interface BaseNote_Link_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface BaseNote_Link {
-  __typename: 'Link';
+  __typename: "Link";
   _id: string;
   name: string;
   createdAt: any;

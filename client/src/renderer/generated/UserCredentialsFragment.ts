@@ -8,13 +8,13 @@
 // ====================================================
 
 export interface UserCredentialsFragment_credentials {
-  __typename: 'Credentials';
+  __typename: "Credentials";
   bookmarklet: string | null;
   rss: string | null;
 }
 
 export interface UserCredentialsFragment {
-  __typename: 'User';
+  __typename: "User";
   _id: string;
   credentials: UserCredentialsFragment_credentials | null;
 }

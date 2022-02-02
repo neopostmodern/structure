@@ -8,14 +8,14 @@
 // ====================================================
 
 export interface RemoveTagByIdFromNote_removeTagByIdFromNote_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface RemoveTagByIdFromNote_removeTagByIdFromNote {
-  __typename: 'Link' | 'Text';
+  __typename: "Link" | "Text";
   _id: string;
   tags: (RemoveTagByIdFromNote_removeTagByIdFromNote_tags | null)[];
 }

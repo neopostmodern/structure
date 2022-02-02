@@ -8,13 +8,13 @@
 // ====================================================
 
 export interface RequestNewCredentialMutation_requestNewCredential_credentials {
-  __typename: 'Credentials';
+  __typename: "Credentials";
   bookmarklet: string | null;
   rss: string | null;
 }
 
 export interface RequestNewCredentialMutation_requestNewCredential {
-  __typename: 'User';
+  __typename: "User";
   _id: string;
   credentials: RequestNewCredentialMutation_requestNewCredential_credentials | null;
 }

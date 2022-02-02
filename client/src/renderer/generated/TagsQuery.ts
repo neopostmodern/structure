@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface TagsQuery_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;

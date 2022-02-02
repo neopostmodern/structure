@@ -8,14 +8,14 @@
 // ====================================================
 
 export interface AddTagByNameToNote_addTagByNameToNote_tags {
-  __typename: 'Tag';
+  __typename: "Tag";
   _id: string;
   name: string;
   color: string;
 }
 
 export interface AddTagByNameToNote_addTagByNameToNote {
-  __typename: 'Link' | 'Text';
+  __typename: "Link" | "Text";
   _id: string;
   tags: (AddTagByNameToNote_addTagByNameToNote_tags | null)[];
 }
