@@ -7,6 +7,7 @@ import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
 import { Store } from 'redux';
 import { RootState } from '../reducers';
 import AddNotePage from './AddNotePage';
+import AuthWrapper from './AuthWrapper';
 import LegacyLayout from './LegacyLayout';
 import LinkPage from './LinkPage';
 import MissingPage from './MissingPage';
@@ -27,55 +28,57 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
     <ApolloProvider client={client}>
       <Provider store={store}>
         <HistoryRouter history={history}>
-          <Routes>
-            <Route path="/" element={<NotesPage />} />
-            <Route
-              path="/notes"
-              element={
-                <LegacyLayout>
-                  <NotesPage />
-                </LegacyLayout>
-              }
-            />
-            <Route path="/notes/add" element={<AddNotePage />} />
+          <AuthWrapper>
+            <Routes>
+              <Route path="/" element={<NotesPage />} />
+              <Route
+                path="/notes"
+                element={
+                  <LegacyLayout>
+                    <NotesPage />
+                  </LegacyLayout>
+                }
+              />
+              <Route path="/notes/add" element={<AddNotePage />} />
 
-            <Route
-              path="/texts/:textId"
-              element={
-                <LegacyLayout>
-                  <TextPage />
-                </LegacyLayout>
-              }
-            />
-            <Route path="/links/:linkId" element={<LinkPage />} />
+              <Route
+                path="/texts/:textId"
+                element={
+                  <LegacyLayout>
+                    <TextPage />
+                  </LegacyLayout>
+                }
+              />
+              <Route path="/links/:linkId" element={<LinkPage />} />
 
-            <Route path="/me" element={<SettingsPage />} />
+              <Route path="/me" element={<SettingsPage />} />
 
-            <Route
-              path="/tags"
-              element={
-                <LegacyLayout>
-                  <TagsPage />
-                </LegacyLayout>
-              }
-            />
-            <Route
-              path="/tags/:tagId"
-              element={
-                <LegacyLayout>
-                  <TagPage />
-                </LegacyLayout>
-              }
-            />
+              <Route
+                path="/tags"
+                element={
+                  <LegacyLayout>
+                    <TagsPage />
+                  </LegacyLayout>
+                }
+              />
+              <Route
+                path="/tags/:tagId"
+                element={
+                  <LegacyLayout>
+                    <TagPage />
+                  </LegacyLayout>
+                }
+              />
 
-            <Route
-              element={
-                <LegacyLayout>
-                  <MissingPage />
-                </LegacyLayout>
-              }
-            />
-          </Routes>
+              <Route
+                element={
+                  <LegacyLayout>
+                    <MissingPage />
+                  </LegacyLayout>
+                }
+              />
+            </Routes>
+          </AuthWrapper>
         </HistoryRouter>
       </Provider>
     </ApolloProvider>

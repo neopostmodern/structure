@@ -34,6 +34,8 @@ const SettingsPage: React.FC = () => {
     fetchPolicy: 'cache-only',
   });
 
+  const isLoggedIn = userQuery.data?.currentUser;
+
   return (
     <ComplexLayout
       primaryActions={
@@ -53,7 +55,7 @@ const SettingsPage: React.FC = () => {
           >
             Delete my account
           </MenuButton>
-          {process.env.TARGET === 'web' && (
+          {isLoggedIn && process.env.TARGET === 'web' && (
             <>
               <ExternalLink href={`${BACKEND_URL}/logout`}>Logout</ExternalLink>
             </>
@@ -61,7 +63,7 @@ const SettingsPage: React.FC = () => {
         </Menu>
       }
     >
-      <UserSettingsSection />
+      {isLoggedIn && <UserSettingsSection />}
       <h2>Configuration</h2>
       <SettingsEntry
         title="Server"

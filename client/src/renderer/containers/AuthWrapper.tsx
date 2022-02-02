@@ -1,20 +1,26 @@
 import { NetworkStatus, useQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { requestLogin } from '../actions/userInterface';
 import Centered from '../components/Centered';
 import { InlineButton, InternalLink } from '../components/CommonStyles';
+import LoginView from '../components/LoginView';
+import VersionMarks from '../components/VersionMarks';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
+import { Versions } from '../generated/Versions';
 import { RootState } from '../reducers';
 import * as Styled from './ComplexLayout.style';
-import { PROFILE_QUERY } from './LegacyLayout';
+import { PROFILE_QUERY, VERSIONS_QUERY } from './LegacyLayout';
 
-const ComplexLayout: React.FC<
+const AuthWrapper: React.FC<
   React.PropsWithChildren<{
     primaryActions?: JSX.Element;
     secondaryActions?: JSX.Element;
   }>
-> = ({ children, primaryActions, secondaryActions }) => {
+> = ({ children }) => {
+  const dispatch = useDispatch();
   const user = useQuery<CurrentUserForLayout>(PROFILE_QUERY);
+  const versions = useQuery<Versions>(VERSIONS_QUERY);
 
   const isUserLoggingIn = useSelector<RootState, boolean>(
     (state) => state.userInterface.loggingIn
@@ -36,9 +42,16 @@ const ComplexLayout: React.FC<
       </span>
     );
   }
+
   const isSettingsPage = path === '/me';
 
-  if (navigator.onLine && user.networkStatus === NetworkStatus.error) {
+  let content;
+
+  if (
+    navigator.onLine &&
+    (versions.networkStatus === NetworkStatus.error ||
+      user.networkStatus === NetworkStatus.error)
+  ) {
     return (
       <Styled.PrimaryContent>
         <Centered>
@@ -57,32 +70,45 @@ const ComplexLayout: React.FC<
     );
   }
 
+  let username = '...';
+  if (isUserLoggingIn) {
+    content = <Centered>Logging in...</Centered>;
+  } else if (user.loading) {
+    content = <Centered>Loading...</Centered>;
+  } else if (user.data.currentUser?.name) {
+    content = children;
+    username = user.data.currentUser.name;
+  } else if (isSettingsPage) {
+    content = children;
+  } else {
+    content = (
+      <LoginView
+        openLoginModal={(): void => {
+          dispatch(requestLogin());
+        }}
+      />
+    );
+    username = 'Settings';
+  }
+
   return (
     <Styled.Container>
-      {!navigator.onLine && (
-        <Styled.OfflineBanner>Offline</Styled.OfflineBanner>
-      )}
       <Styled.Navigation>
         <Styled.Title>{headline}</Styled.Title>
       </Styled.Navigation>
       <Styled.PrimaryContent>
-        {user.loading ? <Centered>Loading...</Centered> : children}
+        <VersionMarks
+          versions={versions.loading ? 'loading' : versions.data.versions}
+        />
+        {content}
       </Styled.PrimaryContent>
-      {primaryActions && (
-        <Styled.PrimaryActions>{primaryActions}</Styled.PrimaryActions>
-      )}
-      {secondaryActions && (
-        <Styled.SecondaryActions>{secondaryActions}</Styled.SecondaryActions>
-      )}
       <Styled.UserAndMenuIndicator>
         {!isSettingsPage && (
-          <Styled.Username to="/me">
-            {user.data.currentUser?.name || '...'}
-          </Styled.Username>
+          <Styled.Username to="/me">{username}</Styled.Username>
         )}
       </Styled.UserAndMenuIndicator>
     </Styled.Container>
   );
 };
 
-export default ComplexLayout;
+export default AuthWrapper;
