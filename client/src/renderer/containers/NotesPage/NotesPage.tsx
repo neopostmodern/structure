@@ -245,8 +245,6 @@ const NotesPage: React.FC<{}> = () => {
   const { notes: matchedNotes, archivedCount: archivedMatchedNotesCount } =
     filterNotes(allNotes, searchQuery, archiveState);
 
-  console.log(matchedNotes[0]);
-
   const content = [];
 
   if (batchEditing) {
