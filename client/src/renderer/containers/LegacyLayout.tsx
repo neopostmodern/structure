@@ -3,14 +3,14 @@ import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestLogin } from '../actions/userInterface';
+import Centered from '../components/Centered';
+import { InlineButton, InternalLink } from '../components/CommonStyles';
+import LoginView from '../components/LoginView';
+import VersionMarks from '../components/VersionMarks';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
 import { Versions } from '../generated/Versions';
 import { RootState } from '../reducers';
-import Centered from './Centered';
-import { InlineButton, InternalLink } from './CommonStyles';
-import * as Styled from './Layout.style';
-import LoginView from './LoginView';
-import VersionMarks from './VersionMarks';
+import * as Styled from './LegacyLayout.style';
 
 const PROFILE_QUERY = gql`
   query CurrentUserForLayout {
@@ -29,7 +29,7 @@ const VERSIONS_QUERY = gql`
   }
 `;
 
-const Layout: React.FC<{}> = ({ children }) => {
+const LegacyLayout: React.FC<{}> = ({ children }) => {
   const dispatch = useDispatch();
   const user = useQuery<CurrentUserForLayout>(PROFILE_QUERY);
 
@@ -116,4 +116,4 @@ const Layout: React.FC<{}> = ({ children }) => {
   );
 };
 
-export default Layout;
+export default LegacyLayout;

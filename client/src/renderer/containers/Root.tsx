@@ -5,9 +5,9 @@ import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router';
 import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
 import { Store } from 'redux';
-import Layout from '../components/Layout';
 import { RootState } from '../reducers';
 import AddNotePage from './AddNotePage';
+import LegacyLayout from './LegacyLayout';
 import LinkPage from './LinkPage';
 import MissingPage from './MissingPage';
 import NotesPage from './NotesPage';
@@ -27,23 +27,83 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
     <ApolloProvider client={client}>
       <Provider store={store}>
         <HistoryRouter history={history}>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<NotesPage />} />
-              <Route path="/notes" element={<NotesPage />} />
-              <Route path="/notes/add" element={<AddNotePage />} />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <LegacyLayout>
+                  <NotesPage />
+                </LegacyLayout>
+              }
+            />
+            <Route
+              path="/notes"
+              element={
+                <LegacyLayout>
+                  <NotesPage />
+                </LegacyLayout>
+              }
+            />
+            <Route
+              path="/notes/add"
+              element={
+                <LegacyLayout>
+                  <AddNotePage />
+                </LegacyLayout>
+              }
+            />
 
-              <Route path="/texts/:textId" element={<TextPage />} />
-              <Route path="/links/:linkId" element={<LinkPage />} />
+            <Route
+              path="/texts/:textId"
+              element={
+                <LegacyLayout>
+                  <TextPage />
+                </LegacyLayout>
+              }
+            />
+            <Route
+              path="/links/:linkId"
+              element={
+                <LegacyLayout>
+                  <LinkPage />
+                </LegacyLayout>
+              }
+            />
 
-              <Route path="/me" element={<UserPage />} />
+            <Route
+              path="/me"
+              element={
+                <LegacyLayout>
+                  <UserPage />
+                </LegacyLayout>
+              }
+            />
 
-              <Route path="/tags" element={<TagsPage />} />
-              <Route path="/tags/:tagId" element={<TagPage />} />
+            <Route
+              path="/tags"
+              element={
+                <LegacyLayout>
+                  <TagsPage />
+                </LegacyLayout>
+              }
+            />
+            <Route
+              path="/tags/:tagId"
+              element={
+                <LegacyLayout>
+                  <TagPage />
+                </LegacyLayout>
+              }
+            />
 
-              <Route element={<MissingPage />} />
-            </Routes>
-          </Layout>
+            <Route
+              element={
+                <LegacyLayout>
+                  <MissingPage />
+                </LegacyLayout>
+              }
+            />
+          </Routes>
         </HistoryRouter>
       </Provider>
     </ApolloProvider>

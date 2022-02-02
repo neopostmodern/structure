@@ -4,7 +4,7 @@ import {
   breakPointMobile,
   containerWidth,
 } from '../styles/constants';
-import { InternalLink } from './CommonStyles';
+import { InternalLink } from '../components/CommonStyles';
 
 export const Container = styled.div`
   font-family: ${baseFont};
