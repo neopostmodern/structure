@@ -2,7 +2,7 @@ import Mousetrap from 'mousetrap';
 import { render } from 'react-dom';
 import apolloClient from './apollo';
 import Root from './containers/Root';
-import { history, store } from './store/configureStore';
+import { history, store } from './configureStore';
 import './styles/fonts.global.css';
 import makeMousetrapGlobal from './utils/mousetrapGlobal';
 

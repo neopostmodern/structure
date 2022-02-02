@@ -1,10 +1,9 @@
 /* eslint-disable global-require */
 import { applyMiddleware, compose, createStore } from 'redux';
 import { createReduxHistoryContext } from 'redux-first-history';
-import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
-import middlewares from '../middleware';
-import createRootReducer from '../reducers';
+import middlewares from './middleware';
+import createRootReducer from './reducers';
 
 let createHistory;
 if (process.env.TARGET === 'web') {
@@ -24,12 +23,15 @@ const enhancers = [];
 // Thunk Middleware
 middleware.push(thunk);
 
-// Logging Middleware
-const logger = createLogger({
-  level: 'info',
-  collapsed: true,
-});
-middleware.push(logger);
+if (process.env.NODE_ENV === 'production') {
+  const { createLogger } = require('redux-logger');
+  // Logging Middleware
+  const logger = createLogger({
+    level: 'info',
+    collapsed: true,
+  });
+  middleware.push(logger);
+}
 
 // Router Middleware
 middleware.push(routerMiddleware);
@@ -46,7 +48,7 @@ enhancers.push(applyMiddleware(...middleware));
 const enhancer = composeEnhancers(...enhancers);
 
 // Create Store
-const store = createStore(
+export const store = createStore(
   createRootReducer(routerReducer),
   undefined,
   enhancer
@@ -54,12 +56,10 @@ const store = createStore(
 
 if (module.hot) {
   module.hot.accept(
-    '../reducers',
+    './reducers',
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    () => store.replaceReducer(require('../reducers'))
+    () => store.replaceReducer(require('./reducers'))
   );
 }
 
-const history = createReduxHistory(store);
-
-export default { store, history };
+export const history = createReduxHistory(store);
