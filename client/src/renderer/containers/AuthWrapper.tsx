@@ -75,11 +75,8 @@ const AuthWrapper: React.FC<
     content = <Centered>Logging in...</Centered>;
   } else if (user.loading) {
     content = <Centered>Loading...</Centered>;
-  } else if (user.data.currentUser?.name) {
-    content = children;
-    username = user.data.currentUser.name;
-  } else if (isSettingsPage) {
-    content = children;
+  } else if (user.data.currentUser?.name || isSettingsPage) {
+    return children;
   } else {
     content = (
       <LoginView
