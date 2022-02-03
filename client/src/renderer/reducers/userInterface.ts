@@ -11,6 +11,7 @@ import {
   LinkLayout,
   RECEIVED_METADATA,
   REQUEST_LOGIN,
+  REQUEST_LOGOUT,
   REQUEST_METADATA,
   SET_BATCH_SELECTED,
   SET_BATCH_SELECTION,
@@ -70,6 +71,8 @@ const links = (
       return { ...state, loggingIn: true };
     case COMPLETE_LOGIN:
       return { ...state, loggingIn: false };
+    case REQUEST_LOGOUT:
+      return { ...state, loggingIn: true }; // abusing loggingIn for logout too
     case CHANGE_LINK_LAYOUT:
       return { ...state, linkLayout: action.payload };
     case CHANGE_TAGS_LAYOUT:

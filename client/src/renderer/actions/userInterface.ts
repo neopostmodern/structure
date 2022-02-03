@@ -19,6 +19,7 @@ export enum ArchiveState {
 
 export const REQUEST_LOGIN = 'REQUEST_LOGIN';
 export const COMPLETE_LOGIN = 'COMPLETE_LOGIN';
+export const REQUEST_LOGOUT = 'REQUEST_LOGOUT';
 export const CHANGE_LINK_LAYOUT = 'CHANGE_LINK_LAYOUT';
 export const CHANGE_TAGS_LAYOUT = 'CHANGE_TAGS_LAYOUT';
 export const CHANGE_ARCHIVE_STATE = 'CHANGE_ARCHIVE_STATE';
@@ -37,6 +38,11 @@ export const CLEAR_CLIPBOARD = 'CLEAR_CLIPBOARD';
 export function requestLogin() {
   return {
     type: REQUEST_LOGIN,
+  };
+}
+export function requestLogout() {
+  return {
+    type: REQUEST_LOGOUT,
   };
 }
 export function completeLogin() {

@@ -1,9 +1,11 @@
+import { push } from 'redux-first-history';
 import { REQUEST_RESTART } from '../actions/configuration';
 import {
   completeLogin,
   requestLogin,
   REQUEST_CLIPBOARD,
   REQUEST_LOGIN,
+  REQUEST_LOGOUT,
   setClipboard,
 } from '../actions/userInterface';
 
@@ -31,6 +33,9 @@ if (process.env.TARGET === 'web') {
         'height=600,width=400,modal=yes,alwaysRaised=yes',
         store.dispatch
       );
+    }
+    if (action.type === REQUEST_LOGOUT) {
+      store.dispatch(push(`${BACKEND_URL}/logout`));
     }
     if (action.type === REQUEST_CLIPBOARD) {
       navigator.permissions
@@ -76,6 +81,19 @@ if (process.env.TARGET === 'web') {
           'nodeIntegration=no',
           store.dispatch
         );
+      }
+      if (action.type === REQUEST_LOGOUT) {
+        const logoutPopup = window.open(
+          `${store.getState().configuration.backendUrl}/logout`,
+          'Log out',
+          'nodeIntegration=no'
+        );
+        const onCloseWatcher = setInterval(() => {
+          if (logoutPopup?.closed) {
+            store.dispatch(completeLogin());
+            clearInterval(onCloseWatcher);
+          }
+        }, 100);
       }
       if (action.type === REQUEST_CLIPBOARD) {
         next(setClipboard(clipboard.readText()));

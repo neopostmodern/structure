@@ -8,6 +8,7 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
+import config from '@structure/config';
 import 'core-js/stable';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
@@ -127,13 +128,23 @@ const createWindow = async () => {
   });
 
   // Open urls in the user's browser
-  mainWindow.webContents.on('new-window', (event, url) => {
-    if (url.endsWith('/login/github')) {
-      return;
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.endsWith('/login/github') || url.endsWith('/logout')) {
+      return { action: 'allow' };
     }
 
-    event.preventDefault();
     shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
+  mainWindow.webContents.on('did-create-window', (browserWindow) => {
+    browserWindow.webContents.on('did-finish-load', () => {
+      if (
+        browserWindow.webContents.getURL().startsWith(config.WEB_FRONTEND_HOST)
+      ) {
+        browserWindow.close();
+      }
+    });
   });
 
   // enable toggling dev-tools for production app

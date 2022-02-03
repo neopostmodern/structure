@@ -3,11 +3,8 @@ import gql from 'graphql-tag';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBackendUrl } from '../actions/configuration';
-import {
-  ExternalLink,
-  InternalLink,
-  TextField,
-} from '../components/CommonStyles';
+import { requestLogout } from '../actions/userInterface';
+import { InternalLink, TextField } from '../components/CommonStyles';
 import { Menu, MenuButton } from '../components/Menu';
 import SettingsEntry from '../components/SettingsEntry';
 import { TinyUserQuery } from '../generated/TinyUserQuery';
@@ -55,10 +52,14 @@ const SettingsPage: React.FC = () => {
           >
             Delete my account
           </MenuButton>
-          {isLoggedIn && process.env.TARGET === 'web' && (
-            <>
-              <ExternalLink href={`${BACKEND_URL}/logout`}>Logout</ExternalLink>
-            </>
+          {isLoggedIn && (
+            <MenuButton
+              onClick={(): void => {
+                dispatch(requestLogout());
+              }}
+            >
+              Logout
+            </MenuButton>
           )}
         </Menu>
       }
