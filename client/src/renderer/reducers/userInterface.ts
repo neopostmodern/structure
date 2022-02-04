@@ -51,7 +51,7 @@ const initialState: UserInterfaceStateType = {
   tagsLayout: TagsLayout.CHAOS_LAYOUT,
   archiveState: ArchiveState.NO_ARCHIVE,
   searchQuery: '',
-  infiniteScrollLimit: 10,
+  infiniteScrollLimit: 15,
   batchEditing: false,
   batchSelections: {},
   metadataLoading: false,

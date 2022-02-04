@@ -260,11 +260,10 @@ const NotesPage: React.FC<{}> = () => {
     if (layout !== LinkLayout.LIST_LAYOUT) {
       content.push(<i>Unsupported layout</i>);
     } else {
-      const currentLength = infiniteScrollLimit;
       content.push(
         <NotesList
           key="notes-list"
-          notes={matchedNotes.slice(0, currentLength)}
+          notes={matchedNotes.slice(0, infiniteScrollLimit)}
           batchEditing={batchEditing}
           batchSelections={batchSelections}
           onSetBatchSelected={(noteId, selected): void => {
@@ -272,10 +271,10 @@ const NotesPage: React.FC<{}> = () => {
           }}
         />
       );
-      if (matchedNotes.length > currentLength) {
+      if (matchedNotes.length > infiniteScrollLimit) {
         content.push(
           <ShowMore key="more" ref={moreElement}>
-            ({matchedNotes.length - currentLength} remaining)
+            ({matchedNotes.length - infiniteScrollLimit} remaining)
           </ShowMore>
         );
       }
