@@ -9,10 +9,11 @@ import Tag, { BaseTag, tagMargin } from '../components/Tag';
 import { TagsQuery } from '../generated/TagsQuery';
 import { UpdateTag2, UpdateTag2Variables } from '../generated/UpdateTag2';
 import { RootState } from '../reducers';
-import { containerWidth } from '../styles/constants';
+import { breakpointDesktop, containerWidth } from '../styles/constants';
 import { TagType } from '../types';
 import colorTools, { ColorCache } from '../utils/colorTools';
 import { stripTypename } from '../utils/graphQl';
+import ComplexLayout from './ComplexLayout';
 
 const TagContainer = styled.div<{ droppable?: boolean }>`
   margin-top: 2rem;
@@ -31,6 +32,9 @@ const ColumnsContainer = styled.div`
   align-items: flex-start;
 
   width: 98vw;
+  @media (min-width: ${breakpointDesktop}rem) {
+    margin-top: 8rem;
+  }
   margin-left: calc(calc(98vw - ${containerWidth}) / -2);
 
   ${TagContainer} {
@@ -184,22 +188,19 @@ const TagsPage: React.FC<{}> = () => {
     }
   };
 
-  let content;
-  if (!tagsQuery.loading) {
-    content = (
-      <>
+  return (
+    <ComplexLayout
+      primaryActions={
         <Menu>
           <MenuButton onClick={selectNextLayout}>
             {layoutToName(layout)}
           </MenuButton>
         </Menu>
-        {renderTags()}
-      </>
-    );
-  } else {
-    content = <i>Loading...</i>;
-  }
-  return <div>{content}</div>;
+      }
+    >
+      {tagsQuery.loading ? <i>Loading...</i> : renderTags()}
+    </ComplexLayout>
+  );
 };
 
 export default TagsPage;

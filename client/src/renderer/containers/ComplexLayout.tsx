@@ -5,8 +5,8 @@ import Centered from '../components/Centered';
 import { InternalLink } from '../components/CommonStyles';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
 import { RootState } from '../reducers';
+import { PROFILE_QUERY } from '../utils/sharedQueries';
 import * as Styled from './ComplexLayout.style';
-import { PROFILE_QUERY } from './LegacyLayout';
 
 const ComplexLayout: React.FC<
   React.PropsWithChildren<{

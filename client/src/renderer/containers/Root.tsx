@@ -8,7 +8,6 @@ import { Store } from 'redux';
 import { RootState } from '../reducers';
 import AddNotePage from './AddNotePage';
 import AuthWrapper from './AuthWrapper';
-import LegacyLayout from './LegacyLayout';
 import LinkPage from './LinkPage';
 import MissingPage from './MissingPage';
 import NotesPage from './NotesPage';
@@ -31,52 +30,17 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
           <AuthWrapper>
             <Routes>
               <Route path="/" element={<NotesPage />} />
-              <Route
-                path="/notes"
-                element={
-                  <LegacyLayout>
-                    <NotesPage />
-                  </LegacyLayout>
-                }
-              />
+              <Route path="/notes" element={<NotesPage />} />
               <Route path="/notes/add" element={<AddNotePage />} />
-
-              <Route
-                path="/texts/:textId"
-                element={
-                  <LegacyLayout>
-                    <TextPage />
-                  </LegacyLayout>
-                }
-              />
+              <Route path="/texts/:textId" element={<TextPage />} />
               <Route path="/links/:linkId" element={<LinkPage />} />
 
               <Route path="/me" element={<SettingsPage />} />
 
-              <Route
-                path="/tags"
-                element={
-                  <LegacyLayout>
-                    <TagsPage />
-                  </LegacyLayout>
-                }
-              />
-              <Route
-                path="/tags/:tagId"
-                element={
-                  <LegacyLayout>
-                    <TagPage />
-                  </LegacyLayout>
-                }
-              />
+              <Route path="/tags" element={<TagsPage />} />
+              <Route path="/tags/:tagId" element={<TagPage />} />
 
-              <Route
-                element={
-                  <LegacyLayout>
-                    <MissingPage />
-                  </LegacyLayout>
-                }
-              />
+              <Route path="*" element={<MissingPage />} />
             </Routes>
           </AuthWrapper>
         </HistoryRouter>

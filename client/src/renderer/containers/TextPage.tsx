@@ -4,7 +4,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
 import { push } from 'redux-first-history';
-import { InlineButton } from '../components/CommonStyles';
+import { Menu, MenuButton } from '../components/Menu';
 import Tags from '../components/Tags';
 import TextForm from '../components/TextForm';
 import {
@@ -17,6 +17,7 @@ import {
   UpdateTextMutationVariables,
 } from '../generated/UpdateTextMutation';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
+import ComplexLayout from './ComplexLayout';
 
 const TEXT_QUERY = gql`
   query TextQuery($textId: ID) {
@@ -87,26 +88,23 @@ const TextPage: React.FC<{}> = () => {
   }
   const { text } = data;
   return (
-    <div style={{ marginTop: 50 }}>
+    <ComplexLayout
+      primaryActions={<Tags tags={text.tags} noteId={text._id} withShortcuts />}
+      secondaryActions={
+        <Menu>
+          <MenuButton type="button" onClick={handleDeleteText}>
+            Delete note
+          </MenuButton>
+        </Menu>
+      }
+    >
       <TextForm
         text={text}
         onSubmit={(updatedText) =>
           updateText({ variables: { text: updatedText } })
         }
       />
-      <div style={{ marginTop: 30 }}>
-        <Tags tags={text.tags} noteId={text._id} withShortcuts />
-      </div>
-      <div style={{ display: 'flex', marginTop: 50 }}>
-        <InlineButton
-          type="button"
-          style={{ marginLeft: 'auto' }}
-          onClick={handleDeleteText}
-        >
-          Delete
-        </InlineButton>
-      </div>
-    </div>
+    </ComplexLayout>
   );
 };
 

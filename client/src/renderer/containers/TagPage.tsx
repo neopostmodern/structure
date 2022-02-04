@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useParams } from 'react-router';
-import styled from 'styled-components';
 import NotesList from '../components/NotesList';
 import TagForm from '../components/TagForm';
 import {
@@ -13,6 +12,7 @@ import {
   UpdateTagMutation,
   UpdateTagMutationVariables,
 } from '../generated/UpdateTagMutation';
+import ComplexLayout from './ComplexLayout';
 
 const TAG_QUERY = gql`
   query TagWithNotesQuery($tagId: ID!) {
@@ -73,10 +73,6 @@ const UPDATE_TAG_MUTATION = gql`
   }
 `;
 
-const TagPageContainer = styled.div`
-  margin-top: 5rem;
-`;
-
 const TagPage: React.FC<{}> = () => {
   const { tagId } = useParams();
 
@@ -98,7 +94,7 @@ const TagPage: React.FC<{}> = () => {
   const { tag } = tagQuery.data;
 
   return (
-    <TagPageContainer>
+    <ComplexLayout>
       <TagForm
         tag={tag}
         onSubmit={(updatedTag): void => {
@@ -109,7 +105,7 @@ const TagPage: React.FC<{}> = () => {
       />
 
       <NotesList notes={tag.notes} />
-    </TagPageContainer>
+    </ComplexLayout>
   );
 };
 

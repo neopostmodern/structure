@@ -10,8 +10,8 @@ import VersionMarks from '../components/VersionMarks';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
 import { Versions } from '../generated/Versions';
 import { RootState } from '../reducers';
+import { PROFILE_QUERY, VERSIONS_QUERY } from '../utils/sharedQueries';
 import * as Styled from './ComplexLayout.style';
-import { PROFILE_QUERY, VERSIONS_QUERY } from './LegacyLayout';
 
 const AuthWrapper: React.FC<
   React.PropsWithChildren<{
