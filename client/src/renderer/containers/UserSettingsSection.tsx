@@ -1,9 +1,10 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { NetworkStatus, useMutation, useQuery } from '@apollo/client';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { TextField } from '../components/CommonStyles';
+import Centered from '../components/Centered';
+import { InlineButton, TextField } from '../components/CommonStyles';
 import Credentials from '../components/Credentials';
 import SettingsEntry from '../components/SettingsEntry';
 import {
@@ -69,6 +70,26 @@ const UserSettingsSection: React.FC<{}> = () => {
     RevokeCredentialMutation,
     RevokeCredentialMutationVariables
   >(REVOKE_CREDENTIAL_MUTATION);
+
+  if (navigator.onLine && userQuery.networkStatus === NetworkStatus.error) {
+    return (
+      <>
+        <h2>Integrations</h2>
+        <Centered height={'20vh'}>
+          <h2>Network error.</h2>
+          This really should not have happened.
+          <br />
+          <br />
+          <InlineButton
+            type="button"
+            onClick={(): void => window.location.reload()}
+          >
+            Give it another try.
+          </InlineButton>
+        </Centered>
+      </>
+    );
+  }
 
   const credentialsConfiguration = userQuery.loading
     ? 'loading'
