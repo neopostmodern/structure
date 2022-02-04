@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql, NetworkStatus, useQuery } from '@apollo/client';
 import Mousetrap from 'mousetrap';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -124,10 +124,10 @@ const NotesPage: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const searchInput = useRef(null);
   const moreElement = useRef(null);
-  const { loading, error, data, refetch } = useQuery<NotesForList>(
-    NOTES_QUERY,
-    { fetchPolicy: gracefulNetworkPolicy() }
-  );
+  const { loading, error, data, networkStatus, refetch } =
+    useQuery<NotesForList>(NOTES_QUERY, {
+      fetchPolicy: gracefulNetworkPolicy(),
+    });
 
   const selectedNoteCount = (): number =>
     Object.values(batchSelections).filter((selected) => selected).length;
@@ -230,79 +230,77 @@ const NotesPage: React.FC<{}> = () => {
     });
   };
 
-  if (error) {
-    return <NetworkError error={error} refetch={refetch} />;
-  }
-
-  // todo: indicate background (re) fetch somewhere
-  if (!data && loading) {
-    return <Centered>Loading...</Centered>;
-  }
-
-  const allNotes = [...data.notes]; // unfreeze
-  allNotes.sort((noteA, noteB) => noteB.createdAt - noteA.createdAt);
-
-  const { notes: matchedNotes, archivedCount: archivedMatchedNotesCount } =
-    filterNotes(allNotes, searchQuery, archiveState);
-
   const content = [];
-
-  if (batchEditing) {
-    content.push(
-      <StickyMenu key="batch-operations-menu">
-        {selectedNoteCount()} selected (
-        <a onClick={(): void => selectUnselectAll(true)}>select all</a>
-        ,&nbsp;
-        <a onClick={(): void => selectUnselectAll(false)}>unselect all</a>
-        ):&nbsp;
-        <a onClick={handleBatchOpenNotes}>Open in browser</a>
-      </StickyMenu>
-    );
-  }
-
-  if (layout !== LinkLayout.LIST_LAYOUT) {
-    content.push(<i>Unsupported layout</i>);
+  let primaryActions = null;
+  if (navigator.onLine && networkStatus === NetworkStatus.error) {
+    content.push(<NetworkError error={error} refetch={refetch} />);
+  } else if (!data && loading) {
+    // todo: indicate background (re) fetch somewhere
+    content.push(<Centered>Loading...</Centered>);
   } else {
-    const currentLength = infiniteScrollLimit;
-    content.push(
-      <NotesList
-        key="notes-list"
-        notes={matchedNotes.slice(0, currentLength)}
-        batchEditing={batchEditing}
-        batchSelections={batchSelections}
-        onSetBatchSelected={(noteId, selected): void => {
-          dispatch(setBatchSelected(noteId, selected));
-        }}
-      />
-    );
-    if (matchedNotes.length > currentLength) {
+    const allNotes = [...data.notes]; // unfreeze
+    allNotes.sort((noteA, noteB) => noteB.createdAt - noteA.createdAt);
+
+    const { notes: matchedNotes, archivedCount: archivedMatchedNotesCount } =
+      filterNotes(allNotes, searchQuery, archiveState);
+
+    if (batchEditing) {
       content.push(
-        <ShowMore key="more" ref={moreElement}>
-          ({matchedNotes.length - currentLength} remaining)
-        </ShowMore>
+        <StickyMenu key="batch-operations-menu">
+          {selectedNoteCount()} selected (
+          <a onClick={(): void => selectUnselectAll(true)}>select all</a>
+          ,&nbsp;
+          <a onClick={(): void => selectUnselectAll(false)}>unselect all</a>
+          ):&nbsp;
+          <a onClick={handleBatchOpenNotes}>Open in browser</a>
+        </StickyMenu>
       );
     }
+
+    if (layout !== LinkLayout.LIST_LAYOUT) {
+      content.push(<i>Unsupported layout</i>);
+    } else {
+      const currentLength = infiniteScrollLimit;
+      content.push(
+        <NotesList
+          key="notes-list"
+          notes={matchedNotes.slice(0, currentLength)}
+          batchEditing={batchEditing}
+          batchSelections={batchSelections}
+          onSetBatchSelected={(noteId, selected): void => {
+            dispatch(setBatchSelected(noteId, selected));
+          }}
+        />
+      );
+      if (matchedNotes.length > currentLength) {
+        content.push(
+          <ShowMore key="more" ref={moreElement}>
+            ({matchedNotes.length - currentLength} remaining)
+          </ShowMore>
+        );
+      }
+    }
+
+    primaryActions = (
+      <NotesMenu
+        archiveState={archiveState}
+        onChangeSearchQuery={(value): void => {
+          dispatch(changeSearchQuery(value));
+        }}
+        layout={layout}
+        toggleLayout={toggleLayout}
+        matchedNotes={matchedNotes}
+        nextArchiveState={nextArchiveState}
+        notes={allNotes}
+        searchQuery={searchQuery}
+        searchInput={searchInput}
+        archivedMatchedNotesCount={archivedMatchedNotesCount}
+      />
+    );
   }
 
   return (
-    <ComplexLayout
-      primaryActions={
-        <NotesMenu
-          archiveState={archiveState}
-          onChangeSearchQuery={(value): void => {
-            dispatch(changeSearchQuery(value));
-          }}
-          layout={layout}
-          toggleLayout={toggleLayout}
-          matchedNotes={matchedNotes}
-          nextArchiveState={nextArchiveState}
-          notes={allNotes}
-          searchQuery={searchQuery}
-          searchInput={searchInput}
-          archivedMatchedNotesCount={archivedMatchedNotesCount}
-        />
-      }
-    >
+    <ComplexLayout primaryActions={primaryActions}>
       {[...content]}
     </ComplexLayout>
   );
