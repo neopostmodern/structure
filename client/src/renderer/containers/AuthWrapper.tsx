@@ -3,8 +3,9 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestLogin } from '../actions/userInterface';
 import Centered from '../components/Centered';
-import { InlineButton, InternalLink } from '../components/CommonStyles';
+import { InternalLink } from '../components/CommonStyles';
 import LoginView from '../components/LoginView';
+import NetworkError from '../components/NetworkError';
 import VersionMarks from '../components/VersionMarks';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
 import { Versions } from '../generated/Versions';
@@ -63,18 +64,10 @@ const AuthWrapper: React.FC<
       !isSettingsPage
     ) {
       content = (
-        <Centered>
-          <h2>Network error.</h2>
-          This really should not have happened.
-          <br />
-          <br />
-          <InlineButton
-            type="button"
-            onClick={(): void => window.location.reload()}
-          >
-            Give it another try.
-          </InlineButton>
-        </Centered>
+        <NetworkError
+          error={versions.error || user.error}
+          refetch={(): void => window.location.reload()}
+        />
       );
     } else {
       content = (
