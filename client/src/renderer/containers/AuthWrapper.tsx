@@ -46,14 +46,23 @@ const AuthWrapper: React.FC<
   const isSettingsPage = path === '/me';
 
   let content;
+  let username = '...';
 
-  if (
-    navigator.onLine &&
-    (versions.networkStatus === NetworkStatus.error ||
-      user.networkStatus === NetworkStatus.error)
-  ) {
-    return (
-      <Styled.PrimaryContent>
+  if (isUserLoggingIn) {
+    content = <Centered>Logging in...</Centered>;
+  } else if (user.loading) {
+    content = <Centered>Loading...</Centered>;
+  } else if (user.data.currentUser?.name || isSettingsPage) {
+    return children;
+  } else {
+    username = 'Settings';
+    if (
+      navigator.onLine &&
+      (versions.networkStatus === NetworkStatus.error ||
+        user.networkStatus === NetworkStatus.error) &&
+      !isSettingsPage
+    ) {
+      content = (
         <Centered>
           <h2>Network error.</h2>
           This really should not have happened.
@@ -66,26 +75,16 @@ const AuthWrapper: React.FC<
             Give it another try.
           </InlineButton>
         </Centered>
-      </Styled.PrimaryContent>
-    );
-  }
-
-  let username = '...';
-  if (isUserLoggingIn) {
-    content = <Centered>Logging in...</Centered>;
-  } else if (user.loading) {
-    content = <Centered>Loading...</Centered>;
-  } else if (user.data.currentUser?.name || isSettingsPage) {
-    return children;
-  } else {
-    content = (
-      <LoginView
-        openLoginModal={(): void => {
-          dispatch(requestLogin());
-        }}
-      />
-    );
-    username = 'Settings';
+      );
+    } else {
+      content = (
+        <LoginView
+          openLoginModal={(): void => {
+            dispatch(requestLogin());
+          }}
+        />
+      );
+    }
   }
 
   return (

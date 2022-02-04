@@ -1,8 +1,8 @@
-import { NetworkStatus, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Centered from '../components/Centered';
-import { InlineButton, InternalLink } from '../components/CommonStyles';
+import { InternalLink } from '../components/CommonStyles';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
 import { RootState } from '../reducers';
 import * as Styled from './ComplexLayout.style';
@@ -37,25 +37,6 @@ const ComplexLayout: React.FC<
     );
   }
   const isSettingsPage = path === '/me';
-
-  if (navigator.onLine && user.networkStatus === NetworkStatus.error) {
-    return (
-      <Styled.PrimaryContent>
-        <Centered>
-          <h2>Network error.</h2>
-          This really should not have happened.
-          <br />
-          <br />
-          <InlineButton
-            type="button"
-            onClick={(): void => window.location.reload()}
-          >
-            Give it another try.
-          </InlineButton>
-        </Centered>
-      </Styled.PrimaryContent>
-    );
-  }
 
   return (
     <Styled.Container>
