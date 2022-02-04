@@ -128,23 +128,25 @@ const Tags: React.FC<TagsProps> = ({ tags, noteId, withShortcuts = false }) => {
   };
 
   let newTagForm;
-  if (addingNew) {
-    newTagForm = (
-      <InlineTagForm
-        tags={
-          tagsQuery.loading
-            ? 'loading'
-            : tagsQuery.data.tags.filter(
-                (tag) => !tags.some(({ _id }) => _id === tag._id)
-              )
-        }
-        onAddTag={handleAddTag}
-        onAbort={hideNewTagForm}
-      />
-    );
-  } else {
-    const addTagText = tags.length === 0 ? '+tag' : '+';
-    newTagForm = <AddNewTag onClick={showNewTagForm}>{addTagText}</AddNewTag>;
+  if (navigator.onLine) {
+    if (addingNew) {
+      newTagForm = (
+        <InlineTagForm
+          tags={
+            tagsQuery.loading
+              ? 'loading'
+              : tagsQuery.data.tags.filter(
+                  (tag) => !tags.some(({ _id }) => _id === tag._id)
+                )
+          }
+          onAddTag={handleAddTag}
+          onAbort={hideNewTagForm}
+        />
+      );
+    } else {
+      const addTagText = tags.length === 0 ? '+tag' : '+';
+      newTagForm = <AddNewTag onClick={showNewTagForm}>{addTagText}</AddNewTag>;
+    }
   }
   return (
     <TagContainer>
