@@ -4,6 +4,12 @@ if [ -n "$CONFIG_FILE" ]; then
 	  eval "$( jq -r '. | to_entries[] | "\(.key)=\(@sh "\(.value)")"' "${BASH_SOURCE%/*}/$CONFIG_FILE" )"
 fi
 
+if [ -z "${BACKUP_DIR+x}" ]; then
+  echo "Usage: CONFIG_FILE=../relative/path/to/config.json backup.sh"
+  echo "(or supply all variables in ENV)"
+  exit 1
+fi
+
 echo "Creating and compressing database dump..."
 ssh "$USER@$SERVER" <<-'SSH'
 	mongodump --db structureApp --out structureAppDump
