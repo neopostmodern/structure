@@ -53,6 +53,12 @@ const configuration: webpack.Configuration = {
     },
   },
 
+  resolve: {
+    alias: {
+      '@mui/styled-engine': '@mui/styled-engine-sc',
+    },
+  },
+
   module: {
     rules: [
       {

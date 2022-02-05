@@ -1,17 +1,17 @@
-import path from 'path';
-import fs from 'fs';
-import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import chalk from 'chalk';
-import { merge } from 'webpack-merge';
-import { spawn, execSync } from 'child_process';
-import baseConfig, { createConfigPlugin } from './webpack.config.base';
-import webpackPaths from './webpack.paths';
-import checkNodeEnv from '../scripts/check-node-env';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import config from '@structure/config';
+import chalk from 'chalk';
+import { execSync, spawn } from 'child_process';
+import fs from 'fs';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import path from 'path';
+import webpack from 'webpack';
+import { merge } from 'webpack-merge';
+import checkNodeEnv from '../scripts/check-node-env';
+import baseConfig, { createConfigPlugin } from './webpack.config.base';
+import webpackPaths from './webpack.paths';
 
-const configPlugin = createConfigPlugin(config)
+const configPlugin = createConfigPlugin(config);
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
@@ -64,12 +64,18 @@ const configuration: webpack.Configuration = {
     },
   },
 
+  resolve: {
+    alias: {
+      '@mui/styled-engine': '@mui/styled-engine-sc',
+    },
+  },
+
   module: {
     rules: [
       {
         test: /\.js$/,
-        enforce: "pre",
-        use: ["source-map-loader"],
+        enforce: 'pre',
+        use: ['source-map-loader'],
       },
       {
         test: /\.s?css$/,
@@ -131,7 +137,7 @@ const configuration: webpack.Configuration = {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      TARGET: process.env.TARGET
+      TARGET: process.env.TARGET,
     }),
 
     new webpack.LoaderOptionsPlugin({
@@ -154,7 +160,7 @@ const configuration: webpack.Configuration = {
       nodeModules: webpackPaths.appNodeModulesPath,
     }),
 
-    configPlugin
+    configPlugin,
   ],
 
   node: {
@@ -183,18 +189,16 @@ const configuration: webpack.Configuration = {
           .on('error', (spawnError) => console.error(spawnError));
       }
 
-      return (
-        [
-          (req, res, next) => {
-            if (req.originalUrl.endsWith('.map')) {
-              res.sendFile(req.originalUrl)
-            } else {
-              next()
-            }
-          },
-          ...middlewares,
-        ]
-      )
+      return [
+        (req, res, next) => {
+          if (req.originalUrl.endsWith('.map')) {
+            res.sendFile(req.originalUrl);
+          } else {
+            next();
+          }
+        },
+        ...middlewares,
+      ];
     },
     historyApiFallback: {
       verbose: true,
