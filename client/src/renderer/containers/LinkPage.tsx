@@ -6,7 +6,6 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
 import { push } from 'redux-first-history';
-import Centered from '../components/Centered';
 import LinkForm from '../components/LinkForm';
 import { Menu } from '../components/Menu';
 import Tags from '../components/Tags';
@@ -97,7 +96,7 @@ const LinkPage: React.FC<{}> = () => {
   });
 
   if (linkQuery.loading && !linkQuery.data) {
-    return <Centered>Loading...</Centered>;
+    return <ComplexLayout loading />;
   }
 
   const { link } = linkQuery.data;

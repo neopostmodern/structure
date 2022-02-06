@@ -88,7 +88,7 @@ const TagPage: React.FC<{}> = () => {
   >(UPDATE_TAG_MUTATION);
 
   if (tagQuery.loading) {
-    return <i>Loading...</i>;
+    return <ComplexLayout loading />;
   }
 
   const { tag } = tagQuery.data;

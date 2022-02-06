@@ -2,7 +2,6 @@ import { NetworkStatus, useQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestLogin } from '../actions/userInterface';
-import Centered from '../components/Centered';
 import { InternalLink } from '../components/CommonStyles';
 import LoginView from '../components/LoginView';
 import NetworkError from '../components/NetworkError';
@@ -11,6 +10,7 @@ import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
 import { Versions } from '../generated/Versions';
 import { RootState } from '../reducers';
 import { PROFILE_QUERY, VERSIONS_QUERY } from '../utils/sharedQueries';
+import ComplexLayout from './ComplexLayout';
 import * as Styled from './ComplexLayout.style';
 
 const AuthWrapper: React.FC<
@@ -50,9 +50,9 @@ const AuthWrapper: React.FC<
   let username = '...';
 
   if (isUserLoggingIn) {
-    content = <Centered>Logging in...</Centered>;
+    content = <ComplexLayout loading="Logging in..." />;
   } else if (user.loading) {
-    content = <Centered>Loading...</Centered>;
+    content = <ComplexLayout loading="Loading user..." />;
   } else if (user.data.currentUser?.name || isSettingsPage) {
     return children;
   } else {

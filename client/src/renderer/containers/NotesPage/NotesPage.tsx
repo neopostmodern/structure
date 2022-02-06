@@ -14,7 +14,6 @@ import {
   setBatchSelection,
   toggleBatchEditing,
 } from '../../actions/userInterface';
-import Centered from '../../components/Centered';
 import { StickyMenu } from '../../components/Menu';
 import NetworkError from '../../components/NetworkError';
 import NotesList from '../../components/NotesList';
@@ -236,8 +235,8 @@ const NotesPage: React.FC<{}> = () => {
   if (navigator.onLine && networkStatus === NetworkStatus.error) {
     content.push(<NetworkError error={error} refetch={refetch} />);
   } else if (!data && loading) {
+    // loading without data is handled below
     // todo: indicate background (re) fetch somewhere
-    content.push(<Centered>Loading...</Centered>);
   } else {
     const allNotes = [...data.notes]; // unfreeze
     allNotes.sort((noteA, noteB) => noteB.createdAt - noteA.createdAt);
@@ -300,7 +299,7 @@ const NotesPage: React.FC<{}> = () => {
   }
 
   return (
-    <ComplexLayout primaryActions={primaryActions}>
+    <ComplexLayout primaryActions={primaryActions} loading={!data && loading}>
       {[...content]}
     </ComplexLayout>
   );

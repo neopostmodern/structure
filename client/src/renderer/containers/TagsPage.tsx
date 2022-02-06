@@ -191,6 +191,7 @@ const TagsPage: React.FC<{}> = () => {
 
   return (
     <ComplexLayout
+      loading={tagsQuery.loading}
       primaryActions={
         <Menu>
           <Button size="huge" onClick={selectNextLayout}>
@@ -199,7 +200,7 @@ const TagsPage: React.FC<{}> = () => {
         </Menu>
       }
     >
-      {tagsQuery.loading ? <i>Loading...</i> : renderTags()}
+      {!tagsQuery.loading && renderTags()}
     </ComplexLayout>
   );
 };

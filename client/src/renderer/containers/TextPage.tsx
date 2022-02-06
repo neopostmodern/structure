@@ -86,7 +86,7 @@ const TextPage: React.FC<{}> = () => {
   };
 
   if (loading) {
-    return <i>Loading...</i>;
+    return <ComplexLayout loading />;
   }
   const { text } = data;
   return (

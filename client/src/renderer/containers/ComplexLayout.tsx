@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+import { CircularProgress } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Centered from '../components/Centered';
@@ -10,10 +11,11 @@ import * as Styled from './ComplexLayout.style';
 
 const ComplexLayout: React.FC<
   React.PropsWithChildren<{
-    primaryActions?: JSX.Element;
-    secondaryActions?: JSX.Element;
+    primaryActions?: JSX.Element | null;
+    secondaryActions?: JSX.Element | null;
+    loading?: boolean | string;
   }>
-> = ({ children, primaryActions, secondaryActions }) => {
+> = ({ children, primaryActions, secondaryActions, loading = false }) => {
   const user = useQuery<CurrentUserForLayout>(PROFILE_QUERY);
 
   const isUserLoggingIn = useSelector<RootState, boolean>(
@@ -47,7 +49,14 @@ const ComplexLayout: React.FC<
         <Styled.Title>{headline}</Styled.Title>
       </Styled.Navigation>
       <Styled.PrimaryContent>
-        {user.loading ? <Centered>Loading...</Centered> : children}
+        {user.loading || loading ? (
+          <Centered>
+            <CircularProgress color="inherit" />
+            {typeof loading === 'string' && loading}
+          </Centered>
+        ) : (
+          children
+        )}
       </Styled.PrimaryContent>
       {primaryActions && (
         <Styled.PrimaryActions>{primaryActions}</Styled.PrimaryActions>
@@ -58,7 +67,7 @@ const ComplexLayout: React.FC<
       <Styled.UserAndMenuIndicator>
         {!isSettingsPage && (
           <Styled.Username to="/me">
-            {user.data.currentUser?.name || '...'}
+            {user.data?.currentUser?.name || '...'}
           </Styled.Username>
         )}
       </Styled.UserAndMenuIndicator>
