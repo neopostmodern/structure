@@ -53,7 +53,7 @@ const AuthWrapper: React.FC<
     content = <ComplexLayout loading="Logging in..." />;
   } else if (user.loading) {
     content = <ComplexLayout loading="Loading user..." />;
-  } else if (user.data.currentUser?.name || isSettingsPage) {
+  } else if (user.data?.currentUser?.name || isSettingsPage) {
     return children;
   } else {
     username = 'Settings';
@@ -87,7 +87,11 @@ const AuthWrapper: React.FC<
       </Styled.Navigation>
       <Styled.PrimaryContent>
         <VersionMarks
-          versions={versions.loading ? 'loading' : versions.data.versions}
+          versions={
+            versions.loading || !versions.data
+              ? 'loading'
+              : versions.data.versions
+          }
         />
         {content}
       </Styled.PrimaryContent>
