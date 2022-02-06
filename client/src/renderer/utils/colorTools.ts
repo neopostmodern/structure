@@ -1,9 +1,16 @@
-const internalColorCache = {};
+type ColorComponents = [number, number, number];
+const internalColorCache: {
+  [color: string]: {
+    rgb: ColorComponents;
+    hsl: ColorComponents;
+    isDark: boolean;
+  };
+} = {};
 
-function rgbToHsl(c): Array<number> {
-  const r = c[0] / 255;
-  const g = c[1] / 255;
-  const b = c[2] / 255;
+function rgbToHsl(rgbColor: ColorComponents): ColorComponents {
+  const r = rgbColor[0] / 255;
+  const g = rgbColor[1] / 255;
+  const b = rgbColor[2] / 255;
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   let h;
@@ -36,7 +43,7 @@ function rgbToHsl(c): Array<number> {
 function processColoredElement(color: string, element?: HTMLElement): void {
   let guaranteedElement = element;
   let temporaryElement = false;
-  if (!element) {
+  if (!guaranteedElement) {
     guaranteedElement = document.createElement('div');
     guaranteedElement.style.backgroundColor = color;
     document.body.appendChild(guaranteedElement);
@@ -46,7 +53,7 @@ function processColoredElement(color: string, element?: HTMLElement): void {
     .getComputedStyle(guaranteedElement)
     .backgroundColor.replace(new RegExp('[^0-9.,]+', 'g'), '')
     .split(',')
-    .map((colorChannel) => parseInt(colorChannel, 10));
+    .map((colorChannel) => parseInt(colorChannel, 10)) as ColorComponents;
   const perceivedBackgroundLightness =
     (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
   internalColorCache[color] = {
@@ -60,15 +67,15 @@ function processColoredElement(color: string, element?: HTMLElement): void {
 }
 
 export const ColorCache = new Proxy(internalColorCache, {
-  get(target, name) {
+  get(target, name: string) {
     if (!target[name]) {
-      processColoredElement(name as string);
+      processColoredElement(name);
     }
     return target[name];
   },
 });
 
-const colorTools = (element): void => {
+const colorTools = (element: HTMLElement | undefined): void => {
   if (!element) {
     return;
   }
