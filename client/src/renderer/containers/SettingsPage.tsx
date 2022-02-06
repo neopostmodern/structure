@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+import { Button } from '@mui/material';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { setBackendUrl } from '../actions/configuration';
 import { requestLogout } from '../actions/userInterface';
 import { TextField } from '../components/CommonStyles';
-import { Menu, MenuButton } from '../components/Menu';
+import { Menu } from '../components/Menu';
 import SettingsEntry from '../components/SettingsEntry';
 import { TinyUserQuery } from '../generated/TinyUserQuery';
 import { RootState } from '../reducers';
@@ -39,28 +40,33 @@ const SettingsPage: React.FC = () => {
       primaryActions={
         <Menu>
           {userQuery.data?.currentUser && (
-            <InternalLink to="/tags">My tags</InternalLink>
+            <Button component={Link} size="huge" to="/tags">
+              My tags
+            </Button>
           )}
-          <MenuButton
+          <Button
+            size="huge"
             onClick={(): void => alert('This feature is not yet available')}
             disabled
           >
             Export my data
-          </MenuButton>
-          <MenuButton
+          </Button>
+          <Button
+            size="huge"
             onClick={(): void => alert('This feature is not yet available')}
             disabled
           >
             Delete my account
-          </MenuButton>
+          </Button>
           {isLoggedIn && (
-            <MenuButton
+            <Button
+              size="huge"
               onClick={(): void => {
                 dispatch(requestLogout());
               }}
             >
               Logout
-            </MenuButton>
+            </Button>
           )}
         </Menu>
       }

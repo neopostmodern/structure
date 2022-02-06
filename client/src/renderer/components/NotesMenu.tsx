@@ -1,10 +1,10 @@
-import React from 'react';
+import { Add } from '@mui/icons-material';
+import { Button, IconButton } from '@mui/material';
+import { Link } from 'react-router-dom';
 import NoteCount from '../containers/NotesPage/NoteCount';
 import { archiveStateToName, layoutToName } from '../utils/textHelpers';
-import { InternalLink } from './CommonStyles';
 import {
   Menu,
-  MenuButton,
   MenuSearchField,
   MenuSearchFieldContainer,
   MenuSearchFieldEraseButton,
@@ -23,15 +23,15 @@ const NotesMenu = ({
   searchInput,
 }) => (
   <Menu>
-    <InternalLink to="/notes/add" style={{ paddingRight: '1em' }}>
-      Add new
-    </InternalLink>
-    <MenuButton type="button" onClick={toggleLayout}>
+    <IconButton component={Link} to="/notes/add">
+      <Add style={{ fontSize: '3rem' }} />
+    </IconButton>
+    <Button onClick={toggleLayout} size="huge">
       {layoutToName(layout)}
-    </MenuButton>
-    <MenuButton onClick={nextArchiveState}>
+    </Button>
+    <Button onClick={nextArchiveState} size="huge">
       {archiveStateToName(archiveState)}
-    </MenuButton>
+    </Button>
     <MenuSearchFieldContainer style={{ marginTop: '1rem' }}>
       <MenuSearchField
         type="text"

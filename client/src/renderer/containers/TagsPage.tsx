@@ -1,10 +1,11 @@
 import { useMutation, useQuery } from '@apollo/client';
+import { Button } from '@mui/material';
 import gql from 'graphql-tag';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { changeTagsLayout, TagsLayout } from '../actions/userInterface';
-import { Menu, MenuButton } from '../components/Menu';
+import { Menu } from '../components/Menu';
 import Tag, { BaseTag, tagMargin } from '../components/Tag';
 import { TagsQuery } from '../generated/TagsQuery';
 import { UpdateTag2, UpdateTag2Variables } from '../generated/UpdateTag2';
@@ -192,9 +193,9 @@ const TagsPage: React.FC<{}> = () => {
     <ComplexLayout
       primaryActions={
         <Menu>
-          <MenuButton onClick={selectNextLayout}>
+          <Button size="huge" onClick={selectNextLayout}>
             {layoutToName(layout)}
-          </MenuButton>
+          </Button>
         </Menu>
       }
     >

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { breakpointDesktop } from '../styles/constants';
-import { TextButton, TextField } from './CommonStyles';
+import { TextField } from './CommonStyles';
 
 const menuFontSize = '1.5rem';
 
@@ -8,6 +8,7 @@ export const Menu = styled.div`
   display: flex;
   @media (min-width: ${breakpointDesktop}rem) {
     flex-direction: column;
+    align-items: flex-start;
   }
   @media (max-width: ${breakpointDesktop}rem) {
     align-items: baseline;
@@ -21,10 +22,6 @@ export const Menu = styled.div`
 
   a,
   button {
-    color: inherit;
-    border: none;
-    background: none;
-
     &:disabled,
     &.disabled {
       text-decoration: line-through;
@@ -32,11 +29,6 @@ export const Menu = styled.div`
       cursor: default;
     }
   }
-`;
-
-export const MenuButton = styled(TextButton)`
-  align-self: flex-start;
-  padding: 0.3em 1em 0.3em 0;
 `;
 
 export const StickyMenu = styled(Menu)`

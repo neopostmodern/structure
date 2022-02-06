@@ -1,4 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
+import { Delete as DeleteIcon } from '@mui/icons-material';
+import { Button } from '@mui/material';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useDispatch } from 'react-redux';
@@ -6,7 +8,7 @@ import { useParams } from 'react-router';
 import { push } from 'redux-first-history';
 import Centered from '../components/Centered';
 import LinkForm from '../components/LinkForm';
-import { Menu, MenuButton } from '../components/Menu';
+import { Menu } from '../components/Menu';
 import Tags from '../components/Tags';
 import {
   DeleteLinkMutation,
@@ -105,14 +107,15 @@ const LinkPage: React.FC<{}> = () => {
       primaryActions={<Tags tags={link.tags} withShortcuts noteId={link._id} />}
       secondaryActions={
         <Menu>
-          <MenuButton
-            type="button"
+          <Button
+            size="huge"
+            startIcon={<DeleteIcon />}
             onClick={(): void => {
               deleteLink({ variables: { linkId: link._id } });
             }}
           >
             Delete note
-          </MenuButton>
+          </Button>
         </Menu>
       }
     >

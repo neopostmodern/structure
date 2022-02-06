@@ -1,10 +1,12 @@
 import { useMutation, useQuery } from '@apollo/client';
+import { Delete as DeleteIcon } from '@mui/icons-material';
+import { Button } from '@mui/material';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
 import { push } from 'redux-first-history';
-import { Menu, MenuButton } from '../components/Menu';
+import { Menu } from '../components/Menu';
 import Tags from '../components/Tags';
 import TextForm from '../components/TextForm';
 import {
@@ -92,9 +94,14 @@ const TextPage: React.FC<{}> = () => {
       primaryActions={<Tags tags={text.tags} noteId={text._id} withShortcuts />}
       secondaryActions={
         <Menu>
-          <MenuButton type="button" onClick={handleDeleteText}>
+          <Button
+            startIcon={<DeleteIcon />}
+            size="huge"
+            type="button"
+            onClick={handleDeleteText}
+          >
             Delete note
-          </MenuButton>
+          </Button>
         </Menu>
       }
     >
