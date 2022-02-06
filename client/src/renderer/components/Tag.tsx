@@ -16,8 +16,8 @@ export const BaseTag = styled.div<{ tag?: TagObject }>`
 `;
 
 export const AddNewTag = styled(BaseTag)`
-  background-color: white;
-  border: 1px solid black;
+  background-color: transparent;
+  border: 1px solid ${({ theme }) => theme.palette.text.primary};
 `;
 
 interface TagProps {

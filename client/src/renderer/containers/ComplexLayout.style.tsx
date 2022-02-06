@@ -1,3 +1,4 @@
+import { Paper } from '@mui/material';
 import styled, { css } from 'styled-components';
 import { InternalLink } from '../components/CommonStyles';
 import {
@@ -9,8 +10,11 @@ import {
 
 const gutter = 1;
 
-export const Container = styled.div`
+export const Container = styled(Paper).attrs(() => ({
+  square: true,
+}))`
   font-family: ${baseFont};
+  min-height: 100vh;
   @media (max-width: ${breakpointDesktop}rem) {
     display: flex;
     flex-direction: column;
@@ -49,11 +53,13 @@ export const Navigation = styled(Corner)`
 export const PrimaryContent = styled.div`
   width: 100%;
   max-width: ${containerWidth};
-  margin: ${gutter}rem auto 5rem;
+  margin: 0 auto;
+  padding-top: ${gutter}rem;
+  padding-bottom: 5rem;
   order: 1;
 
   @media (max-width: ${breakPointMobile}) {
-    margin-top: 0;
+    padding-top: 0;
   }
 `;
 
@@ -104,7 +110,7 @@ export const Title = styled.h1`
 `;
 
 export const Username = styled(InternalLink)`
-  color: black;
+  color: ${({ theme }) => theme.palette.text.primary};
   opacity: 1;
   font-weight: bold;
 

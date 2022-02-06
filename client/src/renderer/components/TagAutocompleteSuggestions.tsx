@@ -23,7 +23,7 @@ const AutocompleteTag = styled(BaseTag)<{
 `;
 
 const AutocompleteTagMore = styled(AutocompleteTag)`
-  background-color: white;
+  background-color: transparent;
   font-weight: bold;
   padding-left: 0;
   padding-right: 0;

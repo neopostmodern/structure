@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { ExternalLink, InlineButton, InternalLink } from './CommonStyles';
 
 export const NotesContainer = styled.div`
-  margin-top: 2rem;
+  padding-top: 2rem;
 `;
 
 export const Note = styled.div<{ archived: boolean }>`

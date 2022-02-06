@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { baseFont } from '../styles/constants';
 
-const baseInteractiveElement = `
+const baseInteractiveElement = css`
   opacity: 0.75;
 
   &:hover {
@@ -15,13 +15,15 @@ export const InlineButton = styled.button`
   font-family: ${baseFont};
 
   background: none;
-  border: 1px solid black;
+  color: inherit;
+  border: 1px solid ${({ theme }) => theme.palette.text.primary};
   cursor: pointer;
 
   padding: 0.2em 0.4em 0.1em;
 
   &:hover,
   &:active {
+    color: black;
     background-color: #eee;
   }
 `;
@@ -30,6 +32,7 @@ export const TextButton = styled.button`
   ${baseInteractiveElement}
 
   background: none;
+  color: inherit;
   border: none;
   padding: 0;
   font: inherit;
@@ -54,14 +57,17 @@ export const ExternalLink = styled.a`
   ${baseLink}
 `;
 
-const baseTextFieldDecorations = `
-	&:hover {
-		border-color: lightgray;
-	}
-	&:focus {
-		border-color: black;
-		outline: none;
-	}
+const baseTextFieldDecorations = css`
+  color: inherit;
+  background-color: transparent;
+
+  &:hover {
+    border-color: lightgray;
+  }
+  &:focus {
+    border-color: ${({ theme }) => theme.palette.text.primary};
+    outline: none;
+  }
 `;
 
 export const TextField = styled.input`

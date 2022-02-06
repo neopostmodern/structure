@@ -7,7 +7,7 @@ import { Route, Routes } from 'react-router';
 import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
 import { Store } from 'redux';
 import { RootState } from '../reducers';
-import theme from '../styles/theme';
+import useTheme from '../styles/useTheme';
 import AddNotePage from './AddNotePage';
 import AuthWrapper from './AuthWrapper';
 import LinkPage from './LinkPage';
@@ -25,6 +25,8 @@ type RootType = {
 };
 
 const Root: React.FC<RootType> = ({ store, history, client }) => {
+  const theme = useTheme();
+
   return (
     <ApolloProvider client={client}>
       <Provider store={store}>

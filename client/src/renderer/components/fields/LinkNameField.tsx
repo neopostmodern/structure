@@ -33,8 +33,8 @@ const Suggestion = styled(TextButton)`
   &:hover {
     outline: none;
     //text-decoration: underline;
-    background-color: black;
-    color: white;
+    background-color: ${({ theme }) => theme.palette.text.primary};
+    color: ${({ theme }) => theme.palette.background.default};
   }
 `;
 

@@ -21,7 +21,7 @@ export const Menu = styled.div`
 
   a,
   button {
-    color: black;
+    color: inherit;
     border: none;
     background: none;
 

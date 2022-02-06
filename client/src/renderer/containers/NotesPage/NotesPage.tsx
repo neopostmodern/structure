@@ -105,6 +105,7 @@ const filterNotes = (
 };
 
 const ShowMore = styled.div`
+  color: black;
   background-color: #eee;
   text-align: center;
   padding: 1em;

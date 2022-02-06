@@ -1,3 +1,4 @@
+import { Paper } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
@@ -5,13 +6,11 @@ import { TagType } from '../types';
 import { TextField } from './CommonStyles';
 import TagAutocompleteSuggestions from './TagAutocompleteSuggestions';
 
-const AutocompleteSuggestionsContainer = styled.div`
+const AutocompleteSuggestionsContainer = styled(Paper)`
   position: absolute;
   z-index: 1;
   left: -0.5em;
-  padding-left: 0.5em;
-  background-color: white;
-  padding-right: 0.5em;
+  padding: 0.5em;
   width: calc(100% + 1em);
 `;
 

@@ -7,7 +7,7 @@ interface LoginViewProps {
 }
 
 const LoginButton = styled.button`
-  border: 1px solid black;
+  border: 1px solid ${({ theme }) => theme.palette.text.primary};
   background: none;
 
   padding: 0.3em 1.2em;

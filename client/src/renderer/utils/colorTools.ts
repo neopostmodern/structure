@@ -76,10 +76,8 @@ const colorTools = (element): void => {
   const color = element.style.backgroundColor;
   processColoredElement(color, element);
 
-  if (ColorCache[color].isDark) {
-    // eslint-disable-next-line no-param-reassign
-    element.style.color = '#eee';
-  }
+  // eslint-disable-next-line no-param-reassign
+  element.style.color = ColorCache[color].isDark ? '#eee' : 'black';
 };
 
 export default colorTools;
