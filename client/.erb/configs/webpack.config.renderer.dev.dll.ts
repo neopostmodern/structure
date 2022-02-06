@@ -2,13 +2,13 @@
  * Builds the DLL for development electron renderer process
  */
 
-import webpack from 'webpack';
 import path from 'path';
+import webpack from 'webpack';
 import { merge } from 'webpack-merge';
-import baseConfig from './webpack.config.base';
-import webpackPaths from './webpack.paths';
 import { dependencies } from '../../package.json';
 import checkNodeEnv from '../scripts/check-node-env';
+import baseConfig from './webpack.config.base';
+import webpackPaths from './webpack.paths';
 
 checkNodeEnv('development');
 
@@ -40,6 +40,12 @@ const configuration: webpack.Configuration = {
     library: {
       name: 'renderer',
       type: 'var',
+    },
+  },
+
+  resolve: {
+    alias: {
+      '@mui/styled-engine': '@mui/styled-engine-sc',
     },
   },
 
