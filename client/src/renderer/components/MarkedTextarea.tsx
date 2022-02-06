@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import marked from 'marked';
 import Mousetrap from 'mousetrap';
 import React, { useEffect, useRef, useState } from 'react';
@@ -5,7 +6,6 @@ import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
 import shortcutKeysToString from '../utils/shortcutKeysToString';
-import { InlineButton } from './CommonStyles';
 import { DescriptionTextarea } from './formComponents';
 
 makeMousetrapGlobal(Mousetrap);
@@ -48,7 +48,7 @@ const EmptyTextarea = styled.div`
   padding-bottom: 1.3rem;
 `;
 
-const EditButton = styled(InlineButton)`
+const EditButton = styled(Button)`
   position: absolute;
   top: ${markedTextareaPadding};
   right: ${markedTextareaPadding};
@@ -125,7 +125,8 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
   return (
     <TextareaContainer>
       <EditButton
-        type="button"
+        variant="outlined"
+        size="small"
         onClick={toggleEditDescription}
         title={shortcutKeysToString(focusDescriptionShortcutKeys)}
       >

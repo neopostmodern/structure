@@ -1,5 +1,6 @@
+import { Button } from '@mui/material';
 import styled from 'styled-components';
-import { ExternalLink, InlineButton, InternalLink } from './CommonStyles';
+import { ExternalLink, InternalLink } from './CommonStyles';
 
 export const NotesContainer = styled.div`
   padding-top: 2rem;
@@ -74,7 +75,7 @@ export const ArchiveStatus = styled.div`
     display: none;
   }
 `;
-export const ArchiveButton = styled(InlineButton)`
+export const ArchiveButton = styled(Button)`
   display: none;
 
   ${Note}:hover & {

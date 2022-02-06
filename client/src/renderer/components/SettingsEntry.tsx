@@ -1,6 +1,6 @@
+import { Button } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
-import { InlineButton } from './CommonStyles';
 
 export const SettingsTable = styled.div`
   display: flex;
@@ -52,14 +52,15 @@ const SettingsEntry: React.FC<SettingsEntryProps> = ({
       <SettingsTableValue>{children}</SettingsTableValue>
       {actionTitle && (
         <SettingsTableAction>
-          <InlineButton
-            type="button"
+          <Button
+            variant="outlined"
+            size="small"
             onClick={(): void => {
               actionHandler();
             }}
           >
             {actionTitle}
-          </InlineButton>
+          </Button>
         </SettingsTableAction>
       )}
     </SettingsTable>

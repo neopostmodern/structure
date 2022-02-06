@@ -1,10 +1,10 @@
 import { useMutation } from '@apollo/client';
+import { Button } from '@mui/material';
 import gql from 'graphql-tag';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
 import { push } from 'redux-first-history';
 import AddLinkForm from '../components/AddLinkForm';
-import { TextButton } from '../components/CommonStyles';
 import {
   AddLinkMutation,
   AddLinkMutationVariables,
@@ -82,9 +82,15 @@ const AddLinkPage: React.FC<{}> = () => {
           history.push('/');
         }}
       />
-      <TextButton type="button" onClick={addText}>
-        Need just text?
-      </TextButton>
+      <Button
+        variant="outlined"
+        onClick={() => {
+          addText();
+        }}
+        style={{ marginTop: '1rem' }}
+      >
+        Create text-only note
+      </Button>
     </ComplexLayout>
   );
 };

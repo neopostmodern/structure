@@ -1,10 +1,11 @@
 import { NetworkStatus, useMutation, useQuery } from '@apollo/client';
+import { Button } from '@mui/material';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Centered from '../components/Centered';
-import { InlineButton, TextField } from '../components/CommonStyles';
+import { TextField } from '../components/CommonStyles';
 import Credentials from '../components/Credentials';
 import SettingsEntry from '../components/SettingsEntry';
 import {
@@ -80,12 +81,12 @@ const UserSettingsSection: React.FC<{}> = () => {
           This really should not have happened.
           <br />
           <br />
-          <InlineButton
-            type="button"
+          <Button
+            variant="outlined"
             onClick={(): void => window.location.reload()}
           >
             Give it another try.
-          </InlineButton>
+          </Button>
         </Centered>
       </>
     );

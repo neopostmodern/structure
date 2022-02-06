@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { clearMetadata, requestMetadata } from '../../actions/userInterface';
 import { RootState } from '../../reducers';
 import { UserInterfaceStateType } from '../../reducers/userInterface';
-import { TextButton } from '../CommonStyles';
 import { FormSubheader, NameInput } from '../formComponents';
 
 const Suggestions = styled.div<{ expanded: boolean }>`
@@ -26,11 +25,19 @@ const Suggestions = styled.div<{ expanded: boolean }>`
       : ''}
 `;
 
-const Suggestion = styled(TextButton)`
+const Suggestion = styled.button`
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
   margin-top: 1rem;
+  font: inherit;
+  opacity: 0.75;
+  cursor: pointer;
 
   &:focus,
   &:hover {
+    opacity: 1;
     outline: none;
     //text-decoration: underline;
     background-color: ${({ theme }) => theme.palette.text.primary};

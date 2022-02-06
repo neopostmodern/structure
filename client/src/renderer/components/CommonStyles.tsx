@@ -11,33 +11,6 @@ const baseInteractiveElement = css`
   }
 `;
 
-export const InlineButton = styled.button`
-  font-family: ${baseFont};
-
-  background: none;
-  color: inherit;
-  border: 1px solid ${({ theme }) => theme.palette.text.primary};
-  cursor: pointer;
-
-  padding: 0.2em 0.4em 0.1em;
-
-  &:hover,
-  &:active {
-    color: black;
-    background-color: #eee;
-  }
-`;
-
-export const TextButton = styled.button`
-  ${baseInteractiveElement}
-
-  background: none;
-  color: inherit;
-  border: none;
-  padding: 0;
-  font: inherit;
-`;
-
 const baseLink = `
   text-decoration: none;
 

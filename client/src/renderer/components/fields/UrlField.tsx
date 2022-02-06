@@ -1,6 +1,7 @@
+import { Button } from '@mui/material';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { InlineButton, TextField } from '../CommonStyles';
+import { TextField } from '../CommonStyles';
 
 interface UrlFieldProps {
   name: string;
@@ -12,15 +13,16 @@ const UrlField: React.FC<UrlFieldProps> = ({ name }) => {
   return (
     <div style={{ display: 'flex' }}>
       <TextField type="text" {...register(name)} />
-      <InlineButton
-        type="button"
+      <Button
+        variant="outlined"
+        size="small"
         style={{ marginLeft: '1rem' }}
         onClick={(): void => {
           window.open(watch(name), '_blank', 'noopener, noreferrer');
         }}
       >
         Open
-      </InlineButton>
+      </Button>
     </div>
   );
 };

@@ -102,7 +102,8 @@ const NotesList: React.FC<NotesListProps> = ({ notes, ...props }) => {
                   {note.archivedAt && 'Archived'}
                 </Styled.ArchiveStatus>
                 <Styled.ArchiveButton
-                  type="button"
+                  variant="outlined"
+                  size="small"
                   onClick={(): void => {
                     toggleArchivedNote({ variables: { noteId: note._id } });
                   }}
