@@ -1,14 +1,17 @@
-import { Add } from '@mui/icons-material';
-import { Button, IconButton } from '@mui/material';
+import { Add, BackspaceOutlined as ClearIcon } from '@mui/icons-material';
+import {
+  Button,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  Input,
+  InputAdornment,
+  InputLabel,
+} from '@mui/material';
 import { Link } from 'react-router-dom';
 import NoteCount from '../containers/NotesPage/NoteCount';
 import { archiveStateToName, layoutToName } from '../utils/textHelpers';
-import {
-  Menu,
-  MenuSearchField,
-  MenuSearchFieldContainer,
-  MenuSearchFieldEraseButton,
-} from './Menu';
+import { Menu, MenuSearchFieldContainer } from './Menu';
 
 const NotesMenu = ({
   notes,
@@ -32,32 +35,38 @@ const NotesMenu = ({
     <Button onClick={nextArchiveState} size="huge">
       {archiveStateToName(archiveState)}
     </Button>
-    <MenuSearchFieldContainer style={{ marginTop: '1rem' }}>
-      <MenuSearchField
-        type="text"
-        placeholder="Filter"
-        onChange={({ target: { value } }): void => {
-          onChangeSearchQuery(value);
-        }}
-        value={searchQuery}
-        ref={searchInput}
-      />
-      {searchQuery.length > 0 ? (
-        <MenuSearchFieldEraseButton
-          type="button"
-          onClick={(): void => onChangeSearchQuery('')}
-        >
-          ⌫
-        </MenuSearchFieldEraseButton>
-      ) : null}
-      <div style={{ textAlign: 'right', fontSize: '50%', marginTop: '0.3em' }}>
-        <NoteCount
-          notes={notes}
-          matchedNotes={matchedNotes}
-          archiveState={archiveState}
-          archivedMatchedNotesCount={archivedMatchedNotesCount}
+    <MenuSearchFieldContainer>
+      <FormControl variant="standard" sx={{ width: '100%' }}>
+        <InputLabel>Filter</InputLabel>
+        <Input
+          onChange={({ target: { value } }): void => {
+            onChangeSearchQuery(value);
+          }}
+          value={searchQuery}
+          inputRef={searchInput}
+          endAdornment={
+            searchQuery.length > 0 && (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="clear text search filter"
+                  onClick={(): void => onChangeSearchQuery('')}
+                  edge="end"
+                >
+                  <ClearIcon />
+                </IconButton>
+              </InputAdornment>
+            )
+          }
         />
-      </div>
+        <FormHelperText sx={{ textAlign: 'right' }}>
+          <NoteCount
+            notes={notes}
+            matchedNotes={matchedNotes}
+            archiveState={archiveState}
+            archivedMatchedNotesCount={archivedMatchedNotesCount}
+          />
+        </FormHelperText>
+      </FormControl>
     </MenuSearchFieldContainer>
   </Menu>
 );

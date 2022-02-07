@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { breakpointDesktop } from '../styles/constants';
-import { TextField } from './CommonStyles';
 
 const menuFontSize = '1.5rem';
 
@@ -11,7 +10,7 @@ export const Menu = styled.div`
     align-items: flex-start;
   }
   @media (max-width: ${breakpointDesktop}rem) {
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
     button {
       align-self: unset;
@@ -40,26 +39,11 @@ export const StickyMenu = styled(Menu)`
 `;
 
 export const MenuSearchFieldContainer = styled.div`
-  position: relative;
-
+  flex-basis: 15ch;
+  @media (min-width: ${breakpointDesktop}rem) {
+    margin-top: ${({ theme }) => theme.spacing(2)};
+  }
   @media (max-width: ${breakpointDesktop}rem) {
-    margin-top: 1.5rem;
     margin-left: auto;
   }
-`;
-
-export const MenuSearchField = styled(TextField)`
-  font-size: ${menuFontSize};
-
-  margin-top: -0.3em;
-  padding-bottom: 3px;
-`;
-
-export const MenuSearchFieldEraseButton = styled.button`
-  font-size: ${menuFontSize};
-
-  z-index: 1;
-  position: absolute;
-  top: 0;
-  right: 0;
 `;

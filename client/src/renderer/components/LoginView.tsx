@@ -1,19 +1,10 @@
+import { Button } from '@mui/material';
 import React from 'react';
-import styled from 'styled-components';
 import Centered from './Centered';
 
 interface LoginViewProps {
   openLoginModal: () => void;
 }
-
-const LoginButton = styled.button`
-  border: 1px solid ${({ theme }) => theme.palette.text.primary};
-  background: none;
-
-  padding: 0.3em 1.2em;
-
-  font-size: 2rem;
-`;
 
 const LoginView: React.FC<LoginViewProps> = ({ openLoginModal }) => (
   <>
@@ -22,9 +13,13 @@ const LoginView: React.FC<LoginViewProps> = ({ openLoginModal }) => (
       tool for (eventually) everything.
     </b>
     <Centered>
-      <LoginButton type="button" onClick={openLoginModal}>
+      <Button
+        variant="outlined"
+        onClick={openLoginModal}
+        sx={{ fontSize: '2rem' }}
+      >
         Log in
-      </LoginButton>
+      </Button>
     </Centered>
     Read the documentation on{' '}
     <a href="https://bericht.neopostmodern.com/posts/how-to-structure">

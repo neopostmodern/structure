@@ -1,4 +1,5 @@
 import { ApolloError } from '@apollo/client';
+import { Button } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -8,12 +9,6 @@ const ErrorContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-`;
-
-const ReloadButton = styled.button`
-  width: 10em;
-  height: 3em;
-  margin-top: 1em;
 `;
 
 const ErrorInformation = styled.div`
@@ -39,9 +34,9 @@ const NetworkError: React.FC<NetworkErrorProps> = ({ error, refetch }) => {
   return (
     <ErrorContainer>
       <h1>Network error.</h1>
-      <ReloadButton type="button" onClick={refetch} autoFocus>
+      <Button variant="outlined" onClick={refetch} autoFocus>
         Reload
-      </ReloadButton>
+      </Button>
       <ErrorInformation>
         <h3>Further information</h3>
         <div>{error.message}</div>
