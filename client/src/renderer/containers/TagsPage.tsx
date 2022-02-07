@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { changeTagsLayout, TagsLayout } from '../actions/userInterface';
 import { Menu } from '../components/Menu';
-import Tag, { BaseTag, tagMargin } from '../components/Tag';
+import Tag from '../components/Tag';
 import { TagsQuery } from '../generated/TagsQuery';
 import { UpdateTag2, UpdateTag2Variables } from '../generated/UpdateTag2';
 import { RootState } from '../reducers';
@@ -23,8 +23,9 @@ const TagContainer = styled.div<{ droppable?: boolean }>`
   ${({ droppable }): string =>
     droppable ? `background-color: lightgrey;` : ''}
 
-  ${BaseTag} {
-    margin-bottom: ${tagMargin};
+  .MuiChip-root {
+    margin-right: ${({ theme }) => theme.spacing(1)};
+    margin-bottom: ${({ theme }) => theme.spacing(1)};
   }
 `;
 
@@ -41,7 +42,7 @@ const ColumnsContainer = styled.div`
   ${TagContainer} {
     align-items: flex-start;
 
-    ${BaseTag} {
+    .MuiChip-root {
       width: fit-content;
       max-width: 7em;
       overflow: hidden;
@@ -157,7 +158,6 @@ const TagsPage: React.FC<{}> = () => {
           <Tag
             key={tag._id}
             tag={tag}
-            ref={colorTools}
             draggable
             onDragStart={(event): void => {
               // eslint-disable-next-line no-param-reassign

@@ -1,4 +1,6 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
+import { AddCircleOutline as PlusIcon } from '@mui/icons-material';
+import { Button, IconButton } from '@mui/material';
 import Mousetrap from 'mousetrap';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -15,7 +17,7 @@ import { TagsQuery } from '../generated/TagsQuery';
 import { TagType } from '../types';
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
 import InlineTagForm from './InlineTagForm';
-import Tag, { AddNewTag } from './Tag';
+import Tag from './Tag';
 
 makeMousetrapGlobal(Mousetrap);
 
@@ -54,6 +56,11 @@ const tagShortcutKeys = ['ctrl+t', 'command+t'];
 const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
+
+  .MuiChip-root {
+    margin-right: ${({ theme }) => theme.spacing(1)};
+    margin-bottom: ${({ theme }) => theme.spacing(1)};
+  }
 `;
 
 interface TagsProps {
@@ -143,9 +150,18 @@ const Tags: React.FC<TagsProps> = ({ tags, noteId, withShortcuts = false }) => {
           onAbort={hideNewTagForm}
         />
       );
+    } else if (tags.length === 0) {
+      newTagForm = (
+        <Button variant="outlined" size="small" onClick={showNewTagForm}>
+          Add tag
+        </Button>
+      );
     } else {
-      const addTagText = tags.length === 0 ? '+tag' : '+';
-      newTagForm = <AddNewTag onClick={showNewTagForm}>{addTagText}</AddNewTag>;
+      newTagForm = (
+        <IconButton size="small" onClick={showNewTagForm}>
+          <PlusIcon />
+        </IconButton>
+      );
     }
   }
   return (

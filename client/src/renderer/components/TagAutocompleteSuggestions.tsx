@@ -1,36 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { TagObject } from '../reducers/links';
-import colorTools, { ColorCache } from '../utils/colorTools';
-import { BaseTag } from './Tag';
+import { ColorCache } from '../utils/colorTools';
+import Tag from './Tag';
 
-const autocompleteTagBorderColor = (tag, focused): string => {
-  if (!focused) {
-    return 'transparent';
-  }
-
-  return ColorCache[tag.color].isDark ? '#eee' : 'black';
-};
-
-const AutocompleteTag = styled(BaseTag)<{
-  tag: TagObject;
-  autocompleteFocused: boolean;
-}>`
-  border: 2px dotted
-    ${({ tag, autocompleteFocused }): string =>
-      autocompleteTagBorderColor(tag, autocompleteFocused)};
-  display: inline-block;
-`;
-
-const AutocompleteTagMore = styled(AutocompleteTag)`
-  background-color: transparent;
+const AutocompleteTagMore = styled.div`
   font-weight: bold;
-  padding-left: 0;
-  padding-right: 0;
-  margin-left: 0;
-  margin-right: 0;
-
-  cursor: initial;
 `;
 
 const TagAutocompleteSuggestions: React.FC<{
@@ -48,17 +23,24 @@ const TagAutocompleteSuggestions: React.FC<{
     {autocompleteSuggestions
       .slice(0, maxSuggestionCount)
       .map((tag, tagIndex) => (
-        <AutocompleteTag
+        <Tag
           key={tag._id}
           tag={tag}
-          autocompleteFocused={tagIndex === focusedAutocompleteIndex}
+          sx={{
+            border: `2px dotted transparent`,
+            borderColor:
+              tagIndex === focusedAutocompleteIndex
+                ? ColorCache[tag.color].isDark
+                  ? '#eee'
+                  : 'black'
+                : undefined,
+            marginRight: 1,
+            marginBottom: 1,
+          }}
           onClick={(): void => {
             onSelectTag(tag);
           }}
-          ref={colorTools}
-        >
-          {tag.name}
-        </AutocompleteTag>
+        />
       ))}
     {autocompleteSuggestions.length > maxSuggestionCount ? (
       <AutocompleteTagMore key="more">

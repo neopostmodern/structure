@@ -1,27 +1,13 @@
+import { Chip, SxProps } from '@mui/material';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { push } from 'redux-first-history';
-import styled from 'styled-components';
-import { TagObject } from '../reducers/links';
 import { TagType } from '../types';
 import colorTools from '../utils/colorTools';
 
-export const tagMargin = '0.5rem';
-export const BaseTag = styled.div<{ tag?: TagObject }>`
-  padding: 0.2em 0.4em 0.1em;
-  margin-right: ${tagMargin};
-  margin-top: ${tagMargin};
-  cursor: pointer;
-  background-color: ${({ tag }): string => tag?.color || '#ddd'};
-`;
-
-export const AddNewTag = styled(BaseTag)`
-  background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.palette.text.primary};
-`;
-
 interface TagProps {
   tag: TagType;
+  sx: SxProps;
 }
 
 const Tag: React.FC<
@@ -30,24 +16,23 @@ const Tag: React.FC<
       React.HTMLAttributes<HTMLDivElement>,
       HTMLDivElement
     >
-> = ({ tag, onClick, ...props }) => {
+> = ({ tag, onClick, sx, ...props }) => {
   const dispatch = useDispatch();
   return (
-    <BaseTag
+    <Chip
       key={tag._id}
-      tag={tag}
       onClick={
         onClick ||
         ((): void => {
           dispatch(push(`/tags/${tag._id}`));
         })
       }
-      ref={colorTools}
+      ref={colorTools as any}
+      label={tag.name}
+      sx={{ backgroundColor: tag.color, ...sx }}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
-    >
-      {tag.name}
-    </BaseTag>
+    />
   );
 };
 
