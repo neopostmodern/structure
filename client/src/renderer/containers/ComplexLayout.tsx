@@ -14,8 +14,15 @@ const ComplexLayout: React.FC<
     primaryActions?: JSX.Element | null;
     secondaryActions?: JSX.Element | null;
     loading?: boolean | string;
+    wide?: boolean;
   }>
-> = ({ children, primaryActions, secondaryActions, loading = false }) => {
+> = ({
+  children,
+  primaryActions,
+  secondaryActions,
+  wide = false,
+  loading = false,
+}) => {
   const user = useQuery<CurrentUserForLayout>(PROFILE_QUERY);
 
   const isUserLoggingIn = useSelector<RootState, boolean>(
@@ -48,7 +55,7 @@ const ComplexLayout: React.FC<
       <Styled.Navigation>
         <Styled.Title>{headline}</Styled.Title>
       </Styled.Navigation>
-      <Styled.PrimaryContent>
+      <Styled.PrimaryContent wide={wide}>
         {user.loading || loading ? (
           <Centered>
             <CircularProgress color="inherit" />

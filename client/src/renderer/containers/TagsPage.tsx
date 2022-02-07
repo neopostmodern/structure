@@ -10,18 +10,21 @@ import Tag from '../components/Tag';
 import { TagsQuery } from '../generated/TagsQuery';
 import { UpdateTag2, UpdateTag2Variables } from '../generated/UpdateTag2';
 import { RootState } from '../reducers';
-import { breakpointDesktop, containerWidth } from '../styles/constants';
+import { breakpointDesktop } from '../styles/constants';
 import { TagType } from '../types';
 import colorTools, { ColorCache } from '../utils/colorTools';
 import { stripTypename } from '../utils/graphQl';
 import ComplexLayout from './ComplexLayout';
 
 const TagContainer = styled.div<{ droppable?: boolean }>`
-  margin-top: 2rem;
   display: flex;
   flex-wrap: wrap;
-  ${({ droppable }): string =>
-    droppable ? `background-color: lightgrey;` : ''}
+  border-radius: ${({ theme }) => theme.shape.borderRadius}px;
+  border: 1px solid transparent;
+  ${({ droppable }): string => (droppable ? `border-color: gray;` : '')}
+
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
 
   .MuiChip-root {
     margin-right: ${({ theme }) => theme.spacing(1)};
@@ -31,16 +34,21 @@ const TagContainer = styled.div<{ droppable?: boolean }>`
 
 const ColumnsContainer = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
 
-  width: 98vw;
+  max-width: 100vw;
+  padding: ${({ theme }) => theme.spacing(2)};
+
+  max-height: 80vh;
+  overflow-x: auto;
   @media (min-width: ${breakpointDesktop}rem) {
     margin-top: 8rem;
   }
-  margin-left: calc(calc(98vw - ${containerWidth}) / -2);
 
   ${TagContainer} {
+    flex-direction: column;
     align-items: flex-start;
+    flex-wrap: wrap;
 
     .MuiChip-root {
       width: fit-content;
@@ -199,6 +207,7 @@ const TagsPage: React.FC<{}> = () => {
           </Button>
         </Menu>
       }
+      wide={layout === TagsLayout.COLOR_COLUMN_LAYOUT}
     >
       {!tagsQuery.loading && renderTags()}
     </ComplexLayout>

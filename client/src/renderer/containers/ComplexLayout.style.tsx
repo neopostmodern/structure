@@ -1,4 +1,4 @@
-import { Paper } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import styled, { css } from 'styled-components';
 import { InternalLink } from '../components/CommonStyles';
 import {
@@ -52,9 +52,14 @@ export const Navigation = styled(Corner)`
   left: 0;
 `;
 
-export const PrimaryContent = styled.div`
+export const PrimaryContent = styled(Box)<{ wide: boolean }>`
   width: 100%;
-  max-width: ${containerWidth};
+  ${({ wide }) =>
+    !wide &&
+    css`
+      max-width: ${containerWidth};
+    `}
+
   margin: 0 auto;
   order: 1;
 
