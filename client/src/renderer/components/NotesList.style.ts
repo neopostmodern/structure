@@ -76,10 +76,14 @@ export const ArchiveStatus = styled.div`
   }
 `;
 export const ArchiveButton = styled(Button)`
-  display: none;
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.2s ease-in-out;
 
   ${Note}:hover & {
-    display: block;
+    opacity: 1;
+    pointer-events: initial;
   }
 `;
 
