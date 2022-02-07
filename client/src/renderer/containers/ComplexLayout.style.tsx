@@ -15,7 +15,9 @@ export const Container = styled(Paper).attrs(() => ({
 }))`
   font-family: ${baseFont};
   min-height: 100vh;
+  box-sizing: border-box;
   @media (max-width: ${breakpointDesktop}rem) {
+    padding: ${({ theme }) => theme.spacing(2)};
     display: flex;
     flex-direction: column;
   }
@@ -54,12 +56,14 @@ export const PrimaryContent = styled.div`
   width: 100%;
   max-width: ${containerWidth};
   margin: 0 auto;
-  padding-top: ${gutter}rem;
-  padding-bottom: 5rem;
   order: 1;
 
   @media (max-width: ${breakPointMobile}) {
     padding-top: 0;
+  }
+  @media (min-width: ${breakpointDesktop}rem) {
+    padding-top: ${({ theme }) => theme.spacing(2)};
+    padding-bottom: ${({ theme }) => theme.spacing(2)};
   }
 `;
 
