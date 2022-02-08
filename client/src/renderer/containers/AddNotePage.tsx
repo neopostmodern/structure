@@ -23,15 +23,10 @@ const ADD_LINK_MUTATION = gql`
   }
 `;
 const ADD_TEXT_MUTATION = gql`
+  ${BASE_NOTE_FRAGMENT}
   mutation AddTextMutation {
     createText {
-      _id
-      createdAt
-      tags {
-        _id
-        name
-        color
-      }
+      ...BaseNote
     }
   }
 `;
@@ -68,6 +63,21 @@ const AddLinkPage: React.FC<{}> = () => {
   const [addText] = useMutation<AddTextMutation>(ADD_TEXT_MUTATION, {
     onCompleted: ({ createText }) => {
       dispatch(push(`/texts/${createText._id}`));
+    },
+    update: (cache, { data: { createText } }) => {
+      const cacheValue = cache.readQuery<NotesForList>({
+        query: NOTES_QUERY,
+      });
+
+      if (!cacheValue) {
+        return;
+      }
+
+      const { notes } = cacheValue;
+      cache.writeQuery({
+        query: NOTES_QUERY,
+        data: { notes: [...notes, { ...createText, type: 'TEXT' }] },
+      });
     },
   });
   const urlSearchParams = new URLSearchParams(useLocation().search);
