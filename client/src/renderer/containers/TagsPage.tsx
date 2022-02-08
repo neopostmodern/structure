@@ -23,13 +23,8 @@ const TagContainer = styled.div<{ droppable?: boolean }>`
   border: 1px solid transparent;
   ${({ droppable }): string => (droppable ? `border-color: gray;` : '')}
 
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-
-  .MuiChip-root {
-    margin-right: ${({ theme }) => theme.spacing(1)};
-    margin-bottom: ${({ theme }) => theme.spacing(1)};
-  }
+  padding: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const ColumnsContainer = styled.div`
@@ -46,8 +41,7 @@ const ColumnsContainer = styled.div`
   }
 
   ${TagContainer} {
-    flex-direction: column;
-    align-items: flex-start;
+    align-content: flex-start;
     flex-wrap: wrap;
 
     .MuiChip-root {

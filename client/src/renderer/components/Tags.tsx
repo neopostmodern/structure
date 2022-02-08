@@ -55,12 +55,9 @@ const tagShortcutKeys = ['ctrl+t', 'command+t'];
 
 const TagContainer = styled.div`
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-
-  .MuiChip-root {
-    margin-right: ${({ theme }) => theme.spacing(1)};
-    margin-bottom: ${({ theme }) => theme.spacing(1)};
-  }
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 interface TagsProps {
