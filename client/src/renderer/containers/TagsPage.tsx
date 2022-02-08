@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Button } from '@mui/material';
 import gql from 'graphql-tag';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { changeTagsLayout, TagsLayout } from '../actions/userInterface';
 import { Menu } from '../components/Menu';
 import Tag from '../components/Tag';
@@ -21,7 +21,15 @@ const TagContainer = styled.div<{ droppable?: boolean }>`
   flex-wrap: wrap;
   border-radius: ${({ theme }) => theme.shape.borderRadius}px;
   border: 1px solid transparent;
-  ${({ droppable }): string => (droppable ? `border-color: gray;` : '')}
+  ${({ droppable }): string =>
+    droppable
+      ? css`
+          border-color: gray;
+          .MuiChip-root {
+            pointer-events: none;
+          }
+        `
+      : ''}
 
   padding: ${({ theme }) => theme.spacing(1)};
   gap: ${({ theme }) => theme.spacing(1)};
@@ -102,7 +110,19 @@ const TagsPage: React.FC<{}> = () => {
   );
 
   const [draggedTag, setDraggedTag] = useState<TagType>();
-  const [droppableColor, setDroppableColor] = useState<string>();
+  const [droppableColor, setDroppableColor] = useState<string | null>();
+  const colorTagGroups = useMemo(() => {
+    const groups = {};
+
+    tagsQuery.data?.tags.forEach((tag) => {
+      if (!groups[tag.color]) {
+        groups[tag.color] = [];
+      }
+      groups[tag.color].push(tag);
+    });
+
+    return groups;
+  }, [tagsQuery]);
 
   const selectNextLayout = (): void => {
     const layouts = Object.keys(TagsLayout);
@@ -121,15 +141,6 @@ const TagsPage: React.FC<{}> = () => {
   };
 
   const renderColorListLayout = (horizontal = false): JSX.Element => {
-    const colorTagGroups = {};
-
-    tagsQuery.data.tags.forEach((tag) => {
-      if (!colorTagGroups[tag.color]) {
-        colorTagGroups[tag.color] = [];
-      }
-      colorTagGroups[tag.color].push(tag);
-    });
-
     const colors = Object.keys(colorTagGroups)
       .map((color) => ({ color, h: ColorCache[color].hsl[0] }))
       .sort((color1, color2) => color2.h - color1.h)
