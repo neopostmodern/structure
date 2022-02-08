@@ -56,7 +56,7 @@ const ComplexLayout: React.FC<
         <Styled.Title>{headline}</Styled.Title>
       </Styled.Navigation>
       <Styled.PrimaryContent wide={wide}>
-        {user.loading || loading ? (
+        {(!user.data && user.loading) || loading ? (
           <Centered>
             <CircularProgress color="inherit" />
             {typeof loading === 'string' && loading}
