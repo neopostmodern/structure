@@ -91,7 +91,9 @@ const TextPage: React.FC<{}> = () => {
   const { text } = data;
   return (
     <ComplexLayout
-      primaryActions={<Tags tags={text.tags} noteId={text._id} withShortcuts />}
+      primaryActions={
+        <Tags tags={text.tags} size="medium" noteId={text._id} withShortcuts />
+      }
       secondaryActions={
         <Menu>
           <Button

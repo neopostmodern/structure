@@ -7,7 +7,8 @@ import colorTools from '../utils/colorTools';
 
 interface TagProps {
   tag: TagType;
-  sx: SxProps;
+  size?: 'small' | 'medium';
+  sx?: SxProps;
 }
 
 const Tag: React.FC<
@@ -16,11 +17,12 @@ const Tag: React.FC<
       React.HTMLAttributes<HTMLDivElement>,
       HTMLDivElement
     >
-> = ({ tag, onClick, sx, ...props }) => {
+> = ({ tag, onClick, sx = {}, size = 'small', ...props }) => {
   const dispatch = useDispatch();
   return (
     <Chip
       key={tag._id}
+      size={size}
       onClick={
         onClick ||
         ((): void => {

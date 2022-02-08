@@ -64,9 +64,15 @@ interface TagsProps {
   tags: Array<TagType>;
   noteId: string;
   withShortcuts?: boolean;
+  size?: 'small' | 'medium';
 }
 
-const Tags: React.FC<TagsProps> = ({ tags, noteId, withShortcuts = false }) => {
+const Tags: React.FC<TagsProps> = ({
+  tags,
+  noteId,
+  size,
+  withShortcuts = false,
+}) => {
   const [addingNew, setAddingNew] = useState<boolean>(false);
 
   const tagsQuery = useQuery<TagsQuery>(TAGS_QUERY);
@@ -167,6 +173,7 @@ const Tags: React.FC<TagsProps> = ({ tags, noteId, withShortcuts = false }) => {
         <Tag
           key={tag._id}
           tag={tag}
+          size={size}
           onContextMenu={(event): void => {
             event.preventDefault();
             removeTagFromNote({ variables: { noteId, tagId: tag._id } });

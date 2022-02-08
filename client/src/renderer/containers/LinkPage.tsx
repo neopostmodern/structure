@@ -103,7 +103,9 @@ const LinkPage: React.FC<{}> = () => {
 
   return (
     <ComplexLayout
-      primaryActions={<Tags tags={link.tags} withShortcuts noteId={link._id} />}
+      primaryActions={
+        <Tags tags={link.tags} size="medium" withShortcuts noteId={link._id} />
+      }
       secondaryActions={
         <Menu>
           <Button
