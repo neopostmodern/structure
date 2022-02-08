@@ -16,7 +16,7 @@ export const Container = styled(Paper).attrs(() => ({
   font-family: ${baseFont};
   min-height: 100vh;
   box-sizing: border-box;
-  @media (max-width: ${breakpointDesktop}rem) {
+  @media (max-width: ${breakpointDesktop - 0.001}rem) {
     padding: ${({ theme }) => theme.spacing(2)};
     display: flex;
     flex-direction: column;
@@ -91,7 +91,7 @@ export const UserAndMenuIndicator = styled(Corner)`
   left: 0;
   bottom: 0;
 
-  @media (max-width: ${breakpointDesktop}rem) {
+  @media (max-width: ${breakpointDesktop - 0.001}rem) {
     order: -1;
     margin-left: auto;
   }

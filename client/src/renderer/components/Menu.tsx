@@ -9,7 +9,7 @@ export const Menu = styled.div`
     flex-direction: column;
     align-items: flex-start;
   }
-  @media (max-width: ${breakpointDesktop}rem) {
+  @media (max-width: ${breakpointDesktop - 0.001}rem) {
     align-items: center;
     flex-wrap: wrap;
     button {
@@ -43,7 +43,7 @@ export const MenuSearchFieldContainer = styled.div`
   @media (min-width: ${breakpointDesktop}rem) {
     margin-top: ${({ theme }) => theme.spacing(2)};
   }
-  @media (max-width: ${breakpointDesktop}rem) {
+  @media (max-width: ${breakpointDesktop - 0.001}rem) {
     margin-left: auto;
   }
 `;
