@@ -46,38 +46,37 @@ const AuthWrapper: React.FC<
 
   const isSettingsPage = path === '/me';
 
-  let content;
-  let username = '...';
-
   if (isUserLoggingIn) {
-    content = <ComplexLayout loading="Logging in..." />;
-  } else if (user.loading) {
-    content = <ComplexLayout loading="Loading user..." />;
-  } else if (user.data?.currentUser?.name || isSettingsPage) {
+    return <ComplexLayout loading="Logging in..." />;
+  }
+  if (user.loading) {
+    return <ComplexLayout loading="Loading user..." />;
+  }
+  if (user.data?.currentUser?.name || isSettingsPage) {
     return children;
+  }
+
+  let content;
+  if (
+    navigator.onLine &&
+    (versions.networkStatus === NetworkStatus.error ||
+      user.networkStatus === NetworkStatus.error) &&
+    !isSettingsPage
+  ) {
+    content = (
+      <NetworkError
+        error={versions.error || user.error}
+        refetch={(): void => window.location.reload()}
+      />
+    );
   } else {
-    username = 'Settings';
-    if (
-      navigator.onLine &&
-      (versions.networkStatus === NetworkStatus.error ||
-        user.networkStatus === NetworkStatus.error) &&
-      !isSettingsPage
-    ) {
-      content = (
-        <NetworkError
-          error={versions.error || user.error}
-          refetch={(): void => window.location.reload()}
-        />
-      );
-    } else {
-      content = (
-        <LoginView
-          openLoginModal={(): void => {
-            dispatch(requestLogin());
-          }}
-        />
-      );
-    }
+    content = (
+      <LoginView
+        openLoginModal={(): void => {
+          dispatch(requestLogin());
+        }}
+      />
+    );
   }
 
   return (
@@ -97,7 +96,7 @@ const AuthWrapper: React.FC<
       </Styled.PrimaryContent>
       <Styled.UserAndMenuIndicator>
         {!isSettingsPage && (
-          <Styled.Username to="/me">{username}</Styled.Username>
+          <Styled.Username to="/me">Settings</Styled.Username>
         )}
       </Styled.UserAndMenuIndicator>
     </Styled.Container>
