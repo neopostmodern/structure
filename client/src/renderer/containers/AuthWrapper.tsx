@@ -66,7 +66,10 @@ const AuthWrapper: React.FC<
     content = (
       <NetworkError
         error={versions.error || user.error}
-        refetch={(): void => window.location.reload()}
+        refetch={(): void => {
+          versions.refetch();
+          user.refetch();
+        }}
       />
     );
   } else {

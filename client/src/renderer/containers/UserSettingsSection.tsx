@@ -1,12 +1,11 @@
 import { NetworkStatus, useMutation, useQuery } from '@apollo/client';
-import { Button } from '@mui/material';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import Centered from '../components/Centered';
 import { TextField } from '../components/CommonStyles';
 import Credentials from '../components/Credentials';
+import NetworkError from '../components/NetworkError';
 import SettingsEntry from '../components/SettingsEntry';
 import {
   RequestNewCredentialMutation,
@@ -76,18 +75,7 @@ const UserSettingsSection: React.FC<{}> = () => {
     return (
       <>
         <h2>Integrations</h2>
-        <Centered height={'20vh'}>
-          <h2>Network error.</h2>
-          This really should not have happened.
-          <br />
-          <br />
-          <Button
-            variant="outlined"
-            onClick={(): void => window.location.reload()}
-          >
-            Give it another try.
-          </Button>
-        </Centered>
+        <NetworkError error={userQuery.error} refetch={userQuery.refetch} />
       </>
     );
   }
