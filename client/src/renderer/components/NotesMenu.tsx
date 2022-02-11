@@ -1,4 +1,4 @@
-import { Add, BackspaceOutlined as ClearIcon } from '@mui/icons-material';
+import { BackspaceOutlined as ClearIcon } from '@mui/icons-material';
 import {
   Button,
   FormControl,
@@ -8,7 +8,6 @@ import {
   InputAdornment,
   InputLabel,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
 import NoteCount from '../containers/NotesPage/NoteCount';
 import { archiveStateToName, layoutToName } from '../utils/textHelpers';
 import { Menu, MenuSearchFieldContainer } from './Menu';
@@ -26,9 +25,6 @@ const NotesMenu = ({
   searchInput,
 }) => (
   <Menu>
-    <IconButton component={Link} to="/notes/add">
-      <Add style={{ fontSize: '3rem' }} />
-    </IconButton>
     <Button onClick={toggleLayout} size="huge">
       {layoutToName(layout)}
     </Button>

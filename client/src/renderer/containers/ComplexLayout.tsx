@@ -3,7 +3,7 @@ import { CircularProgress } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Centered from '../components/Centered';
-import { InternalLink } from '../components/CommonStyles';
+import Navigation from '../components/Navigation';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
 import { RootState } from '../reducers';
 import { PROFILE_QUERY } from '../utils/sharedQueries';
@@ -36,24 +36,13 @@ const ComplexLayout: React.FC<
     user.refetch();
   }, [isUserLoggingIn]);
 
-  let headline = <>Structure</>;
-  if (path !== '/') {
-    headline = (
-      <span>
-        <InternalLink to="/">/</InternalLink>
-        {path.substr(1)}
-      </span>
-    );
-  }
-  const isSettingsPage = path === '/me';
-
   return (
     <Styled.Container>
       {!navigator.onLine && (
         <Styled.OfflineBanner>Offline</Styled.OfflineBanner>
       )}
       <Styled.Navigation>
-        <Styled.Title>{headline}</Styled.Title>
+        <Navigation />
       </Styled.Navigation>
       <Styled.PrimaryContent wide={wide}>
         {(!user.data && user.loading) || loading ? (
@@ -72,7 +61,7 @@ const ComplexLayout: React.FC<
         <Styled.SecondaryActions>{secondaryActions}</Styled.SecondaryActions>
       )}
       <Styled.UserAndMenuIndicator>
-        {!isSettingsPage && (
+        {path !== '/me' && (
           <Styled.Username to="/me">
             {user.data?.currentUser?.name || '...'}
           </Styled.Username>

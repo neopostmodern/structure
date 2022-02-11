@@ -11,7 +11,7 @@ const baseInteractiveElement = css`
   }
 `;
 
-const baseLink = `
+const baseLink = css`
   text-decoration: none;
 
   &:hover {

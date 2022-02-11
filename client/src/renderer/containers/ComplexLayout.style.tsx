@@ -52,7 +52,7 @@ export const Navigation = styled(Corner)`
   left: 0;
 `;
 
-export const PrimaryContent = styled(Box)<{ wide: boolean }>`
+export const PrimaryContent = styled(Box)<{ wide?: boolean }>`
   width: 100%;
   ${({ wide }) =>
     !wide &&
@@ -67,6 +67,7 @@ export const PrimaryContent = styled(Box)<{ wide: boolean }>`
     padding-top: 0;
   }
   @media (min-width: ${breakpointDesktop}rem) {
+    width: 55%;
     padding-top: ${({ theme }) => theme.spacing(2)};
     padding-bottom: ${({ theme }) => theme.spacing(2)};
   }
@@ -94,27 +95,6 @@ export const UserAndMenuIndicator = styled(Corner)`
   @media (max-width: ${breakpointDesktop - 0.001}rem) {
     order: -1;
     margin-left: auto;
-  }
-`;
-
-export const Title = styled.h1`
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  margin: 0;
-
-  font-size: 5rem;
-  font-weight: bold;
-  letter-spacing: -0.025em;
-
-  @media (max-width: ${breakPointMobile}) {
-    font-size: 15vw;
-  }
-
-  a {
-    color: blue;
   }
 `;
 

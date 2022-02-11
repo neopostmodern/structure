@@ -2,8 +2,8 @@ import { NetworkStatus, useQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestLogin } from '../actions/userInterface';
-import { InternalLink } from '../components/CommonStyles';
 import LoginView from '../components/LoginView';
+import Navigation from '../components/Navigation';
 import NetworkError from '../components/NetworkError';
 import VersionMarks from '../components/VersionMarks';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
@@ -33,16 +33,6 @@ const AuthWrapper: React.FC<
   useEffect(() => {
     user.refetch();
   }, [isUserLoggingIn]);
-
-  let headline = <>Structure</>;
-  if (path !== '/') {
-    headline = (
-      <span>
-        <InternalLink to="/">/</InternalLink>
-        {path.substr(1)}
-      </span>
-    );
-  }
 
   const isSettingsPage = path === '/me';
 
@@ -85,7 +75,7 @@ const AuthWrapper: React.FC<
   return (
     <Styled.Container>
       <Styled.Navigation>
-        <Styled.Title>{headline}</Styled.Title>
+        <Navigation />
       </Styled.Navigation>
       <Styled.PrimaryContent>
         <VersionMarks
