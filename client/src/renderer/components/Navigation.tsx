@@ -12,6 +12,7 @@ import LastVisitedNotes from './LastVisitedNotes';
 const TitleLine = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 `;
 
 const TitleLink = styled(Link)`
