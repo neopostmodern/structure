@@ -8,7 +8,8 @@
     "client:start:web": "(cd client && npm run start:web)",
     "common:build": "(cd common && npm run build)",
     "server:start": "(cd server && npm run start)",
-    "generate-types": "(cd server && npm run generate-schema) && (cd client && npm run generate-graphql-types)"
+    "generate-types": "(cd server && npm run generate-schema) && (cd client && npm run generate-graphql-types)",
+    "version": "npx lerna exec npm i -- --package-lock-only --ignore-scripts && git add **/package-lock.json"
   },
   "devDependencies": {
     "lerna": "^4.0.0",
