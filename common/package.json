@@ -26,6 +26,7 @@
   },
   "scripts": {
     "build": "rm -fr dist/* && tsc -p tsconfig-mjs.json && tsc -p tsconfig-cjs.json && ./scripts/fix-package-type.sh",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "postinstall": "npm run build"
   }
 }
