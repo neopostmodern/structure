@@ -45,7 +45,7 @@
   "build": {
     "productName": "Structure",
     "appId": "com.neopostmodern.Structure",
-    "artifactName": "${name}-${version}-${os}.${ext}",
+    "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [

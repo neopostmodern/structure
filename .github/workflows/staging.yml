@@ -1,0 +1,122 @@
+on:
+  push:
+    branches:
+      - master
+
+env:
+  CONFIG_FILE: config-staging.json
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  setup:
+    name: 'Set up node and repository'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up node / npm with caching
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            **/package-lock.json
+      - name: Decrypt configuration
+        run: ./config/decrypt-config.sh
+        env:
+          CONFIG_DECRYPT_PASSPHRASE: ${{ secrets.CONFIG_DECRYPT_PASSPHRASE }}
+      - name: Install root dependencies
+        run: npm ci
+      - name: Install subpackage dependencies
+        run: npx lerna exec npm ci  || echo 'Ignore return code, known errors in postinstall step'
+      - name: Pack setup
+        run: tar cf setup.tar *
+      - name: Store setup (as artifact)
+        uses: actions/upload-artifact@v2
+        with:
+          name: setup-${{ matrix.os }}
+          retention-days: 1
+          path: setup.tar
+
+  build-deploy-web:
+    name: Build and deploy frontend
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+      - name: Download setup (from artifact)
+        uses: actions/download-artifact@v2
+        with:
+          name: setup-ubuntu-latest
+      - name: Unpack setup
+        run: tar xf setup.tar && rm setup.tar
+      - name: Build frontend
+        run: npm run client:build:web
+      - name: Deploy via FTP
+        uses: sebastianpopp/ftp-action@releases/v2
+        with:
+          localDir: ./client/release/app/dist/web/
+          remoteDir: ./dev/
+          host: amsr102.websitehostserver.net:21
+          user: github@structure.neopostmodern.com
+          password: ${{ secrets.FTP_PASSWORD }}
+
+  build-electron:
+    name: Build Electron app
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    needs: [setup]
+    steps:
+      - name: Download setup (from artifact)
+        uses: actions/download-artifact@v2
+        with:
+          name: setup-${{ matrix.os }}
+      - name: Unpack setup
+        run: tar xf setup.tar && rm setup.tar
+      - name: Build Electron app
+        run: npm run client:build:electron
+      - name: Store installers as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Installer ${{ runner.os }}
+          path: client/release/build/structure-*
+          if-no-files-found: error
+
+  deploy-backend:
+    name: Deploy backend
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+      - name: Install required packages
+        run: sudo apt-get install -y lftp
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Download setup (from artifact)
+        uses: actions/download-artifact@v2
+        with:
+          name: setup-ubuntu-latest
+      - name: Unpack setup
+        run: tar xf setup.tar && rm setup.tar
+      - name: Pack server
+        run: tar cf server.tar common config server package.json
+      - name: Deploy
+        run: ./server/scripts/deploy/deploy.sh
+      - name: Check HTTP status code
+        shell: bash
+        run: |
+          sleep 10
+          BACKEND_URL=$(jq -r '.BACKEND_URL' "./config/$CONFIG_FILE")
+          RESPONSE_CODE=$(curl -sL -w "%{http_code}" -I "$BACKEND_URL/hello" -o /dev/null)
+          echo "HTTP response code from $BACKEND_URL/hello : $RESPONSE_CODE"
+          [ "$RESPONSE_CODE" == "200" ]
