@@ -3,6 +3,7 @@
   "GRAPHIQL": false,
   "MONGO_URL": "mongodb://localhost/structureApp",
   "MIGRATIONS_DIRECTORY": "/home/structure/backend/migrations",
+  "CHANNEL": "dev",
   "GITHUB_CLIENT_ID": "YOUR_CLIENT_ID_HERE",
   "GITHUB_CLIENT_SECRET": "YOUR_CLIENT_SECRET_HERE",
   "BACKEND_URL": "https://backend.structure.neopostmodern.com",

@@ -1,10 +1,11 @@
 const { contextBridge, ipcRenderer, clipboard } = require('electron');
 const { name } = require('../../../package.json');
 const { version } = require('../../package.json');
+const { CHANNEL } = require('@structure/config');
 
 const ElectronStore = require('electron-store');
 const electronStore = new ElectronStore({
-  projectName: name,
+  projectName: CHANNEL ? `${name}-${CHANNEL}` : name,
   projectVersion: version,
 });
 
