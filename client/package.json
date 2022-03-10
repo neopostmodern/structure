@@ -100,7 +100,10 @@
       "target": [
         "AppImage"
       ],
-      "category": "Office"
+      "category": "Office",
+      "desktop": {
+        "StartupWMClass": "structure"
+      }
     },
     "directories": {
       "app": "release/app",
