@@ -13,6 +13,7 @@ import {
   DeleteTextMutation,
   DeleteTextMutationVariables,
 } from '../generated/DeleteTextMutation';
+import { NotesForList } from '../generated/NotesForList';
 import { TextQuery } from '../generated/TextQuery';
 import {
   UpdateTextMutation,
@@ -20,6 +21,7 @@ import {
 } from '../generated/UpdateTextMutation';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import ComplexLayout from './ComplexLayout';
+import { NOTES_QUERY } from './NotesPage/NotesPage';
 
 const TEXT_QUERY = gql`
   query TextQuery($textId: ID) {
@@ -76,12 +78,22 @@ const TextPage: React.FC<{}> = () => {
   const [deleteText, deleteTextMutation] = useMutation<
     DeleteTextMutation,
     DeleteTextMutationVariables
-  >(DELETE_TEXT_MUTATION);
+  >(DELETE_TEXT_MUTATION, {
+    onCompleted: () => {
+      dispatch(push('/'));
+    },
+    update(cache, { data: { deleteText: deleteTextData } }) {
+      const { notes } = cache.readQuery<NotesForList>({ query: NOTES_QUERY })``;
+      cache.writeQuery({
+        query: NOTES_QUERY,
+        data: { notes: notes.filter(({ _id }) => _id !== deleteTextData._id) },
+      });
+    },
+  });
 
   const handleDeleteText = () => {
-    deleteText({ variables: { textId: data.text._id } }).then((result) => {
-      dispatch(push('/'));
-      return result;
+    deleteText({
+      variables: { textId: data.text._id },
     });
   };
 
