@@ -82,11 +82,19 @@ const Actions = styled(Corner)`
 export const PrimaryActions = styled(Actions)`
   right: 0;
   top: 0;
+
+  @media (max-width: ${breakpointDesktop - 0.001}rem) {
+    margin-bottom: ${({ theme }) => theme.spacing(2)};
+  }
 `;
 export const SecondaryActions = styled(Actions)`
   right: 0;
   bottom: 0;
   order: 2;
+
+  @media (max-width: ${breakpointDesktop - 0.001}rem) {
+    margin-top: auto;
+  }
 `;
 export const UserAndMenuIndicator = styled(Corner)`
   left: 0;
