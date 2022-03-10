@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { Button } from '@mui/material';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
 import { push } from 'redux-first-history';
+import ButtonWithConfirmation from '../components/ButtonWithConfirmation';
 import LinkForm from '../components/LinkForm';
 import { Menu } from '../components/Menu';
 import Tags from '../components/Tags';
@@ -79,7 +79,7 @@ const LinkPage: React.FC<{}> = () => {
     UpdateLinkMutationVariables
   >(UPDATE_LINK_MUTATION);
 
-  const [deleteLink] = useMutation<
+  const [deleteLink, deleteLinkMutation] = useMutation<
     DeleteLinkMutation,
     DeleteLinkMutationVariables
   >(DELETE_LINK_MUTATION, {
@@ -108,15 +108,21 @@ const LinkPage: React.FC<{}> = () => {
       }
       secondaryActions={
         <Menu>
-          <Button
-            size="huge"
+          <ButtonWithConfirmation
             startIcon={<DeleteIcon />}
+            size="huge"
+            type="button"
             onClick={(): void => {
-              deleteLink({ variables: { linkId: link._id } });
+              deleteLink({
+                variables: { linkId: link._id },
+              });
             }}
+            loading={deleteLinkMutation.loading}
+            confirmationQuestion={`Are you sure you want to delete the note "${link.name}"?`}
+            confirmationButtonLabel="Delete"
           >
             Delete note
-          </Button>
+          </ButtonWithConfirmation>
         </Menu>
       }
     >

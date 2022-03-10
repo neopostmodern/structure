@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { Button } from '@mui/material';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
 import { push } from 'redux-first-history';
+import ButtonWithConfirmation from '../components/ButtonWithConfirmation';
 import { Menu } from '../components/Menu';
 import Tags from '../components/Tags';
 import TextForm from '../components/TextForm';
@@ -73,7 +73,7 @@ const TextPage: React.FC<{}> = () => {
     UpdateTextMutationVariables
   >(UPDATE_TEXT_MUTATION);
 
-  const [deleteText] = useMutation<
+  const [deleteText, deleteTextMutation] = useMutation<
     DeleteTextMutation,
     DeleteTextMutationVariables
   >(DELETE_TEXT_MUTATION);
@@ -96,14 +96,17 @@ const TextPage: React.FC<{}> = () => {
       }
       secondaryActions={
         <Menu>
-          <Button
+          <ButtonWithConfirmation
             startIcon={<DeleteIcon />}
             size="huge"
             type="button"
             onClick={handleDeleteText}
+            loading={deleteTextMutation.loading}
+            confirmationQuestion={`Are you sure you want to delete the note "${text.name}"?`}
+            confirmationButtonLabel="Delete"
           >
             Delete note
-          </Button>
+          </ButtonWithConfirmation>
         </Menu>
       }
     >
