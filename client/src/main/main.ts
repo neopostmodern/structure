@@ -61,14 +61,13 @@ const installExtensions = async () => {
 };
 
 const handleParameters = (argv: Array<string>) => {
-  const structureLink = argv[1];
+  const structureLink = argv[argv.length - 1];
   const structureLinkPrefix = `${CUSTOM_URL_PROTOCOL}://`;
   if (structureLink && structureLink.startsWith(structureLinkPrefix)) {
-    const targetUrl = `file://${__dirname}/app.html#${structureLink.replace(
-      structureLinkPrefix,
-      ''
-    )}`;
-    mainWindow?.webContents.loadURL(targetUrl);
+    mainWindow?.webContents.send(
+      'navigate',
+      structureLink.replace(structureLinkPrefix, '')
+    );
   }
 };
 

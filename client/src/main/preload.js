@@ -9,7 +9,7 @@ const electronStore = new ElectronStore({
   projectVersion: version,
 });
 
-const validIpcChannels = ['login-closed', 'can-login'];
+const validIpcChannels = ['login-closed', 'can-login', 'navigate'];
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -22,13 +22,24 @@ contextBridge.exposeInMainWorld('electron', {
     on(channel, func) {
       if (validIpcChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
-        ipcRenderer.on(channel, (event, ...args) => func(...args));
+        ipcRenderer.on(channel, (event, ...args) => {
+          console.log('on', event, args);
+          func(...args);
+        });
+      } else {
+        console.error(
+          `Channel '${channel}' is not whitelisted – event dropped.`
+        );
       }
     },
     once(channel, func) {
       if (validIpcChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
         ipcRenderer.once(channel, (event, ...args) => func(...args));
+      } else {
+        console.error(
+          `Channel '${channel}' is not whitelisted – event dropped.`
+        );
       }
     },
   },

@@ -67,6 +67,9 @@ if (process.env.TARGET === 'web') {
 } else {
   const { ipcRenderer, clipboard } = window.electron;
   electronMiddleware = (store) => {
+    ipcRenderer.on('navigate', (path) => {
+      store.dispatch(push(path));
+    });
     ipcRenderer.on('login-closed', () => {
       store.dispatch(completeLogin());
     });
