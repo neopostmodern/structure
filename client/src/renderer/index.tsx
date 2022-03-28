@@ -1,8 +1,9 @@
 import Mousetrap from 'mousetrap';
 import { render } from 'react-dom';
 import apolloClient from './apollo';
-import Root from './containers/Root';
+import ErrorBoundary from './components/ErrorBoundary';
 import { history, store } from './configureStore';
+import Root from './containers/Root';
 import './styles/fonts.global.css';
 import makeMousetrapGlobal from './utils/mousetrapGlobal';
 
@@ -28,6 +29,8 @@ if (process.env.TARGET !== 'web') {
 }
 
 render(
-  <Root store={store} history={history} client={apolloClient} />,
+  <ErrorBoundary>
+    <Root store={store} history={history} client={apolloClient} />
+  </ErrorBoundary>,
   document.getElementById('root')
 );
