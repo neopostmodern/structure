@@ -1,6 +1,6 @@
 {
   "name": "structure",
-  "version": "0.20.0-5",
+  "version": "0.20.0-6",
   "main": "./dist/main/main.js",
   "scripts": {
     "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
