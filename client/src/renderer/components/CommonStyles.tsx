@@ -59,11 +59,3 @@ export const TextField = styled.input`
 
   ${baseTextFieldDecorations}
 `;
-
-export const TextArea = styled.textarea`
-  border: 1px solid #eee;
-  box-sizing: border-box;
-  padding: 0.5em;
-
-  ${baseTextFieldDecorations}
-`;

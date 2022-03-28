@@ -1,100 +1,17 @@
-import { Button } from '@mui/material';
-import marked from 'marked';
+import { Tab, Tabs, TextField } from '@mui/material';
 import Mousetrap from 'mousetrap';
-import React, { useEffect, useRef, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
-import shortcutKeysToString from '../utils/shortcutKeysToString';
-import { DescriptionTextarea } from './formComponents';
+import RenderedMarkdown from './RenderedMarkdown';
 
 makeMousetrapGlobal(Mousetrap);
-
-const renderer = new marked.Renderer();
-renderer.listitem = (text: string): string => {
-  if (/^\s*\[[x ]\]\s*/.test(text)) {
-    const textWithListItems = text
-      .replace(/^\s*\[ \]\s*/, '☐ ')
-      .replace(/^\s*\[x\]\s*/, '☑ ');
-    return `<li style="list-style: none; margin-left: -1.3rem;">${textWithListItems}</li>`;
-  }
-  return `<li>${text}</li>`;
-};
-
-renderer.link = (href: string, title: string, text: string): string =>
-  `<a href="${href}" title="${
-    title || href
-  }" target="_blank" rel="noopener noreferrer">${text}</a>`;
-
-marked.setOptions({
-  breaks: true,
-  renderer,
-});
-
-const markedTextareaPadding = '1rem';
 
 const TextareaContainer = styled.div`
   position: relative;
   margin-top: 2px;
   min-height: 3rem;
-`;
-
-const RenderedMarkdown = styled.div`
-  @media (prefers-color-scheme: dark) {
-    a {
-      color: #3485ff;
-    }
-  }
-
-  blockquote {
-    margin: 0;
-    border-left: 2px gray solid;
-    padding: 0 1em;
-  }
-
-  code {
-    padding: 0.1em 0.2em;
-    border-radius: 2px;
-    background-color: rgba(128, 128, 128, 0.4);
-  }
-
-  pre {
-    max-width: 100%;
-    overflow-x: auto;
-
-    padding: 0.5em;
-    border-radius: 2px;
-    background-color: rgba(128, 128, 128, 0.4);
-
-    > code {
-      padding: initial;
-      background-color: initial;
-    }
-  }
-`;
-
-const EmptyTextarea = styled.div`
-  border: 1px dashed gray;
-  color: gray;
-
-  text-align: center;
-  padding-top: 1.5rem;
-  padding-bottom: 1.3rem;
-`;
-
-const EditButton = styled(Button)`
-  position: absolute;
-  top: ${markedTextareaPadding};
-  right: ${markedTextareaPadding};
-
-  opacity: 0;
-  transition: opacity 0.5s;
-  pointer-events: none;
-
-  ${TextareaContainer}:hover & {
-    opacity: 1;
-    pointer-events: all;
-  }
 `;
 
 const focusDescriptionShortcutKeys = ['ctrl+e', 'command+e'];
@@ -104,79 +21,67 @@ type MarkedTextareaProps = {
 };
 
 const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
-  const { watch, register } = useFormContext();
-  const textareaElement = useRef<HTMLTextAreaElement>();
+  const { control, getValues } = useFormContext();
   const [editDescription, setEditDescription] = useState(false);
-  // mousetrap needs a self-updating reference
-  const editDescriptionRef = useRef<boolean>();
-  editDescriptionRef.current = editDescription;
+  const [shouldAutofocus, setShouldAutofocus] = useState(false);
 
-  const focusTextarea = (): void => {
-    if (document.activeElement !== textareaElement.current) {
-      // eslint-disable-next-line no-unused-expressions
-      textareaElement.current?.focus();
-    }
-  };
-
-  const toggleEditDescription = (): void => {
-    const currentEditDescriptionStatus = editDescriptionRef.current;
-
-    if (currentEditDescriptionStatus) {
-      textareaElement.current.blur();
-      setEditDescription(false);
-    } else {
-      setEditDescription(true);
-      focusTextarea();
-    }
-  };
+  const toggleEditDescription = useCallback(() => {
+    setEditDescription(!editDescription);
+  }, [setEditDescription, editDescription]);
 
   useEffect(() => {
     Mousetrap.bindGlobal(focusDescriptionShortcutKeys, toggleEditDescription);
     return (): void => {
       Mousetrap.unbind(focusDescriptionShortcutKeys);
     };
-  }, []);
+  }, [toggleEditDescription]);
 
-  let content;
-  if (!editDescription) {
-    const textContent = watch(name);
-
-    if (textContent && textContent.length) {
-      content = (
-        <RenderedMarkdown
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: marked(textContent) }}
-          style={{ fontSize: '1rem' }}
-        />
-      );
-    } else {
-      content = <EmptyTextarea>No content</EmptyTextarea>;
+  useEffect(() => {
+    if (getValues(name).length === 0 && !editDescription) {
+      setEditDescription(true);
     }
-  }
-
-  const formFieldProperties = register(name);
+  }, []);
 
   return (
     <TextareaContainer>
-      <EditButton
-        variant="outlined"
-        size="small"
-        onClick={toggleEditDescription}
-        title={shortcutKeysToString(focusDescriptionShortcutKeys)}
-      >
-        {editDescription ? 'Done' : 'Edit'}
-      </EditButton>
-      <DescriptionTextarea
-        name={name}
-        ref={(ref): void => {
-          textareaElement.current = ref;
-          formFieldProperties.ref(ref);
+      <Tabs
+        value={editDescription ? 1 : 0}
+        onChange={(_, value: number) => {
+          setEditDescription(Boolean(value));
+          setShouldAutofocus(true);
         }}
-        onBlur={formFieldProperties.onBlur}
-        onChange={formFieldProperties.onChange}
-        hidden={!editDescription}
-      />
-      {content}
+      >
+        <Tab label="View" />
+        <Tab label="Edit" />
+      </Tabs>
+      {editDescription ? (
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <TextField
+              multiline
+              name={field.name}
+              onBlur={field.onBlur}
+              onChange={field.onChange}
+              hidden={!editDescription}
+              value={field.value}
+              variant="outlined"
+              ref={field.ref}
+              autoFocus={shouldAutofocus}
+              fullWidth
+              onFocus={(event) => {
+                event.target.setSelectionRange(
+                  event.target.value.length,
+                  event.target.value.length
+                );
+              }}
+            />
+          )}
+        />
+      ) : (
+        <RenderedMarkdown markdown={getValues(name)} />
+      )}
     </TextareaContainer>
   );
 };
