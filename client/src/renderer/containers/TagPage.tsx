@@ -80,6 +80,7 @@ const TagPage: React.FC<{}> = () => {
     TAG_QUERY,
     {
       variables: { tagId },
+      fetchPolicy: 'cache-and-network',
     }
   );
   const [updateTag] = useMutation<
