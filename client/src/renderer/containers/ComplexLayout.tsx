@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Tooltip } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Centered from '../components/Centered';
@@ -62,9 +62,11 @@ const ComplexLayout: React.FC<
       )}
       <Styled.UserAndMenuIndicator>
         {path !== '/me' && (
-          <Styled.Username to="/me">
-            {user.data?.currentUser?.name || '...'}
-          </Styled.Username>
+          <Tooltip title="Settings">
+            <Styled.Username to="/me">
+              {user.data?.currentUser?.name || '...'}
+            </Styled.Username>
+          </Tooltip>
         )}
       </Styled.UserAndMenuIndicator>
     </Styled.Container>

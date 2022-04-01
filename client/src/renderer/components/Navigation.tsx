@@ -1,5 +1,5 @@
 import { Add, ArrowBack, ArrowForward } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { goBack, goForward } from 'redux-first-history';
@@ -43,25 +43,33 @@ const Navigation = () => {
 
   return (
     <TitleLine>
-      <TitleLink to="/">Structure</TitleLink>
+      <Tooltip title="Back to homepage">
+        <TitleLink to="/">Structure</TitleLink>
+      </Tooltip>
       <HistoryTools>
-        <IconButton
-          onClick={() => dispatch(goBack())}
-          disabled={lengthOfPast <= 0}
-        >
-          <ArrowBack />
-        </IconButton>
+        <Tooltip title="Navigate back">
+          <IconButton
+            onClick={() => dispatch(goBack())}
+            disabled={lengthOfPast <= 0}
+          >
+            <ArrowBack />
+          </IconButton>
+        </Tooltip>
         <LastVisitedNotes />
-        <IconButton
-          onClick={() => dispatch(goForward())}
-          disabled={lengthOfFuture <= 0}
-        >
-          <ArrowForward />
-        </IconButton>
+        <Tooltip title="Navigate forward">
+          <IconButton
+            onClick={() => dispatch(goForward())}
+            disabled={lengthOfFuture <= 0}
+          >
+            <ArrowForward />
+          </IconButton>
+        </Tooltip>
       </HistoryTools>
-      <IconButton component={Link} to="/notes/add">
-        <Add style={{ fontSize: '3rem' }} />
-      </IconButton>
+      <Tooltip title="Add new note">
+        <IconButton component={Link} to="/notes/add">
+          <Add style={{ fontSize: '3rem' }} />
+        </IconButton>
+      </Tooltip>
     </TitleLine>
   );
 };

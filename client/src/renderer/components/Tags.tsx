@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { AddCircleOutline as PlusIcon } from '@mui/icons-material';
-import { Button, IconButton } from '@mui/material';
+import { Button, IconButton, Tooltip } from '@mui/material';
 import Mousetrap from 'mousetrap';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -161,9 +161,11 @@ const Tags: React.FC<TagsProps> = ({
       );
     } else {
       newTagForm = (
-        <IconButton size="small" onClick={showNewTagForm}>
-          <PlusIcon />
-        </IconButton>
+        <Tooltip title="Add tag">
+          <IconButton size="small" onClick={showNewTagForm}>
+            <PlusIcon />
+          </IconButton>
+        </Tooltip>
       );
     }
   }

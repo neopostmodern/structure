@@ -3,7 +3,7 @@ import {
   History as HistoryIcon,
   HistoryToggleOff as HistoryLoadingIcon,
 } from '@mui/icons-material';
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import { MouseEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { push } from 'redux-first-history';
@@ -47,15 +47,17 @@ const LastVisitedNotes = () => {
 
   return (
     <div>
-      <IconButton
-        aria-controls={menuOpen ? menuId : undefined}
-        aria-haspopup="true"
-        aria-expanded={menuOpen ? 'true' : undefined}
-        onClick={handleClick}
-        disabled={lastVisitedNotes.length === 0 || notesQuery.loading}
-      >
-        {notesQuery.loading ? <HistoryLoadingIcon /> : <HistoryIcon />}
-      </IconButton>
+      <Tooltip title="Recently viewed notes">
+        <IconButton
+          aria-controls={menuOpen ? menuId : undefined}
+          aria-haspopup="true"
+          aria-expanded={menuOpen ? 'true' : undefined}
+          onClick={handleClick}
+          disabled={lastVisitedNotes.length === 0 || notesQuery.loading}
+        >
+          {notesQuery.loading ? <HistoryLoadingIcon /> : <HistoryIcon />}
+        </IconButton>
+      </Tooltip>
       <Menu
         id={menuId}
         anchorEl={menuAnchorElement}
