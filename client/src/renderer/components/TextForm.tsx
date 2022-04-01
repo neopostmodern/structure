@@ -1,5 +1,5 @@
 import { pick } from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { NoteObject } from '../reducers/links';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
@@ -24,7 +24,10 @@ const TextForm: React.FC<TextFormProps> = ({ text, onSubmit }) => {
       return { values: formValues, errors: {} };
     },
   });
-  const { register } = formProps;
+  const { register, reset } = formProps;
+  useEffect(() => {
+    reset(defaultValues);
+  }, [reset, text]);
 
   useSaveOnUnmount({ onSubmit, defaultValues }, formProps);
 
