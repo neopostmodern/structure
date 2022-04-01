@@ -83,7 +83,7 @@ const TextPage: React.FC<{}> = () => {
       dispatch(push('/'));
     },
     update(cache, { data: { deleteText: deleteTextData } }) {
-      const { notes } = cache.readQuery<NotesForList>({ query: NOTES_QUERY })``;
+      const { notes } = cache.readQuery<NotesForList>({ query: NOTES_QUERY });
       cache.writeQuery({
         query: NOTES_QUERY,
         data: { notes: notes.filter(({ _id }) => _id !== deleteTextData._id) },
