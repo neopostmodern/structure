@@ -6,7 +6,6 @@ import { goBack, goForward } from 'redux-first-history';
 import styled from 'styled-components';
 import { RootState } from '../reducers';
 import { HistoryStateType } from '../reducers/history';
-import { breakPointMobile } from '../styles/constants';
 import LastVisitedNotes from './LastVisitedNotes';
 
 const TitleLine = styled.div`
@@ -22,10 +21,6 @@ const TitleLink = styled(Link)`
 
   &:not(:hover) {
     text-decoration: none;
-  }
-
-  @media (max-width: ${breakPointMobile}) {
-    font-size: 15vw;
   }
 `;
 
