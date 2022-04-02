@@ -1,6 +1,6 @@
 import { Tab, Tabs, TextField } from '@mui/material';
 import Mousetrap from 'mousetrap';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
@@ -23,18 +23,55 @@ type MarkedTextareaProps = {
 const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
   const { control, getValues } = useFormContext();
   const [editDescription, setEditDescription] = useState(false);
-  const [shouldAutofocus, setShouldAutofocus] = useState(false);
+  const [lastSelection, setLastSelection] = useState<[number, number] | null>(
+    null
+  );
+  const textareaElement = useRef<HTMLTextAreaElement>();
 
-  const toggleEditDescription = useCallback(() => {
-    setEditDescription(!editDescription);
-  }, [setEditDescription, editDescription]);
+  // mousetrap needs a self-updating reference
+  const mousetrapRefs = useRef<{
+    editDescription: boolean;
+    lastSelection: [number, number] | null;
+  }>();
+  mousetrapRefs.current = { editDescription, lastSelection };
+
+  const focusTextarea = (): void => {
+    if (document.activeElement !== textareaElement.current) {
+      textareaElement.current?.focus();
+      if (mousetrapRefs.current?.lastSelection) {
+        textareaElement.current?.setSelectionRange(
+          ...mousetrapRefs.current?.lastSelection
+        );
+      }
+    }
+  };
+
+  const toggleEditDescription = (): void => {
+    if (mousetrapRefs.current?.editDescription) {
+      if (document.activeElement !== textareaElement.current) {
+        focusTextarea();
+      } else {
+        if (textareaElement.current) {
+          setLastSelection([
+            textareaElement.current.selectionStart,
+            textareaElement.current.selectionEnd,
+          ]);
+          textareaElement.current.blur();
+        }
+        setEditDescription(false);
+      }
+    } else {
+      setEditDescription(true);
+      focusTextarea();
+    }
+  };
 
   useEffect(() => {
     Mousetrap.bindGlobal(focusDescriptionShortcutKeys, toggleEditDescription);
     return (): void => {
       Mousetrap.unbind(focusDescriptionShortcutKeys);
     };
-  }, [toggleEditDescription]);
+  }, []);
 
   useEffect(() => {
     if (getValues(name).length === 0 && !editDescription) {
@@ -46,15 +83,14 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
     <TextareaContainer>
       <Tabs
         value={editDescription ? 1 : 0}
-        onChange={(_, value: number) => {
-          setEditDescription(Boolean(value));
-          setShouldAutofocus(true);
+        onChange={() => {
+          toggleEditDescription();
         }}
       >
         <Tab label="View" />
         <Tab label="Edit" />
       </Tabs>
-      {editDescription ? (
+      <div hidden={!editDescription}>
         <Controller
           name={name}
           control={control}
@@ -67,8 +103,10 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
               hidden={!editDescription}
               value={field.value}
               variant="outlined"
-              ref={field.ref}
-              autoFocus={shouldAutofocus}
+              inputRef={(ref) => {
+                field.ref(ref);
+                textareaElement.current = ref;
+              }}
               fullWidth
               onFocus={(event) => {
                 event.target.setSelectionRange(
@@ -79,9 +117,8 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
             />
           )}
         />
-      ) : (
-        <RenderedMarkdown markdown={getValues(name)} />
-      )}
+      </div>
+      {!editDescription && <RenderedMarkdown markdown={getValues(name)} />}
     </TextareaContainer>
   );
 };
