@@ -1,26 +1,11 @@
-import { gql, useMutation } from '@apollo/client';
 import React from 'react';
 import TimeAgo from 'react-timeago';
-import {
-  ToggleArchivedNote,
-  ToggleArchivedNoteVariables,
-} from '../generated/ToggleArchivedNote';
 import { NoteObject } from '../reducers/links';
 import { BatchSelectionType } from '../reducers/userInterface';
 import Centered from './Centered';
 import * as Styled from './NotesList.style';
+import NotesListActionMenu from './NotesListActionMenu';
 import Tags from './Tags';
-
-const TOGGLE_ARCHIVED_MUTATION = gql`
-  mutation ToggleArchivedNote($noteId: ID!) {
-    toggleArchivedNote(noteId: $noteId) {
-      ... on INote {
-        _id
-        archivedAt
-      }
-    }
-  }
-`;
 
 type BatchEditingProps =
   | {
@@ -35,11 +20,6 @@ type NotesListProps = {
 } & BatchEditingProps;
 
 const NotesList: React.FC<NotesListProps> = ({ notes, ...props }) => {
-  const [toggleArchivedNote] = useMutation<
-    ToggleArchivedNote,
-    ToggleArchivedNoteVariables
-  >(TOGGLE_ARCHIVED_MUTATION);
-
   if (notes.length === 0) {
     // todo: style
     // todo: offer to reset search
@@ -97,20 +77,9 @@ const NotesList: React.FC<NotesListProps> = ({ notes, ...props }) => {
             </Styled.NoteInfo>
             <Styled.NoteActions>
               <Tags tags={note.tags} noteId={note._id} />
-              <Styled.ArchiveActionWrapper>
-                <Styled.ArchiveStatus>
-                  {note.archivedAt && 'Archived'}
-                </Styled.ArchiveStatus>
-                <Styled.ArchiveButton
-                  variant="outlined"
-                  size="small"
-                  onClick={(): void => {
-                    toggleArchivedNote({ variables: { noteId: note._id } });
-                  }}
-                >
-                  {note.archivedAt ? 'Unarchive' : 'Archive'}
-                </Styled.ArchiveButton>
-              </Styled.ArchiveActionWrapper>
+              <Styled.ActionMenuWrapper>
+                <NotesListActionMenu note={note} />
+              </Styled.ActionMenuWrapper>
             </Styled.NoteActions>
           </Styled.NoteContainer>
         </Styled.Note>

@@ -67,7 +67,7 @@ export const LinkDomain = styled(ExternalLink)`
   color: inherit;
 `;
 
-export const ArchiveActionWrapper = styled.div`
+export const ActionMenuWrapper = styled.div`
   margin-left: auto;
 `;
 
