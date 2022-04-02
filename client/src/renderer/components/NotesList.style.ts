@@ -23,8 +23,9 @@ export const NoteTitleLine = styled.div`
 
 export const NoteTitleLink = styled(InternalLink)`
   color: inherit;
-  margin-bottom: 0.3em;
   font-size: 130%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const NoteAddedDate = styled.div`
