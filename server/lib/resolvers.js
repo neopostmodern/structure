@@ -48,7 +48,7 @@ const rootResolvers = {
   Text: INoteResolvers,
   Tag: {
     notes(tag, args, context) {
-      return Note.find({ tags: tag }).then(typeEnumFixer)
+      return Note.find({ tags: tag, deletedAt: null }).then(typeEnumFixer)
     },
   },
   Query: {
@@ -66,7 +66,7 @@ const rootResolvers = {
         throw new Error('Need to be logged in to fetch links.')
       }
       const protectedLimit = limit < 1 || limit > 10 ? 10 : limit
-      return Note.find({ user: context.user })
+      return Note.find({ user: context.user, deletedAt: null })
         .sort({ createdAt: -1 })
         .limit(protectedLimit)
         .exec()
@@ -83,7 +83,7 @@ const rootResolvers = {
         throw new Error('Need to be logged in to fetch links.')
       }
       const protectedLimit = limit < 1 || limit > 10 ? 10 : limit
-      return Link.find({ user: context.user })
+      return Link.find({ user: context.user, deletedAt: null })
         .sort({ createdAt: -1 })
         .limit(protectedLimit)
         .exec()
@@ -151,18 +151,6 @@ const rootResolvers = {
         return link.save()
       })
     },
-    deleteLink(root, { linkId }, context) {
-      if (!context.user) {
-        throw new Error('Need to be logged in to delete links.')
-      }
-      return Link.findOne({ _id: linkId, user: context.user }).then((link) => {
-        if (!link) {
-          throw new Error('Resource could not be found.')
-        }
-
-        return link.remove()
-      })
-    },
 
     createText(root, {}, context) {
       if (!context.user) {
@@ -188,18 +176,6 @@ const rootResolvers = {
           text[propName] = propValue
         })
         return text.save()
-      })
-    },
-    deleteText(root, { textId }, context) {
-      if (!context.user) {
-        throw new Error('Need to be logged in to delete texts.')
-      }
-      return Text.findOne({ _id: textId, user: context.user }).then((text) => {
-        if (!text) {
-          throw new Error('Resource could not be found.')
-        }
-
-        return text.remove()
       })
     },
 
@@ -238,6 +214,25 @@ const rootResolvers = {
           note.archivedAt = new Date()
         }
 
+        return note.save()
+      })
+    },
+    toggleDeletedNote(root, { noteId }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to delete notes.')
+      }
+      return Note.findOne({ _id: noteId, user: context.user }).then((note) => {
+        if (!note) {
+          throw new Error('Resource could not be found.')
+        }
+
+        if (note.deletedAt) {
+          // eslint-disable-next-line no-param-reassign
+          note.deletedAt = null
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          note.deletedAt = new Date()
+        }
         return note.save()
       })
     },

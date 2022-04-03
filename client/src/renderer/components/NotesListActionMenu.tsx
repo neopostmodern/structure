@@ -7,12 +7,22 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useState } from 'react';
+import useDeleteNote from '../hooks/useDeleteNote';
 import useToggleArchivedNote from '../hooks/useToggleArchivedNote';
 import { NoteObject } from '../reducers/links';
+import DeleteNoteTrigger from './DeleteNoteTrigger';
 
 const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
-  const { toggleArchivedNote, errorSnackbar, loading } =
-    useToggleArchivedNote(note);
+  const {
+    toggleArchivedNote,
+    errorSnackbar: toggleArchivedNoteErrorSnackbar,
+    loading: toggleArchivedNoteLoading,
+  } = useToggleArchivedNote(note);
+  const {
+    deleteNote,
+    errorSnackbar: deleteLinkErrorSnackbar,
+    loading: deleteLinkLoading,
+  } = useDeleteNote(note._id);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleClose = () => {
@@ -21,8 +31,9 @@ const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
 
   return (
     <>
-      {errorSnackbar}
-      {loading ? (
+      {toggleArchivedNoteErrorSnackbar}
+      {deleteLinkErrorSnackbar}
+      {toggleArchivedNoteLoading || deleteLinkLoading ? (
         <CircularProgress />
       ) : (
         <>
@@ -47,6 +58,12 @@ const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
               </ListItemIcon>
               {note.archivedAt ? 'Unarchive' : 'Archive'}
             </MenuItem>
+            <DeleteNoteTrigger
+              variant="menuitem"
+              note={note}
+              loading={deleteLinkLoading}
+              deleteNote={deleteNote}
+            />
           </Menu>
         </>
       )}

@@ -9,6 +9,7 @@ interface INote {
   _id: ID!
   archivedAt: Date
   createdAt: Date!
+  deletedAt: Date
   description: String!
   name: String!
   tags: [Tag]!
@@ -42,6 +43,7 @@ type Link implements INote {
   _id: ID!
   archivedAt: Date
   createdAt: Date!
+  deletedAt: Date
   description: String!
   domain: String!
   name: String!
@@ -55,13 +57,12 @@ type Link implements INote {
 type Mutation {
   addTagByNameToNote(name: String!, noteId: ID!): Note!
   createText: Text!
-  deleteLink(linkId: ID!): Link!
-  deleteText(textId: ID!): Text!
   removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
   requestNewCredential(purpose: String!): User!
   revokeCredential(purpose: String!): User!
   submitLink(url: String!): Link!
   toggleArchivedNote(noteId: ID!): Note!
+  toggleDeletedNote(noteId: ID!): Note!
   updateLink(link: InputLink!): Link!
   updateTag(tag: InputTag!): Tag!
   updateText(text: InputText!): Text!
@@ -97,6 +98,7 @@ type Text implements INote {
   _id: ID!
   archivedAt: Date
   createdAt: Date!
+  deletedAt: Date
   description: String!
   name: String!
   tags: [Tag]!

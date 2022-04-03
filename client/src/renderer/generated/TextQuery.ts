@@ -18,6 +18,7 @@ export interface TextQuery_text {
   __typename: "Text";
   _id: string;
   createdAt: any;
+  archivedAt: any | null;
   name: string;
   description: string;
   tags: (TextQuery_text_tags | null)[];

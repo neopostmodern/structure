@@ -18,6 +18,7 @@ export interface LinkQuery_link {
   __typename: "Link";
   _id: string;
   createdAt: any;
+  archivedAt: any | null;
   url: string;
   name: string;
   description: string;

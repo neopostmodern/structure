@@ -52,6 +52,7 @@ export default gql`
 
     createdAt: Date!
     archivedAt: Date
+    deletedAt: Date
 
     # Comments posted about this repository
     # tags(limit: Int, offset: Int): [Tag]!
@@ -68,6 +69,7 @@ export default gql`
 
     createdAt: Date!
     archivedAt: Date
+    deletedAt: Date
 
     # Comments posted about this repository
     # tags(limit: Int, offset: Int): [Tag]!
@@ -93,6 +95,7 @@ export default gql`
 
     createdAt: Date!
     archivedAt: Date
+    deletedAt: Date
 
     # Comments posted about this repository
     # tags(limit: Int, offset: Int): [Tag]!
@@ -139,17 +142,16 @@ export default gql`
 
     submitLink(url: String!): Link!
     updateLink(link: InputLink!): Link!
-    deleteLink(linkId: ID!): Link!
 
     createText: Text!
     updateText(text: InputText!): Text!
-    deleteText(textId: ID!): Text!
 
     addTagByNameToNote(noteId: ID!, name: String!): Note!
 
     removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
 
     toggleArchivedNote(noteId: ID!): Note!
+    toggleDeletedNote(noteId: ID!): Note!
 
     requestNewCredential(purpose: String!): User!
 

@@ -20,6 +20,7 @@ export interface UpdateTextMutation_updateText {
   __typename: "Text";
   _id: string;
   createdAt: any;
+  archivedAt: any | null;
   name: string;
   description: string;
   tags: (UpdateTextMutation_updateText_tags | null)[];
