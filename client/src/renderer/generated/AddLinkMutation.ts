@@ -27,7 +27,7 @@ export interface AddLinkMutation_submitLink {
 }
 
 export interface AddLinkMutation {
-  submitLink: AddLinkMutation_submitLink | null;
+  submitLink: AddLinkMutation_submitLink;
 }
 
 export interface AddLinkMutationVariables {

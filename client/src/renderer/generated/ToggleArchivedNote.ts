@@ -14,7 +14,7 @@ export interface ToggleArchivedNote_toggleArchivedNote {
 }
 
 export interface ToggleArchivedNote {
-  toggleArchivedNote: ToggleArchivedNote_toggleArchivedNote | null;
+  toggleArchivedNote: ToggleArchivedNote_toggleArchivedNote;
 }
 
 export interface ToggleArchivedNoteVariables {

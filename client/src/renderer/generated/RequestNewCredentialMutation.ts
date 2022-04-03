@@ -20,7 +20,7 @@ export interface RequestNewCredentialMutation_requestNewCredential {
 }
 
 export interface RequestNewCredentialMutation {
-  requestNewCredential: RequestNewCredentialMutation_requestNewCredential | null;
+  requestNewCredential: RequestNewCredentialMutation_requestNewCredential;
 }
 
 export interface RequestNewCredentialMutationVariables {

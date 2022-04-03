@@ -13,7 +13,7 @@ export interface DeleteLinkMutation_deleteLink {
 }
 
 export interface DeleteLinkMutation {
-  deleteLink: DeleteLinkMutation_deleteLink | null;
+  deleteLink: DeleteLinkMutation_deleteLink;
 }
 
 export interface DeleteLinkMutationVariables {

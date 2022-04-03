@@ -58,7 +58,7 @@ export interface TagWithNotesQuery_tag {
 }
 
 export interface TagWithNotesQuery {
-  tag: TagWithNotesQuery_tag | null;
+  tag: TagWithNotesQuery_tag;
 }
 
 export interface TagWithNotesQueryVariables {

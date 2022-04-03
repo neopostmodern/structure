@@ -46,5 +46,5 @@ export interface NotesForList_notes_Link {
 export type NotesForList_notes = NotesForList_notes_Text | NotesForList_notes_Link;
 
 export interface NotesForList {
-  notes: (NotesForList_notes | null)[] | null;
+  notes: NotesForList_notes[];
 }

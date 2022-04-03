@@ -15,5 +15,5 @@ export interface TagsQuery_tags {
 }
 
 export interface TagsQuery {
-  tags: (TagsQuery_tags | null)[] | null;
+  tags: TagsQuery_tags[];
 }

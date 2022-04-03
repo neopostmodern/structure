@@ -26,7 +26,7 @@ export interface LinkQuery_link {
 }
 
 export interface LinkQuery {
-  link: LinkQuery_link | null;
+  link: LinkQuery_link;
 }
 
 export interface LinkQueryVariables {

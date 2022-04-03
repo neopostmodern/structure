@@ -20,7 +20,7 @@ export interface RevokeCredentialMutation_revokeCredential {
 }
 
 export interface RevokeCredentialMutation {
-  revokeCredential: RevokeCredentialMutation_revokeCredential | null;
+  revokeCredential: RevokeCredentialMutation_revokeCredential;
 }
 
 export interface RevokeCredentialMutationVariables {

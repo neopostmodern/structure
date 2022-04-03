@@ -17,7 +17,7 @@ export interface UpdateTag2_updateTag {
 }
 
 export interface UpdateTag2 {
-  updateTag: UpdateTag2_updateTag | null;
+  updateTag: UpdateTag2_updateTag;
 }
 
 export interface UpdateTag2Variables {

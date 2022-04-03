@@ -53,18 +53,18 @@ type Link implements INote {
 }
 
 type Mutation {
-  addTagByNameToNote(name: String!, noteId: ID!): Note
-  createText: Text
-  deleteLink(linkId: ID!): Link
-  deleteText(textId: ID!): Text
-  removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note
-  requestNewCredential(purpose: String!): User
-  revokeCredential(purpose: String!): User
-  submitLink(url: String!): Link
-  toggleArchivedNote(noteId: ID!): Note
-  updateLink(link: InputLink!): Link
-  updateTag(tag: InputTag!): Tag
-  updateText(text: InputText!): Text
+  addTagByNameToNote(name: String!, noteId: ID!): Note!
+  createText: Text!
+  deleteLink(linkId: ID!): Link!
+  deleteText(textId: ID!): Text!
+  removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
+  requestNewCredential(purpose: String!): User!
+  revokeCredential(purpose: String!): User!
+  submitLink(url: String!): Link!
+  toggleArchivedNote(noteId: ID!): Note!
+  updateLink(link: InputLink!): Link!
+  updateTag(tag: InputTag!): Tag!
+  updateText(text: InputText!): Text!
 }
 
 union Note = Link | Text
@@ -76,13 +76,13 @@ enum NoteType {
 
 type Query {
   currentUser: User
-  link(linkId: ID): Link
-  links(limit: Int, offset: Int): [Link]
-  notes(limit: Int, offset: Int): [Note]
-  tag(tagId: ID): Tag
-  tags(limit: Int, offset: Int): [Tag]
-  text(textId: ID): Text
-  versions: Versions
+  link(linkId: ID): Link!
+  links(limit: Int, offset: Int): [Link!]!
+  notes(limit: Int, offset: Int): [Note!]!
+  tag(tagId: ID): Tag!
+  tags(limit: Int, offset: Int): [Tag!]!
+  text(textId: ID): Text!
+  versions: Versions!
 }
 
 type Tag {

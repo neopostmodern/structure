@@ -28,7 +28,7 @@ export interface UpdateLinkMutation_updateLink {
 }
 
 export interface UpdateLinkMutation {
-  updateLink: UpdateLinkMutation_updateLink | null;
+  updateLink: UpdateLinkMutation_updateLink;
 }
 
 export interface UpdateLinkMutationVariables {

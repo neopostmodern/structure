@@ -14,5 +14,5 @@ export interface VisitedNotes_notes {
 }
 
 export interface VisitedNotes {
-  notes: (VisitedNotes_notes | null)[] | null;
+  notes: VisitedNotes_notes[];
 }

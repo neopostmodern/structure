@@ -26,7 +26,7 @@ export interface UpdateTextMutation_updateText {
 }
 
 export interface UpdateTextMutation {
-  updateText: UpdateTextMutation_updateText | null;
+  updateText: UpdateTextMutation_updateText;
 }
 
 export interface UpdateTextMutationVariables {

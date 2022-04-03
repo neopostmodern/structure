@@ -21,7 +21,7 @@ export interface AddTagByNameToNote_addTagByNameToNote {
 }
 
 export interface AddTagByNameToNote {
-  addTagByNameToNote: AddTagByNameToNote_addTagByNameToNote | null;
+  addTagByNameToNote: AddTagByNameToNote_addTagByNameToNote;
 }
 
 export interface AddTagByNameToNoteVariables {

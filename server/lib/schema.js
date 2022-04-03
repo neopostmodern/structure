@@ -114,7 +114,7 @@ export default gql`
     # Return the currently logged in user, or null if nobody is logged in
     currentUser: User
 
-    versions: Versions
+    versions: Versions!
 
     links(
       # The number of items to skip, for pagination
@@ -122,38 +122,38 @@ export default gql`
 
       # The number of items to fetch starting from the offset, for pagination
       limit: Int
-    ): [Link]
+    ): [Link!]!
 
-    notes(offset: Int, limit: Int): [Note]
+    notes(offset: Int, limit: Int): [Note!]!
 
-    link(linkId: ID): Link
-    text(textId: ID): Text
+    link(linkId: ID): Link!
+    text(textId: ID): Text!
 
-    tags(offset: Int, limit: Int): [Tag]
+    tags(offset: Int, limit: Int): [Tag!]!
 
-    tag(tagId: ID): Tag
+    tag(tagId: ID): Tag!
   }
 
   type Mutation {
-    updateTag(tag: InputTag!): Tag
+    updateTag(tag: InputTag!): Tag!
 
-    submitLink(url: String!): Link
-    updateLink(link: InputLink!): Link
-    deleteLink(linkId: ID!): Link
+    submitLink(url: String!): Link!
+    updateLink(link: InputLink!): Link!
+    deleteLink(linkId: ID!): Link!
 
-    createText: Text
-    updateText(text: InputText!): Text
-    deleteText(textId: ID!): Text
+    createText: Text!
+    updateText(text: InputText!): Text!
+    deleteText(textId: ID!): Text!
 
-    addTagByNameToNote(noteId: ID!, name: String!): Note
+    addTagByNameToNote(noteId: ID!, name: String!): Note!
 
-    removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note
+    removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
 
-    toggleArchivedNote(noteId: ID!): Note
+    toggleArchivedNote(noteId: ID!): Note!
 
-    requestNewCredential(purpose: String!): User
+    requestNewCredential(purpose: String!): User!
 
-    revokeCredential(purpose: String!): User
+    revokeCredential(purpose: String!): User!
   }
 
   schema {

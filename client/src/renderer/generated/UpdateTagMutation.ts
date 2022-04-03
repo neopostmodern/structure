@@ -58,7 +58,7 @@ export interface UpdateTagMutation_updateTag {
 }
 
 export interface UpdateTagMutation {
-  updateTag: UpdateTagMutation_updateTag | null;
+  updateTag: UpdateTagMutation_updateTag;
 }
 
 export interface UpdateTagMutationVariables {

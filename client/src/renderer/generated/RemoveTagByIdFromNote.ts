@@ -21,7 +21,7 @@ export interface RemoveTagByIdFromNote_removeTagByIdFromNote {
 }
 
 export interface RemoveTagByIdFromNote {
-  removeTagByIdFromNote: RemoveTagByIdFromNote_removeTagByIdFromNote | null;
+  removeTagByIdFromNote: RemoveTagByIdFromNote_removeTagByIdFromNote;
 }
 
 export interface RemoveTagByIdFromNoteVariables {

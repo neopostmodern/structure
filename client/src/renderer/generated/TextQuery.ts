@@ -24,7 +24,7 @@ export interface TextQuery_text {
 }
 
 export interface TextQuery {
-  text: TextQuery_text | null;
+  text: TextQuery_text;
 }
 
 export interface TextQueryVariables {

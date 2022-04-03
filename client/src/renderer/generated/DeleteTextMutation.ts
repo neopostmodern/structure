@@ -13,7 +13,7 @@ export interface DeleteTextMutation_deleteText {
 }
 
 export interface DeleteTextMutation {
-  deleteText: DeleteTextMutation_deleteText | null;
+  deleteText: DeleteTextMutation_deleteText;
 }
 
 export interface DeleteTextMutationVariables {

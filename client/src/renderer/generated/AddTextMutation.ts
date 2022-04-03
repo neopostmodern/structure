@@ -25,5 +25,5 @@ export interface AddTextMutation_createText {
 }
 
 export interface AddTextMutation {
-  createText: AddTextMutation_createText | null;
+  createText: AddTextMutation_createText;
 }

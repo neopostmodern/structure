@@ -14,5 +14,5 @@ export interface Versions_versions {
 }
 
 export interface Versions {
-  versions: Versions_versions | null;
+  versions: Versions_versions;
 }
