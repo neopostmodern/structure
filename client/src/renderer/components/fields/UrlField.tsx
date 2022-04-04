@@ -1,6 +1,8 @@
-import { Button } from '@mui/material';
+import { Launch, Share } from '@mui/icons-material';
+import { IconButton, Tooltip } from '@mui/material';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
+import { openInDefaultBrowser, shareUrl } from '../../utils/openWith';
 import { TextField } from '../CommonStyles';
 
 interface UrlFieldProps {
@@ -8,21 +10,32 @@ interface UrlFieldProps {
 }
 
 const UrlField: React.FC<UrlFieldProps> = ({ name }) => {
-  const { watch, register } = useFormContext();
+  const { watch, register, getValues } = useFormContext();
 
   return (
     <div style={{ display: 'flex' }}>
       <TextField type="text" {...register(name)} />
-      <Button
-        variant="outlined"
-        size="small"
-        style={{ marginLeft: '1rem' }}
-        onClick={(): void => {
-          window.open(watch(name), '_blank', 'noopener, noreferrer');
-        }}
-      >
-        Open
-      </Button>
+      <Tooltip title="Open in default browser">
+        <IconButton
+          style={{ marginLeft: '1rem' }}
+          onClick={(): void => {
+            openInDefaultBrowser(watch(name));
+          }}
+        >
+          <Launch />
+        </IconButton>
+      </Tooltip>
+      {navigator.share && (
+        <Tooltip title="Share URL">
+          <IconButton
+            onClick={() => {
+              shareUrl(getValues(name), getValues('name'));
+            }}
+          >
+            <Share />
+          </IconButton>
+        </Tooltip>
+      )}
     </div>
   );
 };

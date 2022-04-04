@@ -1,4 +1,10 @@
-import { Archive, MoreVert, Unarchive } from '@mui/icons-material';
+import {
+  Archive,
+  Launch,
+  MoreVert,
+  Share,
+  Unarchive,
+} from '@mui/icons-material';
 import {
   CircularProgress,
   IconButton,
@@ -10,6 +16,7 @@ import { useState } from 'react';
 import useDeleteNote from '../hooks/useDeleteNote';
 import useToggleArchivedNote from '../hooks/useToggleArchivedNote';
 import { NoteObject } from '../reducers/links';
+import { openInDefaultBrowser, shareUrl } from '../utils/openWith';
 import DeleteNoteTrigger from './DeleteNoteTrigger';
 
 const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
@@ -47,6 +54,22 @@ const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
+            {note.url && (
+              <MenuItem onClick={() => openInDefaultBrowser(note.url)}>
+                <ListItemIcon>
+                  <Launch />
+                </ListItemIcon>{' '}
+                Open in browser
+              </MenuItem>
+            )}
+            {note.url && navigator.share && (
+              <MenuItem onClick={() => shareUrl(note.url, note.name)}>
+                <ListItemIcon>
+                  <Share />
+                </ListItemIcon>{' '}
+                Share URL
+              </MenuItem>
+            )}
             <MenuItem
               onClick={() => {
                 toggleArchivedNote();
