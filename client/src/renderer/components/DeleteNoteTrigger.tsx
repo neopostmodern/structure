@@ -16,15 +16,7 @@ const DeleteNoteTrigger = ({
     <TriggerWithConfirmation
       variant={variant}
       startIcon={<DeleteIcon />}
-      buttonProps={
-        variant === 'button'
-          ? {
-              size: 'huge',
-              type: 'button',
-              loading: loading,
-            }
-          : undefined
-      }
+      loading={loading}
       onClick={(): void => {
         deleteNote();
       }}

@@ -2,8 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useParams } from 'react-router';
-import DeleteNoteTrigger from '../components/DeleteNoteTrigger';
-import { Menu } from '../components/Menu';
+import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
 import TextForm from '../components/TextForm';
 import { TextQuery } from '../generated/TextQuery';
@@ -11,7 +10,6 @@ import {
   UpdateTextMutation,
   UpdateTextMutationVariables,
 } from '../generated/UpdateTextMutation';
-import useDeleteNote from '../hooks/useDeleteNote';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import ComplexLayout from './ComplexLayout';
 
@@ -60,12 +58,6 @@ const TextPage: React.FC<{}> = () => {
     UpdateTextMutationVariables
   >(UPDATE_TEXT_MUTATION);
 
-  const {
-    deleteNote,
-    errorSnackbar: deleteLinkErrorSnackbar,
-    loading: deleteLinkLoading,
-  } = useDeleteNote(data?.text._id);
-
   if (loading && !data) {
     return <ComplexLayout loading />;
   }
@@ -74,35 +66,19 @@ const TextPage: React.FC<{}> = () => {
   }
   const { text } = data;
   return (
-    <>
-      {deleteLinkErrorSnackbar}
-      <ComplexLayout
-        primaryActions={
-          <Tags
-            tags={text.tags}
-            size="medium"
-            noteId={text._id}
-            withShortcuts
-          />
+    <ComplexLayout
+      primaryActions={
+        <Tags tags={text.tags} size="medium" noteId={text._id} withShortcuts />
+      }
+      secondaryActions={<NotePageMenu note={text} />}
+    >
+      <TextForm
+        text={text}
+        onSubmit={(updatedText) =>
+          updateText({ variables: { text: updatedText } })
         }
-        secondaryActions={
-          <Menu>
-            <DeleteNoteTrigger
-              note={text}
-              loading={deleteLinkLoading}
-              deleteNote={deleteNote}
-            />
-          </Menu>
-        }
-      >
-        <TextForm
-          text={text}
-          onSubmit={(updatedText) =>
-            updateText({ variables: { text: updatedText } })
-          }
-        />
-      </ComplexLayout>
-    </>
+      />
+    </ComplexLayout>
   );
 };
 

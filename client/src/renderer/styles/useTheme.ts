@@ -33,6 +33,9 @@ const useTheme = () => {
       },
       typography: {
         fontFamily: baseFont,
+        button: {
+          textTransform: 'unset',
+        },
       },
       components: {
         MuiButton: {
@@ -40,9 +43,6 @@ const useTheme = () => {
             color: 'neutral',
           },
           styleOverrides: {
-            root: {
-              textTransform: 'unset',
-            },
             sizeHuge: {
               fontSize: '1.25rem',
             },

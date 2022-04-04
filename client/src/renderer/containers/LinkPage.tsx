@@ -2,16 +2,14 @@ import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useParams } from 'react-router';
-import DeleteNoteTrigger from '../components/DeleteNoteTrigger';
 import LinkForm from '../components/LinkForm';
-import { Menu } from '../components/Menu';
+import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
 import { LinkQuery, LinkQueryVariables } from '../generated/LinkQuery';
 import {
   UpdateLinkMutation,
   UpdateLinkMutationVariables,
 } from '../generated/UpdateLinkMutation';
-import useDeleteNote from '../hooks/useDeleteNote';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import ComplexLayout from './ComplexLayout';
 
@@ -63,11 +61,6 @@ const LinkPage: React.FC<{}> = () => {
     UpdateLinkMutation,
     UpdateLinkMutationVariables
   >(UPDATE_LINK_MUTATION);
-  const {
-    deleteNote,
-    errorSnackbar: deleteLinkErrorSnackbar,
-    loading: deleteLinkLoading,
-  } = useDeleteNote(linkQuery.data?.link._id);
 
   if (linkQuery.loading && !linkQuery.data) {
     return <ComplexLayout loading />;
@@ -80,35 +73,19 @@ const LinkPage: React.FC<{}> = () => {
   const { link } = linkQuery.data;
 
   return (
-    <>
-      {deleteLinkErrorSnackbar}
-      <ComplexLayout
-        primaryActions={
-          <Tags
-            tags={link.tags}
-            size="medium"
-            withShortcuts
-            noteId={link._id}
-          />
-        }
-        secondaryActions={
-          <Menu>
-            <DeleteNoteTrigger
-              note={link}
-              loading={deleteLinkLoading}
-              deleteNote={deleteNote}
-            />
-          </Menu>
-        }
-      >
-        <LinkForm
-          link={link}
-          onSubmit={(updatedLink): void => {
-            updateLink({ variables: { link: updatedLink } });
-          }}
-        />
-      </ComplexLayout>
-    </>
+    <ComplexLayout
+      primaryActions={
+        <Tags tags={link.tags} size="medium" withShortcuts noteId={link._id} />
+      }
+      secondaryActions={<NotePageMenu note={link} />}
+    >
+      <LinkForm
+        link={link}
+        onSubmit={(updatedLink): void => {
+          updateLink({ variables: { link: updatedLink } });
+        }}
+      />
+    </ComplexLayout>
   );
 };
 

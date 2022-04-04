@@ -4,7 +4,7 @@ import {
   ToggleArchivedNote,
   ToggleArchivedNoteVariables,
 } from '../generated/ToggleArchivedNote';
-import { NoteObject } from '../reducers/links';
+import { DateOrTimestamp } from '../utils/textHelpers';
 
 const TOGGLE_ARCHIVED_MUTATION = gql`
   mutation ToggleArchivedNote($noteId: ID!) {
@@ -16,7 +16,10 @@ const TOGGLE_ARCHIVED_MUTATION = gql`
     }
   }
 `;
-const useToggleArchivedNote = (note: NoteObject) => {
+const useToggleArchivedNote = (note: {
+  _id: string;
+  archivedAt: DateOrTimestamp;
+}) => {
   const [toggleArchivedNote, toggleArchivedNoteMutation] = useMutation<
     ToggleArchivedNote,
     ToggleArchivedNoteVariables

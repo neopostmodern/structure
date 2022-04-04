@@ -1,23 +1,24 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { breakpointDesktop } from '../styles/constants';
 
-const menuFontSize = '1.5rem';
-
-export const Menu = styled.div`
+export const Menu = styled.div<{
+  direction?: 'vertical' | 'vertical-horizontal';
+}>`
   display: flex;
-  @media (min-width: ${breakpointDesktop}rem) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  @media (max-width: ${breakpointDesktop - 0.001}rem) {
-    align-items: center;
-    flex-wrap: wrap;
-    button {
-      align-self: unset;
-    }
-  }
-
-  font-size: ${menuFontSize};
+  flex-direction: column;
+  align-items: flex-start;
+  ${({ direction }) =>
+    direction === 'vertical-horizontal' &&
+    css`
+      @media (max-width: ${breakpointDesktop - 0.001}rem) {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        button {
+          align-self: unset;
+        }
+      }
+    `}
 
   a,
   button {
@@ -39,7 +40,7 @@ export const StickyMenu = styled(Menu)`
 `;
 
 export const MenuSearchFieldContainer = styled.div`
-  flex-basis: 15ch;
+  flex-basis: 22.5ch;
   @media (min-width: ${breakpointDesktop}rem) {
     margin-top: ${({ theme }) => theme.spacing(2)};
   }

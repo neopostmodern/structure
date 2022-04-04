@@ -1,4 +1,4 @@
-import { LoadingButton, LoadingButtonProps } from '@mui/lab';
+import { LoadingButton } from '@mui/lab';
 import {
   Button,
   Dialog,
@@ -10,34 +10,24 @@ import {
 } from '@mui/material';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
-interface TriggerWithConfirmationBaseProps {
+type TriggerWithConfirmationProps = PropsWithChildren<{
   startIcon: ReactNode | undefined;
   onClick: () => void;
   confirmationQuestion: string;
   confirmationButtonLabel: string;
-}
-interface ButtonWithConfirmationProps extends TriggerWithConfirmationBaseProps {
-  variant: 'button';
-  buttonProps: Omit<LoadingButtonProps, keyof TriggerWithConfirmationBaseProps>;
-}
-interface MenuItemWithConfirmationProps
-  extends TriggerWithConfirmationBaseProps {
-  variant: 'menuitem';
-}
+  variant: 'button' | 'menuitem';
+  loading: boolean;
+}>;
 
-type TriggerWithConfirmationProps = PropsWithChildren<
-  MenuItemWithConfirmationProps | ButtonWithConfirmationProps
->;
-
-const TriggerWithConfirmation = (props: TriggerWithConfirmationProps) => {
-  const {
-    confirmationQuestion,
-    confirmationButtonLabel,
-    onClick,
-    startIcon,
-    variant,
-    children,
-  } = props;
+const TriggerWithConfirmation = ({
+  confirmationQuestion,
+  confirmationButtonLabel,
+  onClick,
+  startIcon,
+  variant,
+  loading,
+  children,
+}: TriggerWithConfirmationProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleTriggerClick = () => setDialogOpen(true);
@@ -51,7 +41,7 @@ const TriggerWithConfirmation = (props: TriggerWithConfirmationProps) => {
         <LoadingButton
           onClick={handleTriggerClick}
           startIcon={startIcon}
-          {...props.buttonProps}
+          loading={loading}
         >
           {children}
         </LoadingButton>

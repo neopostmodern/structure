@@ -24,7 +24,7 @@ const NotesMenu = ({
   archivedMatchedNotesCount,
   searchInput,
 }) => (
-  <Menu>
+  <Menu direction="vertical-horizontal">
     <Button onClick={toggleLayout} size="huge">
       {layoutToName(layout)}
     </Button>

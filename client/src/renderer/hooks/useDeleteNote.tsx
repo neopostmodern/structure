@@ -20,7 +20,7 @@ const TOGGLE_DELETED_NOTE_MUTATION = gql`
   }
 `;
 
-const useDeleteNote = (noteId: string | null | undefined) => {
+const useDeleteNote = (note: { _id: string }) => {
   const dispatch = useDispatch();
   const [toggleDeletedNote, toggleDeletedNoteMutation] = useMutation<
     ToggleDeletedNoteMutation,
@@ -51,15 +51,10 @@ const useDeleteNote = (noteId: string | null | undefined) => {
   });
 
   const doDeleteNote = async () => {
-    if (!noteId) {
-      throw Error(
-        '[useDeleteNote] doDeleteNote called before link was provided'
-      );
-    }
     toggleDeletedNoteMutation.reset();
     try {
       await toggleDeletedNote({
-        variables: { noteId },
+        variables: { noteId: note._id },
       });
     } catch (e) {}
   };
