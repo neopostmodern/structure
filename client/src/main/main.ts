@@ -26,6 +26,8 @@ export default class AppUpdater {
   }
 }
 
+app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar');
+
 // see package.json
 const CUSTOM_URL_PROTOCOL = 'structure';
 
