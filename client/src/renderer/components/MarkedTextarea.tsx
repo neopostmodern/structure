@@ -36,11 +36,19 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
   mousetrapRefs.current = { editDescription, lastSelection };
 
   const focusTextarea = (): void => {
+    if (!textareaElement.current) {
+      return;
+    }
     if (document.activeElement !== textareaElement.current) {
-      textareaElement.current?.focus();
+      textareaElement.current.focus();
       if (mousetrapRefs.current?.lastSelection) {
-        textareaElement.current?.setSelectionRange(
-          ...mousetrapRefs.current?.lastSelection
+        textareaElement.current.setSelectionRange(
+          ...mousetrapRefs.current.lastSelection
+        );
+      } else {
+        textareaElement.current.setSelectionRange(
+          textareaElement.current.value.length,
+          textareaElement.current.value.length
         );
       }
     }
@@ -108,12 +116,6 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
                 textareaElement.current = ref;
               }}
               fullWidth
-              onFocus={(event) => {
-                event.target.setSelectionRange(
-                  event.target.value.length,
-                  event.target.value.length
-                );
-              }}
             />
           )}
         />
