@@ -12,9 +12,15 @@ const ErrorContainer = styled.div`
 `;
 
 const ErrorInformation = styled.div`
+  width: 100%;
   align-self: flex-start;
   color: gray;
   margin-top: 5em;
+`;
+
+const FullErrorMessage = styled.pre`
+  max-width: 100%;
+  overflow-x: auto;
 `;
 
 interface NetworkErrorProps {
@@ -25,7 +31,9 @@ interface NetworkErrorProps {
 const NetworkError: React.FC<NetworkErrorProps> = ({ error, refetch }) => {
   let fullErrorMessage;
   try {
-    fullErrorMessage = <pre>{JSON.stringify(error, null, 2)}</pre>;
+    fullErrorMessage = (
+      <FullErrorMessage>{JSON.stringify(error, null, 2)}</FullErrorMessage>
+    );
   } catch (e) {
     fullErrorMessage = (
       <div>Complete error message couldn&apos;t be displayed.</div>
