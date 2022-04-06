@@ -3,6 +3,7 @@ import { GraphQLScalarType, Kind } from 'graphql'
 import Moment from 'moment'
 import {
   addTagByNameToNote,
+  fetchTitleSuggestions,
   requestNewCredential,
   revokeCredential,
   submitLink,
@@ -112,6 +113,23 @@ const rootResolvers = {
           // .populate("tags")
           .exec()
       )
+    },
+    async titleSuggestions(root, { linkId }, { user }) {
+      if (!user) {
+        throw new Error('Need to be logged in to fetch title suggestions.')
+      }
+      const link = await Link.findById(linkId)
+      if (!link) {
+        throw new Error(`No link with ID ${linkId}`)
+      }
+      try {
+        let x = await fetchTitleSuggestions(link.url)
+        console.log(link.url, x)
+        return x
+      } catch (error) {
+        console.warn(`Failed to fetch title suggestions for ${linkId}`, error)
+        return []
+      }
     },
   },
   Mutation: {

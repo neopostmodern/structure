@@ -20,9 +20,12 @@
     "express-session": "^1.17.2",
     "feed": "github:neopostmodern/feed",
     "graphql": "^15.5.0",
+    "html-entities": "^2.3.3",
+    "jsdom": "^19.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "mongoose": "^5.12.10",
+    "node-fetch": "^3.2.3",
     "passport": "^0.4.1",
     "passport-github": "^1.1.0"
   },

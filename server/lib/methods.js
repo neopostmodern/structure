@@ -1,4 +1,7 @@
 import crypto from 'crypto'
+import { decode } from 'html-entities'
+import { JSDOM } from 'jsdom'
+import fetch from 'node-fetch'
 import { Link, Note, Tag, User } from './mongo.js'
 
 export function submitLink(user, url) {
@@ -44,4 +47,29 @@ export function revokeCredential(userId, purpose) {
 
     return user.save()
   })
+}
+
+export async function fetchTitleSuggestions(url) {
+  return fetch(url)
+    .then((response) => response.text())
+    .then((html) => {
+      const dom = new JSDOM(html)
+      const metaTitles = Array.from(
+        dom.window.document.querySelectorAll('meta'),
+      )
+        .filter((meta) => {
+          const name = meta.getAttribute('name')
+          return name && name.includes('title')
+        })
+        .map((meta) => meta.content)
+
+      const titleBag = [
+        dom.window.document.querySelector('title').innerHTML,
+        ...metaTitles,
+      ].map((rawTitle) => decode(rawTitle))
+
+      return titleBag.filter(
+        (title, index) => titleBag.indexOf(title) === index,
+      ) // de-duplicate
+    })
 }

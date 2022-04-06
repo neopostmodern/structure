@@ -5,14 +5,11 @@ import {
   CHANGE_SEARCH_QUERY,
   CHANGE_TAGS_LAYOUT,
   CLEAR_CLIPBOARD,
-  CLEAR_METADATA,
   COMPLETE_LOGIN,
   INCREASE_INFINITE_SCROLL,
   LinkLayout,
-  RECEIVED_METADATA,
   REQUEST_LOGIN,
   REQUEST_LOGOUT,
-  REQUEST_METADATA,
   SET_BATCH_SELECTED,
   SET_BATCH_SELECTION,
   SET_CLIPBOARD,
@@ -31,10 +28,6 @@ export interface UserInterfaceStateType {
   archiveState: ArchiveState;
   searchQuery: string;
   infiniteScrollLimit: number;
-  metadata?: {
-    titles: Array<string>;
-  };
-  metadataLoading: boolean;
   batchEditing: boolean;
   batchSelections: BatchSelectionType;
   clipboard?: string;
@@ -54,7 +47,6 @@ const initialState: UserInterfaceStateType = {
   infiniteScrollLimit: 15,
   batchEditing: false,
   batchSelections: {},
-  metadataLoading: false,
 };
 
 const links = (
@@ -81,12 +73,6 @@ const links = (
         ...state,
         infiniteScrollLimit: state.infiniteScrollLimit + action.payload,
       };
-    case REQUEST_METADATA:
-      return { ...state, metadataLoading: true };
-    case RECEIVED_METADATA:
-      return { ...state, metadataLoading: false, metadata: action.payload };
-    case CLEAR_METADATA:
-      return { ...state, metadataLoading: false, metadata: undefined };
     case TOGGLE_BATCH_EDITING:
       return { ...state, batchEditing: !state.batchEditing };
     case SET_BATCH_SELECTED:

@@ -133,6 +133,8 @@ export default gql`
     tags(offset: Int, limit: Int): [Tag!]!
 
     tag(tagId: ID): Tag!
+
+    titleSuggestions(linkId: ID!): [String!]!
   }
 
   type Mutation {

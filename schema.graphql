@@ -83,6 +83,7 @@ type Query {
   tag(tagId: ID): Tag!
   tags(limit: Int, offset: Int): [Tag!]!
   text(textId: ID): Text!
+  titleSuggestions(linkId: ID!): [String!]!
   versions: Versions!
 }
 

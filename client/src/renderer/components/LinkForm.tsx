@@ -50,7 +50,7 @@ const LinkForm: React.FC<LinkFormProps> = ({
       <form>
         <Gap vertical={1} visibility="below-desktop" />
 
-        <LinkNameField url={watch('url')} name="name" />
+        <LinkNameField url={watch('url')} name="name" linkId={link._id} />
         <UrlField name="url" />
 
         {tagsComponent && (
