@@ -11,9 +11,9 @@ export default class ErrorBoundary extends React.Component<
     this.state = { error: undefined };
   }
 
-  static getDerivedStateFromError(error: Error) {
+  static getDerivedStateFromError({ name, stack, message }: Error) {
     // Update state so the next render will show the fallback UI.
-    return { error };
+    return { error: { name, stack, message } };
   }
 
   componentDidMount() {
@@ -34,29 +34,35 @@ export default class ErrorBoundary extends React.Component<
         caughtBy = 'window global error handler';
         const { filename, lineno, colno } = error as ErrorEvent;
         additionalInformation = (
-          <small>
-            in {filename}@{lineno}:{colno}
-          </small>
+          <>
+            <small>
+              in {filename}@{lineno}:{colno}
+            </small>
+
+            <br />
+            <br />
+          </>
         );
-      } else {
-        additionalInformation = <pre>{JSON.stringify(error, null, 2)}</pre>;
       }
       return (
         <div>
           <h1>Something went wrong.</h1>
+          <button onClick={() => window.location.reload()}>Reload page</button>
+          &nbsp;
+          <button onClick={() => (window.location.href = '/')}>
+            Back to home page
+          </button>
+          <br />
+          <br />
           Here is a technical summary of the error caught by <i>{caughtBy}</i>:
           <br />
           <br />
           <b>{error.message}</b>
           <br />
           {additionalInformation}
-          <br />
-          <br />
-          <button onClick={() => window.location.reload()}>Reload page</button>
-          &nbsp;
-          <button onClick={() => (window.location.href = '/')}>
-            Back to home page
-          </button>
+          <pre style={{ maxWidth: '100%', overflowX: 'auto' }}>
+            {'error' in error ? error.error.stack : error.stack}
+          </pre>
         </div>
       );
     }
