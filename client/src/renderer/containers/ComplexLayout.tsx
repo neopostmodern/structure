@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { CircularProgress, Tooltip } from '@mui/material';
+import { CircularProgress, Stack, Tooltip } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Centered from '../components/Centered';
@@ -47,8 +47,10 @@ const ComplexLayout: React.FC<
       <Styled.PrimaryContent wide={wide}>
         {(!user.data && user.loading) || loading ? (
           <Centered>
-            <CircularProgress color="inherit" />
-            {typeof loading === 'string' && loading}
+            <Stack alignItems="center">
+              <CircularProgress color="inherit" />
+              {typeof loading === 'string' && loading}
+            </Stack>
           </Centered>
         ) : (
           children
