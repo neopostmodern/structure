@@ -4,9 +4,12 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Centered from '../components/Centered';
 import Navigation from '../components/Navigation';
+import VersionMarks from '../components/VersionMarks';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
+import { Versions } from '../generated/Versions';
 import { RootState } from '../reducers';
-import { PROFILE_QUERY } from '../utils/sharedQueries';
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
+import { PROFILE_QUERY, VERSIONS_QUERY } from '../utils/sharedQueries';
 import * as Styled from './ComplexLayout.style';
 
 const ComplexLayout: React.FC<
@@ -23,7 +26,12 @@ const ComplexLayout: React.FC<
   wide = false,
   loading = false,
 }) => {
-  const user = useQuery<CurrentUserForLayout>(PROFILE_QUERY);
+  const user = useQuery<CurrentUserForLayout>(PROFILE_QUERY, {
+    fetchPolicy: gracefulNetworkPolicy(),
+  });
+  const versions = useQuery<Versions>(VERSIONS_QUERY, {
+    fetchPolicy: gracefulNetworkPolicy(),
+  });
 
   const isUserLoggingIn = useSelector<RootState, boolean>(
     (state) => state.userInterface.loggingIn
@@ -45,6 +53,13 @@ const ComplexLayout: React.FC<
         <Navigation />
       </Styled.Navigation>
       <Styled.PrimaryContent wide={wide}>
+        <VersionMarks
+          versions={
+            versions.loading || !versions.data
+              ? 'loading'
+              : versions.data.versions
+          }
+        />
         {(!user.data && user.loading) || loading ? (
           <Centered>
             <Stack alignItems="center">

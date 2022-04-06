@@ -9,6 +9,7 @@ import VersionMarks from '../components/VersionMarks';
 import { CurrentUserForLayout } from '../generated/CurrentUserForLayout';
 import { Versions } from '../generated/Versions';
 import { RootState } from '../reducers';
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { PROFILE_QUERY, VERSIONS_QUERY } from '../utils/sharedQueries';
 import ComplexLayout from './ComplexLayout';
 import * as Styled from './ComplexLayout.style';
@@ -20,8 +21,12 @@ const AuthWrapper: React.FC<
   }>
 > = ({ children }) => {
   const dispatch = useDispatch();
-  const user = useQuery<CurrentUserForLayout>(PROFILE_QUERY);
-  const versions = useQuery<Versions>(VERSIONS_QUERY);
+  const user = useQuery<CurrentUserForLayout>(PROFILE_QUERY, {
+    fetchPolicy: gracefulNetworkPolicy(),
+  });
+  const versions = useQuery<Versions>(VERSIONS_QUERY, {
+    fetchPolicy: gracefulNetworkPolicy(),
+  });
 
   const isUserLoggingIn = useSelector<RootState, boolean>(
     (state) => state.userInterface.loggingIn
