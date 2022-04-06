@@ -2,8 +2,6 @@ import styled from 'styled-components';
 import { TextField } from './CommonStyles';
 
 export const NameInput = styled(TextField)`
-  margin-bottom: 1rem;
-  padding-bottom: 0.1em;
   font-size: 200%;
 `;
 

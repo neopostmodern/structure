@@ -11,6 +11,7 @@ import {
   UpdateTextMutationVariables,
 } from '../generated/UpdateTextMutation';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
+import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
 import ComplexLayout from './ComplexLayout';
 
 const TEXT_QUERY = gql`
@@ -48,6 +49,7 @@ const UPDATE_TEXT_MUTATION = gql`
 `;
 
 const TextPage: React.FC<{}> = () => {
+  const isDesktopLayout = useIsDesktopLayout();
   const { textId } = useParams();
   const { loading, data } = useQuery<TextQuery>(TEXT_QUERY, {
     fetchPolicy: gracefulNetworkPolicy(),
@@ -65,11 +67,13 @@ const TextPage: React.FC<{}> = () => {
     throw Error('[TextPage] Illegal state: no data');
   }
   const { text } = data;
+  const tagsComponent = (
+    <Tags tags={text.tags} size="medium" noteId={text._id} withShortcuts />
+  );
+
   return (
     <ComplexLayout
-      primaryActions={
-        <Tags tags={text.tags} size="medium" noteId={text._id} withShortcuts />
-      }
+      primaryActions={isDesktopLayout && tagsComponent}
       secondaryActions={<NotePageMenu note={text} />}
     >
       <TextForm
@@ -77,6 +81,7 @@ const TextPage: React.FC<{}> = () => {
         onSubmit={(updatedText) =>
           updateText({ variables: { text: updatedText } })
         }
+        tagsComponent={!isDesktopLayout && tagsComponent}
       />
     </ComplexLayout>
   );

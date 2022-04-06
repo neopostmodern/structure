@@ -29,6 +29,7 @@ type InlineTagFormProps = {
 type TagMap = { [tagId: string]: TagsQuery_tags };
 
 const MAX_AUTOCOMPLETE_LENGTH = 5;
+const INLINE_TAG_FORM_ID = 'inline-tag-form';
 
 const InlineTagForm: React.FC<InlineTagFormProps> = ({
   onAddTag,
@@ -157,6 +158,7 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
     <form
       onSubmit={handleSubmit(({ tagName }) => onAddTag(tagName))}
       style={{ position: 'relative' }}
+      id={INLINE_TAG_FORM_ID}
     >
       {formState.errors.tagName && (
         <div
@@ -175,6 +177,7 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
         {...register('tagName', { required: 'no empty tags' })}
         placeholder="tag name"
         type="text"
+        form={INLINE_TAG_FORM_ID}
         onKeyDown={handleInputKeydown}
         autoFocus
         style={

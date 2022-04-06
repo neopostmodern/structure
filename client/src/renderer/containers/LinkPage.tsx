@@ -11,6 +11,7 @@ import {
   UpdateLinkMutationVariables,
 } from '../generated/UpdateLinkMutation';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
+import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
 import ComplexLayout from './ComplexLayout';
 
 const LINK_QUERY = gql`
@@ -51,6 +52,8 @@ const UPDATE_LINK_MUTATION = gql`
 `;
 
 const LinkPage: React.FC<{}> = () => {
+  const isDesktopLayout = useIsDesktopLayout();
+
   const { linkId } = useParams();
   const linkQuery = useQuery<LinkQuery, LinkQueryVariables>(LINK_QUERY, {
     fetchPolicy: gracefulNetworkPolicy(),
@@ -71,12 +74,13 @@ const LinkPage: React.FC<{}> = () => {
   }
 
   const { link } = linkQuery.data;
+  const tagsComponent = (
+    <Tags tags={link.tags} size="medium" withShortcuts noteId={link._id} />
+  );
 
   return (
     <ComplexLayout
-      primaryActions={
-        <Tags tags={link.tags} size="medium" withShortcuts noteId={link._id} />
-      }
+      primaryActions={isDesktopLayout && tagsComponent}
       secondaryActions={<NotePageMenu note={link} />}
     >
       <LinkForm
@@ -84,6 +88,7 @@ const LinkPage: React.FC<{}> = () => {
         onSubmit={(updatedLink): void => {
           updateLink({ variables: { link: updatedLink } });
         }}
+        tagsComponent={!isDesktopLayout && tagsComponent}
       />
     </ComplexLayout>
   );
