@@ -39,7 +39,7 @@ if (process.env.TARGET === 'web') {
     }
     if (action.type === REQUEST_CLIPBOARD) {
       navigator.permissions
-        .query({ name: 'clipboard-read' })
+        .query({ name: 'clipboard-read' as any })
         .then(({ state }) => {
           if (state === 'granted') {
             navigator.clipboard

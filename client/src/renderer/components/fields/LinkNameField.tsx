@@ -54,7 +54,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name }) => {
   const { watch, register, setValue } = useFormContext();
   const [nameFocused, setNameFocused] = useState(false);
   const [nameFocusedAnimation, setNameFocusedAnimation] = useState(false);
-  const inputElement = useRef<HTMLInputElement>();
+  const inputElement = useRef<HTMLInputElement | null>();
 
   const { metadata, metadataLoading } = useSelector<
     RootState,
@@ -112,6 +112,9 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name }) => {
                 }}
                 key={index}
                 onClick={(): void => {
+                  if (!inputElement.current) {
+                    return;
+                  }
                   inputElement.current.value = title;
                   setValue(name, title, {
                     shouldValidate: true,

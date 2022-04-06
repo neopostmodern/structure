@@ -10,7 +10,7 @@ const AutocompleteTagMore = styled.div`
 
 const TagAutocompleteSuggestions: React.FC<{
   autocompleteSuggestions: Array<TagObject>;
-  focusedAutocompleteIndex: number;
+  focusedAutocompleteIndex: number | null;
   onSelectTag: (tag: TagObject) => void;
   maxSuggestionCount: number;
 }> = ({

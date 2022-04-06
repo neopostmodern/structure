@@ -61,11 +61,6 @@ const links = (
   state: UserInterfaceStateType = initialState,
   action: Action
 ): UserInterfaceStateType => {
-  const deleteFields = (nextState, fields) => {
-    // eslint-disable-next-line no-param-reassign
-    fields.forEach((field) => delete nextState[field]);
-    return nextState;
-  };
   switch (action.type) {
     case REQUEST_LOGIN:
       return { ...state, loggingIn: true };
@@ -91,7 +86,7 @@ const links = (
     case RECEIVED_METADATA:
       return { ...state, metadataLoading: false, metadata: action.payload };
     case CLEAR_METADATA:
-      return deleteFields({ ...state, metadataLoading: false }, ['metadata']);
+      return { ...state, metadataLoading: false, metadata: undefined };
     case TOGGLE_BATCH_EDITING:
       return { ...state, batchEditing: !state.batchEditing };
     case SET_BATCH_SELECTED:
@@ -107,7 +102,7 @@ const links = (
     case SET_CLIPBOARD:
       return { ...state, clipboard: action.payload };
     case CLEAR_CLIPBOARD:
-      return deleteFields({ ...state }, ['clipboard']);
+      return { ...state, clipboard: undefined };
     default:
       return state;
   }

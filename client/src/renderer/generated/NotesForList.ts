@@ -21,7 +21,7 @@ export interface NotesForList_notes_Text {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (NotesForList_notes_Text_tags | null)[];
+  tags: NotesForList_notes_Text_tags[];
 }
 
 export interface NotesForList_notes_Link_tags {
@@ -38,7 +38,7 @@ export interface NotesForList_notes_Link {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (NotesForList_notes_Link_tags | null)[];
+  tags: NotesForList_notes_Link_tags[];
   url: string;
   domain: string;
 }

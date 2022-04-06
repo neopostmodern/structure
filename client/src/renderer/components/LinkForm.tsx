@@ -1,27 +1,25 @@
 import { pick } from 'lodash';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { LinkType } from '../types';
+import { LinkQuery_link } from '../generated/LinkQuery';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
 import LinkNameField from './fields/LinkNameField';
 import UrlField from './fields/UrlField';
 import { FormSubheader } from './formComponents';
 import MarkedTextarea from './MarkedTextarea';
 
-const linkFormFields = [
+const linkFormFields: Array<keyof LinkQuery_link> = [
   '_id',
   'url',
-  'domain',
-  'path',
   'name',
   'description',
   'archivedAt',
 ];
-type LinkInForm = Pick<LinkType, typeof linkFormFields[number]>;
+type LinkInForm = Pick<LinkQuery_link, typeof linkFormFields[number]>;
 
 type LinkFormProps = {
-  link: LinkType;
-  onSubmit: (updatedLink: LinkType) => void;
+  link: LinkQuery_link;
+  onSubmit: (updatedLink: LinkQuery_link) => void;
 };
 
 const LinkForm: React.FC<LinkFormProps> = ({ link, onSubmit }) => {

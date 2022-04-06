@@ -23,7 +23,7 @@ export interface LinkQuery_link {
   name: string;
   description: string;
   domain: string;
-  tags: (LinkQuery_link_tags | null)[];
+  tags: LinkQuery_link_tags[];
 }
 
 export interface LinkQuery {

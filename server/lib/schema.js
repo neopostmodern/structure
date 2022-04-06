@@ -54,9 +54,8 @@ export default gql`
     archivedAt: Date
     deletedAt: Date
 
-    # Comments posted about this repository
     # tags(limit: Int, offset: Int): [Tag]!
-    tags: [Tag]!
+    tags: [Tag!]!
   }
 
   type Text implements INote {
@@ -71,9 +70,8 @@ export default gql`
     archivedAt: Date
     deletedAt: Date
 
-    # Comments posted about this repository
     # tags(limit: Int, offset: Int): [Tag]!
-    tags: [Tag]!
+    tags: [Tag!]!
   }
   input InputText {
     _id: ID!
@@ -99,7 +97,7 @@ export default gql`
 
     # Comments posted about this repository
     # tags(limit: Int, offset: Int): [Tag]!
-    tags: [Tag]!
+    tags: [Tag!]!
   }
   input InputLink {
     _id: ID!

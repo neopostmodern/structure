@@ -24,7 +24,7 @@ export interface TagWithNotesQuery_tag_notes_Text {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (TagWithNotesQuery_tag_notes_Text_tags | null)[];
+  tags: TagWithNotesQuery_tag_notes_Text_tags[];
 }
 
 export interface TagWithNotesQuery_tag_notes_Link_tags {
@@ -42,7 +42,7 @@ export interface TagWithNotesQuery_tag_notes_Link {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (TagWithNotesQuery_tag_notes_Link_tags | null)[];
+  tags: TagWithNotesQuery_tag_notes_Link_tags[];
   url: string;
   domain: string;
 }

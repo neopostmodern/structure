@@ -37,29 +37,28 @@ type SettingsEntryAction = {
 type SettingsEntryProps = {
   title: string | JSX.Element;
   comment?: string | JSX.Element;
-} & (SettingsEntryAction | never);
+} & (SettingsEntryAction | {});
 
 const SettingsEntry: React.FC<SettingsEntryProps> = ({
   title,
-  actionTitle,
-  actionHandler,
   comment,
   children,
+  ...optionalProps
 }) => (
   <>
     <SettingsTable>
       <SettingsTablePurpose>{title}</SettingsTablePurpose>
       <SettingsTableValue>{children}</SettingsTableValue>
-      {actionTitle && (
+      {'actionTitle' in optionalProps && optionalProps.actionTitle && (
         <SettingsTableAction>
           <Button
             variant="outlined"
             size="small"
             onClick={(): void => {
-              actionHandler();
+              optionalProps.actionHandler();
             }}
           >
-            {actionTitle}
+            {optionalProps.actionTitle}
           </Button>
         </SettingsTableAction>
       )}

@@ -35,8 +35,10 @@ function rgbToHsl(rgbColor: ColorComponents): ColorComponents {
         h = (r - g) / d + 4;
         break;
     }
+    // @ts-ignore
     h /= 6;
   }
+  // @ts-ignore
   return [h * 360, s * 100, l * 100];
 }
 
@@ -75,7 +77,7 @@ export const ColorCache = new Proxy(internalColorCache, {
   },
 });
 
-const colorTools = (element: HTMLElement | undefined): void => {
+const colorTools = (element: HTMLElement | null): void => {
   if (!element) {
     return;
   }

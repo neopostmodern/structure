@@ -21,7 +21,7 @@ export interface AddLinkMutation_submitLink {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (AddLinkMutation_submitLink_tags | null)[];
+  tags: AddLinkMutation_submitLink_tags[];
   url: string;
   domain: string;
 }

@@ -17,7 +17,7 @@ export interface RemoveTagByIdFromNote_removeTagByIdFromNote_tags {
 export interface RemoveTagByIdFromNote_removeTagByIdFromNote {
   __typename: "Link" | "Text";
   _id: string;
-  tags: (RemoveTagByIdFromNote_removeTagByIdFromNote_tags | null)[];
+  tags: RemoveTagByIdFromNote_removeTagByIdFromNote_tags[];
 }
 
 export interface RemoveTagByIdFromNote {

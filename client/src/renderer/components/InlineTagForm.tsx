@@ -1,8 +1,14 @@
 import { Paper } from '@mui/material';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  KeyboardEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
-import { TagType } from '../types';
+import { TagsQuery_tags } from '../generated/TagsQuery';
 import { TextField } from './CommonStyles';
 import TagAutocompleteSuggestions from './TagAutocompleteSuggestions';
 
@@ -15,10 +21,12 @@ const AutocompleteSuggestionsContainer = styled(Paper)`
 `;
 
 type InlineTagFormProps = {
-  tags: 'loading' | Array<TagType>;
+  tags: 'loading' | Array<TagsQuery_tags>;
   onAddTag: (tagName: string) => void;
   onAbort: () => void;
 };
+
+type TagMap = { [tagId: string]: TagsQuery_tags };
 
 const MAX_AUTOCOMPLETE_LENGTH = 5;
 
@@ -29,22 +37,23 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
 }) => {
   const { handleSubmit, register, formState, watch } = useForm();
   const nameValue = watch('tagName');
-  const [focusedAutocompleteIndex, setFocusedAutocompleteIndex] =
-    useState<number>(0);
+  const [focusedAutocompleteIndex, setFocusedAutocompleteIndex] = useState<
+    number | null
+  >(0);
   const [touched, setTouched] = useState(false);
 
-  const tagMap = useMemo<{ [x: string]: TagType }>(() => {
+  const tagMap = useMemo<TagMap>(() => {
     if (tags === 'loading') {
       return {};
     }
-    const nextTagMap = {};
+    const nextTagMap: TagMap = {};
     tags.forEach((tag) => {
       nextTagMap[tag._id] = tag;
     });
     return nextTagMap;
   }, [tags]);
 
-  const autocompleteSuggestions = useMemo<TagType[]>(() => {
+  const autocompleteSuggestions = useMemo<TagsQuery_tags[]>(() => {
     if (tags === 'loading') {
       return [];
     }
@@ -74,17 +83,13 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
   );
 
   useEffect(() => {
-    if (
-      autocompleteSuggestions.length === 0 &&
-      focusedAutocompleteIndex !== null
-    ) {
-      setFocusedAutocompleteIndex(null);
-    } else if (focusedAutocompleteIndex > autocompleteSuggestions.length) {
-      setFocusedAutocompleteIndex(autocompleteSuggestions.length - 1);
-    }
-
-    if (
-      focusedAutocompleteIndex === null &&
+    if (focusedAutocompleteIndex !== null) {
+      if (autocompleteSuggestions.length === 0) {
+        setFocusedAutocompleteIndex(null);
+      } else if (focusedAutocompleteIndex > autocompleteSuggestions.length) {
+        setFocusedAutocompleteIndex(autocompleteSuggestions.length - 1);
+      }
+    } else if (
       lastAutocompleteSuggestionsLength.current === 0 &&
       autocompleteSuggestions.length > 0
     ) {
@@ -93,41 +98,41 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
     lastAutocompleteSuggestionsLength.current = autocompleteSuggestions.length;
   }, [autocompleteSuggestions, focusedAutocompleteIndex]);
 
-  const handleInputKeydown = (event): void => {
-    let nextFocusedAutocompleteIndex = focusedAutocompleteIndex;
+  const handleInputKeydown = (event: KeyboardEvent<HTMLElement>): void => {
+    let nextFocusedAutocompleteIndex: number | null = focusedAutocompleteIndex;
     switch (event.key) {
       case 'Escape':
         onAbort();
-        break;
+        return;
       case 'Enter':
         // if either shift key is pressed or the input field itself is focused, let default input
         // field behavior kick in (instead of using suggestion)
         if (!event.shiftKey && focusedAutocompleteIndex !== null) {
           onAddTag(autocompleteSuggestions[focusedAutocompleteIndex].name);
         }
-        break;
+        return;
       case 'ArrowDown':
         if (focusedAutocompleteIndex === null) {
           nextFocusedAutocompleteIndex = 0;
         } else {
-          nextFocusedAutocompleteIndex += 1;
+          nextFocusedAutocompleteIndex = focusedAutocompleteIndex + 1;
         }
         break;
       case 'ArrowUp':
         if (focusedAutocompleteIndex === null) {
           nextFocusedAutocompleteIndex = MAX_AUTOCOMPLETE_LENGTH - 1;
         } else {
-          nextFocusedAutocompleteIndex -= 1;
+          nextFocusedAutocompleteIndex = focusedAutocompleteIndex - 1;
         }
         break;
       case 'ArrowLeft':
         if (focusedAutocompleteIndex !== null) {
-          nextFocusedAutocompleteIndex -= 1;
+          nextFocusedAutocompleteIndex = focusedAutocompleteIndex - 1;
         }
         break;
       case 'ArrowRight':
         if (focusedAutocompleteIndex !== null) {
-          nextFocusedAutocompleteIndex += 1;
+          nextFocusedAutocompleteIndex = focusedAutocompleteIndex + 1;
         }
         break;
       default:
@@ -135,9 +140,10 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
     }
 
     if (
-      nextFocusedAutocompleteIndex < 0 ||
-      nextFocusedAutocompleteIndex >=
-        Math.min(MAX_AUTOCOMPLETE_LENGTH, autocompleteSuggestions.length)
+      nextFocusedAutocompleteIndex !== null &&
+      (nextFocusedAutocompleteIndex < 0 ||
+        nextFocusedAutocompleteIndex >=
+          Math.min(MAX_AUTOCOMPLETE_LENGTH, autocompleteSuggestions.length))
     ) {
       nextFocusedAutocompleteIndex = null;
     }

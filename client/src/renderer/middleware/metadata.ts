@@ -5,7 +5,7 @@ import {
 } from '../actions/userInterface';
 import htmlDecode from '../utils/htmlDecode';
 
-export default (store) => (next) => (action) => {
+export default () => (next) => (action) => {
   if (action.type === REQUEST_METADATA) {
     fetch(action.payload) // , { mode: 'no-cors' }
       .then((response) => response.text())

@@ -21,7 +21,7 @@ export interface AddTextMutation_createText {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (AddTextMutation_createText_tags | null)[];
+  tags: AddTextMutation_createText_tags[];
 }
 
 export interface AddTextMutation {

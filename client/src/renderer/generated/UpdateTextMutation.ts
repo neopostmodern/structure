@@ -23,7 +23,7 @@ export interface UpdateTextMutation_updateText {
   archivedAt: any | null;
   name: string;
   description: string;
-  tags: (UpdateTextMutation_updateText_tags | null)[];
+  tags: UpdateTextMutation_updateText_tags[];
 }
 
 export interface UpdateTextMutation {

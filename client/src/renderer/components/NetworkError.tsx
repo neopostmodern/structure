@@ -24,11 +24,22 @@ const FullErrorMessage = styled.pre`
 `;
 
 interface NetworkErrorProps {
-  error: ApolloError; // todo: could be more generic?
+  error: ApolloError | undefined; // todo: could be more generic?
   refetch: () => void;
 }
 
 const NetworkError: React.FC<NetworkErrorProps> = ({ error, refetch }) => {
+  if (!error) {
+    return (
+      <ErrorContainer>
+        <h1>Network error.</h1>
+        <ErrorInformation>
+          A network error was reported but no error was supplied.
+        </ErrorInformation>
+      </ErrorContainer>
+    );
+  }
+
   let fullErrorMessage;
   try {
     fullErrorMessage = (

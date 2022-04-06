@@ -29,7 +29,7 @@ const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
     deleteNote,
     errorSnackbar: deleteLinkErrorSnackbar,
     loading: deleteLinkLoading,
-  } = useDeleteNote(note._id);
+  } = useDeleteNote(note);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleClose = () => {
@@ -54,19 +54,19 @@ const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            {note.url && (
+            {'url' in note && note.url && (
               <MenuItem onClick={() => openInDefaultBrowser(note.url)}>
                 <ListItemIcon>
                   <Launch />
-                </ListItemIcon>{' '}
+                </ListItemIcon>
                 Open in browser
               </MenuItem>
             )}
-            {note.url && navigator.share && (
+            {'url' in note && note.url && navigator.share && (
               <MenuItem onClick={() => shareUrl(note.url, note.name)}>
                 <ListItemIcon>
                   <Share />
-                </ListItemIcon>{' '}
+                </ListItemIcon>
                 Share URL
               </MenuItem>
             )}
@@ -85,7 +85,10 @@ const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
               variant="menuitem"
               note={note}
               loading={deleteLinkLoading}
-              deleteNote={deleteNote}
+              deleteNote={() => {
+                handleClose();
+                deleteNote();
+              }}
             />
           </Menu>
         </>

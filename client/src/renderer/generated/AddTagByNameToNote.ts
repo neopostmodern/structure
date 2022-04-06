@@ -17,7 +17,7 @@ export interface AddTagByNameToNote_addTagByNameToNote_tags {
 export interface AddTagByNameToNote_addTagByNameToNote {
   __typename: "Link" | "Text";
   _id: string;
-  tags: (AddTagByNameToNote_addTagByNameToNote_tags | null)[];
+  tags: AddTagByNameToNote_addTagByNameToNote_tags[];
 }
 
 export interface AddTagByNameToNote {

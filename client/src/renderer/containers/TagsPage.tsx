@@ -7,11 +7,10 @@ import styled, { css } from 'styled-components';
 import { changeTagsLayout, TagsLayout } from '../actions/userInterface';
 import { Menu } from '../components/Menu';
 import Tag from '../components/Tag';
-import { TagsQuery } from '../generated/TagsQuery';
+import { TagsQuery, TagsQuery_tags } from '../generated/TagsQuery';
 import { UpdateTag2, UpdateTag2Variables } from '../generated/UpdateTag2';
 import { RootState } from '../reducers';
 import { breakpointDesktop } from '../styles/constants';
-import { TagType } from '../types';
 import colorTools, { ColorCache } from '../utils/colorTools';
 import { stripTypename } from '../utils/graphQl';
 import ComplexLayout from './ComplexLayout';
@@ -98,6 +97,10 @@ const UPDATE_TAG_MUTATION = gql`
   }
 `;
 
+type ColorTagGroups = {
+  [color: string]: Array<TagsQuery_tags>;
+};
+
 const TagsPage: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const layout = useSelector<RootState, TagsLayout>(
@@ -109,10 +112,10 @@ const TagsPage: React.FC<{}> = () => {
     UPDATE_TAG_MUTATION
   );
 
-  const [draggedTag, setDraggedTag] = useState<TagType>();
+  const [draggedTag, setDraggedTag] = useState<TagsQuery_tags>();
   const [droppableColor, setDroppableColor] = useState<string | null>();
-  const colorTagGroups = useMemo(() => {
-    const groups = {};
+  const colorTagGroups = useMemo<ColorTagGroups>(() => {
+    const groups: ColorTagGroups = {};
 
     tagsQuery.data?.tags.forEach((tag) => {
       if (!groups[tag.color]) {
@@ -158,6 +161,9 @@ const TagsPage: React.FC<{}> = () => {
           setDroppableColor(null);
         }}
         onDrop={(): void => {
+          if (!droppableColor) {
+            return;
+          }
           const recoloredTag = {
             ...draggedTag,
             color: droppableColor,

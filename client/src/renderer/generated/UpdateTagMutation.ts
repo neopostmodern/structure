@@ -24,7 +24,7 @@ export interface UpdateTagMutation_updateTag_notes_Text {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (UpdateTagMutation_updateTag_notes_Text_tags | null)[];
+  tags: UpdateTagMutation_updateTag_notes_Text_tags[];
 }
 
 export interface UpdateTagMutation_updateTag_notes_Link_tags {
@@ -42,7 +42,7 @@ export interface UpdateTagMutation_updateTag_notes_Link {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (UpdateTagMutation_updateTag_notes_Link_tags | null)[];
+  tags: UpdateTagMutation_updateTag_notes_Link_tags[];
   url: string;
   domain: string;
 }

@@ -18,7 +18,7 @@ const TOGGLE_ARCHIVED_MUTATION = gql`
 `;
 const useToggleArchivedNote = (note: {
   _id: string;
-  archivedAt: DateOrTimestamp;
+  archivedAt: DateOrTimestamp | null;
 }) => {
   const [toggleArchivedNote, toggleArchivedNoteMutation] = useMutation<
     ToggleArchivedNote,

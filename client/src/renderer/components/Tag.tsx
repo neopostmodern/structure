@@ -1,4 +1,4 @@
-import { Chip, SxProps } from '@mui/material';
+import { Chip, ChipProps, SxProps } from '@mui/material';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { push } from 'redux-first-history';
@@ -17,13 +17,13 @@ interface TagProps {
   sx?: SxProps;
 }
 
-const Tag: React.FC<
-  TagProps &
-    React.DetailedHTMLProps<
-      React.HTMLAttributes<HTMLDivElement>,
-      HTMLDivElement
-    >
-> = ({ tag, onClick, sx = {}, size = 'small', ...props }) => {
+const Tag: React.FC<TagProps & ChipProps> = ({
+  tag,
+  onClick,
+  sx = {},
+  size = 'small',
+  ...props
+}) => {
   const dispatch = useDispatch();
   return (
     <TagChip

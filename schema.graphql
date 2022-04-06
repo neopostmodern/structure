@@ -12,7 +12,7 @@ interface INote {
   deletedAt: Date
   description: String!
   name: String!
-  tags: [Tag]!
+  tags: [Tag!]!
   type: NoteType!
   user: User!
 }
@@ -48,7 +48,7 @@ type Link implements INote {
   domain: String!
   name: String!
   path: String!
-  tags: [Tag]!
+  tags: [Tag!]!
   type: NoteType!
   url: String!
   user: User!
@@ -101,7 +101,7 @@ type Text implements INote {
   deletedAt: Date
   description: String!
   name: String!
-  tags: [Tag]!
+  tags: [Tag!]!
   type: NoteType!
   user: User!
 }

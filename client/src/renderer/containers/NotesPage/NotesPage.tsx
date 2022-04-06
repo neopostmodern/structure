@@ -18,7 +18,7 @@ import { StickyMenu } from '../../components/Menu';
 import NetworkError from '../../components/NetworkError';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
-import { NotesForList } from '../../generated/NotesForList';
+import { NotesForList, NotesForList_notes } from '../../generated/NotesForList';
 import { RootState } from '../../reducers';
 import {
   BatchSelectionType,
@@ -72,7 +72,7 @@ const textIncludes = (needle?: string, haystack?: string): boolean => {
 };
 
 const filterNotes = (
-  notes,
+  notes: Array<NotesForList_notes>,
   searchQuery: string,
   archiveState: ArchiveState
 ) => {

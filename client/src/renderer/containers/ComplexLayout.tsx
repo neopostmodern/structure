@@ -11,7 +11,7 @@ import * as Styled from './ComplexLayout.style';
 
 const ComplexLayout: React.FC<
   React.PropsWithChildren<{
-    primaryActions?: JSX.Element | null;
+    primaryActions?: JSX.Element | null | false;
     secondaryActions?: JSX.Element | null;
     loading?: boolean | string;
     wide?: boolean;
@@ -29,7 +29,7 @@ const ComplexLayout: React.FC<
     (state) => state.userInterface.loggingIn
   );
   const path = useSelector<RootState, string>(
-    (state) => state.router.location.pathname
+    (state) => state.router.location?.pathname || ''
   );
 
   useEffect(() => {

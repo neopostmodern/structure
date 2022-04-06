@@ -54,7 +54,7 @@ const VersionMarks: React.FC<VersionMarksProps> = ({ versions }) => {
     );
   }
 
-  if (recommended > config.apiVersion) {
+  if (recommended && recommended > config.apiVersion) {
     return (
       <VersionMarksContainer>
         <Headline>Your Structure is outdated.</Headline>

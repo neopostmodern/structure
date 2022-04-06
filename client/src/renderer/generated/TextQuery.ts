@@ -21,7 +21,7 @@ export interface TextQuery_text {
   archivedAt: any | null;
   name: string;
   description: string;
-  tags: (TextQuery_text_tags | null)[];
+  tags: TextQuery_text_tags[];
 }
 
 export interface TextQuery {

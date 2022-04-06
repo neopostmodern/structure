@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { TextField } from '../components/CommonStyles';
-import Credentials from '../components/Credentials';
+import Credentials, { CredentialsOrLoading } from '../components/Credentials';
 import NetworkError from '../components/NetworkError';
 import SettingsEntry from '../components/SettingsEntry';
 import {
@@ -80,29 +80,30 @@ const UserSettingsSection: React.FC<{}> = () => {
     );
   }
 
-  const credentialsConfiguration = userQuery.loading
-    ? 'loading'
-    : [
-        {
-          displayName: 'Bookmarklet (standalone)',
-          name: 'bookmarklet',
-          value:
-            userQuery.data.currentUser.credentials.bookmarklet &&
-            bookmarkletCode(
-              backendUrl,
-              userQuery.data.currentUser.credentials.bookmarklet
-            ),
-          comment:
-            'This bookmarklet will save links in the background. You will not be able to change the title or tag it immediately. The bookmarklet uses an authentication token.',
-        },
-        {
-          displayName: 'RSS-Feed',
-          name: 'rss',
-          value:
-            userQuery.data.currentUser.credentials.rss &&
-            rssFeedUrl(backendUrl, userQuery.data.currentUser.credentials.rss),
-        },
-      ];
+  let credentialsConfiguration: CredentialsOrLoading = 'loading';
+  if (userQuery.data) {
+    credentialsConfiguration = [
+      {
+        displayName: 'Bookmarklet (standalone)',
+        name: 'bookmarklet',
+        value:
+          userQuery.data.currentUser?.credentials?.bookmarklet &&
+          bookmarkletCode(
+            backendUrl,
+            userQuery.data.currentUser.credentials.bookmarklet
+          ),
+        comment:
+          'This bookmarklet will save links in the background. You will not be able to change the title or tag it immediately. The bookmarklet uses an authentication token.',
+      },
+      {
+        displayName: 'RSS-Feed',
+        name: 'rss',
+        value:
+          userQuery.data.currentUser?.credentials?.rss &&
+          rssFeedUrl(backendUrl, userQuery.data.currentUser.credentials.rss),
+      },
+    ];
+  }
 
   return (
     <>

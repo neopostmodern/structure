@@ -21,7 +21,7 @@ export interface BaseNote_Text {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (BaseNote_Text_tags | null)[];
+  tags: BaseNote_Text_tags[];
 }
 
 export interface BaseNote_Link_tags {
@@ -38,7 +38,7 @@ export interface BaseNote_Link {
   createdAt: any;
   archivedAt: any | null;
   description: string;
-  tags: (BaseNote_Link_tags | null)[];
+  tags: BaseNote_Link_tags[];
   url: string;
   domain: string;
 }

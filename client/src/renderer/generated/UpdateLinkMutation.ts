@@ -24,7 +24,7 @@ export interface UpdateLinkMutation_updateLink {
   domain: string;
   name: string;
   description: string;
-  tags: (UpdateLinkMutation_updateLink_tags | null)[];
+  tags: UpdateLinkMutation_updateLink_tags[];
 }
 
 export interface UpdateLinkMutation {
