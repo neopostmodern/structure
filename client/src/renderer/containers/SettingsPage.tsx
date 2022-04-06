@@ -38,7 +38,7 @@ const SettingsPage: React.FC = () => {
   return (
     <ComplexLayout
       primaryActions={
-        <Menu>
+        <Menu direction="vertical-horizontal">
           {userQuery.data?.currentUser && (
             <Button component={Link} size="huge" to="/tags">
               My tags
