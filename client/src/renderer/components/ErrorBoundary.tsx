@@ -31,21 +31,32 @@ export default class ErrorBoundary extends React.Component<
       let additionalInformation;
       let error = this.state.error;
       if ('lineno' in error) {
-        error = error.error;
         caughtBy = 'window global error handler';
-        const { type, filename, lineno, colno } = error as ErrorEvent;
+        const { filename, lineno, colno } = error as ErrorEvent;
         additionalInformation = (
           <small>
-            {type} in {filename}@{lineno}:{colno}
+            in {filename}@{lineno}:{colno}
           </small>
         );
+      } else {
+        additionalInformation = <pre>{JSON.stringify(error, null, 2)}</pre>;
       }
       return (
         <div>
           <h1>Something went wrong.</h1>
           Here is a technical summary of the error caught by <i>{caughtBy}</i>:
-          <pre>{JSON.stringify(error, null, 2)}</pre>
+          <br />
+          <br />
+          <b>{error.message}</b>
+          <br />
           {additionalInformation}
+          <br />
+          <br />
+          <button onClick={() => window.location.reload()}>Reload page</button>
+          &nbsp;
+          <button onClick={() => (window.location.href = '/')}>
+            Back to home page
+          </button>
         </div>
       );
     }
