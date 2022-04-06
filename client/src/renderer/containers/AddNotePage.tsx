@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import gql from 'graphql-tag';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
-import { push } from 'redux-first-history';
+import { push, replace } from 'redux-first-history';
 import AddLinkForm from '../components/AddLinkForm';
 import {
   AddLinkMutation,
@@ -34,37 +34,17 @@ const ADD_TEXT_MUTATION = gql`
 const AddLinkPage: React.FC<{}> = () => {
   const dispatch = useDispatch();
 
-  const [addLink] = useMutation<AddLinkMutation, AddLinkMutationVariables>(
-    ADD_LINK_MUTATION,
-    {
-      onCompleted: ({ submitLink }) => {
-        dispatch(push(`/links/${submitLink._id}`));
-      },
-      onError: (error) => {
-        console.error(error);
-      },
-      update: (cache, { data: { submitLink } }) => {
-        const cacheValue = cache.readQuery<NotesForList>({
-          query: NOTES_QUERY,
-        });
-
-        if (!cacheValue) {
-          return;
-        }
-
-        const { notes } = cacheValue;
-        cache.writeQuery({
-          query: NOTES_QUERY,
-          data: { notes: [...notes, { ...submitLink, type: 'LINK' }] },
-        });
-      },
-    }
-  );
-  const [addText] = useMutation<AddTextMutation>(ADD_TEXT_MUTATION, {
-    onCompleted: ({ createText }) => {
-      dispatch(push(`/texts/${createText._id}`));
+  const [addLink, addLinkMutation] = useMutation<
+    AddLinkMutation,
+    AddLinkMutationVariables
+  >(ADD_LINK_MUTATION, {
+    onCompleted: ({ submitLink }) => {
+      dispatch(replace(`/links/${submitLink._id}`));
     },
-    update: (cache, { data: { createText } }) => {
+    onError: (error) => {
+      console.error(error);
+    },
+    update: (cache, { data: { submitLink } }) => {
       const cacheValue = cache.readQuery<NotesForList>({
         query: NOTES_QUERY,
       });
@@ -76,20 +56,49 @@ const AddLinkPage: React.FC<{}> = () => {
       const { notes } = cacheValue;
       cache.writeQuery({
         query: NOTES_QUERY,
-        data: { notes: [...notes, { ...createText, type: 'TEXT' }] },
+        data: { notes: [...notes, { ...submitLink, type: 'LINK' }] },
       });
     },
   });
+  const [addText, addTextMutation] = useMutation<AddTextMutation>(
+    ADD_TEXT_MUTATION,
+    {
+      onCompleted: ({ createText }) => {
+        dispatch(replace(`/texts/${createText._id}`));
+      },
+      update: (cache, { data: { createText } }) => {
+        const cacheValue = cache.readQuery<NotesForList>({
+          query: NOTES_QUERY,
+        });
+
+        if (!cacheValue) {
+          return;
+        }
+
+        const { notes } = cacheValue;
+        cache.writeQuery({
+          query: NOTES_QUERY,
+          data: { notes: [...notes, { ...createText, type: 'TEXT' }] },
+        });
+      },
+    }
+  );
   const urlSearchParams = new URLSearchParams(useLocation().search);
 
   return (
-    <ComplexLayout>
+    <ComplexLayout
+      loading={
+        (addLinkMutation.loading || addTextMutation.loading) && 'Creating note'
+      }
+    >
       <AddLinkForm
-        defaultValue={urlSearchParams.get('url')}
+        defaultValue={urlSearchParams.get('url') || undefined}
         autoSubmit={urlSearchParams.has('autoSubmit')}
-        onSubmit={(url): void => addLink({ variables: { url } })}
+        onSubmit={(url): void => {
+          addLink({ variables: { url } });
+        }}
         onAbort={(): void => {
-          history.push('/');
+          dispatch(push('/'));
         }}
       />
       <Button
