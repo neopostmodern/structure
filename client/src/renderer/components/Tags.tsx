@@ -55,6 +55,7 @@ const tagShortcutKeys = ['ctrl+t', 'command+t'];
 
 const TagContainer = styled.div`
   display: flex;
+  min-width: 0;
   align-items: center;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
