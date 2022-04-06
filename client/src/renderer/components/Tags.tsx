@@ -1,13 +1,9 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql } from '@apollo/client';
 import React from 'react';
 import styled from 'styled-components';
-import {
-  RemoveTagByIdFromNote,
-  RemoveTagByIdFromNoteVariables,
-} from '../generated/RemoveTagByIdFromNote';
 import { TagsQuery_tags } from '../generated/TagsQuery';
 import AddTagForm from './AddTagForm';
-import Tag from './Tag';
+import TagWithContextMenu from './TagWithContextMenu';
 
 export const REMOVE_TAG_MUTATION = gql`
   mutation RemoveTagByIdFromNote($noteId: ID!, $tagId: ID!) {
@@ -45,23 +41,10 @@ const Tags: React.FC<TagsProps> = ({
   size,
   withShortcuts = false,
 }) => {
-  const [removeTagFromNote] = useMutation<
-    RemoveTagByIdFromNote,
-    RemoveTagByIdFromNoteVariables
-  >(REMOVE_TAG_MUTATION);
-
   return (
     <TagContainer>
       {tags.map((tag) => (
-        <Tag
-          key={tag._id}
-          tag={tag}
-          size={size}
-          onContextMenu={(event): void => {
-            event.preventDefault();
-            removeTagFromNote({ variables: { noteId, tagId: tag._id } });
-          }}
-        />
+        <TagWithContextMenu tag={tag} size={size} noteId={noteId} />
       ))}
       <AddTagForm
         withShortcuts={withShortcuts}
