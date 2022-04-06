@@ -4,9 +4,10 @@ export default gql`
   scalar Date
 
   type Versions {
-    minimum: Int!
-    recommended: Int
-    maximum: Int
+    minimum: String
+    current: String!
+    recommended: String
+      @deprecated(reason: "Upgrade to 0.20.0+ and use 'current' field")
   }
 
   type Credentials {
@@ -115,7 +116,7 @@ export default gql`
     # Return the currently logged in user, or null if nobody is logged in
     currentUser: User
 
-    versions: Versions!
+    versions(currentVersion: String): Versions!
 
     links(
       # The number of items to skip, for pagination

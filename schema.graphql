@@ -84,7 +84,7 @@ type Query {
   tags(limit: Int, offset: Int): [Tag!]!
   text(textId: ID): Text!
   titleSuggestions(linkId: ID!): [String!]!
-  versions: Versions!
+  versions(currentVersion: String): Versions!
 }
 
 type Tag {
@@ -116,7 +116,7 @@ type User {
 }
 
 type Versions {
-  maximum: Int
-  minimum: Int!
-  recommended: Int
+  current: String!
+  minimum: String
+  recommended: String @deprecated(reason: "Upgrade to 0.20.0+ and use 'current' field")
 }

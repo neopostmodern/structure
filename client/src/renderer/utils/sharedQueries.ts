@@ -1,18 +1,14 @@
 import gql from 'graphql-tag';
 
 export const PROFILE_QUERY = gql`
-  query CurrentUserForLayout {
+  query ProfileQuery($currentVersion: String!) {
     currentUser {
       _id
       name
     }
-  }
-`;
-export const VERSIONS_QUERY = gql`
-  query Versions {
-    versions {
+    versions(currentVersion: $currentVersion) {
+      current
       minimum
-      recommended
     }
   }
 `;

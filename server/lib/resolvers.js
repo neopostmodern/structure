@@ -1,6 +1,7 @@
 import { makeExecutableSchema } from 'apollo-server'
 import { GraphQLScalarType, Kind } from 'graphql'
 import Moment from 'moment'
+import packageJson from '../package.json'
 import {
   addTagByNameToNote,
   fetchTitleSuggestions,
@@ -56,10 +57,19 @@ const rootResolvers = {
     currentUser(root, args, context) {
       return context.user || null
     },
-    versions(root, args, context) {
+    versions(root, { currentVersion }) {
+      if (currentVersion) {
+        return {
+          // todo: return the minimum required version depending on the client's current version
+          // minimum: '0.20.0',
+          current: packageJson.version,
+        }
+      }
+
+      // backward compatibility < 0.20.0
       return {
-        minimum: 7,
-        recommended: 7,
+        minimum: 8,
+        recommended: 8,
       }
     },
     notes(root, { offset, limit }, context) {
