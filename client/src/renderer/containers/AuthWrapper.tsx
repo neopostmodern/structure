@@ -37,7 +37,7 @@ const AuthWrapper: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
     profileQuery.refetch();
   }, [isUserLoggingIn]);
 
-  const isSettingsPage = path === '/me';
+  const isSettingsPage = path === '/settings';
 
   if (isUserLoggingIn) {
     return <ComplexLayout loading="Logging in..." />;
@@ -73,6 +73,15 @@ const AuthWrapper: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
     );
   }
 
+  let isProfileQueryLoading = false;
+  if (profileQuery.loading) {
+    isProfileQueryLoading = !profileQuery.data;
+  } else {
+    if (!profileQuery.data) {
+      throw Error('[AuthWrapper] Illegal state: no data');
+    }
+  }
+
   return (
     <Styled.Container>
       <Styled.Navigation>
@@ -81,9 +90,7 @@ const AuthWrapper: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       <Styled.PrimaryContent>
         <VersionMarks
           versions={
-            profileQuery.loading || !profileQuery.data
-              ? 'loading'
-              : profileQuery.data.versions
+            isProfileQueryLoading ? 'loading' : profileQuery.data.versions
           }
           currentPackageVersion={currentPackageVersion}
         />
@@ -91,7 +98,7 @@ const AuthWrapper: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       </Styled.PrimaryContent>
       <Styled.UserAndMenuIndicator>
         {!isSettingsPage && (
-          <Styled.Username to="/me">Settings</Styled.Username>
+          <Styled.Username to="/settings">Settings</Styled.Username>
         )}
       </Styled.UserAndMenuIndicator>
     </Styled.Container>

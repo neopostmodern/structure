@@ -48,15 +48,17 @@ const LastVisitedNotes = () => {
   return (
     <div>
       <Tooltip title="Recently viewed notes">
-        <IconButton
-          aria-controls={menuOpen ? menuId : undefined}
-          aria-haspopup="true"
-          aria-expanded={menuOpen ? 'true' : undefined}
-          onClick={handleClick}
-          disabled={lastVisitedNotes.length === 0 || notesQuery.loading}
-        >
-          {notesQuery.loading ? <HistoryLoadingIcon /> : <HistoryIcon />}
-        </IconButton>
+        <span>
+          <IconButton
+            aria-controls={menuOpen ? menuId : undefined}
+            aria-haspopup="true"
+            aria-expanded={menuOpen ? 'true' : undefined}
+            onClick={handleClick}
+            disabled={lastVisitedNotes.length === 0 || notesQuery.loading}
+          >
+            {notesQuery.loading ? <HistoryLoadingIcon /> : <HistoryIcon />}
+          </IconButton>
+        </span>
       </Tooltip>
       <Menu
         id={menuId}

@@ -1,4 +1,5 @@
 import { NetworkStatus, useMutation, useQuery } from '@apollo/client';
+import { Typography } from '@mui/material';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
 import gql from 'graphql-tag';
 import React from 'react';
@@ -74,7 +75,7 @@ const UserSettingsSection: React.FC<{}> = () => {
   if (navigator.onLine && userQuery.networkStatus === NetworkStatus.error) {
     return (
       <>
-        <h2>Integrations</h2>
+        <Typography variant="h2">Integrations</Typography>
         <NetworkError error={userQuery.error} refetch={userQuery.refetch} />
       </>
     );
@@ -107,7 +108,7 @@ const UserSettingsSection: React.FC<{}> = () => {
 
   return (
     <>
-      <h2>Integrations</h2>
+      <Typography variant="h2">Integrations</Typography>
       <SettingsEntry
         title="Bookmarklet (desktop app)"
         comment="This bookmarklet will save links via the desktop app. To use it, the desktop app must be running (or it will be opened) and you must be logged in. The bookmarklet contains no authentication token."

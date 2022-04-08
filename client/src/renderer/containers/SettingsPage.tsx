@@ -1,13 +1,11 @@
 import { useQuery } from '@apollo/client';
-import { Button } from '@mui/material';
+import { Typography } from '@mui/material';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { setBackendUrl } from '../actions/configuration';
-import { requestLogout } from '../actions/userInterface';
 import { TextField } from '../components/CommonStyles';
-import { Menu } from '../components/Menu';
+import Gap from '../components/Gap';
 import SettingsEntry from '../components/SettingsEntry';
 import { TinyUserQuery } from '../generated/TinyUserQuery';
 import { RootState } from '../reducers';
@@ -36,43 +34,16 @@ const SettingsPage: React.FC = () => {
   const isLoggedIn = userQuery.data?.currentUser;
 
   return (
-    <ComplexLayout
-      primaryActions={
-        <Menu direction="vertical-horizontal">
-          {userQuery.data?.currentUser && (
-            <Button component={Link} size="huge" to="/tags">
-              My tags
-            </Button>
-          )}
-          <Button
-            size="huge"
-            onClick={(): void => alert('This feature is not yet available')}
-            disabled
-          >
-            Export my data
-          </Button>
-          <Button
-            size="huge"
-            onClick={(): void => alert('This feature is not yet available')}
-            disabled
-          >
-            Delete my account
-          </Button>
-          {isLoggedIn && (
-            <Button
-              size="huge"
-              onClick={(): void => {
-                dispatch(requestLogout());
-              }}
-            >
-              Logout
-            </Button>
-          )}
-        </Menu>
-      }
-    >
-      {isLoggedIn && <UserSettingsSection />}
-      <h2>Configuration</h2>
+    <ComplexLayout>
+      <Typography variant="h1">Settings</Typography>
+      <Gap vertical={1} />
+      {isLoggedIn && (
+        <>
+          <UserSettingsSection />
+          <Gap vertical={2} />
+        </>
+      )}
+      <Typography variant="h2">Configuration</Typography>
       <SettingsEntry
         title="Server"
         actionTitle="Update"
@@ -110,17 +81,6 @@ const SettingsPage: React.FC = () => {
           disabled={process.env.TARGET === 'web'}
         />
       </SettingsEntry>
-      <h2>About</h2>
-      You are using Structure {VERSION}
-      <br />
-      Find the Structure source code{' '}
-      <a
-        href="https://github.com/neopostmodern/structure"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        on GitHub
-      </a>
     </ComplexLayout>
   );
 };

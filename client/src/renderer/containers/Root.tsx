@@ -17,6 +17,7 @@ import SettingsPage from './SettingsPage';
 import TagPage from './TagPage';
 import TagsPage from './TagsPage';
 import TextPage from './TextPage';
+import UserPage from './UserPage';
 
 type RootType = {
   store: Store<RootState>;
@@ -41,7 +42,8 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
                 <Route path="/texts/:textId" element={<TextPage />} />
                 <Route path="/links/:linkId" element={<LinkPage />} />
 
-                <Route path="/me" element={<SettingsPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/me" element={<UserPage />} />
 
                 <Route path="/tags" element={<TagsPage />} />
                 <Route path="/tags/:tagId" element={<TagPage />} />

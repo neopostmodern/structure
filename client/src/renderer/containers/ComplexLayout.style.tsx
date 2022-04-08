@@ -21,6 +21,30 @@ export const Container = styled(Paper).attrs(() => ({
     display: flex;
     flex-direction: column;
   }
+  @media (max-width: ${breakPointMobile}) {
+    ${({ theme }) =>
+      (
+        Object.entries(theme.mixins.toolbar) as Array<
+          [string, number | { minHeight: number }]
+        >
+      )
+        .map(([key, value]): string => {
+          let toolbarHeight = value;
+          let mediaQuery;
+          if (typeof value !== 'number') {
+            mediaQuery = key;
+            toolbarHeight = value.minHeight;
+          }
+          const paddingRule = `padding-bottom: calc(${toolbarHeight}px + ${theme.spacing(
+            2
+          )});`;
+          if (!mediaQuery) {
+            return paddingRule;
+          }
+          return `${mediaQuery} { ${paddingRule} }`;
+        })
+        .join('\n')}
+  }
 `;
 
 const cornerMaxWidth = css`calc(calc(100% - ${containerWidth}) / 2)`;

@@ -22,6 +22,11 @@ declare module '@mui/material/Button' {
   }
 }
 
+const headerTypographyDefaults = {
+  fontFamily: baseFont,
+  fontWeight: 400,
+};
+
 const useTheme = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
@@ -30,9 +35,20 @@ const useTheme = () => {
       palette: {
         mode: prefersDarkMode ? 'dark' : 'light',
         neutral: null as any,
+        primary: {
+          main: prefersDarkMode ? '#fff' : '#000',
+        },
       },
       typography: {
         fontFamily: baseFont,
+        h1: {
+          fontSize: '3rem',
+          ...headerTypographyDefaults,
+        },
+        h2: {
+          fontSize: '2.2rem',
+          ...headerTypographyDefaults,
+        },
         button: {
           textTransform: 'unset',
         },
@@ -45,6 +61,20 @@ const useTheme = () => {
           styleOverrides: {
             sizeHuge: {
               fontSize: '1.25rem',
+            },
+          },
+        },
+        MuiLink: {
+          styleOverrides: {
+            underlineAlways: {
+              textDecorationThickness: '0.15em',
+            },
+          },
+        },
+        MuiToolbar: {
+          styleOverrides: {
+            root: {
+              backgroundColor: prefersDarkMode ? undefined : '#ededed',
             },
           },
         },
