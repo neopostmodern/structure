@@ -33,6 +33,7 @@ export const SettingsTableComments = styled.div`
 type SettingsEntryAction = {
   actionTitle: string;
   actionHandler: () => void;
+  readOnly?: boolean;
 };
 type SettingsEntryProps = {
   title: string | JSX.Element;
@@ -49,19 +50,21 @@ const SettingsEntry: React.FC<SettingsEntryProps> = ({
     <SettingsTable>
       <SettingsTablePurpose>{title}</SettingsTablePurpose>
       <SettingsTableValue>{children}</SettingsTableValue>
-      {'actionTitle' in optionalProps && optionalProps.actionTitle && (
-        <SettingsTableAction>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={(): void => {
-              optionalProps.actionHandler();
-            }}
-          >
-            {optionalProps.actionTitle}
-          </Button>
-        </SettingsTableAction>
-      )}
+      {'actionTitle' in optionalProps &&
+        optionalProps.actionTitle &&
+        !optionalProps.readOnly && (
+          <SettingsTableAction>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={(): void => {
+                optionalProps.actionHandler();
+              }}
+            >
+              {optionalProps.actionTitle}
+            </Button>
+          </SettingsTableAction>
+        )}
     </SettingsTable>
 
     <SettingsTableComments>{comment}</SettingsTableComments>

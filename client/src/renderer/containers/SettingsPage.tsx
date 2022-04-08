@@ -54,6 +54,7 @@ const SettingsPage: React.FC = () => {
             )
           );
         }}
+        readOnly={process.env.TARGET === 'web'}
         comment={
           <>
             The backend server is in charge of storing your data (username,
@@ -62,14 +63,21 @@ const SettingsPage: React.FC = () => {
             transport to the server, not on the server. This means the operator
             of the server can (theoretically) read and/or modify all your data.
             <br />
-            Modifying the backend server URL causes a restart.{' '}
-            <b>
-              Setting an invalid value might make it impossible to restart the
-              app.
-            </b>{' '}
-            Data is not migrated automatically when switching backend servers.
-            <br />
-            Default: {backendUrlDefault}
+            {process.env.TARGET === 'electron' ? (
+              <>
+                Modifying the backend server URL causes a restart.{' '}
+                <b>
+                  Setting an invalid value might make it impossible to restart
+                  the app.
+                </b>{' '}
+                Data is not migrated automatically when switching backend
+                servers.
+                <br />
+                Default: {backendUrlDefault}
+              </>
+            ) : (
+              <>This setting can not be changed in the web version.</>
+            )}
           </>
         }
       >
