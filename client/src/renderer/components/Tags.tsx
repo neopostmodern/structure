@@ -44,7 +44,12 @@ const Tags: React.FC<TagsProps> = ({
   return (
     <TagContainer>
       {tags.map((tag) => (
-        <TagWithContextMenu tag={tag} size={size} noteId={noteId} />
+        <TagWithContextMenu
+          key={tag._id}
+          tag={tag}
+          size={size}
+          noteId={noteId}
+        />
       ))}
       <AddTagForm
         withShortcuts={withShortcuts}
