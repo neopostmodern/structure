@@ -67,42 +67,44 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name, linkId }) => {
   const formFieldProperties = register(name);
 
   let titleSuggestionsComponent;
-  if (titleSuggestions.error) {
-    titleSuggestionsComponent = <i>Failed to load title suggestions</i>;
-  } else if (titleSuggestions.loading) {
-    titleSuggestionsComponent = <i>Loading title suggestions...</i>;
-  } else {
-    if (!titleSuggestions.data) {
-      throw Error('[LinkNameField] Illegal state: no title suggestions data');
-    }
-    if (titleSuggestions.data.titleSuggestions.length === 0) {
-      titleSuggestionsComponent = <i>No titles found in website</i>;
+  if (titleSuggestions.called) {
+    if (titleSuggestions.error) {
+      titleSuggestionsComponent = <i>Failed to load title suggestions</i>;
+    } else if (titleSuggestions.loading) {
+      titleSuggestionsComponent = <i>Loading title suggestions...</i>;
     } else {
-      titleSuggestionsComponent = titleSuggestions.data.titleSuggestions.map(
-        (title, index) => (
-          <Suggestion
-            type="button"
-            style={{
-              fontStyle: 'italic',
-              fontSize: '80%',
-              display: 'block',
-              marginTop: '0.3em',
-            }}
-            key={index}
-            onClick={(): void => {
-              if (!inputElement.current) {
-                return;
-              }
-              inputElement.current.value = title;
-              setValue(name, title, {
-                shouldValidate: true,
-              });
-            }}
-          >
-            {title}
-          </Suggestion>
-        )
-      );
+      if (!titleSuggestions.data) {
+        throw Error('[LinkNameField] Illegal state: no title suggestions data');
+      }
+      if (titleSuggestions.data.titleSuggestions.length === 0) {
+        titleSuggestionsComponent = <i>No titles found in website</i>;
+      } else {
+        titleSuggestionsComponent = titleSuggestions.data.titleSuggestions.map(
+          (title, index) => (
+            <Suggestion
+              type="button"
+              style={{
+                fontStyle: 'italic',
+                fontSize: '80%',
+                display: 'block',
+                marginTop: '0.3em',
+              }}
+              key={index}
+              onClick={(): void => {
+                if (!inputElement.current) {
+                  return;
+                }
+                inputElement.current.value = title;
+                setValue(name, title, {
+                  shouldValidate: true,
+                });
+              }}
+            >
+              {title}
+            </Suggestion>
+          )
+        );
+      }
     }
   }
 
