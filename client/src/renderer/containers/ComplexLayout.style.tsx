@@ -68,6 +68,7 @@ export const OfflineBanner = styled.div`
   background-color: gray;
   color: white;
   padding: 0.5em;
+  margin-bottom: ${gutter}rem;
   text-align: center;
 `;
 

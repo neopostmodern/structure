@@ -29,11 +29,16 @@ const TitleLine = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  flex: 1;
+  @media (max-width: 39.999rem) {
+    flex: 1;
+  }
   @media (min-width: 40rem) and (max-width: ${breakpointDesktop - 0.001}rem) {
-    flex: unset;
     width: calc(50% + 32px);
     min-width: 25rem;
+  }
+  @media (min-width: ${breakpointDesktop}rem) {
+    flex-basis: 27rem;
+    flex-grow: 0;
   }
 `;
 
