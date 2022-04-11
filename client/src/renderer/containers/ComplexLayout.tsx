@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { version as currentPackageVersion } from '../../../package.json';
 import Centered from '../components/Centered';
+import FatalApolloError from '../components/FatalApolloError';
+import Gap from '../components/Gap';
 import { Menu } from '../components/Menu';
 import Navigation from '../components/Navigation';
 import VersionMarks from '../components/VersionMarks';
@@ -14,6 +16,7 @@ import { RootState } from '../reducers';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
 import { PROFILE_QUERY } from '../utils/sharedQueries';
+import useDataState, { DataState } from '../utils/useDataState';
 import * as Styled from './ComplexLayout.style';
 
 export interface AdditionalNavigationItem {
@@ -36,17 +39,22 @@ const ComplexLayout: React.FC<
   wide = false,
   loading = false,
 }) => {
-  const profileQuery = useQuery<ProfileQuery>(PROFILE_QUERY, {
-    fetchPolicy: gracefulNetworkPolicy(),
-    variables: {
-      currentVersion: currentPackageVersion,
-    },
-  });
+  const profileQuery = useDataState(
+    useQuery<ProfileQuery>(PROFILE_QUERY, {
+      fetchPolicy: gracefulNetworkPolicy('cache-first'),
+      variables: {
+        currentVersion: currentPackageVersion,
+      },
+    })
+  );
 
   const isDesktopLayout = useIsDesktopLayout();
   const isUserLoggingIn = useSelector<RootState, boolean>(
     (state) => state.userInterface.loggingIn
   );
+  const isLoggedIn =
+    profileQuery.state === DataState.DATA &&
+    profileQuery.data.currentUser?.name;
 
   useEffect(() => {
     profileQuery.refetch();
@@ -64,26 +72,22 @@ const ComplexLayout: React.FC<
       icon: <Settings />,
     },
     {
-      label: profileQuery.data?.currentUser?.name || '...',
+      label:
+        profileQuery.state === DataState.DATA && profileQuery.data.currentUser
+          ? profileQuery.data.currentUser.name
+          : '...',
       path: '/me',
       icon: <AccountCircle />,
     },
-  ];
+  ].filter(({ path }) => isLoggedIn || path === '/settings');
 
-  let isProfileQueryLoading = false;
-  if (profileQuery.loading) {
-    isProfileQueryLoading = !profileQuery.data;
-  } else {
-    if (!profileQuery.data) {
-      throw Error('[ComplexLayout] Illegal state: no data');
-    }
-  }
+  const offlineBanner = !navigator.onLine && (
+    <Styled.OfflineBanner>Offline</Styled.OfflineBanner>
+  );
 
   return (
     <Styled.Container>
-      {!navigator.onLine && (
-        <Styled.OfflineBanner>Offline</Styled.OfflineBanner>
-      )}
+      {!isDesktopLayout && offlineBanner}
       <Styled.Navigation>
         <Navigation
           drawerNavigationItems={
@@ -92,21 +96,34 @@ const ComplexLayout: React.FC<
         />
       </Styled.Navigation>
       <Styled.PrimaryContent wide={wide}>
-        <VersionMarks
-          versions={
-            isProfileQueryLoading ? 'loading' : profileQuery.data.versions
-          }
-          currentPackageVersion={currentPackageVersion}
-        />
-        {(!profileQuery.data && profileQuery.loading) || loading ? (
-          <Centered>
-            <Stack alignItems="center">
-              <CircularProgress color="inherit" />
-              {typeof loading === 'string' && loading}
-            </Stack>
-          </Centered>
+        {isDesktopLayout && offlineBanner}
+        {profileQuery.state === DataState.ERROR ? (
+          <FatalApolloError
+            error={profileQuery.error}
+            refetch={profileQuery.refetch}
+          />
         ) : (
-          children
+          <>
+            <VersionMarks
+              versions={
+                profileQuery.state === DataState.DATA
+                  ? profileQuery.data.versions
+                  : 'loading'
+              }
+              currentPackageVersion={currentPackageVersion}
+            />
+            {profileQuery.state === DataState.LOADING || loading ? (
+              <Centered>
+                <Stack alignItems="center">
+                  <CircularProgress color="inherit" />
+                  <Gap vertical={1} />
+                  {typeof loading === 'string' && loading}
+                </Stack>
+              </Centered>
+            ) : (
+              children
+            )}
+          </>
         )}
       </Styled.PrimaryContent>
       {primaryActions && (

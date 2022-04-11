@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useParams } from 'react-router';
+import FatalApolloError from '../components/FatalApolloError';
 import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
 import TextForm from '../components/TextForm';
@@ -12,6 +13,7 @@ import {
 } from '../generated/UpdateTextMutation';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
+import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
 const TEXT_QUERY = gql`
@@ -48,25 +50,32 @@ const UPDATE_TEXT_MUTATION = gql`
   }
 `;
 
-const TextPage: React.FC<{}> = () => {
+const TextPage: React.FC = () => {
   const isDesktopLayout = useIsDesktopLayout();
   const { textId } = useParams();
-  const { loading, data } = useQuery<TextQuery>(TEXT_QUERY, {
-    fetchPolicy: gracefulNetworkPolicy(),
-    variables: { textId },
-  });
+  const textQuery = useDataState(
+    useQuery<TextQuery>(TEXT_QUERY, {
+      fetchPolicy: gracefulNetworkPolicy(),
+      variables: { textId },
+    })
+  );
   const [updateText] = useMutation<
     UpdateTextMutation,
     UpdateTextMutationVariables
   >(UPDATE_TEXT_MUTATION);
 
-  if (loading && !data) {
+  if (textQuery.state === DataState.LOADING) {
     return <ComplexLayout loading />;
   }
-  if (!data) {
-    throw Error('[TextPage] Illegal state: no data');
+  if (textQuery.state === DataState.ERROR) {
+    return (
+      <ComplexLayout>
+        <FatalApolloError query={textQuery} />
+      </ComplexLayout>
+    );
   }
-  const { text } = data;
+
+  const { text } = textQuery.data;
   const tagsComponent = (
     <Tags tags={text.tags} size="medium" noteId={text._id} withShortcuts />
   );

@@ -1,4 +1,4 @@
-import { gql, NetworkStatus, useQuery } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import Mousetrap from 'mousetrap';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,8 +14,8 @@ import {
   setBatchSelection,
   toggleBatchEditing,
 } from '../../actions/userInterface';
+import FatalApolloError from '../../components/FatalApolloError';
 import { StickyMenu } from '../../components/Menu';
-import NetworkError from '../../components/NetworkError';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
 import { NotesForList, NotesForList_notes } from '../../generated/NotesForList';
@@ -25,6 +25,7 @@ import {
   UserInterfaceStateType,
 } from '../../reducers/userInterface';
 import gracefulNetworkPolicy from '../../utils/gracefulNetworkPolicy';
+import useDataState, { DataState } from '../../utils/useDataState';
 import ComplexLayout from '../ComplexLayout';
 
 export const BASE_NOTE_FRAGMENT = gql`
@@ -80,7 +81,7 @@ const filterNotes = (
   if (searchQuery.length !== 0) {
     filteredNotes = filteredNotes.filter(
       (note) =>
-        textIncludes(searchQuery, note.url) ||
+        ('url' in note && textIncludes(searchQuery, note.url)) ||
         textIncludes(searchQuery, note.name) ||
         note.tags.some((tag) => textIncludes(searchQuery, tag.name))
     );
@@ -110,7 +111,7 @@ const ShowMore = styled.div`
   padding: 1em;
 `;
 
-const NotesPage: React.FC<{}> = () => {
+const NotesPage: React.FC = () => {
   const {
     linkLayout: layout,
     archiveState,
@@ -122,21 +123,26 @@ const NotesPage: React.FC<{}> = () => {
     (state) => state.userInterface
   );
   const dispatch = useDispatch();
-  const searchInput = useRef(null);
-  const moreElement = useRef(null);
-  const { loading, error, data, networkStatus, refetch } =
+  const searchInput = useRef<HTMLInputElement | null>(null);
+  const moreElement = useRef<HTMLDivElement | null>(null);
+  const notesQuery = useDataState(
     useQuery<NotesForList>(NOTES_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
-    });
+    })
+  );
 
   const selectedNoteCount = (): number =>
     Object.values(batchSelections).filter((selected) => selected).length;
 
   const selectUnselectAll = (selected?: boolean): void => {
+    if (notesQuery.state !== DataState.DATA) {
+      return;
+    }
+
     let nextSelectedState = selected;
     const selection: BatchSelectionType = {};
     const filteredNotes = filterNotes(
-      data.notes,
+      notesQuery.data.notes,
       searchQuery,
       archiveState
     ).notes;
@@ -145,7 +151,7 @@ const NotesPage: React.FC<{}> = () => {
       nextSelectedState = filteredNotes.length !== selectedNoteCount();
     }
     filteredNotes.forEach((note) => {
-      selection[note._id] = nextSelectedState;
+      selection[note._id] = nextSelectedState as boolean;
     });
     dispatch(setBatchSelection(selection));
   };
@@ -164,8 +170,11 @@ const NotesPage: React.FC<{}> = () => {
     };
 
     Mousetrap.bind(searchFieldShortcutKeys, (): void => {
-      searchInput.current.focus();
-      setTimeout(() => searchInput.current.select(0, searchQuery.length), 10);
+      searchInput.current?.focus();
+      setTimeout(
+        () => searchInput.current?.setSelectionRange(0, searchQuery.length),
+        10
+      );
     });
     Mousetrap.bind(toggleBatchEditingShortcutKeys, (): void => {
       dispatch(toggleBatchEditing());
@@ -180,7 +189,7 @@ const NotesPage: React.FC<{}> = () => {
 
       return false;
     });
-    Mousetrap.bind(reloadShortcutKeys, () => refetch());
+    Mousetrap.bind(reloadShortcutKeys, () => notesQuery.refetch());
     window.addEventListener('scroll', handleScrollEvent);
 
     return (): void => {
@@ -219,7 +228,11 @@ const NotesPage: React.FC<{}> = () => {
   };
 
   const handleBatchOpenNotes = (): void => {
-    data.notes.forEach((note) => {
+    if (notesQuery.state !== DataState.DATA) {
+      return;
+    }
+
+    notesQuery.data.notes.forEach((note) => {
       if (!batchSelections[note._id]) {
         return;
       }
@@ -232,13 +245,11 @@ const NotesPage: React.FC<{}> = () => {
 
   const content = [];
   let primaryActions = null;
-  if (navigator.onLine && networkStatus === NetworkStatus.error) {
-    content.push(<NetworkError error={error} refetch={refetch} />);
-  } else if (!data && loading) {
-    // loading without data is handled below
-    // todo: indicate background (re) fetch somewhere
-  } else {
-    const allNotes = [...data.notes]; // unfreeze
+  // todo: indicate background (re) fetch somewhere
+  if (notesQuery.state === DataState.ERROR) {
+    content.push(<FatalApolloError query={notesQuery} />);
+  } else if (notesQuery.state === DataState.DATA) {
+    const allNotes = [...notesQuery.data.notes]; // unfreeze
     allNotes.sort((noteA, noteB) => noteB.createdAt - noteA.createdAt);
 
     const { notes: matchedNotes, archivedCount: archivedMatchedNotesCount } =
@@ -283,7 +294,7 @@ const NotesPage: React.FC<{}> = () => {
     primaryActions = (
       <NotesMenu
         archiveState={archiveState}
-        onChangeSearchQuery={(value): void => {
+        onChangeSearchQuery={(value: string): void => {
           dispatch(changeSearchQuery(value));
         }}
         layout={layout}
@@ -299,7 +310,10 @@ const NotesPage: React.FC<{}> = () => {
   }
 
   return (
-    <ComplexLayout primaryActions={primaryActions} loading={!data && loading}>
+    <ComplexLayout
+      primaryActions={primaryActions}
+      loading={notesQuery.state === DataState.LOADING}
+    >
       {[...content]}
     </ComplexLayout>
   );

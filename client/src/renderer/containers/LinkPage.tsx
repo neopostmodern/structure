@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useParams } from 'react-router';
+import FatalApolloError from '../components/FatalApolloError';
 import LinkForm from '../components/LinkForm';
 import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
@@ -12,6 +13,7 @@ import {
 } from '../generated/UpdateLinkMutation';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
+import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
 const LINK_QUERY = gql`
@@ -51,26 +53,31 @@ const UPDATE_LINK_MUTATION = gql`
   }
 `;
 
-const LinkPage: React.FC<{}> = () => {
+const LinkPage: React.FC = () => {
   const isDesktopLayout = useIsDesktopLayout();
 
   const { linkId } = useParams();
-  const linkQuery = useQuery<LinkQuery, LinkQueryVariables>(LINK_QUERY, {
-    fetchPolicy: gracefulNetworkPolicy(),
-    variables: { linkId },
-  });
+  const linkQuery = useDataState(
+    useQuery<LinkQuery, LinkQueryVariables>(LINK_QUERY, {
+      fetchPolicy: gracefulNetworkPolicy(),
+      variables: { linkId },
+    })
+  );
 
   const [updateLink] = useMutation<
     UpdateLinkMutation,
     UpdateLinkMutationVariables
   >(UPDATE_LINK_MUTATION);
 
-  if (linkQuery.loading && !linkQuery.data) {
+  if (linkQuery.state === DataState.LOADING) {
     return <ComplexLayout loading />;
   }
-
-  if (!linkQuery.data) {
-    throw Error('[LinkPage] Illegal state: no data');
+  if (linkQuery.state === DataState.ERROR) {
+    return (
+      <ComplexLayout>
+        <FatalApolloError query={linkQuery} />
+      </ComplexLayout>
+    );
   }
 
   const { link } = linkQuery.data;

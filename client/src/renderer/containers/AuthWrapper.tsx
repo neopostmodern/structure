@@ -1,29 +1,28 @@
-import { NetworkStatus, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { version as currentPackageVersion } from '../../../package.json';
 import { requestLogin } from '../actions/userInterface';
+import FatalApolloError from '../components/FatalApolloError';
 import LoginView from '../components/LoginView';
-import Navigation from '../components/Navigation';
-import NetworkError from '../components/NetworkError';
 import VersionMarks from '../components/VersionMarks';
 import { ProfileQuery, ProfileQueryVariables } from '../generated/ProfileQuery';
 import { RootState } from '../reducers';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { PROFILE_QUERY } from '../utils/sharedQueries';
+import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
-import * as Styled from './ComplexLayout.style';
+import SettingsPage from './SettingsPage';
 
 const AuthWrapper: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const dispatch = useDispatch();
-  const profileQuery = useQuery<ProfileQuery, ProfileQueryVariables>(
-    PROFILE_QUERY,
-    {
+  const profileQuery = useDataState(
+    useQuery<ProfileQuery, ProfileQueryVariables>(PROFILE_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
       variables: {
         currentVersion: currentPackageVersion,
       },
-    }
+    })
   );
 
   const isUserLoggingIn = useSelector<RootState, boolean>(
@@ -37,71 +36,48 @@ const AuthWrapper: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
     profileQuery.refetch();
   }, [isUserLoggingIn]);
 
-  const isSettingsPage = path === '/settings';
-
+  if (path === '/settings') {
+    /* redundant routing prevents undesired children from being created in the
+     * virtual DOM when navigating to /settings, but before the settings page
+     * is rendered by the router */
+    return <SettingsPage />;
+  }
   if (isUserLoggingIn) {
     return <ComplexLayout loading="Logging in..." />;
   }
-  if (profileQuery.loading) {
+  if (profileQuery.state === DataState.LOADING) {
     return <ComplexLayout loading="Loading user..." />;
   }
-  if (profileQuery.data?.currentUser?.name || isSettingsPage) {
+  if (
+    profileQuery.state === DataState.DATA &&
+    profileQuery.data.currentUser?.name
+  ) {
     return children;
   }
 
-  let content;
-  if (
-    navigator.onLine &&
-    profileQuery.networkStatus === NetworkStatus.error &&
-    !isSettingsPage
-  ) {
-    content = (
-      <NetworkError
-        error={profileQuery.error}
-        refetch={(): void => {
-          profileQuery.refetch();
-        }}
-      />
-    );
-  } else {
-    content = (
-      <LoginView
-        openLoginModal={(): void => {
-          dispatch(requestLogin());
-        }}
-      />
-    );
-  }
-
-  let isProfileQueryLoading = false;
-  if (profileQuery.loading) {
-    isProfileQueryLoading = !profileQuery.data;
-  } else {
-    if (!profileQuery.data) {
-      throw Error('[AuthWrapper] Illegal state: no data');
-    }
-  }
-
   return (
-    <Styled.Container>
-      <Styled.Navigation>
-        <Navigation />
-      </Styled.Navigation>
-      <Styled.PrimaryContent>
-        <VersionMarks
-          versions={
-            isProfileQueryLoading ? 'loading' : profileQuery.data.versions
-          }
-          currentPackageVersion={currentPackageVersion}
+    <ComplexLayout>
+      {profileQuery.state === DataState.ERROR ? (
+        <FatalApolloError
+          error={profileQuery.error}
+          refetch={(): void => {
+            profileQuery.refetch();
+          }}
         />
-        {content}
-      </Styled.PrimaryContent>
-      <Styled.UserAndMenuIndicator>
-        {!isSettingsPage && (
-          <Styled.Username to="/settings">Settings</Styled.Username>
-        )}
-      </Styled.UserAndMenuIndicator>
-    </Styled.Container>
+      ) : (
+        <>
+          <VersionMarks
+            versions={profileQuery.data.versions}
+            currentPackageVersion={currentPackageVersion}
+          />
+          <LoginView
+            openLoginModal={(): void => {
+              dispatch(requestLogin());
+            }}
+          />
+        </>
+      )}
+    </ComplexLayout>
   );
 };
 

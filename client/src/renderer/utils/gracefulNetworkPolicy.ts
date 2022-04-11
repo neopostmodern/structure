@@ -1,6 +1,8 @@
 import { WatchQueryFetchPolicy } from '@apollo/client';
 
-const gracefulNetworkPolicy = (): WatchQueryFetchPolicy =>
-  navigator.onLine ? 'cache-and-network' : 'cache-only';
+const gracefulNetworkPolicy = (
+  onlineNetworkPolicy: WatchQueryFetchPolicy = 'cache-and-network'
+): WatchQueryFetchPolicy =>
+  navigator.onLine ? onlineNetworkPolicy : 'cache-only';
 
 export default gracefulNetworkPolicy;

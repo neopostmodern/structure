@@ -1,4 +1,4 @@
-import { NetworkStatus, useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
 import gql from 'graphql-tag';
@@ -6,7 +6,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { TextField } from '../components/CommonStyles';
 import Credentials, { CredentialsOrLoading } from '../components/Credentials';
-import NetworkError from '../components/NetworkError';
+import FatalApolloError from '../components/FatalApolloError';
 import SettingsEntry from '../components/SettingsEntry';
 import {
   RequestNewCredentialMutation,
@@ -19,6 +19,8 @@ import {
 import { UserCredentialsQuery } from '../generated/UserCredentialsQuery';
 import { RootState } from '../reducers';
 import { ConfigurationStateType } from '../reducers/configuration';
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
+import useDataState, { DataState } from '../utils/useDataState';
 
 const userCredentialsFragment = gql`
   fragment UserCredentialsFragment on User {
@@ -56,13 +58,15 @@ const REVOKE_CREDENTIAL_MUTATION = gql`
   }
 `;
 
-const UserSettingsSection: React.FC<{}> = () => {
+const UserSettingsSection: React.FC = () => {
   const { backendUrl } = useSelector<RootState, ConfigurationStateType>(
     (state) => state.configuration
   );
-  const userQuery = useQuery<UserCredentialsQuery>(USER_CREDENTIALS_QUERY, {
-    fetchPolicy: 'cache-and-network',
-  });
+  const userQuery = useDataState(
+    useQuery<UserCredentialsQuery>(USER_CREDENTIALS_QUERY, {
+      fetchPolicy: gracefulNetworkPolicy(),
+    })
+  );
   const [requestNewCredential] = useMutation<
     RequestNewCredentialMutation,
     RequestNewCredentialMutationVariables
@@ -72,17 +76,19 @@ const UserSettingsSection: React.FC<{}> = () => {
     RevokeCredentialMutationVariables
   >(REVOKE_CREDENTIAL_MUTATION);
 
-  if (navigator.onLine && userQuery.networkStatus === NetworkStatus.error) {
+  if (userQuery.state === DataState.ERROR) {
     return (
       <>
         <Typography variant="h2">Integrations</Typography>
-        <NetworkError error={userQuery.error} refetch={userQuery.refetch} />
+        <FatalApolloError query={userQuery} />
       </>
     );
   }
 
-  let credentialsConfiguration: CredentialsOrLoading = 'loading';
-  if (userQuery.data) {
+  let credentialsConfiguration: CredentialsOrLoading;
+  if (userQuery.state === DataState.LOADING) {
+    credentialsConfiguration = 'loading';
+  } else {
     credentialsConfiguration = [
       {
         displayName: 'Bookmarklet (standalone)',

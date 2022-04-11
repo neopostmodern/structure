@@ -7,6 +7,8 @@ import {
   TitleSuggestionsQuery,
   TitleSuggestionsQueryVariables,
 } from '../../generated/TitleSuggestionsQuery';
+import useDataState, { DataState } from '../../utils/useDataState';
+import ErrorSnackbar from '../ErrorSnackbar';
 import { FormSubheader, NameInput } from '../formComponents';
 
 const Suggestions = styled.div`
@@ -59,28 +61,40 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name, linkId }) => {
   const { register, setValue, getValues } = useFormContext();
   const inputElement = useRef<HTMLInputElement | null>();
 
-  const [fetchTitleSuggestions, titleSuggestions] = useLazyQuery<
-    TitleSuggestionsQuery,
-    TitleSuggestionsQueryVariables
-  >(TITLE_SUGGESTIONS_QUERY, { variables: { linkId } });
+  const [fetchTitleSuggestions, titleSuggestionsQuery] = useDataState(
+    useLazyQuery<TitleSuggestionsQuery, TitleSuggestionsQueryVariables>(
+      TITLE_SUGGESTIONS_QUERY,
+      { variables: { linkId } }
+    )
+  );
 
   const formFieldProperties = register(name);
 
-  let titleSuggestionsComponent;
-  if (titleSuggestions.called) {
-    if (titleSuggestions.error) {
-      titleSuggestionsComponent = <i>Failed to load title suggestions</i>;
-    } else if (titleSuggestions.loading) {
+  let titleSuggestionsComponent: JSX.Element | Array<JSX.Element> | null;
+  switch (titleSuggestionsQuery.state) {
+    case DataState.UNCALLED:
+      titleSuggestionsComponent = null;
+      break;
+    case DataState.LOADING:
       titleSuggestionsComponent = <i>Loading title suggestions...</i>;
-    } else {
-      if (!titleSuggestions.data) {
-        throw Error('[LinkNameField] Illegal state: no title suggestions data');
-      }
-      if (titleSuggestions.data.titleSuggestions.length === 0) {
+      break;
+    case DataState.ERROR:
+      titleSuggestionsComponent = (
+        <>
+          <ErrorSnackbar
+            error={titleSuggestionsQuery.error}
+            actionDescription="fetch title suggestions"
+          />
+          <i>Failed to load title suggestions</i>
+        </>
+      );
+      break;
+    case DataState.DATA:
+      if (titleSuggestionsQuery.data.titleSuggestions.length === 0) {
         titleSuggestionsComponent = <i>No titles found in website</i>;
       } else {
-        titleSuggestionsComponent = titleSuggestions.data.titleSuggestions.map(
-          (title, index) => (
+        titleSuggestionsComponent =
+          titleSuggestionsQuery.data.titleSuggestions.map((title, index) => (
             <Suggestion
               type="button"
               style={{
@@ -102,10 +116,9 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name, linkId }) => {
             >
               {title}
             </Suggestion>
-          )
-        );
+          ));
       }
-    }
+      break;
   }
 
   return (
@@ -122,6 +135,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name, linkId }) => {
           inputElement.current = ref;
         }}
         placeholder="Title"
+        disabled={!navigator.onLine}
       />
       <Suggestions>
         <FormSubheader>Title suggestions</FormSubheader>

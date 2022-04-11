@@ -1,4 +1,4 @@
-import { ApolloError } from '@apollo/client';
+import { ApolloError, NetworkStatus } from '@apollo/client';
 import { Button } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
@@ -23,18 +23,28 @@ const FullErrorMessage = styled.pre`
   overflow-x: auto;
 `;
 
-interface NetworkErrorProps {
-  error: ApolloError | undefined; // todo: could be more generic?
-  refetch: () => void;
-}
+type NetworkErrorProps =
+  | {
+      error: ApolloError | undefined; // todo: could be more generic?
+      refetch: () => void;
+    }
+  | {
+      query: {
+        error: ApolloError;
+        refetch: () => void;
+        networkStatus: NetworkStatus;
+      };
+    };
 
-const NetworkError: React.FC<NetworkErrorProps> = ({ error, refetch }) => {
+const FatalApolloError: React.FC<NetworkErrorProps> = (props) => {
+  const { error, refetch, ...optionalProps } =
+    'query' in props ? props.query : props;
   if (!error) {
     return (
       <ErrorContainer>
-        <h1>Network error.</h1>
+        <h1>Unknown error.</h1>
         <ErrorInformation>
-          A network error was reported but no error was supplied.
+          An error was reported but no error was supplied.
         </ErrorInformation>
       </ErrorContainer>
     );
@@ -52,7 +62,13 @@ const NetworkError: React.FC<NetworkErrorProps> = ({ error, refetch }) => {
   }
   return (
     <ErrorContainer>
-      <h1>Network error.</h1>
+      <h1>
+        {'networkStatus' in optionalProps &&
+        optionalProps.networkStatus === NetworkStatus.error
+          ? 'Network'
+          : 'Unknown'}{' '}
+        error.
+      </h1>
       <Button variant="outlined" onClick={refetch} autoFocus>
         Reload
       </Button>
@@ -65,4 +81,4 @@ const NetworkError: React.FC<NetworkErrorProps> = ({ error, refetch }) => {
   );
 };
 
-export default NetworkError;
+export default FatalApolloError;
