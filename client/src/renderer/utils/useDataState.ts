@@ -8,6 +8,8 @@ export enum DataState {
   UNCALLED = 'UNCALLED',
 }
 
+export const OFFLINE_CACHE_MISS = 'OFFLINE_CACHE_MISS';
+
 type OmittedAdditionalFieldNames = 'loading' | 'data' | 'error' | 'called';
 const selectedAdditionalFieldNames = ['networkStatus', 'refetch'] as const;
 type SelectedAdditionalFieldNames = typeof selectedAdditionalFieldNames[number];
@@ -82,6 +84,15 @@ function useDataState<QueryData, QueryVariables>(
     dataState = { state: DataState.DATA, data, loadingBackground: loading };
   } else if (queryResult.loading) {
     dataState = { state: DataState.LOADING };
+  } else if (!navigator.onLine) {
+    // see https://github.com/apollographql/apollo-client/issues/7505 (cache-only queries throw no errors when they can't be fulfilled)
+    dataState = {
+      state: DataState.ERROR,
+      error: new ApolloError({
+        errorMessage: 'Requested data not in cache',
+        extraInfo: OFFLINE_CACHE_MISS,
+      }),
+    };
   } else {
     throw Error('[useDataState] Illegal state: no data');
   }
