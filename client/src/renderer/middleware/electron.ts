@@ -8,6 +8,7 @@ import {
   REQUEST_LOGOUT,
   setClipboard,
 } from '../actions/userInterface';
+import apolloClient, { cachePersistor } from '../apollo';
 
 const handleLogin = (backendUrl: string, popUpOptions: string, dispatch) => {
   const loginPopup = window.open(
@@ -23,6 +24,11 @@ const handleLogin = (backendUrl: string, popUpOptions: string, dispatch) => {
   }, 100);
 };
 
+const clearApolloCache = () => {
+  apolloClient.clearStore();
+  cachePersistor.purge();
+};
+
 let electronMiddleware;
 
 if (process.env.TARGET === 'web') {
@@ -35,6 +41,7 @@ if (process.env.TARGET === 'web') {
       );
     }
     if (action.type === REQUEST_LOGOUT) {
+      clearApolloCache();
       store.dispatch(push(`${BACKEND_URL}/logout`));
     }
     if (action.type === REQUEST_CLIPBOARD) {
@@ -93,6 +100,7 @@ if (process.env.TARGET === 'web') {
         );
         const onCloseWatcher = setInterval(() => {
           if (logoutPopup?.closed) {
+            clearApolloCache();
             store.dispatch(completeLogin());
             clearInterval(onCloseWatcher);
           }
