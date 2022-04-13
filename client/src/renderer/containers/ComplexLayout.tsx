@@ -98,10 +98,7 @@ const ComplexLayout: React.FC<
       <Styled.PrimaryContent wide={wide}>
         {isDesktopLayout && offlineBanner}
         {profileQuery.state === DataState.ERROR ? (
-          <FatalApolloError
-            error={profileQuery.error}
-            refetch={profileQuery.refetch}
-          />
+          <FatalApolloError query={profileQuery} />
         ) : (
           <>
             <VersionMarks

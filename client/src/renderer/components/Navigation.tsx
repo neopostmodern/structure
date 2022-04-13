@@ -87,7 +87,7 @@ const Navigation = ({
   const addNoteFab = (
     <Tooltip title="Add new note">
       <ResponsiveFab
-        centered={isMobileLayout}
+        centered={isMobileLayout || undefined}
         color="primary"
         aria-label="add"
         component={Link}

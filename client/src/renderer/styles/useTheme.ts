@@ -25,6 +25,7 @@ declare module '@mui/material/Button' {
 const headerTypographyDefaults = {
   fontFamily: baseFont,
   fontWeight: 400,
+  marginBottom: '0.2em',
 };
 
 const useTheme = () => {

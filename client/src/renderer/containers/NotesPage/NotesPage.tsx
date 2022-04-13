@@ -247,7 +247,7 @@ const NotesPage: React.FC = () => {
   let primaryActions = null;
   // todo: indicate background (re) fetch somewhere
   if (notesQuery.state === DataState.ERROR) {
-    content.push(<FatalApolloError query={notesQuery} />);
+    content.push(<FatalApolloError key="error" query={notesQuery} />);
   } else if (notesQuery.state === DataState.DATA) {
     const allNotes = [...notesQuery.data.notes]; // unfreeze
     allNotes.sort((noteA, noteB) => noteB.createdAt - noteA.createdAt);
@@ -269,7 +269,7 @@ const NotesPage: React.FC = () => {
     }
 
     if (layout !== LinkLayout.LIST_LAYOUT) {
-      content.push(<i>Unsupported layout</i>);
+      content.push(<i key="unsupported-layout">Unsupported layout</i>);
     } else {
       content.push(
         <NotesList
