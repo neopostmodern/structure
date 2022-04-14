@@ -35,7 +35,17 @@ jobs:
       - name: Install root dependencies
         run: npm ci
       - name: Install subpackage dependencies
-        run: npx lerna exec npm ci  || echo 'Ignore return code, known errors in postinstall step'
+        run: |
+          packages=( "config" "common" "server" )
+          for dir in "${packages[@]}"
+          do
+            pushd "$dir"
+            npm ci
+            popd
+          done
+          pushd client
+          npm ci || echo 'Ignore return code, known errors in postinstall step'
+          popd
       - name: Pack setup
         run: tar cf setup.tar *
       - name: Store setup (as artifact)
