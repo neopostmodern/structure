@@ -14,7 +14,7 @@ async function migrateUp(version, migration) {
 }
 async function migrateDown(version, migration) {
   console.log(`  ⇓ ${migration.name} (${version}) will migrate 'down'...`)
-  await migration.up()
+  await migration.down()
 
   const databaseVersion = await Meta.findOne({ _id: 'database-version' })
   databaseVersion.value = version - 1
