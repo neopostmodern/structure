@@ -54,28 +54,36 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
     }
   };
 
-  const toggleEditDescription = (): void => {
+  const toggleEditDescription = (fromShortcut = false): void => {
     if (mousetrapRefs.current?.editDescription) {
-      if (document.activeElement !== textareaElement.current) {
+      if (fromShortcut && document.activeElement !== textareaElement.current) {
         focusTextarea();
       } else {
         if (textareaElement.current) {
-          setLastSelection([
-            textareaElement.current.selectionStart,
-            textareaElement.current.selectionEnd,
-          ]);
-          textareaElement.current.blur();
+          if (fromShortcut) {
+            setLastSelection([
+              textareaElement.current.selectionStart,
+              textareaElement.current.selectionEnd,
+            ]);
+            textareaElement.current.blur();
+          } else {
+            setLastSelection(null);
+          }
         }
         setEditDescription(false);
       }
     } else {
       setEditDescription(true);
-      focusTextarea();
+      setTimeout(() => {
+        focusTextarea();
+      }, 0);
     }
   };
 
   useEffect(() => {
-    Mousetrap.bindGlobal(focusDescriptionShortcutKeys, toggleEditDescription);
+    Mousetrap.bindGlobal(focusDescriptionShortcutKeys, () => {
+      toggleEditDescription(true);
+    });
     return (): void => {
       Mousetrap.unbind(focusDescriptionShortcutKeys);
     };
