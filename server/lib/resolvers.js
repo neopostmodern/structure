@@ -188,7 +188,6 @@ const rootResolvers = {
       return new Text({
         name: new Moment().format('dddd, MMMM Do YYYY'),
         user: context.user,
-        createdAt: new Date(),
       }).save()
     },
     updateText(root, { text: { _id, ...props } }, context) {

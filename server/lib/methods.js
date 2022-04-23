@@ -8,7 +8,6 @@ export function submitLink(user, url) {
   return new Link({
     url,
     user,
-    createdAt: new Date(),
   }).save()
 }
 

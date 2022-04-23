@@ -8,17 +8,20 @@ const { Schema } = mongoose
 mongoose.connect(config.MONGO_URL, { useNewUrlParser: true })
 mongoose.set('debug', config.MONGOOSE_DEBUG)
 
-const metaSchema = Schema({
+export const withBaseSchema = (schemaDefinition, schemaOptions = {}) => {
+  return new Schema(schemaDefinition, { timestamps: true, ...schemaOptions })
+}
+
+const metaSchema = withBaseSchema({
   _id: String,
   value: {},
 })
 export const Meta = mongoose.model('Meta', metaSchema)
 
-const userSchema = Schema(
+const userSchema = withBaseSchema(
   {
     _id: String,
     name: String,
-    createdAt: Date,
     authenticationProvider: String,
     credentials: {
       type: {
@@ -41,11 +44,10 @@ const userSchema = Schema(
 export const User = mongoose.model('User', userSchema)
 
 const noteOptions = { discriminatorKey: 'type' }
-const noteSchema = Schema(
+const noteSchema = withBaseSchema(
   {
     name: String,
     description: { type: String, default: '' },
-    createdAt: Date,
     user: { type: String, ref: 'User' },
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag', index: true }],
     archivedAt: { type: Date, default: null },
@@ -77,7 +79,7 @@ linkSchema.pre('save', function (next) {
 })
 export const Link = Note.discriminator('Link', linkSchema)
 
-const tagSchema = Schema({
+const tagSchema = withBaseSchema({
   user: { type: String, ref: 'User' },
   name: String,
   color: String,

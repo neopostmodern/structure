@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { Link, Meta, Note, User } from './mongo.js'
+import { Link, Meta, Note, Tag, User } from './mongo.js'
 
 const migrations = new Map()
 migrations.set(0, {
@@ -113,6 +113,139 @@ migrations.set(5, {
   },
   async down() {
     return User.updateMany({}, { $unset: { credentials: true } })
+  },
+})
+
+const collectionsToAddUpdatedAtField = [Meta, User, Note, Tag]
+migrations.set(6, {
+  name: 'create-field-updated-at',
+  async up() {
+    console.log(
+      "[Migration 6.1] Ensure the (previously missing) 'createdAt' field exists on all users...",
+    )
+    await User.find().then((users) =>
+      Promise.all(
+        users.map(async (user) => {
+          if (user.createdAt) {
+            return
+          }
+          console.log(`Setting best-guess 'createdAt' for user ${user._id}...`)
+          let oldestNoteCreatedAt = (
+            await Note.findOne(
+              { user: user._id },
+              { createdAt: 1 },
+              {
+                sort: { createdAt: 1 },
+              },
+            )
+          )?.createdAt
+          if (!oldestNoteCreatedAt) {
+            console.log('! User has no notes, using current time.')
+            oldestNoteCreatedAt = new Date()
+          }
+          user.createdAt = oldestNoteCreatedAt
+          return user.save({ timestamps: false })
+        }),
+      ),
+    )
+    console.log('[Migration 6.1] OK\n')
+
+    console.log(
+      "[Migration 6.2] Ensure the (previously missing) 'createdAt' field exists on all tags...",
+    )
+    await Tag.updateMany(
+      {},
+      [
+        {
+          $set: {
+            createdAt: {
+              $toDate: '$_id',
+            },
+          },
+        },
+      ],
+      { timestamps: false },
+    )
+    console.log('[Migration 6.2] OK\n')
+
+    console.log(
+      "[Migration 6.3] Ensure the (previously missing) 'createdAt' field exists on meta collection...",
+    )
+    const oldestUserCreatedAt =
+      (
+        await User.findOne(
+          {},
+          { createdAt: 1 },
+          {
+            sort: { createdAt: 1 },
+          },
+        )
+      )?.createdAt || new Date()
+    await Meta.updateMany(
+      {},
+      {
+        $set: {
+          createdAt: oldestUserCreatedAt,
+        },
+      },
+      { timestamps: false },
+    )
+    console.log('[Migration 6.3] OK\n')
+
+    console.log("[Migration 6.4] Create field 'updatedAt' throughout...")
+    for (const collection of collectionsToAddUpdatedAtField) {
+      await collection.updateMany(
+        {},
+        [
+          {
+            $set: {
+              updatedAt: '$createdAt',
+            },
+          },
+        ],
+        { timestamps: false },
+      )
+    }
+    console.log('[Migration 6.4] OK\n')
+  },
+  async down() {
+    console.log("[Migration 6.1] Delete 'createdAt' on user...")
+    await User.updateMany(
+      {},
+      { $unset: { createdAt: true } },
+      { timestamps: false },
+    )
+    console.log('[Migration 6.1] OK\n')
+
+    console.log("[Migration 6.2] Delete 'createdAt' on tag...")
+    await Tag.updateMany(
+      {},
+      { $unset: { createdAt: true } },
+      { timestamps: false },
+    )
+    console.log('[Migration 6.2] OK\n')
+
+    console.log("[Migration 6.3] Delete 'createdAt' on meta collection...")
+    await Meta.updateMany(
+      {},
+      { $unset: { createdAt: true } },
+      { timestamps: false },
+    )
+    console.log('[Migration 6.3] OK\n')
+
+    console.log("[Migration 6.4] Delete field 'updatedAt' throughout...")
+    for (const collection of collectionsToAddUpdatedAtField) {
+      await collection.updateMany(
+        {},
+        {
+          $unset: {
+            updatedAt: true,
+          },
+        },
+        { timestamps: false },
+      )
+    }
+    console.log('[Migration 6.4] OK\n')
   },
 })
 

@@ -69,7 +69,7 @@ const runExpressServer = async () => {
 }
 
 console.log('Running migrations...')
-migrateTo(5)
+migrateTo(6)
   .then(() => {
     console.log('Migrations complete.')
     runExpressServer()
