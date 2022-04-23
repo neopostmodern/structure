@@ -3,6 +3,12 @@ import { gql } from 'apollo-server'
 export default gql`
   scalar Date
 
+  interface BaseObject {
+    _id: ID!
+    createdAt: Date!
+    updatedAt: Date!
+  }
+
   type Versions {
     minimum: String
     current: String!
@@ -14,16 +20,20 @@ export default gql`
     bookmarklet: String
     rss: String
   }
-  type User {
-    _id: String!
-    name: String!
+  type User implements BaseObject {
+    _id: ID!
     createdAt: Date!
+    updatedAt: Date!
+
+    name: String!
     authenticationProvider: String
     credentials: Credentials
   }
 
-  type Tag {
+  type Tag implements BaseObject {
     _id: ID!
+    createdAt: Date!
+    updatedAt: Date!
     user: User!
 
     name: String!
@@ -43,7 +53,7 @@ export default gql`
     LINK
   }
 
-  interface INote {
+  interface INote { # implements BaseObject – blocked on https://github.com/apollographql/apollo-tooling/issues/2551, no GraphQL 16+ support coming
     type: NoteType!
     _id: ID!
     user: User!
@@ -52,6 +62,7 @@ export default gql`
     description: String!
 
     createdAt: Date!
+    updatedAt: Date!
     archivedAt: Date
     deletedAt: Date
 
@@ -59,7 +70,7 @@ export default gql`
     tags: [Tag!]!
   }
 
-  type Text implements INote {
+  type Text implements BaseObject & INote {
     type: NoteType!
     _id: ID!
     user: User!
@@ -68,6 +79,7 @@ export default gql`
     description: String!
 
     createdAt: Date!
+    updatedAt: Date!
     archivedAt: Date
     deletedAt: Date
 
@@ -81,7 +93,7 @@ export default gql`
   }
 
   # Information about a link
-  type Link implements INote {
+  type Link implements BaseObject & INote {
     type: NoteType!
     _id: ID!
     user: User!
@@ -93,6 +105,7 @@ export default gql`
     description: String!
 
     createdAt: Date!
+    updatedAt: Date!
     archivedAt: Date
     deletedAt: Date
 

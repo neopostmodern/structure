@@ -1,3 +1,9 @@
+interface BaseObject {
+  _id: ID!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
 type Credentials {
   bookmarklet: String
   rss: String
@@ -14,6 +20,7 @@ interface INote {
   name: String!
   tags: [Tag!]!
   type: NoteType!
+  updatedAt: Date!
   user: User!
 }
 
@@ -39,7 +46,7 @@ input InputText {
   name: String
 }
 
-type Link implements INote {
+type Link implements BaseObject & INote {
   _id: ID!
   archivedAt: Date
   createdAt: Date!
@@ -50,6 +57,7 @@ type Link implements INote {
   path: String!
   tags: [Tag!]!
   type: NoteType!
+  updatedAt: Date!
   url: String!
   user: User!
 }
@@ -87,15 +95,17 @@ type Query {
   versions(currentVersion: String): Versions!
 }
 
-type Tag {
+type Tag implements BaseObject {
   _id: ID!
   color: String!
+  createdAt: Date!
   name: String!
   notes: [Note]
+  updatedAt: Date!
   user: User!
 }
 
-type Text implements INote {
+type Text implements BaseObject & INote {
   _id: ID!
   archivedAt: Date
   createdAt: Date!
@@ -104,15 +114,17 @@ type Text implements INote {
   name: String!
   tags: [Tag!]!
   type: NoteType!
+  updatedAt: Date!
   user: User!
 }
 
-type User {
-  _id: String!
+type User implements BaseObject {
+  _id: ID!
   authenticationProvider: String
   createdAt: Date!
   credentials: Credentials
   name: String!
+  updatedAt: Date!
 }
 
 type Versions {
