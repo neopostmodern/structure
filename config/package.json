@@ -1,5 +1,5 @@
 {
   "name": "@structure/config",
-  "main": "config.json",
+  "main": "index.js",
   "version": "0.20.0-7"
 }

@@ -1,7 +1,7 @@
 import { makeExecutableSchema } from 'apollo-server'
 import { GraphQLScalarType, Kind } from 'graphql'
 import Moment from 'moment'
-import packageJson from '../package.json'
+import packageJson from '../package.json' assert { type: 'json' }
 import {
   addTagByNameToNote,
   fetchTitleSuggestions,
