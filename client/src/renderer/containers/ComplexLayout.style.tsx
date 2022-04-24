@@ -92,7 +92,11 @@ export const PrimaryContent = styled(Box)<{ wide?: boolean }>`
     padding-top: 0;
   }
   @media (min-width: ${breakpointDesktop}rem) {
-    width: 55%;
+    ${({ wide }) =>
+      !wide &&
+      css`
+        width: 55%;
+      `}
     padding-top: ${({ theme }) => theme.spacing(2)};
     padding-bottom: ${({ theme }) => theme.spacing(2)};
   }
