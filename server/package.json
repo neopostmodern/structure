@@ -48,5 +48,8 @@
     "@graphql-codegen/cli": "^2.4.0",
     "@graphql-codegen/schema-ast": "^2.4.1",
     "@graphql-codegen/typescript": "^2.4.2"
+  },
+  "volta": {
+    "node": "17.9.0"
   }
 }

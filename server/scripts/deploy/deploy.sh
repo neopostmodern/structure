@@ -19,10 +19,11 @@ ssh "$USER@$SERVER" "cd $SERVER_FOLDER_BACKEND && tar xf server.tar && rm server
 echo "OK"
 
 echo "Starting backend service (as pm2-process '$PROCESS_NAME')..."
+PM2_NODE_ARGS="--interpreter=\$(which node)"
 if [ -n "$NODE_ARGS" ]; then
-	 PM2_NODE_ARGS="--node-args=\"$NODE_ARGS\""
+	 PM2_NODE_ARGS="$PM2_PM2_NODE_ARGS --node-args=\"$NODE_ARGS\""
 fi
-ssh "$USER@$SERVER" "[ -s \"\$HOME/.nvm/nvm.sh\" ] && \. \"\$HOME/.nvm/nvm.sh\"; export NODE_ENV=\"production\"; pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start --cwd $SERVER_FOLDER_BACKEND/server/ --name \"$PROCESS_NAME\" $PM2_NODE_ARGS \$(which npm) -- start"
+ssh "$USER@$SERVER" "bash -l -c 'export NODE_ENV=\"production\"; pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start --cwd $SERVER_FOLDER_BACKEND/server/ --name \"$PROCESS_NAME\" $PM2_NODE_ARGS \$(which npm) -- start'"
 echo "OK"
 
 echo -e "\nDeploy finished at $(date)"
