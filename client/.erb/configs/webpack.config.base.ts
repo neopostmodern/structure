@@ -2,16 +2,19 @@
  * Base webpack config used across other specific configs
  */
 
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import path from 'path';
 import webpack from 'webpack';
-import webpackPaths from './webpack.paths';
-import { version as projectVersion } from '../../package.json'
+import { GenerateSW } from 'workbox-webpack-plugin';
+import { version as projectVersion } from '../../package.json';
 import { dependencies as externals } from '../../release/app/package.json';
+import webpackPaths from './webpack.paths';
 
 // compare with src/globals.d.ts
 interface GlobalConfig {
-  VERSION: string
-  BACKEND_URL: string
-  WEB_FRONTEND_HOST: string
+  VERSION: string;
+  BACKEND_URL: string;
+  WEB_FRONTEND_HOST: string;
 }
 
 export const createConfigPlugin = (config) => {
@@ -19,10 +22,36 @@ export const createConfigPlugin = (config) => {
     VERSION: JSON.stringify(projectVersion),
     BACKEND_URL: JSON.stringify(config.BACKEND_URL),
     WEB_FRONTEND_HOST: JSON.stringify(config.WEB_FRONTEND_HOST),
-  }
+  };
 
-  return new webpack.DefinePlugin(jsonifiedConfig)
-}
+  return new webpack.DefinePlugin(jsonifiedConfig);
+};
+
+export const createPluginsForPWA = ({ development = false } = {}) => {
+  if (process.env.TARGET !== 'web') {
+    return [];
+  }
+  const assetsFolderPath = path.join(__dirname, '../../assets');
+  return [
+    new GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+      maximumFileSizeToCacheInBytes: development ? 50000000 : undefined,
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.join(assetsFolderPath, 'manifest.webmanifest'),
+          to: 'manifest.webmanifest',
+        },
+        {
+          from: path.join(assetsFolderPath, 'icons/256x256.png'),
+          to: 'icons/256x256.png',
+        },
+      ],
+    }),
+  ];
+};
 
 const configuration: webpack.Configuration = {
   externals: [...Object.keys(externals || {})],

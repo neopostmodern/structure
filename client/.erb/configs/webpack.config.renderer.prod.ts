@@ -13,7 +13,10 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
 import checkNodeEnv from '../scripts/check-node-env';
 import deleteSourceMaps from '../scripts/delete-source-maps';
-import baseConfig, { createConfigPlugin } from './webpack.config.base';
+import baseConfig, {
+  createConfigPlugin,
+  createPluginsForPWA,
+} from './webpack.config.base';
 import webpackPaths from './webpack.paths';
 
 const configPlugin = createConfigPlugin(config);
@@ -142,6 +145,8 @@ const configuration: webpack.Configuration = {
     }),
 
     configPlugin,
+
+    ...createPluginsForPWA(),
   ],
 };
 
