@@ -25,6 +25,12 @@ import { HistoryStateType } from '../reducers/history';
 import { breakpointDesktop, breakPointMobile } from '../styles/constants';
 import LastVisitedNotes from './LastVisitedNotes';
 
+const CustomDesktopAppBar = styled(Box)`
+  @media (min-width: 40rem) and (max-width: ${breakpointDesktop - 0.001}rem) {
+    margin-top: -0.5rem;
+  }
+`;
+
 const TitleLine = styled.div`
   display: flex;
   justify-content: space-between;
@@ -45,10 +51,15 @@ const TitleLine = styled.div`
 const TitleLink = styled(Link)`
   font-size: 2.5rem;
   font-weight: bold;
+  line-height: 1.18;
   color: inherit;
 
   &:not(:hover) {
     text-decoration: none;
+  }
+
+  @media (min-width: ${breakpointDesktop}rem) {
+    margin-left: ${({ theme }) => theme.spacing(1)};
   }
 `;
 
@@ -131,7 +142,7 @@ const Navigation = ({
   return (
     <>
       {!isMobileLayout && (
-        <Box display="flex" alignItems="center">
+        <CustomDesktopAppBar display="flex" alignItems="center">
           <TitleLine>
             <Tooltip title="Back to homepage">
               <TitleLink to="/">Structure</TitleLink>
@@ -142,7 +153,7 @@ const Navigation = ({
           {drawerNavigationItems && (
             <Box sx={{ marginLeft: 'auto' }}>{menuButton}</Box>
           )}
-        </Box>
+        </CustomDesktopAppBar>
       )}
       {drawerNavigationItems && (
         <Drawer

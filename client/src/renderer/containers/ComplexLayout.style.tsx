@@ -1,14 +1,11 @@
 import { Box, Paper } from '@mui/material';
 import styled, { css } from 'styled-components';
-import { InternalLink } from '../components/CommonStyles';
 import {
   baseFont,
   breakpointDesktop,
   breakPointMobile,
   containerWidth,
 } from '../styles/constants';
-
-const gutter = 1;
 
 export const Container = styled(Paper).attrs(() => ({
   square: true,
@@ -51,25 +48,12 @@ const cornerMaxWidth = css`calc(calc(100% - ${containerWidth}) / 2)`;
 const Corner = styled.div`
   @media (min-width: ${breakpointDesktop}rem) {
     position: fixed;
-    padding: ${gutter}rem;
+    padding: ${({ theme }) => theme.spacing(2)};
+    padding-top: ${({ theme }) => theme.spacing(4)};
     box-sizing: border-box;
     width: 100%;
     max-width: ${cornerMaxWidth};
   }
-`;
-
-export const Banner = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-`;
-export const OfflineBanner = styled.div`
-  background-color: gray;
-  color: white;
-  padding: 0.5em;
-  margin-bottom: ${gutter}rem;
-  text-align: center;
 `;
 
 export const Navigation = styled(Corner)`
@@ -88,16 +72,15 @@ export const PrimaryContent = styled(Box)<{ wide?: boolean }>`
   margin: 0 auto;
   order: 1;
 
-  @media (max-width: ${breakPointMobile}) {
-    padding-top: 0;
-  }
+  padding-top: ${({ theme }) => theme.spacing(2)};
+
   @media (min-width: ${breakpointDesktop}rem) {
     ${({ wide }) =>
       !wide &&
       css`
         width: 55%;
       `}
-    padding-top: ${({ theme }) => theme.spacing(2)};
+    padding-top: ${({ theme }) => theme.spacing(4)};
     padding-bottom: ${({ theme }) => theme.spacing(2)};
   }
 `;
@@ -132,15 +115,5 @@ export const UserAndMenuIndicator = styled(Corner)`
   @media (max-width: ${breakpointDesktop - 0.001}rem) {
     order: -1;
     margin-left: auto;
-  }
-`;
-
-export const Username = styled(InternalLink)`
-  color: ${({ theme }) => theme.palette.text.primary};
-  opacity: 1;
-  font-weight: bold;
-
-  &:hover {
-    text-decoration: underline;
   }
 `;

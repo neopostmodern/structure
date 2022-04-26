@@ -16,6 +16,7 @@ import {
 } from '../../actions/userInterface';
 import FatalApolloError from '../../components/FatalApolloError';
 import { StickyMenu } from '../../components/Menu';
+import NetworkOperationsIndicator from '../../components/NetworkOperationsIndicator';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
 import { NotesForList, NotesForList_notes } from '../../generated/NotesForList';
@@ -245,7 +246,7 @@ const NotesPage: React.FC = () => {
 
   const content = [];
   let primaryActions = null;
-  // todo: indicate background (re) fetch somewhere
+
   if (notesQuery.state === DataState.ERROR) {
     content.push(<FatalApolloError key="error" query={notesQuery} />);
   } else if (notesQuery.state === DataState.DATA) {
@@ -271,6 +272,13 @@ const NotesPage: React.FC = () => {
     if (layout !== LinkLayout.LIST_LAYOUT) {
       content.push(<i key="unsupported-layout">Unsupported layout</i>);
     } else {
+      content.push(
+        <NetworkOperationsIndicator
+          key="refresh-indicator"
+          query={notesQuery}
+        />
+      );
+
       content.push(
         <NotesList
           key="notes-list"

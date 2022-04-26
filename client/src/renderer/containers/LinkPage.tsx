@@ -4,6 +4,7 @@ import React from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
 import LinkForm from '../components/LinkForm';
+import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
 import { LinkQuery, LinkQueryVariables } from '../generated/LinkQuery';
@@ -64,7 +65,7 @@ const LinkPage: React.FC = () => {
     })
   );
 
-  const [updateLink] = useMutation<
+  const [updateLink, updateLinkMutation] = useMutation<
     UpdateLinkMutation,
     UpdateLinkMutationVariables
   >(UPDATE_LINK_MUTATION);
@@ -90,6 +91,10 @@ const LinkPage: React.FC = () => {
       primaryActions={isDesktopLayout && tagsComponent}
       secondaryActions={<NotePageMenu note={link} />}
     >
+      <NetworkOperationsIndicator
+        query={linkQuery}
+        mutation={updateLinkMutation}
+      />
       <LinkForm
         link={link}
         onSubmit={(updatedLink): void => {

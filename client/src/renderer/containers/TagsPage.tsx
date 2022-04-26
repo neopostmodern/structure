@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { changeTagsLayout, TagsLayout } from '../actions/userInterface';
 import { Menu } from '../components/Menu';
+import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import Tag from '../components/Tag';
 import { TagsQuery, TagsQuery_tags } from '../generated/TagsQuery';
 import { UpdateTag2, UpdateTag2Variables } from '../generated/UpdateTag2';
@@ -225,6 +226,7 @@ const TagsPage: React.FC<{}> = () => {
       }
       wide={layout === TagsLayout.COLOR_COLUMN_LAYOUT}
     >
+      <NetworkOperationsIndicator query={tagsQuery} />
       {tagsQuery.state === DataState.DATA && renderTags(tagsQuery.data.tags)}
     </ComplexLayout>
   );

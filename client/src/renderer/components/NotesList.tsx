@@ -3,6 +3,7 @@ import TimeAgo from 'react-timeago';
 import { NoteObject } from '../reducers/links';
 import { BatchSelectionType } from '../reducers/userInterface';
 import Centered from './Centered';
+import Gap from './Gap';
 import * as Styled from './NotesList.style';
 import NotesListActionMenu from './NotesListActionMenu';
 import Tags from './Tags';
@@ -27,7 +28,8 @@ const NotesList: React.FC<NotesListProps> = ({ notes, ...props }) => {
   }
 
   return (
-    <Styled.NotesContainer>
+    <>
+      <Gap vertical={1} />
       {notes.map((note) => (
         <Styled.Note key={note._id} archived={Boolean(note.archivedAt)}>
           {'batchEditing' in props && props.batchEditing === true && (
@@ -84,7 +86,7 @@ const NotesList: React.FC<NotesListProps> = ({ notes, ...props }) => {
           </Styled.NoteContainer>
         </Styled.Note>
       ))}
-    </Styled.NotesContainer>
+    </>
   );
 };
 

@@ -7,6 +7,7 @@ import { requestLogout } from '../actions/userInterface';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import Gap from '../components/Gap';
 import { Menu } from '../components/Menu';
+import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import UserInfo from '../components/UserInfo';
 import { UserQuery } from '../generated/UserQuery';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
@@ -69,6 +70,7 @@ const UserPage: React.FC = () => {
         actionDescription={'retrieve user data'}
         retry={userQuery.refetch}
       />
+      <NetworkOperationsIndicator query={userQuery} />
       {userQuery.state === DataState.DATA && userQuery.data.currentUser && (
         <>
           <UserInfo user={userQuery.data.currentUser} />

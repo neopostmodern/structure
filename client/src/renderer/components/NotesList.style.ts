@@ -2,10 +2,6 @@ import { Button } from '@mui/material';
 import styled from 'styled-components';
 import { ExternalLink, InternalLink } from './CommonStyles';
 
-export const NotesContainer = styled.div`
-  padding-top: 2rem;
-`;
-
 export const Note = styled.div<{ archived: boolean }>`
   margin-bottom: 2rem;
   display: flex;

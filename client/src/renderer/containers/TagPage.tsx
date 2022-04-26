@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React from 'react';
 import { useParams } from 'react-router';
+import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotesList from '../components/NotesList';
 import TagForm from '../components/TagForm';
 import {
@@ -84,13 +85,17 @@ const TagPage: React.FC<{}> = () => {
       fetchPolicy: gracefulNetworkPolicy(),
     })
   );
-  const [updateTag] = useMutation<
+  const [updateTag, updateTagMutation] = useMutation<
     UpdateTagMutation,
     UpdateTagMutationVariables
   >(UPDATE_TAG_MUTATION);
 
   return (
     <ComplexLayout loading={tagQuery.state === DataState.LOADING}>
+      <NetworkOperationsIndicator
+        query={tagQuery}
+        mutation={updateTagMutation}
+      />
       {tagQuery.state === DataState.DATA && (
         <>
           <TagForm

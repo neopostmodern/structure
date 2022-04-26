@@ -18,7 +18,7 @@ type SelectedApolloQueryResultFields<QueryData, QueryVariables> = Pick<
   SelectedAdditionalFieldNames
 >;
 
-type PolicedData<QueryData> =
+export type PolicedData<QueryData> =
   | { state: DataState.LOADING }
   | { state: DataState.DATA; data: QueryData; loadingBackground: boolean }
   | { state: DataState.ERROR; error: ApolloError };

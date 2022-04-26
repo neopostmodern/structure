@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import config from '../config';
 import { Loadable } from '../utils/types';
+import { NetworkIndicatorContainer } from './NetworkOperationsIndicator';
 
 const VersionMarksContainer = styled.div<{ warning?: boolean }>`
   padding: 1rem;
@@ -36,7 +37,11 @@ const VersionMarks: React.FC<VersionMarksProps> = ({
   currentPackageVersion,
 }) => {
   if (versions === 'loading') {
-    return <i>Checking for new versions...</i>;
+    return (
+      <NetworkIndicatorContainer align="left">
+        Checking for new versions...
+      </NetworkIndicatorContainer>
+    );
   }
 
   const updateButtonProps =

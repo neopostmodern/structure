@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import React from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
+import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
 import TextForm from '../components/TextForm';
@@ -59,7 +60,7 @@ const TextPage: React.FC = () => {
       variables: { textId },
     })
   );
-  const [updateText] = useMutation<
+  const [updateText, updateTextMutation] = useMutation<
     UpdateTextMutation,
     UpdateTextMutationVariables
   >(UPDATE_TEXT_MUTATION);
@@ -85,6 +86,10 @@ const TextPage: React.FC = () => {
       primaryActions={isDesktopLayout && tagsComponent}
       secondaryActions={<NotePageMenu note={text} />}
     >
+      <NetworkOperationsIndicator
+        query={textQuery}
+        mutation={updateTextMutation}
+      />
       <TextForm
         text={text}
         onSubmit={(updatedText) =>

@@ -42,7 +42,6 @@ const TextForm: React.FC<TextFormProps> = ({
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formProps}>
       <form>
-        <Gap vertical={1} visibility="below-desktop" />
         <NameInput type="text" {...register('name', { required: true })} />
 
         {tagsComponent && (

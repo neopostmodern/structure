@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import { TextField } from './CommonStyles';
 
 export const NameInput = styled(TextField)`
-  font-size: 200%;
+  font-size: 2.5rem;
+  padding-top: 0;
 `;
 
 export const FormSubheader = styled.div`

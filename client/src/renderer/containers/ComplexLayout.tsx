@@ -10,6 +10,7 @@ import FatalApolloError from '../components/FatalApolloError';
 import Gap from '../components/Gap';
 import { Menu } from '../components/Menu';
 import Navigation from '../components/Navigation';
+import { NetworkIndicatorContainer } from '../components/NetworkOperationsIndicator';
 import VersionMarks from '../components/VersionMarks';
 import { ProfileQuery } from '../generated/ProfileQuery';
 import { RootState } from '../reducers';
@@ -81,13 +82,8 @@ const ComplexLayout: React.FC<
     },
   ].filter(({ path }) => isLoggedIn || path === '/settings');
 
-  const offlineBanner = !navigator.onLine && (
-    <Styled.OfflineBanner>Offline</Styled.OfflineBanner>
-  );
-
   return (
     <Styled.Container>
-      {!isDesktopLayout && offlineBanner}
       <Styled.Navigation>
         <Navigation
           drawerNavigationItems={
@@ -96,7 +92,9 @@ const ComplexLayout: React.FC<
         />
       </Styled.Navigation>
       <Styled.PrimaryContent wide={wide}>
-        {isDesktopLayout && offlineBanner}
+        {!navigator.onLine && (
+          <NetworkIndicatorContainer>Offline</NetworkIndicatorContainer>
+        )}
         {profileQuery.state === DataState.ERROR ? (
           <FatalApolloError query={profileQuery} />
         ) : (

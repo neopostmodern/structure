@@ -48,8 +48,6 @@ const LinkForm: React.FC<LinkFormProps> = ({
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formProps}>
       <form>
-        <Gap vertical={1} visibility="below-desktop" />
-
         <LinkNameField url={watch('url')} name="name" linkId={link._id} />
         <UrlField name="url" />
 
