@@ -2,5 +2,5 @@
 
 ssh "$USER@$SERVER" <<EOT
 pm2 stop "${PROCESS_NAME}"
-mongo --eval "conn = new Mongo(); db = conn.getDB('structureApp-staging'); db.dropDatabase(); db.copyDatabase('structureApp', 'structureApp-staging');"
+mongodump --archive --db=structureApp | mongorestore --archive --nsFrom='structureApp.*' --nsTo='structureApp-staging.*'
 EOT
