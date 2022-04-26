@@ -18,3 +18,24 @@
   font-weight: bold;
   font-style: normal;
 }
+
+@font-face {
+  font-family: 'Lunchtype22';
+  src: url('fonts/lunchtype23-light-italic-webfont.woff2') format('woff2');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Lunchtype22';
+  src: url('fonts/lunchtype23-regular-italic-webfont.woff2') format('woff2');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Lunchtype22';
+  src: url('fonts/lunchtype23-medium-italic-webfont.woff2') format('woff2');
+  font-weight: bold;
+  font-style: italic;
+}
