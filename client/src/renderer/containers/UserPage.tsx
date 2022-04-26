@@ -9,6 +9,8 @@ import Gap from '../components/Gap';
 import { Menu } from '../components/Menu';
 import UserInfo from '../components/UserInfo';
 import { UserQuery } from '../generated/UserQuery';
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
+import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
 const USER_QUERY = gql`
@@ -24,11 +26,11 @@ const USER_QUERY = gql`
 
 const UserPage: React.FC = () => {
   const dispatch = useDispatch();
-  const userQuery = useQuery<UserQuery>(USER_QUERY, {
-    fetchPolicy: 'cache-and-network',
-  });
-
-  const isLoading = userQuery.loading && !userQuery.data;
+  const userQuery = useDataState(
+    useQuery<UserQuery>(USER_QUERY, {
+      fetchPolicy: gracefulNetworkPolicy(),
+    })
+  );
 
   return (
     <ComplexLayout
@@ -58,14 +60,16 @@ const UserPage: React.FC = () => {
           </Button>
         </Menu>
       }
-      loading={isLoading}
+      loading={userQuery.state === DataState.LOADING}
     >
       <ErrorSnackbar
-        error={userQuery.error}
+        error={
+          userQuery.state === DataState.ERROR ? userQuery.error : undefined
+        }
         actionDescription={'retrieve user data'}
         retry={userQuery.refetch}
       />
-      {userQuery.data?.currentUser && (
+      {userQuery.state === DataState.DATA && userQuery.data.currentUser && (
         <>
           <UserInfo user={userQuery.data.currentUser} />
           <Gap vertical={2} />

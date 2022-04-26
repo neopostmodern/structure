@@ -12,7 +12,9 @@ import { UpdateTag2, UpdateTag2Variables } from '../generated/UpdateTag2';
 import { RootState } from '../reducers';
 import { breakpointDesktop } from '../styles/constants';
 import colorTools, { ColorCache } from '../utils/colorTools';
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { stripTypename } from '../utils/graphQl';
+import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
 const TagContainer = styled.div<{ droppable?: boolean }>`
@@ -20,15 +22,14 @@ const TagContainer = styled.div<{ droppable?: boolean }>`
   flex-wrap: wrap;
   border-radius: ${({ theme }) => theme.shape.borderRadius}px;
   border: 1px solid transparent;
-  ${({ droppable }): string =>
-    droppable
-      ? css`
-          border-color: gray;
-          .MuiChip-root {
-            pointer-events: none;
-          }
-        `
-      : ''}
+  ${({ droppable }) =>
+    droppable &&
+    css`
+      border-color: gray;
+      .MuiChip-root {
+        pointer-events: none;
+      }
+    `}
 
   padding: ${({ theme }) => theme.spacing(1)};
   gap: ${({ theme }) => theme.spacing(1)};
@@ -106,7 +107,9 @@ const TagsPage: React.FC<{}> = () => {
   const layout = useSelector<RootState, TagsLayout>(
     (state) => state.userInterface.tagsLayout
   );
-  const tagsQuery = useQuery<TagsQuery>(TAGS_QUERY);
+  const tagsQuery = useDataState(
+    useQuery<TagsQuery>(TAGS_QUERY, { fetchPolicy: gracefulNetworkPolicy() })
+  );
 
   const [updateTag] = useMutation<UpdateTag2, UpdateTag2Variables>(
     UPDATE_TAG_MUTATION
@@ -117,12 +120,14 @@ const TagsPage: React.FC<{}> = () => {
   const colorTagGroups = useMemo<ColorTagGroups>(() => {
     const groups: ColorTagGroups = {};
 
-    tagsQuery.data?.tags.forEach((tag) => {
-      if (!groups[tag.color]) {
-        groups[tag.color] = [];
-      }
-      groups[tag.color].push(tag);
-    });
+    if (tagsQuery.state === DataState.DATA) {
+      tagsQuery.data?.tags.forEach((tag) => {
+        if (!groups[tag.color]) {
+          groups[tag.color] = [];
+        }
+        groups[tag.color].push(tag);
+      });
+    }
 
     return groups;
   }, [tagsQuery]);
@@ -133,10 +138,10 @@ const TagsPage: React.FC<{}> = () => {
     dispatch(changeTagsLayout(TagsLayout[layouts[nextLayoutIndex]]));
   };
 
-  const renderChaosLayout = (): JSX.Element => {
+  const renderChaosLayout = (tags: Array<TagsQuery_tags>): JSX.Element => {
     return (
       <TagContainer>
-        {tagsQuery.data.tags.map((tag) => (
+        {tags.map((tag) => (
           <Tag key={tag._id} tag={tag} ref={colorTools} />
         ))}
       </TagContainer>
@@ -195,10 +200,10 @@ const TagsPage: React.FC<{}> = () => {
     return <>{tagContainers}</>;
   };
 
-  const renderTags = (): JSX.Element => {
+  const renderTags = (tags: Array<TagsQuery_tags>): JSX.Element => {
     switch (layout) {
       case TagsLayout.CHAOS_LAYOUT:
-        return renderChaosLayout();
+        return renderChaosLayout(tags);
       case TagsLayout.COLOR_LIST_LAYOUT:
         return renderColorListLayout();
       case TagsLayout.COLOR_COLUMN_LAYOUT:
@@ -210,7 +215,7 @@ const TagsPage: React.FC<{}> = () => {
 
   return (
     <ComplexLayout
-      loading={tagsQuery.loading}
+      loading={tagsQuery.state === DataState.LOADING}
       primaryActions={
         <Menu>
           <Button size="huge" onClick={selectNextLayout}>
@@ -220,7 +225,7 @@ const TagsPage: React.FC<{}> = () => {
       }
       wide={layout === TagsLayout.COLOR_COLUMN_LAYOUT}
     >
-      {!tagsQuery.loading && renderTags()}
+      {tagsQuery.state === DataState.DATA && renderTags(tagsQuery.data.tags)}
     </ComplexLayout>
   );
 };

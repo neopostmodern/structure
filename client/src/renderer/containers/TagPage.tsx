@@ -12,6 +12,8 @@ import {
   UpdateTagMutation,
   UpdateTagMutationVariables,
 } from '../generated/UpdateTagMutation';
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
+import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
 const TAG_QUERY = gql`
@@ -76,36 +78,33 @@ const UPDATE_TAG_MUTATION = gql`
 const TagPage: React.FC<{}> = () => {
   const { tagId } = useParams();
 
-  const tagQuery = useQuery<TagWithNotesQuery, TagWithNotesQueryVariables>(
-    TAG_QUERY,
-    {
+  const tagQuery = useDataState(
+    useQuery<TagWithNotesQuery, TagWithNotesQueryVariables>(TAG_QUERY, {
       variables: { tagId },
-      fetchPolicy: 'cache-and-network',
-    }
+      fetchPolicy: gracefulNetworkPolicy(),
+    })
   );
   const [updateTag] = useMutation<
     UpdateTagMutation,
     UpdateTagMutationVariables
   >(UPDATE_TAG_MUTATION);
 
-  if (tagQuery.loading) {
-    return <ComplexLayout loading />;
-  }
-
-  const { tag } = tagQuery.data;
-
   return (
-    <ComplexLayout>
-      <TagForm
-        tag={tag}
-        onSubmit={(updatedTag): void => {
-          updateTag({
-            variables: { tag: updatedTag },
-          });
-        }}
-      />
+    <ComplexLayout loading={tagQuery.state === DataState.LOADING}>
+      {tagQuery.state === DataState.DATA && (
+        <>
+          <TagForm
+            tag={tagQuery.data.tag}
+            onSubmit={(updatedTag): void => {
+              updateTag({
+                variables: { tag: updatedTag },
+              });
+            }}
+          />
 
-      <NotesList notes={tag.notes} />
+          <NotesList notes={tagQuery.data.tag.notes} />
+        </>
+      )}
     </ComplexLayout>
   );
 };
