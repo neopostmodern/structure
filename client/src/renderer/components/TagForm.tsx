@@ -3,6 +3,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { TagType } from '../types';
+import colorTools from '../utils/colorTools';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
 import { TextField } from './CommonStyles';
 import { NameInput } from './formComponents';
@@ -13,13 +14,6 @@ const ColorBlockInput = styled(TextField)`
   margin-bottom: 2rem;
 
   text-align: center;
-  font-size: 0;
-  cursor: pointer;
-
-  &:focus {
-    font-size: initial;
-    cursor: initial;
-  }
 `;
 
 const tagFormFields = ['_id', 'color', 'name'];
@@ -46,10 +40,16 @@ const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
 
   useSaveOnUnmount({ onSubmit, defaultValues }, { getValues });
 
+  const { ref: registerRef, ...registerProps } = register('color');
+
   return (
     <form>
       <ColorBlockInput
-        {...register('color')}
+        ref={(ref) => {
+          registerRef(ref);
+          colorTools(ref);
+        }}
+        {...registerProps}
         type="text"
         style={{ backgroundColor: tag.color }}
       />
