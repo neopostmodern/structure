@@ -1,6 +1,26 @@
 {
   "name": "structure",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neopostmodern/structure.git"
+  },
+  "author": {
+    "name": "neopostmodern",
+    "email": "structure@neopostmodern.com",
+    "url": "https://github.com/neopostmodern"
+  },
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/neopostmodern/structure/issues"
+  },
+  "keywords": [
+    "bookmarking",
+    "knowledgebase",
+    "notes",
+    "note-taking",
+    "structure"
+  ],
+  "homepage": "https://structure.neopostmodern.com/",
   "scripts": {
     "client:build:electron": "(cd client && npm run package)",
     "client:build:web": "(cd client && npm run build:web)",
