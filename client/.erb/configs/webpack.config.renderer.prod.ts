@@ -146,7 +146,7 @@ const configuration: webpack.Configuration = {
 
     configPlugin,
 
-    ...createPluginsForPWA(),
+    ...createPluginsForPWA({ additionalAssetFileNames: ['.htaccess'] }),
   ],
 };
 

@@ -27,11 +27,15 @@ export const createConfigPlugin = (config) => {
   return new webpack.DefinePlugin(jsonifiedConfig);
 };
 
-export const createPluginsForPWA = ({ development = false } = {}) => {
+export const createPluginsForPWA = ({
+  development = false,
+  additionalAssetFileNames = [],
+} = {}) => {
   if (process.env.TARGET !== 'web') {
     return [];
   }
   const assetsFolderPath = path.join(__dirname, '../../assets');
+  const assetFileNames = ['manifest.webmanifest', 'icons/256x256.png'];
   return [
     new GenerateSW({
       clientsClaim: true,
@@ -39,16 +43,12 @@ export const createPluginsForPWA = ({ development = false } = {}) => {
       maximumFileSizeToCacheInBytes: development ? 50000000 : undefined,
     }),
     new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.join(assetsFolderPath, 'manifest.webmanifest'),
-          to: 'manifest.webmanifest',
-        },
-        {
-          from: path.join(assetsFolderPath, 'icons/256x256.png'),
-          to: 'icons/256x256.png',
-        },
-      ],
+      patterns: [...assetFileNames, additionalAssetFileNames].map(
+        (assetFileName) => ({
+          from: path.join(assetsFolderPath, assetFileName),
+          to: assetFileName,
+        })
+      ),
     }),
   ];
 };
