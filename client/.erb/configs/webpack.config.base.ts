@@ -43,7 +43,7 @@ export const createPluginsForPWA = ({
       maximumFileSizeToCacheInBytes: development ? 50000000 : undefined,
     }),
     new CopyWebpackPlugin({
-      patterns: [...assetFileNames, additionalAssetFileNames].map(
+      patterns: [...assetFileNames, ...additionalAssetFileNames].map(
         (assetFileName) => ({
           from: path.join(assetsFolderPath, assetFileName),
           to: assetFileName,
