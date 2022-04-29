@@ -46,7 +46,7 @@ export const createPluginsForPWA = ({
       patterns: [...assetFileNames, ...additionalAssetFileNames].map(
         (assetFileName) => ({
           from: path.join(assetsFolderPath, assetFileName),
-          to: assetFileName,
+          to: assetFileName.includes('/') ? assetFileName : undefined, // see https://github.com/webpack-contrib/copy-webpack-plugin/issues/137#issuecomment-464339172
         })
       ),
     }),
