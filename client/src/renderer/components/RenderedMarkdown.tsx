@@ -23,6 +23,10 @@ marked.setOptions({
 });
 
 const MarkdownContainer = styled.div`
+  p:last-child {
+    margin-bottom: 0;
+  }
+
   @media (prefers-color-scheme: dark) {
     a {
       color: #3485ff;
@@ -65,17 +69,26 @@ const EmptyTextarea = styled.div`
   padding-bottom: 1.3rem;
 `;
 
-const RenderedMarkdown = ({ markdown }: { markdown: string }) => {
-  if (!markdown.length) {
+const RenderedMarkdown = ({
+  markdown,
+  showEmpty = true,
+}: {
+  markdown: string;
+  showEmpty?: boolean;
+}) => {
+  if (markdown.length) {
+    return (
+      <MarkdownContainer
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: marked(markdown) }}
+        style={{ fontSize: '1rem' }}
+      />
+    );
+  }
+  if (showEmpty) {
     return <EmptyTextarea>No content</EmptyTextarea>;
   }
-  return (
-    <MarkdownContainer
-      // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{ __html: marked(markdown) }}
-      style={{ fontSize: '1rem' }}
-    />
-  );
+  return null;
 };
 
 export default RenderedMarkdown;

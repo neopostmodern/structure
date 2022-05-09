@@ -124,7 +124,7 @@ const NotesPage: React.FC = () => {
     dispatch(
       changeLinkLayout(
         layout === LinkLayout.LIST_LAYOUT
-          ? LinkLayout.GRID_LAYOUT
+          ? LinkLayout.EXPANDED_LIST_LAYOUT
           : LinkLayout.LIST_LAYOUT
       )
     );
@@ -172,20 +172,15 @@ const NotesPage: React.FC = () => {
       <NoteBatchEditingBar key="batch-operations-menu" notes={matchedNotes} />
     );
 
-    if (layout !== LinkLayout.LIST_LAYOUT) {
-      content.push(<i key="unsupported-layout">Unsupported layout</i>);
-    } else {
-      content.push(
-        <NetworkOperationsIndicator
-          key="refresh-indicator"
-          query={notesQuery}
-        />
-      );
+    content.push(
+      <NetworkOperationsIndicator key="refresh-indicator" query={notesQuery} />
+    );
 
     content.push(
       <NotesList
         key="notes-list"
         notes={matchedNotes.slice(0, infiniteScrollLimit)}
+        expanded={layout === LinkLayout.EXPANDED_LIST_LAYOUT}
       />
     );
 

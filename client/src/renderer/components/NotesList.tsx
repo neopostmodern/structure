@@ -6,7 +6,8 @@ import NoteInList from './NoteInList';
 
 const NotesList: React.FC<{
   notes: Array<NoteObject>;
-}> = React.memo(({ notes }) => {
+  expanded: boolean;
+}> = ({ notes, expanded }) => {
   if (notes.length === 0) {
     // todo: style
     // todo: offer to reset search
@@ -17,10 +18,10 @@ const NotesList: React.FC<{
     <>
       <Gap vertical={1} />
       {notes.map((note) => (
-        <NoteInList key={note._id} note={note} />
+        <NoteInList key={note._id} note={note} expanded={expanded} />
       ))}
     </>
   );
-});
+};
 
-export default NotesList;
+export default React.memo(NotesList);

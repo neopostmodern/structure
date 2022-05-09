@@ -4,11 +4,13 @@ import { NoteObject } from '../reducers/links';
 import * as Styled from './NoteInList.style';
 import NoteInListBatchEditing from './NoteInListBatchEditing';
 import NotesListActionMenu from './NotesListActionMenu';
+import RenderedMarkdown from './RenderedMarkdown';
 import Tags from './Tags';
 
-export const NoteInList: React.FC<
-  React.PropsWithChildren<{ note: NoteObject }>
-> = ({ note }) => {
+export const NoteInList: React.FC<{ note: NoteObject; expanded: boolean }> = ({
+  note,
+  expanded,
+}) => {
   return (
     <Styled.Note archived={Boolean(note.archivedAt)}>
       <NoteInListBatchEditing noteId={note._id} />
@@ -40,7 +42,9 @@ export const NoteInList: React.FC<
               {note.domain}
             </Styled.LinkDomain>
           )}
-          <Styled.NoteDescription>{note.description}</Styled.NoteDescription>
+          {!expanded && (
+            <Styled.NoteDescription>{note.description}</Styled.NoteDescription>
+          )}
         </Styled.NoteInfo>
         <Styled.NoteActions>
           <Tags tags={note.tags} noteId={note._id} />
@@ -48,6 +52,9 @@ export const NoteInList: React.FC<
             <NotesListActionMenu note={note} />
           </Styled.ActionMenuWrapper>
         </Styled.NoteActions>
+        {expanded && (
+          <RenderedMarkdown markdown={note.description} showEmpty={false} />
+        )}
       </Styled.NoteContainer>
     </Styled.Note>
   );

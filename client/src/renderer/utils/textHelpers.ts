@@ -2,13 +2,10 @@ import { ArchiveState, LinkLayout } from '../actions/userInterface';
 
 export const layoutToName = (layout: LinkLayout): string => {
   switch (layout) {
-    case LinkLayout.GRID_LAYOUT:
-      return 'Grid layout';
+    case LinkLayout.EXPANDED_LIST_LAYOUT:
+      return 'Expanded layout';
     case LinkLayout.LIST_LAYOUT:
       return 'List layout';
-    default:
-      console.error('Unkown layout', layout);
-      return 'Unknown layout';
   }
 };
 
