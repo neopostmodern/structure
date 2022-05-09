@@ -5,6 +5,7 @@ import { ExternalLink, InternalLink } from './CommonStyles';
 export const Note = styled.div<{ archived: boolean }>`
   margin-bottom: 2rem;
   display: flex;
+  align-items: center;
   opacity: ${({ archived }): number => (archived ? 0.5 : 1)};
 `;
 
