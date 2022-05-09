@@ -4,7 +4,7 @@ import {
   HistoryToggleOff as HistoryLoadingIcon,
 } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { push } from 'redux-first-history';
 import { VisitedNotes } from '../generated/VisitedNotes';
@@ -28,12 +28,15 @@ const LastVisitedNotes = () => {
   const [menuAnchorElement, setMenuAnchorElement] =
     useState<null | HTMLElement>(null);
   const menuOpen = Boolean(menuAnchorElement);
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setMenuAnchorElement(event.currentTarget);
-  };
-  const handleClose = () => {
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      setMenuAnchorElement(event.currentTarget);
+    },
+    [setMenuAnchorElement]
+  );
+  const handleClose = useCallback(() => {
     setMenuAnchorElement(null);
-  };
+  }, [setMenuAnchorElement]);
 
   const lastVisitedNotes = useSelector<RootState, Array<NoteSummary>>(
     (state) => state.history.lastVisitedNotes

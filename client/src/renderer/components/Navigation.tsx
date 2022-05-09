@@ -14,7 +14,7 @@ import {
   Tooltip,
   useMediaQuery,
 } from '@mui/material';
-import { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { goBack, goForward } from 'redux-first-history';
@@ -94,6 +94,22 @@ const Navigation = ({
     HistoryStateType
   >((state) => state.history);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const handleGoBack = useCallback(
+    () => dispatch(goBack()),
+    [dispatch, goBack]
+  );
+  const handleGoForward = useCallback(
+    () => dispatch(goForward()),
+    [dispatch, goForward]
+  );
+  const handleDrawerOpen = useCallback(
+    () => setIsDrawerOpen(true),
+    [setIsDrawerOpen]
+  );
+  const handleDrawerClose = useCallback(
+    () => setIsDrawerOpen(false),
+    [setIsDrawerOpen]
+  );
 
   const addNoteFab = (
     <Tooltip title="Add new note">
@@ -109,7 +125,7 @@ const Navigation = ({
     </Tooltip>
   );
   const menuButton = (
-    <IconButton onClick={() => setIsDrawerOpen(true)}>
+    <IconButton onClick={handleDrawerOpen}>
       <Menu />
     </IconButton>
   );
@@ -117,10 +133,7 @@ const Navigation = ({
     <HistoryTools>
       <Tooltip title="Navigate back">
         <span>
-          <IconButton
-            onClick={() => dispatch(goBack())}
-            disabled={lengthOfPast <= 0}
-          >
+          <IconButton onClick={handleGoBack} disabled={lengthOfPast <= 0}>
             <ArrowBack />
           </IconButton>
         </span>
@@ -128,10 +141,7 @@ const Navigation = ({
       <LastVisitedNotes />
       <Tooltip title="Navigate forward">
         <span>
-          <IconButton
-            onClick={() => dispatch(goForward())}
-            disabled={lengthOfFuture <= 0}
-          >
+          <IconButton onClick={handleGoForward} disabled={lengthOfFuture <= 0}>
             <ArrowForward />
           </IconButton>
         </span>
@@ -156,11 +166,7 @@ const Navigation = ({
         </CustomDesktopAppBar>
       )}
       {drawerNavigationItems && (
-        <Drawer
-          anchor="right"
-          open={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
-        >
+        <Drawer anchor="right" open={isDrawerOpen} onClose={handleDrawerClose}>
           <List>
             {drawerNavigationItems.map(({ label, path, icon }) => (
               <ListItem key={path} disablePadding>
@@ -190,4 +196,4 @@ const Navigation = ({
   );
 };
 
-export default Navigation;
+export default React.memo(Navigation);

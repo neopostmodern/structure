@@ -1,6 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import Mousetrap from 'mousetrap';
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import {
@@ -98,6 +98,13 @@ const NotesPage: React.FC = () => {
     notesQuery,
     searchQuery,
     archiveState
+  );
+
+  const handleSetBatchSelected = useCallback(
+    (noteId, selected): void => {
+      dispatch(setBatchSelected(noteId, selected));
+    },
+    [setBatchSelected]
   );
 
   const selectedNoteCount = (): number =>
@@ -259,9 +266,7 @@ const NotesPage: React.FC = () => {
           notes={matchedNotes.slice(0, infiniteScrollLimit)}
           batchEditing={batchEditing}
           batchSelections={batchSelections}
-          onSetBatchSelected={(noteId, selected): void => {
-            dispatch(setBatchSelected(noteId, selected));
-          }}
+          onSetBatchSelected={handleSetBatchSelected}
         />
       );
       if (matchedNotes.length > infiniteScrollLimit) {

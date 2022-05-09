@@ -1,16 +1,15 @@
 import { useQuery } from '@apollo/client';
 import { AccountCircle, LocalOffer, Settings } from '@mui/icons-material';
-import { Button, CircularProgress, Stack } from '@mui/material';
-import React, { useEffect } from 'react';
+import { CircularProgress, Stack } from '@mui/material';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { version as currentPackageVersion } from '../../../package.json';
 import Centered from '../components/Centered';
 import FatalApolloError from '../components/FatalApolloError';
 import Gap from '../components/Gap';
-import { Menu } from '../components/Menu';
 import Navigation from '../components/Navigation';
 import { NetworkIndicatorContainer } from '../components/NetworkOperationsIndicator';
+import UserAndMenuIndicatorDesktop from '../components/UserAndMenuIndicatorDesktop';
 import VersionMarks from '../components/VersionMarks';
 import { ProfileQuery } from '../generated/ProfileQuery';
 import { RootState } from '../reducers';
@@ -61,26 +60,31 @@ const ComplexLayout: React.FC<
     profileQuery.refetch();
   }, [isUserLoggingIn]);
 
-  const additionalNavigationItems: Array<AdditionalNavigationItem> = [
-    {
-      label: 'Your tags',
-      path: '/tags',
-      icon: <LocalOffer />,
-    },
-    {
-      label: 'Settings',
-      path: '/settings',
-      icon: <Settings />,
-    },
-    {
-      label:
-        profileQuery.state === DataState.DATA && profileQuery.data.currentUser
-          ? profileQuery.data.currentUser.name
-          : '...',
-      path: '/me',
-      icon: <AccountCircle />,
-    },
-  ].filter(({ path }) => isLoggedIn || path === '/settings');
+  const additionalNavigationItems: Array<AdditionalNavigationItem> = useMemo(
+    () =>
+      [
+        {
+          label: 'Your tags',
+          path: '/tags',
+          icon: <LocalOffer />,
+        },
+        {
+          label: 'Settings',
+          path: '/settings',
+          icon: <Settings />,
+        },
+        {
+          label:
+            profileQuery.state === DataState.DATA &&
+            profileQuery.data.currentUser
+              ? profileQuery.data.currentUser.name
+              : '...',
+          path: '/me',
+          icon: <AccountCircle />,
+        },
+      ].filter(({ path }) => isLoggedIn || path === '/settings'),
+    [isLoggedIn, profileQuery]
+  );
 
   return (
     <Styled.Container>
@@ -128,21 +132,9 @@ const ComplexLayout: React.FC<
         <Styled.SecondaryActions>{secondaryActions}</Styled.SecondaryActions>
       )}
       {isDesktopLayout && (
-        <Styled.UserAndMenuIndicator>
-          <Menu>
-            {additionalNavigationItems.map(({ label, path, icon }) => (
-              <Button
-                key={path}
-                size="large"
-                startIcon={icon}
-                to={path}
-                component={Link}
-              >
-                {label}
-              </Button>
-            ))}
-          </Menu>
-        </Styled.UserAndMenuIndicator>
+        <UserAndMenuIndicatorDesktop
+          additionalNavigationItems={additionalNavigationItems}
+        />
       )}
     </Styled.Container>
   );
