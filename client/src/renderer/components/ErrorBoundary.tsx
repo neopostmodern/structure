@@ -36,7 +36,7 @@ export default class ErrorBoundary extends React.Component<
         additionalInformation = (
           <>
             <small>
-              in {filename}@{lineno}:{colno}
+              in {filename || '[unknown file]'}@{lineno}:{colno}
             </small>
 
             <br />
@@ -44,6 +44,7 @@ export default class ErrorBoundary extends React.Component<
           </>
         );
       }
+      let stack = ('error' in error ? error.error : error)?.stack;
       return (
         <div>
           <h1>Something went wrong.</h1>
@@ -60,9 +61,11 @@ export default class ErrorBoundary extends React.Component<
           <b>{error.message}</b>
           <br />
           {additionalInformation}
-          <pre style={{ maxWidth: '100%', overflowX: 'auto' }}>
-            {'error' in error ? error.error.stack : error.stack}
-          </pre>
+          {stack ? (
+            <pre style={{ maxWidth: '100%', overflowX: 'auto' }}>{stack}</pre>
+          ) : (
+            <>Stack not available</>
+          )}
         </div>
       );
     }
