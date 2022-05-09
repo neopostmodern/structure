@@ -13,7 +13,7 @@ export const OFFLINE_CACHE_MISS = 'OFFLINE_CACHE_MISS';
 type OmittedAdditionalFieldNames = 'loading' | 'data' | 'error' | 'called';
 const selectedAdditionalFieldNames = ['networkStatus', 'refetch'] as const;
 type SelectedAdditionalFieldNames = typeof selectedAdditionalFieldNames[number];
-type SelectedApolloQueryResultFields<QueryData, QueryVariables> = Pick<
+export type SelectedApolloQueryResultFields<QueryData, QueryVariables> = Pick<
   QueryResult<QueryData, QueryVariables>,
   SelectedAdditionalFieldNames
 >;
@@ -34,29 +34,28 @@ const isQueryTuple = <QueryData, QueryVariables>(
 ): queryReturnValue is QueryTuple<QueryData, QueryVariables> =>
   Array.isArray(queryReturnValue);
 
-function useDataState<QueryData, QueryVariables>(
-  queryTuple: QueryTuple<QueryData, QueryVariables>
-): [
+export type UseDataStateResult<QueryData, QueryVariables> =
+  PolicedData<QueryData> &
+    SelectedApolloQueryResultFields<QueryData, QueryVariables>;
+export type UseDataStateLazyResult<QueryData, QueryVariables> = [
   QueryTuple<QueryData, QueryVariables>[0],
   LazyPolicedData<QueryData> &
     SelectedApolloQueryResultFields<QueryData, QueryVariables>
 ];
+
+function useDataState<QueryData, QueryVariables>(
+  queryTuple: QueryTuple<QueryData, QueryVariables>
+): UseDataStateLazyResult<QueryData, QueryVariables>;
 function useDataState<QueryData, QueryVariables>(
   queryResult: QueryResult<QueryData, QueryVariables>
-): PolicedData<QueryData> &
-  SelectedApolloQueryResultFields<QueryData, QueryVariables>;
+): UseDataStateResult<QueryData, QueryVariables>;
 function useDataState<QueryData, QueryVariables>(
   queryReturnValue:
     | QueryResult<QueryData, QueryVariables>
     | QueryTuple<QueryData, QueryVariables>
 ):
-  | (PolicedData<QueryData> &
-      SelectedApolloQueryResultFields<QueryData, QueryVariables>)
-  | [
-      QueryTuple<QueryData, QueryVariables>[0],
-      LazyPolicedData<QueryData> &
-        SelectedApolloQueryResultFields<QueryData, QueryVariables>
-    ] {
+  | UseDataStateResult<QueryData, QueryVariables>
+  | UseDataStateLazyResult<QueryData, QueryVariables> {
   let queryResult: QueryResult<QueryData, QueryVariables>;
   let callQuery: QueryTuple<QueryData, QueryVariables>[0] | undefined;
   if (isQueryTuple(queryReturnValue)) {

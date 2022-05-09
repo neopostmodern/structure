@@ -16,10 +16,13 @@ import {
 } from '../../actions/userInterface';
 import FatalApolloError from '../../components/FatalApolloError';
 import { StickyMenu } from '../../components/Menu';
-import NetworkOperationsIndicator from '../../components/NetworkOperationsIndicator';
+import NetworkOperationsIndicator, {
+  NetworkIndicatorContainer,
+} from '../../components/NetworkOperationsIndicator';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
-import { NotesForList, NotesForList_notes } from '../../generated/NotesForList';
+import { NotesForList } from '../../generated/NotesForList';
+import useFilteredNotes from '../../hooks/useFilteredNotes';
 import { RootState } from '../../reducers';
 import {
   BatchSelectionType,
@@ -65,46 +68,6 @@ const toggleBatchEditingShortcutKeys = ['ctrl+b', 'command+b'];
 const selectAllShortcutKeys = ['ctrl+a', 'command+a'];
 const reloadShortcutKeys = ['ctrl+r', 'command+r'];
 
-const textIncludes = (needle?: string, haystack?: string): boolean => {
-  if (!haystack || !needle) {
-    return false;
-  }
-
-  return haystack.toLowerCase().includes(needle.toLowerCase());
-};
-
-const filterNotes = (
-  notes: Array<NotesForList_notes>,
-  searchQuery: string,
-  archiveState: ArchiveState
-) => {
-  let filteredNotes = notes;
-  if (searchQuery.length !== 0) {
-    filteredNotes = filteredNotes.filter(
-      (note) =>
-        ('url' in note && textIncludes(searchQuery, note.url)) ||
-        textIncludes(searchQuery, note.name) ||
-        note.tags.some((tag) => textIncludes(searchQuery, tag.name))
-    );
-  }
-
-  const completeCount = filteredNotes.length;
-  let archivedCount;
-
-  if (archiveState === ArchiveState.ONLY_ARCHIVE) {
-    filteredNotes = filteredNotes.filter((note) => Boolean(note.archivedAt));
-    archivedCount = notes.length;
-  } else if (archiveState === ArchiveState.NO_ARCHIVE) {
-    filteredNotes = filteredNotes.filter((note) => !note.archivedAt);
-    archivedCount = completeCount - filteredNotes.length;
-  }
-
-  return {
-    notes: filteredNotes,
-    archivedCount,
-  };
-};
-
 const ShowMore = styled.div`
   color: black;
   background-color: #eee;
@@ -131,22 +94,23 @@ const NotesPage: React.FC = () => {
       fetchPolicy: gracefulNetworkPolicy(),
     })
   );
+  const filteredNotesQueryWrapper = useFilteredNotes(
+    notesQuery,
+    searchQuery,
+    archiveState
+  );
 
   const selectedNoteCount = (): number =>
     Object.values(batchSelections).filter((selected) => selected).length;
 
   const selectUnselectAll = (selected?: boolean): void => {
-    if (notesQuery.state !== DataState.DATA) {
+    if (filteredNotesQueryWrapper.state !== DataState.DATA) {
       return;
     }
 
     let nextSelectedState = selected;
     const selection: BatchSelectionType = {};
-    const filteredNotes = filterNotes(
-      notesQuery.data.notes,
-      searchQuery,
-      archiveState
-    ).notes;
+    const filteredNotes = filteredNotesQueryWrapper.data.notes;
     if (typeof selected === 'undefined') {
       // if no selected target is passed in and all notes are selected, unselect them instead
       nextSelectedState = filteredNotes.length !== selectedNoteCount();
@@ -247,14 +211,24 @@ const NotesPage: React.FC = () => {
   const content = [];
   let primaryActions = null;
 
-  if (notesQuery.state === DataState.ERROR) {
-    content.push(<FatalApolloError key="error" query={notesQuery} />);
-  } else if (notesQuery.state === DataState.DATA) {
-    const allNotes = [...notesQuery.data.notes]; // unfreeze
-    allNotes.sort((noteA, noteB) => noteB.createdAt - noteA.createdAt);
+  if (filteredNotesQueryWrapper.state === DataState.ERROR) {
+    content.push(
+      <FatalApolloError key="error" query={filteredNotesQueryWrapper} />
+    );
+  } else if (filteredNotesQueryWrapper.state === DataState.DATA) {
+    if (filteredNotesQueryWrapper.loadingBackground) {
+      content.push(
+        <NetworkIndicatorContainer key="searching" align="left">
+          Filtering...
+        </NetworkIndicatorContainer>
+      );
+    }
 
-    const { notes: matchedNotes, archivedCount: archivedMatchedNotesCount } =
-      filterNotes(allNotes, searchQuery, archiveState);
+    const {
+      allNotes,
+      notes: matchedNotes,
+      archivedCount: archivedMatchedNotesCount,
+    } = filteredNotesQueryWrapper.data;
 
     if (batchEditing) {
       content.push(
@@ -320,7 +294,7 @@ const NotesPage: React.FC = () => {
   return (
     <ComplexLayout
       primaryActions={primaryActions}
-      loading={notesQuery.state === DataState.LOADING}
+      loading={filteredNotesQueryWrapper.state === DataState.LOADING}
     >
       {[...content]}
     </ComplexLayout>
