@@ -18,7 +18,7 @@ import { stripTypename } from '../utils/graphQl';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
-const TagContainer = styled.div<{ droppable?: boolean }>`
+const TagContainer = styled.div<{ color: string; droppable?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   border-radius: ${({ theme }) => theme.shape.borderRadius}px;
@@ -26,7 +26,7 @@ const TagContainer = styled.div<{ droppable?: boolean }>`
   ${({ droppable }) =>
     droppable &&
     css`
-      border-color: gray;
+      border-color: ${({ color }) => color};
       .MuiChip-root {
         pointer-events: none;
       }
@@ -46,12 +46,13 @@ const ColumnsContainer = styled.div`
   max-height: 80vh;
   overflow-x: auto;
   @media (min-width: ${breakpointDesktop}rem) {
-    margin-top: 8rem;
+    margin-top: 3rem;
   }
 
   ${TagContainer} {
     align-content: flex-start;
     flex-wrap: wrap;
+    flex: 0 0.35 auto;
 
     .MuiChip-root {
       width: fit-content;
@@ -63,6 +64,14 @@ const ColumnsContainer = styled.div`
   }
 `;
 
+const ColumnIndicator = styled.div<{ color: string }>`
+  position: sticky;
+  top: 0;
+  background-color: ${({ color }) => color};
+  width: 100%;
+  height: 0.5rem;
+`;
+
 export const layoutToName = (layout: TagsLayout): string => {
   switch (layout) {
     case TagsLayout.CHAOS_LAYOUT:
@@ -71,8 +80,6 @@ export const layoutToName = (layout: TagsLayout): string => {
       return 'Color list layout';
     case TagsLayout.COLOR_COLUMN_LAYOUT:
       return 'Color column layout';
-    case TagsLayout.COLOR_WHEEL_LAYOUT:
-      return 'Color wheel layout';
     default:
       console.error('Unknown layout', layout);
       return 'Unknown layout';
@@ -157,6 +164,7 @@ const TagsPage: React.FC<{}> = () => {
 
     const tagContainers = colors.map((color) => (
       <TagContainer
+        color={color}
         droppable={color === droppableColor}
         onDragOver={(event): void => {
           event.preventDefault();
@@ -179,6 +187,7 @@ const TagsPage: React.FC<{}> = () => {
         }}
         key={color}
       >
+        {horizontal && <ColumnIndicator color={color} />}
         {colorTagGroups[color].map((tag) => (
           <Tag
             key={tag._id}
