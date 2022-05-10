@@ -6,7 +6,7 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
 env:
-  CONFIG_FILE: config.json
+  CONFIG_FILE: config-prod.json
 
 defaults:
   run:
