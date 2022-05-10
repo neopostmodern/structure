@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 // named import isn't working at the moment
 const { Schema } = mongoose
 
-mongoose.connect(config.MONGO_URL, { useNewUrlParser: true })
+await mongoose.connect(config.MONGO_URL)
 mongoose.set('debug', config.MONGOOSE_DEBUG)
 
 export const withBaseSchema = (schemaDefinition, schemaOptions = {}) => {

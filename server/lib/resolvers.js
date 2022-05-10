@@ -13,7 +13,7 @@ import { Link, Note, Tag, Text } from './mongo.js'
 import schemaDefinition from './schema.js'
 
 const INoteResolvers = {
-  tags(note, args, context) {
+  async tags(note, args, context) {
     return Tag.find({ _id: { $in: note.tags } })
   },
 }
@@ -49,7 +49,7 @@ const rootResolvers = {
   Link: INoteResolvers,
   Text: INoteResolvers,
   Tag: {
-    notes(tag, args, context) {
+    async notes(tag, args, context) {
       return Note.find({ tags: tag, deletedAt: null }).then(typeEnumFixer)
     },
   },
@@ -72,7 +72,7 @@ const rootResolvers = {
         recommended: 8,
       }
     },
-    notes(root, { offset, limit }, context) {
+    async notes(root, { offset, limit }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch links.')
       }
@@ -83,13 +83,13 @@ const rootResolvers = {
         .exec()
         .then(typeEnumFixer)
     },
-    link(root, { linkId }, context) {
+    async link(root, { linkId }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch a link.')
       }
       return Link.findById(linkId)
     },
-    links(root, { offset, limit }, context) {
+    async links(root, { offset, limit }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch links.')
       }
@@ -99,19 +99,19 @@ const rootResolvers = {
         .limit(protectedLimit)
         .exec()
     },
-    text(root, { textId }, context) {
+    async text(root, { textId }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch a text.')
       }
       return Text.findById(textId)
     },
-    tag(root, { tagId }, context) {
+    async tag(root, { tagId }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch a tag.')
       }
       return Tag.findById(tagId)
     },
-    tags(root, { offset, limit }, context) {
+    async tags(root, { offset, limit }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch links.')
       }

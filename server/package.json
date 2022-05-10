@@ -24,7 +24,7 @@
     "jsdom": "^19.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "mongoose": "^5.12.10",
+    "mongoose": "^6.3.3",
     "node-fetch": "^3.2.3",
     "passport": "^0.4.1",
     "passport-github": "^1.1.0"
