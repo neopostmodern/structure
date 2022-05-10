@@ -47,16 +47,12 @@ const NetworkOperationsIndicator = ({
         setSavingState(NetworkPhase.IN_PROGRESS);
       }
     } else if (isLoadingBackground) {
-      if (savingState === NetworkPhase.IN_PROGRESS) {
-        setSavingState(NetworkPhase.NOTIFY_COMPLETE);
-      } else if (
-        backgroundLoadingState === NetworkPhase.IDLE &&
-        savingState === NetworkPhase.IDLE
-      ) {
+      if (backgroundLoadingState === NetworkPhase.IDLE) {
         setBackgroundLoadingState(NetworkPhase.IN_PROGRESS);
       }
     } else {
-      if (savingState === NetworkPhase.NOTIFY_COMPLETE) {
+      if (savingState === NetworkPhase.IN_PROGRESS) {
+        setSavingState(NetworkPhase.NOTIFY_COMPLETE);
         setTimeout(() => {
           setSavingState(NetworkPhase.IDLE);
         }, DISPLAY_SAVED_NOTIFICATION_LENGTH);
