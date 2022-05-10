@@ -50,6 +50,6 @@
     "@graphql-codegen/typescript": "^2.4.2"
   },
   "volta": {
-    "node": "17.9.0"
+    "node": "18.1.0"
   }
 }
