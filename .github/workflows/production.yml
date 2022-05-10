@@ -1,12 +1,12 @@
-name: "[Staging] Build web app, electron app, server, and deploy to staging"
+name: "[Production] Build web app, electron app, server, and publish/deploy to production"
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 env:
-  CONFIG_FILE: config-staging.json
+  CONFIG_FILE: config.json
 
 defaults:
   run:
@@ -74,7 +74,7 @@ jobs:
         uses: sebastianpopp/ftp-action@releases/v2
         with:
           localDir: ./client/release/app/dist/web/
-          remoteDir: ./dev/
+          remoteDir: ./
           host: amsr102.websitehostserver.net:21
           user: github@structure.neopostmodern.com
           password: ${{ secrets.FTP_PASSWORD }}
@@ -93,14 +93,8 @@ jobs:
           name: setup-${{ matrix.os }}
       - name: Unpack setup
         run: tar xf setup.tar && rm setup.tar
-      - name: Build Electron app
-        run: npm run client:build:electron
-      - name: Store installers as artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: Installer ${{ runner.os }}
-          path: client/release/build/structure-*
-          if-no-files-found: error
+      - name: Build and publish Electron app
+        run: PUBLISH=always npm run client:build:electron
 
   deploy-backend:
     name: Deploy backend
