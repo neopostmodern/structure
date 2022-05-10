@@ -49,8 +49,8 @@ const configuration: webpack.Configuration = {
       process.env.TARGET === 'web'
         ? webpackPaths.distWebPath
         : webpackPaths.distRendererPath,
-    publicPath: './',
-    filename: 'renderer.js',
+    publicPath: process.env.TARGET === 'web' ? '/' : './',
+    filename: process.env.TARGET === 'web' ? '[id].js' : 'renderer.js',
     library: {
       type: 'umd',
     },
@@ -106,6 +106,12 @@ const configuration: webpack.Configuration = {
       }),
       new CssMinimizerPlugin(),
     ],
+    splitChunks:
+      process.env.TARGET === 'web'
+        ? {
+            chunks: 'all',
+          }
+        : false,
   },
 
   plugins: [

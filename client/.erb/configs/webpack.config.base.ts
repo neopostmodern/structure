@@ -41,6 +41,8 @@ export const createPluginsForPWA = ({
       clientsClaim: true,
       skipWaiting: true,
       maximumFileSizeToCacheInBytes: development ? 50000000 : undefined,
+      exclude: [/.*htaccess/, /.*LICENSE.*/],
+      navigateFallback: '/index.html',
     }),
     new CopyWebpackPlugin({
       patterns: [...assetFileNames, ...additionalAssetFileNames].map(
