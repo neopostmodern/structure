@@ -94,6 +94,8 @@ jobs:
       - name: Unpack setup
         run: tar xf setup.tar && rm setup.tar
       - name: Build and publish Electron app
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run client:publish:electron
 
   deploy-backend:
