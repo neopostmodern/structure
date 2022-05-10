@@ -170,6 +170,10 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.4",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.1",
@@ -189,11 +193,11 @@
     "apollo": "2.33.4",
     "apollo-codegen-core": "0.40.3",
     "apollo-language-server": "1.26.3",
-    "browserslist-config-erb": "^0.0.3",
+    "babel-loader": "^8.2.5",
+    "browserslist": "^4.20.3",
     "chalk": "^4.1.2",
     "concurrently": "^6.5.1",
     "copy-webpack-plugin": "^10.2.4",
-    "core-js": "^3.20.1",
     "cross-env": "^7.0.3",
     "css-loader": "^6.5.1",
     "css-minimizer-webpack-plugin": "^3.3.1",
@@ -274,14 +278,12 @@
     "redux-first-history": "^5.0.8",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.1",
-    "regenerator-runtime": "^0.13.9",
     "styled-components": "^5.3.3"
   },
   "devEngines": {
     "node": ">=14.x",
     "npm": ">=7.x"
   },
-  "browserslist": [],
   "prettier": {
     "overrides": [
       {

@@ -36,13 +36,14 @@ const configuration: webpack.Configuration = {
 
   mode: 'production',
 
-  target: ['web', 'electron-renderer'],
+  target:
+    process.env.TARGET === 'web'
+      ? 'browserslist:defaults'
+      : ['web', 'electron-renderer'],
 
-  entry: [
-    'core-js',
-    'regenerator-runtime/runtime',
-    path.join(webpackPaths.srcRendererPath, 'index.tsx'),
-  ],
+  entry: {
+    main: path.join(webpackPaths.srcRendererPath, 'index.tsx'),
+  },
 
   output: {
     path:
@@ -50,7 +51,8 @@ const configuration: webpack.Configuration = {
         ? webpackPaths.distWebPath
         : webpackPaths.distRendererPath,
     publicPath: process.env.TARGET === 'web' ? '/' : './',
-    filename: process.env.TARGET === 'web' ? '[id].js' : 'renderer.js',
+    filename:
+      process.env.TARGET === 'web' ? '[name].[chunkhash].js' : 'renderer.js',
     library: {
       type: 'umd',
     },
@@ -106,12 +108,21 @@ const configuration: webpack.Configuration = {
       }),
       new CssMinimizerPlugin(),
     ],
-    splitChunks:
-      process.env.TARGET === 'web'
-        ? {
+    ...(process.env.TARGET === 'web'
+      ? {
+          runtimeChunk: true,
+          splitChunks: {
             chunks: 'all',
-          }
-        : false,
+            cacheGroups: {
+              vendor: {
+                test: /[\\/]node_modules[\\/]/,
+                name: 'vendors',
+                chunks: 'all',
+              },
+            },
+          },
+        }
+      : {}),
   },
 
   plugins: [
