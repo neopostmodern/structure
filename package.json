@@ -24,6 +24,7 @@
   "scripts": {
     "client:build:electron": "(cd client && npm run package)",
     "client:build:web": "(cd client && npm run build:web)",
+    "client:publish:electron": "(cd client && npm run package-publish)",
     "client:start:electron": "(cd client && npm run start)",
     "client:start:web": "(cd client && npm run start:web)",
     "common:build": "(cd common && npm run build)",

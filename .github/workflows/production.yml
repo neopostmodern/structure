@@ -94,7 +94,7 @@ jobs:
       - name: Unpack setup
         run: tar xf setup.tar && rm setup.tar
       - name: Build and publish Electron app
-        run: PUBLISH=always npm run client:build:electron
+        run: npm run client:publish:electron
 
   deploy-backend:
     name: Deploy backend
