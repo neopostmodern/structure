@@ -37,9 +37,14 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
   const dispatch = useDispatch();
   const { formState, handleSubmit, setValue, control } = useForm({
     defaultValues: {
-      uri: defaultValue || '',
+      uri: '',
     },
   });
+  useEffect(() => {
+    if (defaultValue) {
+      setValue('uri', defaultValue, { shouldDirty: true });
+    }
+  }, [defaultValue, setValue, isUrlValid]);
   const submitHandler = handleSubmit(({ uri }) => {
     onSubmit(uri);
   });
@@ -60,9 +65,11 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
   const clipboard = useSelector<RootState, string | undefined>(
     (state) => state.userInterface.clipboard
   );
-  if (clipboard && isUrlValid(clipboard)) {
-    setValue('uri', clipboard);
-  }
+  useEffect(() => {
+    if (clipboard && isUrlValid(clipboard)) {
+      setValue('uri', clipboard, { shouldDirty: true });
+    }
+  }, [clipboard, setValue, isUrlValid]);
 
   let endAdornment: JSX.Element | undefined;
   if (!Object.keys(formState.errors).length && formState.dirtyFields.uri) {
