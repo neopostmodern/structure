@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
@@ -64,6 +64,10 @@ const TextPage: React.FC = () => {
     UpdateTextMutation,
     UpdateTextMutationVariables
   >(UPDATE_TEXT_MUTATION);
+  const handleSubmit = useCallback(
+    (updatedText) => updateText({ variables: { text: updatedText } }),
+    [updateText]
+  );
 
   if (textQuery.state === DataState.LOADING) {
     return <ComplexLayout loading />;
@@ -92,9 +96,7 @@ const TextPage: React.FC = () => {
       />
       <TextForm
         text={text}
-        onSubmit={(updatedText) =>
-          updateText({ variables: { text: updatedText } })
-        }
+        onSubmit={handleSubmit}
         tagsComponent={!isDesktopLayout && tagsComponent}
       />
     </ComplexLayout>

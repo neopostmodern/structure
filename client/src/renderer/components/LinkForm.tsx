@@ -40,14 +40,14 @@ const LinkForm: React.FC<LinkFormProps> = ({
       return { values: formValues, errors: {} };
     },
   });
-  const { watch } = formProps;
+  const { watch, handleSubmit } = formProps;
 
   useSaveOnUnmount({ onSubmit, defaultValues }, formProps);
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formProps}>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <LinkNameField url={watch('url')} name="name" linkId={link._id} />
         <UrlField name="url" />
 

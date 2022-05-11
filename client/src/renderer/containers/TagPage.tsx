@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotesList from '../components/NotesList';
@@ -89,6 +89,14 @@ const TagPage: React.FC<{}> = () => {
     UpdateTagMutation,
     UpdateTagMutationVariables
   >(UPDATE_TAG_MUTATION);
+  const handleSubmit = useCallback(
+    (updatedTag): void => {
+      updateTag({
+        variables: { tag: updatedTag },
+      });
+    },
+    [updateTag]
+  );
 
   return (
     <ComplexLayout loading={tagQuery.state === DataState.LOADING}>
@@ -98,14 +106,7 @@ const TagPage: React.FC<{}> = () => {
       />
       {tagQuery.state === DataState.DATA && (
         <>
-          <TagForm
-            tag={tagQuery.data.tag}
-            onSubmit={(updatedTag): void => {
-              updateTag({
-                variables: { tag: updatedTag },
-              });
-            }}
-          />
+          <TagForm tag={tagQuery.data.tag} onSubmit={handleSubmit} />
 
           <NotesList notes={tagQuery.data.tag.notes} />
         </>

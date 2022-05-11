@@ -31,7 +31,7 @@ const TextForm: React.FC<TextFormProps> = ({
       return { values: formValues, errors: {} };
     },
   });
-  const { register, reset } = formProps;
+  const { register, reset, handleSubmit } = formProps;
   useEffect(() => {
     reset(defaultValues);
   }, [reset, text]);
@@ -41,7 +41,7 @@ const TextForm: React.FC<TextFormProps> = ({
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formProps}>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <NameInput type="text" {...register('name', { required: true })} />
 
         {tagsComponent && (

@@ -26,7 +26,7 @@ interface TagFormProps {
 const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
   const defaultValues = pick(tag, tagFormFields);
 
-  const { register, getValues } = useForm<
+  const { register, getValues, handleSubmit } = useForm<
     Pick<TagType, typeof tagFormFields[number]>
   >({
     defaultValues,
@@ -43,7 +43,7 @@ const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
   const { ref: registerRef, ...registerProps } = register('color');
 
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <ColorBlockInput
         ref={(ref) => {
           registerRef(ref);

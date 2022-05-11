@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
 import LinkForm from '../components/LinkForm';
@@ -69,6 +69,12 @@ const LinkPage: React.FC = () => {
     UpdateLinkMutation,
     UpdateLinkMutationVariables
   >(UPDATE_LINK_MUTATION);
+  const handleSubmit = useCallback(
+    (updatedLink): void => {
+      updateLink({ variables: { link: updatedLink } });
+    },
+    [updateLink]
+  );
 
   if (linkQuery.state === DataState.LOADING) {
     return <ComplexLayout loading />;
@@ -97,9 +103,7 @@ const LinkPage: React.FC = () => {
       />
       <LinkForm
         link={link}
-        onSubmit={(updatedLink): void => {
-          updateLink({ variables: { link: updatedLink } });
-        }}
+        onSubmit={handleSubmit}
         tagsComponent={!isDesktopLayout && tagsComponent}
       />
     </ComplexLayout>
