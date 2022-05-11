@@ -1,6 +1,7 @@
 import { Paper } from '@mui/material';
 import React, {
   KeyboardEvent,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -42,6 +43,15 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
     number | null
   >(0);
   const [touched, setTouched] = useState(false);
+
+  const handleFormSubmit = useCallback(
+    (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      handleSubmit(({ tagName }) => onAddTag(tagName))(event);
+    },
+    [handleSubmit, onAddTag]
+  );
 
   const tagMap = useMemo<TagMap>(() => {
     if (tags === 'loading') {
@@ -156,7 +166,7 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
 
   return (
     <form
-      onSubmit={handleSubmit(({ tagName }) => onAddTag(tagName))}
+      onSubmitCapture={handleFormSubmit}
       style={{ position: 'relative' }}
       id={INLINE_TAG_FORM_ID}
     >
