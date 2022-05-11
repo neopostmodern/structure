@@ -9,12 +9,10 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import config from '@structure/config';
-import 'core-js/stable';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import path from 'path';
-import 'regenerator-runtime/runtime';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
