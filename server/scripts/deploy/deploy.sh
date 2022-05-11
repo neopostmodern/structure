@@ -23,7 +23,7 @@ PM2_NODE_ARGS="--interpreter=\$(which node)"
 if [ -n "$NODE_ARGS" ]; then
 	 PM2_NODE_ARGS="$PM2_PM2_NODE_ARGS --node-args=\"$NODE_ARGS\""
 fi
-ssh "$USER@$SERVER" "bash -l -c 'export NODE_ENV=\"production\"; pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start --cwd $SERVER_FOLDER_BACKEND/server/ --name \"$PROCESS_NAME\" $PM2_NODE_ARGS \$(which npm) -- start'"
+ssh "$USER@$SERVER" "bash -l -c 'cd \"$SERVER_FOLDER_BACKEND/server/\"; export NODE_ENV=\"production\"; pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start --cwd \"$SERVER_FOLDER_BACKEND/server/\" --name \"$PROCESS_NAME\" $PM2_NODE_ARGS \$(which npm) -- start'"
 echo "OK"
 
 echo -e "\nDeploy finished at $(date)"
