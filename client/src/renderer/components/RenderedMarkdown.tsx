@@ -1,4 +1,5 @@
 import marked from 'marked';
+import React from 'react';
 import styled from 'styled-components';
 
 const renderer = new marked.Renderer();
@@ -91,4 +92,4 @@ const RenderedMarkdown = ({
   return null;
 };
 
-export default RenderedMarkdown;
+export default React.memo(RenderedMarkdown);

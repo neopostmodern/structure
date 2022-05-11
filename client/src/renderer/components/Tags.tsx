@@ -60,4 +60,4 @@ const Tags: React.FC<TagsProps> = ({
   );
 };
 
-export default Tags;
+export default React.memo(Tags);
