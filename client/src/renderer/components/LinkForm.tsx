@@ -2,6 +2,7 @@ import { pick } from 'lodash';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { LinkQuery_link } from '../generated/LinkQuery';
+import { isUrlValid } from '../utils/textHelpers';
 import { OptionalReactComponent } from '../utils/types';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
 import LinkNameField from './fields/LinkNameField';
@@ -36,8 +37,17 @@ const LinkForm: React.FC<LinkFormProps> = ({
     defaultValues,
     mode: 'onBlur',
     resolver: (formValues) => {
-      onSubmit(formValues);
-      return { values: formValues, errors: {} };
+      const errors: { [key: string]: string } = {};
+      if (!formValues.url) {
+        errors.url = 'URL is required';
+      } else if (!isUrlValid(formValues.url)) {
+        errors.url =
+          'Not a valid URL – did you forget the protocol? (e.g. https://)';
+      }
+      if (Object.keys(errors).length === 0) {
+        onSubmit(formValues);
+      }
+      return { values: formValues, errors };
     },
   });
   const { watch, handleSubmit } = formProps;

@@ -10,33 +10,40 @@ interface UrlFieldProps {
 }
 
 const UrlField: React.FC<UrlFieldProps> = ({ name }) => {
-  const { watch, register, getValues } = useFormContext();
+  const { watch, register, getValues, formState } = useFormContext();
 
   return (
-    <div style={{ display: 'flex' }}>
-      <TextField type="text" {...register(name)} />
-      <Tooltip title="Open in default browser">
-        <IconButton
-          style={{ marginLeft: '1rem' }}
-          onClick={(): void => {
-            openInDefaultBrowser(watch(name));
-          }}
-        >
-          <Launch />
-        </IconButton>
-      </Tooltip>
-      {navigator.share && (
-        <Tooltip title="Share URL">
+    <>
+      <div style={{ display: 'flex' }}>
+        <TextField type="text" {...register(name)} />
+        <Tooltip title="Open in default browser">
           <IconButton
-            onClick={() => {
-              shareUrl(getValues(name), getValues('name'));
+            style={{ marginLeft: '1rem' }}
+            onClick={(): void => {
+              openInDefaultBrowser(watch(name));
             }}
           >
-            <Share />
+            <Launch />
           </IconButton>
         </Tooltip>
+        {navigator.share && (
+          <Tooltip title="Share URL">
+            <IconButton
+              onClick={() => {
+                shareUrl(getValues(name), getValues('name'));
+              }}
+            >
+              <Share />
+            </IconButton>
+          </Tooltip>
+        )}
+      </div>
+      {formState.errors[name] && (
+        <div style={{ color: 'red', fontSize: '80%' }}>
+          {formState.errors[name]}
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

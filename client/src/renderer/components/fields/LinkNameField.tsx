@@ -7,6 +7,7 @@ import {
   TitleSuggestionsQuery,
   TitleSuggestionsQueryVariables,
 } from '../../generated/TitleSuggestionsQuery';
+import { isUrlValid } from '../../utils/textHelpers';
 import useDataState, { DataState } from '../../utils/useDataState';
 import ErrorSnackbar from '../ErrorSnackbar';
 import { FormSubheader, NameInput } from '../formComponents';
@@ -126,7 +127,9 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name, linkId }) => {
       <NameInput
         type="text"
         {...formFieldProperties}
-        autoFocus={getValues(name) === urlAnalyzer(url).suggestedName}
+        autoFocus={
+          isUrlValid(url) && getValues(name) === urlAnalyzer(url).suggestedName
+        }
         onFocus={(): void => {
           fetchTitleSuggestions();
         }}

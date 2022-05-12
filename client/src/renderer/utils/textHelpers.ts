@@ -53,3 +53,12 @@ export const dateToCustomizedLongISO8061 = (date: DateOrTimestamp): string =>
 export const capitalize = (text: string) =>
   text[0].toUpperCase() + text.slice(1);
 /* END: from @palast-jetzt/common */
+
+export const isUrlValid = (url: string): boolean => {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};

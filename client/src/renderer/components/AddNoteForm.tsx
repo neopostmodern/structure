@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { clearClipboard, requestClipboard } from '../actions/userInterface';
 import { RootState } from '../reducers';
+import { isUrlValid } from '../utils/textHelpers';
 
 const AddLinkInput = styled(Input)`
   input {
@@ -23,8 +24,6 @@ const AddLinkInput = styled(Input)`
 const SubmitButtonContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
-
-const isUrlValid = (url: string): boolean => url.startsWith('http');
 
 type AddLinkFormProps = {
   defaultValue?: string;
