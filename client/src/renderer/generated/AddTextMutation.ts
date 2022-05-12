@@ -27,3 +27,7 @@ export interface AddTextMutation_createText {
 export interface AddTextMutation {
   createText: AddTextMutation_createText;
 }
+
+export interface AddTextMutationVariables {
+  title?: string | null;
+}

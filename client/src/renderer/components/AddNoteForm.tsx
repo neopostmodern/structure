@@ -1,5 +1,6 @@
 import { ArrowForward, ContentPaste } from '@mui/icons-material';
 import {
+  Button,
   FormControl,
   FormHelperText,
   IconButton,
@@ -19,41 +20,53 @@ const AddLinkInput = styled(Input)`
   }
 `;
 
+const SubmitButtonContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
 const isUrlValid = (url: string): boolean => url.startsWith('http');
 
 type AddLinkFormProps = {
   defaultValue?: string;
   autoSubmit?: boolean;
-  onSubmit: (url: string) => void;
+  onSubmitUrl: (url: string) => void;
+  onSubmitText: (title?: string) => void;
   onAbort: () => void;
 };
 
-const AddLinkForm: React.FC<AddLinkFormProps> = ({
+const AddNoteForm: React.FC<AddLinkFormProps> = ({
   defaultValue,
   autoSubmit,
-  onSubmit,
+  onSubmitUrl,
+  onSubmitText,
   onAbort,
 }) => {
   const dispatch = useDispatch();
-  const { formState, handleSubmit, setValue, control } = useForm({
+  const { formState, handleSubmit, setValue, control } = useForm<{
+    urlOrTitle: string;
+  }>({
     defaultValues: {
-      uri: '',
+      urlOrTitle: '',
     },
   });
   useEffect(() => {
     if (defaultValue) {
-      setValue('uri', defaultValue, { shouldDirty: true });
+      setValue('urlOrTitle', defaultValue, { shouldDirty: true });
     }
   }, [defaultValue, setValue, isUrlValid]);
-  const submitHandler = handleSubmit(({ uri }) => {
-    onSubmit(uri);
+  const submitHandler = handleSubmit(({ urlOrTitle }) => {
+    if (isUrlValid(urlOrTitle)) {
+      onSubmitUrl(urlOrTitle);
+    } else {
+      onSubmitText(urlOrTitle);
+    }
   });
 
   useEffect(() => {
-    if ('uri' in formState.dirtyFields && autoSubmit) {
+    if ('urlOrTitle' in formState.dirtyFields && autoSubmit) {
       submitHandler();
     }
-  }, ['uri' in formState.dirtyFields, autoSubmit]);
+  }, ['urlOrTitle' in formState.dirtyFields, autoSubmit]);
 
   useEffect(() => {
     dispatch(requestClipboard());
@@ -66,19 +79,22 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
   );
   useEffect(() => {
     if (clipboard && isUrlValid(clipboard)) {
-      setValue('uri', clipboard, { shouldDirty: true });
+      setValue('urlOrTitle', clipboard, { shouldDirty: true });
     }
   }, [clipboard, setValue, isUrlValid]);
   const handlePasteClick = useCallback(() => {
     (async () => {
-      setValue('uri', await navigator.clipboard.readText(), {
+      setValue('urlOrTitle', await navigator.clipboard.readText(), {
         shouldDirty: true,
       });
     })();
   }, [setValue]);
 
   let endAdornment: JSX.Element | undefined;
-  if (!Object.keys(formState.errors).length && formState.dirtyFields.uri) {
+  if (
+    !Object.keys(formState.errors).length &&
+    formState.dirtyFields.urlOrTitle
+  ) {
     endAdornment = (
       <IconButton
         onClick={() => {
@@ -97,16 +113,13 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
   }
 
   return (
-    <div style={{ paddingTop: '20vh' }}>
+    <>
       <form onSubmit={submitHandler}>
         <Controller
-          name="uri"
+          name="urlOrTitle"
           control={control}
           rules={{
-            required: 'URL is required',
-            validate: (value) =>
-              isUrlValid(value) ||
-              'Did you forget the protocol? (e.g. https://)',
+            required: 'URL or title is required',
           }}
           render={({ field }) => (
             <FormControl variant="standard" fullWidth>
@@ -114,7 +127,7 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
                 {...field}
                 autoFocus
                 type="text"
-                placeholder="URL here"
+                placeholder="Enter URL or text note title"
                 onKeyDown={(event): void => {
                   if (event.key === 'Escape') {
                     onAbort();
@@ -128,17 +141,30 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
                   ) : undefined
                 }
               />
-              {formState.errors.uri && (
+              {formState.errors.urlOrTitle && (
                 <FormHelperText error>
-                  {formState.errors.uri.message}
+                  {formState.errors.urlOrTitle.message}
                 </FormHelperText>
               )}
             </FormControl>
           )}
         />
       </form>
-    </div>
+      {!formState.isDirty && (
+        <SubmitButtonContainer>
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => {
+              onSubmitText();
+            }}
+          >
+            Quick text-only note
+          </Button>
+        </SubmitButtonContainer>
+      )}
+    </>
   );
 };
 
-export default AddLinkForm;
+export default AddNoteForm;

@@ -180,6 +180,7 @@ const configuration: webpack.Configuration = {
     static: {
       publicPath: '/',
     },
+    allowedHosts: ['local3000.neopostmodern.com'],
     setupMiddlewares: (middlewares) => {
       if (process.env.TARGET === 'electron') {
         console.log('Starting Main Process...');

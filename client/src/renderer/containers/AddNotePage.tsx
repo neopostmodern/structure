@@ -1,15 +1,18 @@
 import { useMutation } from '@apollo/client';
-import { Button } from '@mui/material';
 import gql from 'graphql-tag';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
 import { push, replace } from 'redux-first-history';
-import AddLinkForm from '../components/AddLinkForm';
+import AddNoteForm from '../components/AddNoteForm';
 import {
   AddLinkMutation,
   AddLinkMutationVariables,
 } from '../generated/AddLinkMutation';
-import { AddTextMutation } from '../generated/AddTextMutation';
+import {
+  AddTextMutation,
+  AddTextMutationVariables,
+} from '../generated/AddTextMutation';
 import { NotesForList } from '../generated/NotesForList';
 import ComplexLayout from './ComplexLayout';
 import { BASE_NOTE_FRAGMENT, NOTES_QUERY } from './NotesPage/NotesPage';
@@ -24,8 +27,8 @@ const ADD_LINK_MUTATION = gql`
 `;
 const ADD_TEXT_MUTATION = gql`
   ${BASE_NOTE_FRAGMENT}
-  mutation AddTextMutation {
-    createText {
+  mutation AddTextMutation($title: String) {
+    createText(title: $title) {
       ...BaseNote
     }
   }
@@ -60,29 +63,47 @@ const AddLinkPage: React.FC<{}> = () => {
       });
     },
   });
-  const [addText, addTextMutation] = useMutation<AddTextMutation>(
-    ADD_TEXT_MUTATION,
-    {
-      onCompleted: ({ createText }) => {
-        dispatch(replace(`/texts/${createText._id}`));
-      },
-      update: (cache, { data: { createText } }) => {
-        const cacheValue = cache.readQuery<NotesForList>({
-          query: NOTES_QUERY,
-        });
-
-        if (!cacheValue) {
-          return;
-        }
-
-        const { notes } = cacheValue;
-        cache.writeQuery({
-          query: NOTES_QUERY,
-          data: { notes: [...notes, { ...createText, type: 'TEXT' }] },
-        });
-      },
-    }
+  const handleSubmitUrl = useCallback(
+    (url): void => {
+      addLink({ variables: { url } });
+    },
+    [addLink]
   );
+
+  const [addText, addTextMutation] = useMutation<
+    AddTextMutation,
+    AddTextMutationVariables
+  >(ADD_TEXT_MUTATION, {
+    onCompleted: ({ createText }) => {
+      dispatch(replace(`/texts/${createText._id}`));
+    },
+    update: (cache, { data: { createText } }) => {
+      const cacheValue = cache.readQuery<NotesForList>({
+        query: NOTES_QUERY,
+      });
+
+      if (!cacheValue) {
+        return;
+      }
+
+      const { notes } = cacheValue;
+      cache.writeQuery({
+        query: NOTES_QUERY,
+        data: { notes: [...notes, { ...createText, type: 'TEXT' }] },
+      });
+    },
+  });
+  const handleSubmitText = useCallback(
+    (title?: string) => {
+      addText({ variables: { title } });
+    },
+    [addText]
+  );
+
+  const handleAbort = useCallback((): void => {
+    dispatch(push('/'));
+  }, [dispatch, push]);
+
   const urlSearchParams = new URLSearchParams(useLocation().search);
 
   return (
@@ -91,25 +112,13 @@ const AddLinkPage: React.FC<{}> = () => {
         (addLinkMutation.loading || addTextMutation.loading) && 'Creating note'
       }
     >
-      <AddLinkForm
+      <AddNoteForm
         defaultValue={urlSearchParams.get('url') || undefined}
         autoSubmit={urlSearchParams.has('autoSubmit')}
-        onSubmit={(url): void => {
-          addLink({ variables: { url } });
-        }}
-        onAbort={(): void => {
-          dispatch(push('/'));
-        }}
+        onSubmitUrl={handleSubmitUrl}
+        onSubmitText={handleSubmitText}
+        onAbort={handleAbort}
       />
-      <Button
-        variant="outlined"
-        onClick={() => {
-          addText();
-        }}
-        style={{ marginTop: '1rem' }}
-      >
-        Create text-only note
-      </Button>
     </ComplexLayout>
   );
 };

@@ -180,13 +180,13 @@ const rootResolvers = {
       })
     },
 
-    createText(root, {}, context) {
+    createText(root, { title }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to create texts.')
       }
 
       return new Text({
-        name: new Moment().format('dddd, MMMM Do YYYY'),
+        name: title || new Moment().format('dddd, MMMM Do YYYY'),
         user: context.user,
       }).save()
     },
