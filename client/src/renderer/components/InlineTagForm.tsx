@@ -190,6 +190,7 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
         form={INLINE_TAG_FORM_ID}
         onKeyDown={handleInputKeydown}
         autoFocus
+        autoComplete="off"
         style={
           focusedAutocompleteIndex === null
             ? { borderBottomStyle: 'dotted', borderBottomWidth: '2px' }

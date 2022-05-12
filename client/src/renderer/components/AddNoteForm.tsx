@@ -126,6 +126,9 @@ const AddNoteForm: React.FC<AddLinkFormProps> = ({
               <AddLinkInput
                 {...field}
                 autoFocus
+                inputProps={{
+                  autocomplete: 'off',
+                }}
                 type="text"
                 placeholder="Enter URL or text note title"
                 onKeyDown={(event): void => {
