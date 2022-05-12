@@ -6,7 +6,7 @@ import {
   Input,
   InputAdornment,
 } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -50,10 +50,10 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
   });
 
   useEffect(() => {
-    if (autoSubmit) {
+    if ('uri' in formState.dirtyFields && autoSubmit) {
       submitHandler();
     }
-  }, [autoSubmit]);
+  }, ['uri' in formState.dirtyFields, autoSubmit]);
 
   useEffect(() => {
     dispatch(requestClipboard());
@@ -61,7 +61,6 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
       dispatch(clearClipboard());
     };
   }, [dispatch]);
-
   const clipboard = useSelector<RootState, string | undefined>(
     (state) => state.userInterface.clipboard
   );
@@ -70,6 +69,13 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
       setValue('uri', clipboard, { shouldDirty: true });
     }
   }, [clipboard, setValue, isUrlValid]);
+  const handlePasteClick = useCallback(() => {
+    (async () => {
+      setValue('uri', await navigator.clipboard.readText(), {
+        shouldDirty: true,
+      });
+    })();
+  }, [setValue]);
 
   let endAdornment: JSX.Element | undefined;
   if (!Object.keys(formState.errors).length && formState.dirtyFields.uri) {
@@ -84,13 +90,7 @@ const AddLinkForm: React.FC<AddLinkFormProps> = ({
     );
   } else if (navigator.clipboard.readText) {
     endAdornment = (
-      <IconButton
-        onClick={() => {
-          (async () => {
-            setValue('uri', await navigator.clipboard.readText());
-          })();
-        }}
-      >
+      <IconButton onClick={handlePasteClick}>
         <ContentPaste />
       </IconButton>
     );
