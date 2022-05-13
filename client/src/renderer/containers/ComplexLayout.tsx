@@ -12,6 +12,7 @@ import { NetworkIndicatorContainer } from '../components/NetworkOperationsIndica
 import UserAndMenuIndicatorDesktop from '../components/UserAndMenuIndicatorDesktop';
 import VersionMarks from '../components/VersionMarks';
 import { ProfileQuery } from '../generated/ProfileQuery';
+import usePrevious from '../hooks/usePrevious';
 import { RootState } from '../reducers';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
@@ -52,13 +53,16 @@ const ComplexLayout: React.FC<
   const isUserLoggingIn = useSelector<RootState, boolean>(
     (state) => state.userInterface.loggingIn
   );
+  const wasUserLoggingIn = usePrevious(isUserLoggingIn);
   const isLoggedIn =
     profileQuery.state === DataState.DATA &&
     profileQuery.data.currentUser?.name;
 
   useEffect(() => {
-    profileQuery.refetch();
-  }, [isUserLoggingIn]);
+    if (wasUserLoggingIn && !isUserLoggingIn) {
+      profileQuery.refetch();
+    }
+  }, [wasUserLoggingIn, isUserLoggingIn]);
 
   const additionalNavigationItems: Array<AdditionalNavigationItem> = useMemo(
     () =>
