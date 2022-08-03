@@ -249,7 +249,7 @@
     "workbox-webpack-plugin": "^6.5.3"
   },
   "dependencies": {
-    "@apollo/client": "^3.6.0",
+    "@apollo/client": "^3.6.9",
     "@exponent/electron-cookies": "^2.0.0",
     "@mui/icons-material": "^5.3.1",
     "@mui/lab": "^5.0.0-alpha.72",
