@@ -180,8 +180,19 @@ const Navigation = ({
         </Drawer>
       )}
       {isMobileLayout && (
-        <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
-          <Toolbar>
+        <AppBar
+          position="fixed"
+          sx={{
+            top: 'auto',
+            bottom: 0,
+          }}
+        >
+          <Toolbar
+            sx={{
+              paddingBottom: 'env(safe-area-inset-bottom)',
+              minHeight: 'calc(56px + env(safe-area-inset-bottom))',
+            }}
+          >
             <IconButton component={Link} to={'/'}>
               <Home />
             </IconButton>

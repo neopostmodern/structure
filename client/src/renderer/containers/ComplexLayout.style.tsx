@@ -34,7 +34,7 @@ export const Container = styled(Paper).attrs(() => ({
           }
           const paddingRule = `padding-bottom: calc(${toolbarHeight}px + ${theme.spacing(
             2
-          )});`;
+          )} + env(safe-area-inset-bottom));`;
           if (!mediaQuery) {
             return paddingRule;
           }
