@@ -3,7 +3,7 @@ import { AccountCircle, LocalOffer, Settings } from '@mui/icons-material';
 import { CircularProgress, Stack } from '@mui/material';
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { version as currentPackageVersion } from '../../../package.json';
+import packageJson from '../../../package.json';
 import Centered from '../components/Centered';
 import FatalApolloError from '../components/FatalApolloError';
 import Gap from '../components/Gap';
@@ -44,7 +44,7 @@ const ComplexLayout: React.FC<
     useQuery<ProfileQuery>(PROFILE_QUERY, {
       fetchPolicy: gracefulNetworkPolicy('cache-first'),
       variables: {
-        currentVersion: currentPackageVersion,
+        currentVersion: packageJson.version,
       },
     })
   );
@@ -113,7 +113,7 @@ const ComplexLayout: React.FC<
                   ? profileQuery.data.versions
                   : 'loading'
               }
-              currentPackageVersion={currentPackageVersion}
+              currentPackageVersion={packageJson.version}
             />
             {profileQuery.state === DataState.LOADING || loading ? (
               <Centered>

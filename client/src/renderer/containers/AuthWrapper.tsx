@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { version as currentPackageVersion } from '../../../package.json';
+import packageJson from '../../../package.json';
 import { requestLogin } from '../actions/userInterface';
 import FatalApolloError from '../components/FatalApolloError';
 import LoginView from '../components/LoginView';
@@ -20,7 +20,7 @@ const AuthWrapper: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
     useQuery<ProfileQuery, ProfileQueryVariables>(PROFILE_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
       variables: {
-        currentVersion: currentPackageVersion,
+        currentVersion: packageJson.version,
       },
     })
   );
@@ -68,7 +68,7 @@ const AuthWrapper: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         <>
           <VersionMarks
             versions={profileQuery.data.versions}
-            currentPackageVersion={currentPackageVersion}
+            currentPackageVersion={packageJson.version}
           />
           <LoginView
             openLoginModal={(): void => {
