@@ -22,6 +22,7 @@ const LINK_QUERY = gql`
     link(linkId: $linkId) {
       _id
       createdAt
+      updatedAt
       archivedAt
       url
       name
@@ -41,6 +42,7 @@ const UPDATE_LINK_MUTATION = gql`
     updateLink(link: $link) {
       _id
       createdAt
+      updatedAt
       url
       domain
       name
@@ -71,7 +73,9 @@ const LinkPage: React.FC = () => {
   >(UPDATE_LINK_MUTATION);
   const handleSubmit = useCallback(
     (updatedLink): void => {
-      updateLink({ variables: { link: updatedLink } });
+      updateLink({ variables: { link: updatedLink } }).catch((error) => {
+        console.error('[LinkPage.updateLink]', error);
+      });
     },
     [updateLink]
   );

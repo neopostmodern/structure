@@ -31,6 +31,7 @@ input InputLink {
   domain: String
   name: String
   path: String
+  updatedAt: Date
   url: String
 }
 
@@ -38,12 +39,14 @@ input InputTag {
   _id: ID!
   color: String!
   name: String!
+  updatedAt: Date
 }
 
 input InputText {
   _id: ID!
   description: String
   name: String
+  updatedAt: Date
 }
 
 type Link implements BaseObject & INote {

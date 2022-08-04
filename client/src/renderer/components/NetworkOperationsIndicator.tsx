@@ -2,6 +2,7 @@ import { MutationResult } from '@apollo/client';
 import { Box, Typography } from '@mui/material';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { DataState, PolicedData } from '../utils/useDataState';
+import ErrorSnackbar from './ErrorSnackbar';
 
 enum NetworkPhase {
   IDLE,
@@ -79,7 +80,12 @@ const NetworkOperationsIndicator = ({
     message = 'Up to date.';
   }
 
-  return <NetworkIndicatorContainer>{message}</NetworkIndicatorContainer>;
+  return (
+    <>
+      <NetworkIndicatorContainer>{message}</NetworkIndicatorContainer>
+      <ErrorSnackbar error={mutation?.error} actionDescription="save" />
+    </>
+  );
 };
 
 export default NetworkOperationsIndicator;

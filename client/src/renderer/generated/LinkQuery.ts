@@ -8,16 +8,17 @@
 // ====================================================
 
 export interface LinkQuery_link_tags {
-  __typename: "Tag";
+  __typename: 'Tag';
   _id: string;
   name: string;
   color: string;
 }
 
 export interface LinkQuery_link {
-  __typename: "Link";
+  __typename: 'Link';
   _id: string;
   createdAt: any;
+  updatedAt: any;
   archivedAt: any | null;
   url: string;
   name: string;

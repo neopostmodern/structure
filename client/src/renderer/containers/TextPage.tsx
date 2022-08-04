@@ -22,6 +22,7 @@ const TEXT_QUERY = gql`
     text(textId: $textId) {
       _id
       createdAt
+      updatedAt
       archivedAt
       name
       description
@@ -39,6 +40,7 @@ const UPDATE_TEXT_MUTATION = gql`
     updateText(text: $text) {
       _id
       createdAt
+      updatedAt
       archivedAt
       name
       description
@@ -65,7 +67,11 @@ const TextPage: React.FC = () => {
     UpdateTextMutationVariables
   >(UPDATE_TEXT_MUTATION);
   const handleSubmit = useCallback(
-    (updatedText) => updateText({ variables: { text: updatedText } }),
+    (updatedText) => {
+      updateText({ variables: { text: updatedText } }).catch((error) => {
+        console.error('[TextPage.updateText]', error);
+      });
+    },
     [updateText]
   );
 

@@ -8,7 +8,12 @@ import { NameInput } from './formComponents';
 import Gap from './Gap';
 import MarkedTextarea from './MarkedTextarea';
 
-const textFormFields: Array<keyof NoteObject> = ['_id', 'name', 'description'];
+const textFormFields: Array<keyof NoteObject> = [
+  '_id',
+  'updatedAt',
+  'name',
+  'description',
+];
 type TextInForm = Pick<NoteObject, typeof textFormFields[number]>;
 
 interface TextFormProps {

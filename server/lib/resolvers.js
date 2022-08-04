@@ -152,6 +152,12 @@ const rootResolvers = {
           throw new Error('Resource could not be found.')
         }
 
+        if (tag.updatedAt > props.updatedAt) {
+          throw new Error(
+            'Tag has been changed externally since last sync, change rejected.',
+          )
+        }
+
         Object.entries(props).forEach(([propName, propValue]) => {
           tag[propName] = propValue
         })
@@ -171,6 +177,12 @@ const rootResolvers = {
       return Link.findOne({ _id, user: context.user }).then((link) => {
         if (!link) {
           throw new Error('Resource could not be found.')
+        }
+
+        if (link.updatedAt > props.updatedAt) {
+          throw new Error(
+            'Note has been changed externally since last sync, change rejected.',
+          )
         }
 
         Object.entries(props).forEach(([propName, propValue]) => {
@@ -197,6 +209,12 @@ const rootResolvers = {
       return Text.findOne({ _id, user: context.user }).then((text) => {
         if (!text) {
           throw new Error('Resource could not be found.')
+        }
+
+        if (text.updatedAt > props.updatedAt) {
+          throw new Error(
+            'Note has been changed externally since last sync, change rejected.',
+          )
         }
 
         Object.entries(props).forEach(([propName, propValue]) => {

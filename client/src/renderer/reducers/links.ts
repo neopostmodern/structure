@@ -1,5 +1,7 @@
 export type TagObject = {
   _id: string;
+  createdAt: number;
+  updatedAt: number;
   name: string;
   color: string;
 };
@@ -12,5 +14,6 @@ export type NoteObject = {
   description: string;
   tags: Array<TagObject>;
   createdAt: number; // todo: Date
+  updatedAt: number; // todo: Date
   archivedAt: number | null; // todo: Date
 };

@@ -43,7 +43,7 @@ export default gql`
   }
   input InputTag {
     _id: ID!
-
+    updatedAt: Date # todo: make mandatory in v0.21
     name: String!
     color: String!
   }
@@ -88,6 +88,7 @@ export default gql`
   }
   input InputText {
     _id: ID!
+    updatedAt: Date # todo: make mandatory in v0.21
     name: String
     description: String
   }
@@ -115,6 +116,7 @@ export default gql`
   }
   input InputLink {
     _id: ID!
+    updatedAt: Date # todo: make mandatory in v0.21
     url: String
     domain: String
     path: String

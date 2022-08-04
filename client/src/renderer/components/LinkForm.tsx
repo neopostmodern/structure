@@ -13,6 +13,7 @@ import MarkedTextarea from './MarkedTextarea';
 
 const linkFormFields: Array<keyof LinkQuery_link> = [
   '_id',
+  'updatedAt',
   'url',
   'name',
   'description',

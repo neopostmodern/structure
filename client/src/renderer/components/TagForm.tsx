@@ -2,7 +2,7 @@ import { pick } from 'lodash';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
-import { TagType } from '../types';
+import { TagObject } from '../reducers/links';
 import colorTools from '../utils/colorTools';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
 import { TextField } from './CommonStyles';
@@ -16,19 +16,23 @@ const ColorBlockInput = styled(TextField)`
   text-align: center;
 `;
 
-const tagFormFields = ['_id', 'color', 'name'];
+const tagFormFields: Array<keyof TagObject> = [
+  '_id',
+  'updatedAt',
+  'color',
+  'name',
+];
+type TagInForm = Pick<TagObject, typeof tagFormFields[number]>;
 
 interface TagFormProps {
-  tag: TagType;
-  onSubmit: (tag: TagType) => void;
+  tag: TagObject;
+  onSubmit: (tag: TagObject) => void;
 }
 
 const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
   const defaultValues = pick(tag, tagFormFields);
 
-  const { register, getValues, handleSubmit } = useForm<
-    Pick<TagType, typeof tagFormFields[number]>
-  >({
+  const { register, getValues, handleSubmit } = useForm<TagInForm>({
     defaultValues,
     mode: 'onBlur',
     resolver: (formValues) => {

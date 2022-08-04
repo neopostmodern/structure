@@ -8,17 +8,18 @@
 // ====================================================
 
 export interface TextQuery_text_tags {
-  __typename: "Tag";
+  __typename: 'Tag';
   _id: string;
   name: string;
   color: string;
 }
 
 export interface TextQuery_text {
-  __typename: "Text";
+  __typename: 'Text';
   _id: string;
   createdAt: any;
   archivedAt: any | null;
+  updatedAt: any;
   name: string;
   description: string;
   tags: TextQuery_text_tags[];

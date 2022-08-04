@@ -21,6 +21,7 @@ const TAG_QUERY = gql`
   query TagWithNotesQuery($tagId: ID!) {
     tag(tagId: $tagId) {
       _id
+      updatedAt
       name
       color
 
@@ -50,6 +51,7 @@ const UPDATE_TAG_MUTATION = gql`
   mutation UpdateTagMutation($tag: InputTag!) {
     updateTag(tag: $tag) {
       _id
+      updatedAt
       name
       color
 
@@ -93,6 +95,8 @@ const TagPage: React.FC<{}> = () => {
     (updatedTag): void => {
       updateTag({
         variables: { tag: updatedTag },
+      }).catch((error) => {
+        console.error('[TagPage.updateTag]', error);
       });
     },
     [updateTag]
