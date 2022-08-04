@@ -1,31 +1,32 @@
-import marked from 'marked';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
+import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
 
-const renderer = new marked.Renderer();
-renderer.listitem = (text: string): string => {
-  if (/^\s*\[[x ]\]\s*/.test(text)) {
-    const textWithListItems = text
-      .replace(/^\s*\[ \]\s*/, '☐ ')
-      .replace(/^\s*\[x\]\s*/, '☑ ');
-    return `<li style="list-style: none; margin-left: -1.3rem;">${textWithListItems}</li>`;
-  }
-  return `<li>${text}</li>`;
-};
+const listIndent = '2em';
 
-renderer.link = (href: string, title: string, text: string): string =>
-  `<a href="${href}" title="${
-    title || href
-  }" target="_blank" rel="noopener noreferrer">${text}</a>`;
+const MarkdownContainer = styled(ReactMarkdown)`
+  font-size: 1rem;
 
-marked.setOptions({
-  breaks: true,
-  renderer,
-});
-
-const MarkdownContainer = styled.div`
   p:last-child {
     margin-bottom: 0;
+  }
+
+  ul,
+  ol {
+    padding-left: ${listIndent};
+
+    li {
+      &.task-list-item {
+        list-style: none;
+        margin-left: -${listIndent};
+      }
+
+      > p {
+        margin: 0;
+      }
+    }
   }
 
   @media (prefers-color-scheme: dark) {
@@ -80,10 +81,27 @@ const RenderedMarkdown = ({
   if (markdown.length) {
     return (
       <MarkdownContainer
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: marked(markdown) }}
-        style={{ fontSize: '1rem' }}
-      />
+        remarkPlugins={[remarkBreaks, [remarkGfm, { singleTilde: false }]]}
+        components={{
+          a({ href, title, children }) {
+            return (
+              <a
+                href={href}
+                title={title || href}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                {children}
+              </a>
+            );
+          },
+          input({ checked }) {
+            return checked ? '☐ ' : '☑ ';
+          },
+        }}
+      >
+        {markdown}
+      </MarkdownContainer>
     );
   }
   if (showEmpty) {
