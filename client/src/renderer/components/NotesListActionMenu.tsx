@@ -52,6 +52,9 @@ const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
+            onClick={() => {
+              handleClose();
+            }}
             onClose={handleClose}
           >
             {'url' in note && note.url && (
@@ -73,7 +76,6 @@ const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
             <MenuItem
               onClick={() => {
                 toggleArchivedNote();
-                handleClose();
               }}
             >
               <ListItemIcon>
@@ -86,7 +88,6 @@ const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
               note={note}
               loading={deleteLinkLoading}
               deleteNote={() => {
-                handleClose();
                 deleteNote();
               }}
             />
