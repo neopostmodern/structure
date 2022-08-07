@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
+import FatalApolloError from '../components/FatalApolloError';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotesList from '../components/NotesList';
 import TagForm from '../components/TagForm';
@@ -102,19 +103,26 @@ const TagPage: React.FC<{}> = () => {
     [updateTag]
   );
 
+  if (tagQuery.state === DataState.LOADING) {
+    return <ComplexLayout loading />;
+  }
+  if (tagQuery.state === DataState.ERROR) {
+    return (
+      <ComplexLayout>
+        <FatalApolloError query={tagQuery} />
+      </ComplexLayout>
+    );
+  }
+
   return (
-    <ComplexLayout loading={tagQuery.state === DataState.LOADING}>
+    <ComplexLayout>
       <NetworkOperationsIndicator
         query={tagQuery}
         mutation={updateTagMutation}
       />
-      {tagQuery.state === DataState.DATA && (
-        <>
-          <TagForm tag={tagQuery.data.tag} onSubmit={handleSubmit} />
+      <TagForm tag={tagQuery.data.tag} onSubmit={handleSubmit} />
 
-          <NotesList notes={tagQuery.data.tag.notes} />
-        </>
-      )}
+      <NotesList notes={tagQuery.data.tag.notes} />
     </ComplexLayout>
   );
 };
