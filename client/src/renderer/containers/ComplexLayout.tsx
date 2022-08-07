@@ -121,7 +121,7 @@ const ComplexLayout: React.FC<
             {profileQuery.state === DataState.LOADING || loading ? (
               <Centered>
                 <Stack alignItems="center">
-                  <CircularProgress color="inherit" />
+                  <CircularProgress color="inherit" disableShrink />
                   <Gap vertical={1} />
                   {typeof loading === 'string' && loading}
                 </Stack>
