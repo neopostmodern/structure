@@ -44,6 +44,7 @@ const ErrorInformation = styled.div`
 
 const ErrorInformationSmall = styled.div`
   width: 45ch;
+  max-width: 100%;
   color: gray;
 `;
 
