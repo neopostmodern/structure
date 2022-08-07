@@ -14,8 +14,9 @@ import {
   AddTextMutationVariables,
 } from '../generated/AddTextMutation';
 import { NotesForList } from '../generated/NotesForList';
+import { BASE_NOTE_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import ComplexLayout from './ComplexLayout';
-import { BASE_NOTE_FRAGMENT, NOTES_QUERY } from './NotesPage/NotesPage';
+import { NOTES_QUERY } from './NotesPage/NotesPage';
 
 const ADD_LINK_MUTATION = gql`
   ${BASE_NOTE_FRAGMENT}

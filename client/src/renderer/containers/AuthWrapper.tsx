@@ -9,7 +9,7 @@ import VersionMarks from '../components/VersionMarks';
 import { ProfileQuery, ProfileQueryVariables } from '../generated/ProfileQuery';
 import { RootState } from '../reducers';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
-import { PROFILE_QUERY } from '../utils/sharedQueries';
+import { PROFILE_QUERY } from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 import SettingsPage from './SettingsPage';

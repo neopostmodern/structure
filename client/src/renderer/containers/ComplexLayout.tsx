@@ -17,7 +17,7 @@ import usePrevious from '../hooks/usePrevious';
 import { RootState } from '../reducers';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
-import { PROFILE_QUERY } from '../utils/sharedQueries';
+import { PROFILE_QUERY } from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
 import * as Styled from './ComplexLayout.style';
 

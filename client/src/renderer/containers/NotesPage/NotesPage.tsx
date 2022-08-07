@@ -22,31 +22,9 @@ import { NotesForList } from '../../generated/NotesForList';
 import useFilteredNotes from '../../hooks/useFilteredNotes';
 import { RootState } from '../../reducers';
 import { UserInterfaceStateType } from '../../reducers/userInterface';
-import gracefulNetworkPolicy from '../../utils/gracefulNetworkPolicy';
+import { BASE_NOTE_FRAGMENT } from '../../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../../utils/useDataState';
 import ComplexLayout from '../ComplexLayout';
-
-export const BASE_NOTE_FRAGMENT = gql`
-  fragment BaseNote on INote {
-    ... on INote {
-      # type
-      _id
-      name
-      createdAt
-      archivedAt
-      description
-      tags {
-        _id
-        name
-        color
-      }
-    }
-    ... on Link {
-      url
-      domain
-    }
-  }
-`;
 
 export const NOTES_QUERY = gql`
   query NotesForList {

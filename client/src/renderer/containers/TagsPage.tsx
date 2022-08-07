@@ -15,6 +15,7 @@ import { breakpointDesktop } from '../styles/constants';
 import colorTools, { ColorCache } from '../utils/colorTools';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { stripTypename } from '../utils/graphQl';
+import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
@@ -89,21 +90,19 @@ export const layoutToName = (layout: TagsLayout): string => {
 export const TAGS_QUERY = gql`
   query TagsQuery {
     tags {
-      _id
-      name
-      color
+      ...BaseTag
     }
   }
+  ${BASE_TAG_FRAGMENT}
 `;
 
 const UPDATE_TAG_MUTATION = gql`
   mutation UpdateTag2($tag: InputTag!) {
     updateTag(tag: $tag) {
-      _id
-      name
-      color
+      ...BaseTag
     }
   }
+  ${BASE_TAG_FRAGMENT}
 `;
 
 type ColorTagGroups = {
