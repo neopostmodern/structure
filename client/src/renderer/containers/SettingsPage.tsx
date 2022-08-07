@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBackendUrl } from '../actions/configuration';
+import AdvancedSettings from '../components/AdvancedSettings';
 import { TextField } from '../components/CommonStyles';
 import Gap from '../components/Gap';
 import SettingsEntry from '../components/SettingsEntry';
@@ -89,6 +90,7 @@ const SettingsPage: React.FC = () => {
           disabled={process.env.TARGET === 'web'}
         />
       </SettingsEntry>
+      <AdvancedSettings />
     </ComplexLayout>
   );
 };

@@ -8,7 +8,7 @@ import {
   REQUEST_LOGOUT,
   setClipboard,
 } from '../actions/userInterface';
-import apolloClient, { cachePersistor } from '../apollo';
+import { clearApolloCache } from '../utils/cache';
 
 const handleLogin = (backendUrl: string, popUpOptions: string, dispatch) => {
   const loginPopup = window.open(
@@ -22,11 +22,6 @@ const handleLogin = (backendUrl: string, popUpOptions: string, dispatch) => {
       clearInterval(onCloseWatcher);
     }
   }, 100);
-};
-
-const clearApolloCache = () => {
-  apolloClient.clearStore();
-  cachePersistor.purge();
 };
 
 let electronMiddleware;
