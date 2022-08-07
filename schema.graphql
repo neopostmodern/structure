@@ -11,6 +11,12 @@ type Credentials {
 
 scalar Date
 
+type EntitiesUpdatedSince {
+  notes: [Note!]!
+  tags: [Tag!]!
+  timestamp: Date!
+}
+
 interface INote {
   _id: ID!
   archivedAt: Date
@@ -88,6 +94,7 @@ enum NoteType {
 
 type Query {
   currentUser: User
+  entitiesUpdatedSince(updatedSince: Date!): EntitiesUpdatedSince!
   link(linkId: ID): Link!
   links(limit: Int, offset: Int): [Link!]!
   notes(limit: Int, offset: Int): [Note!]!

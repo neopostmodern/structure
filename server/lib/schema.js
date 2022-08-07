@@ -126,6 +126,11 @@ export default gql`
   }
 
   union Note = Link | Text
+  type EntitiesUpdatedSince {
+    notes: [Note!]!
+    tags: [Tag!]!
+    timestamp: Date!
+  }
 
   type Query {
     # Return the currently logged in user, or null if nobody is logged in
@@ -142,6 +147,7 @@ export default gql`
     ): [Link!]!
 
     notes(offset: Int, limit: Int): [Note!]!
+    entitiesUpdatedSince(updatedSince: Date!): EntitiesUpdatedSince!
 
     link(linkId: ID): Link!
     text(textId: ID): Text!

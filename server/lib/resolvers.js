@@ -83,6 +83,24 @@ const rootResolvers = {
         .exec()
         .then(typeEnumFixer)
     },
+    async entitiesUpdatedSince(root, { updatedSince }, context) {
+      if (!context.user) {
+        throw new Error('Need to be logged in to fetch links.')
+      }
+      const updatedSinceAsDate = new Date(updatedSince)
+      const filter = {
+        user: context.user,
+        updatedAt: { $gt: updatedSinceAsDate },
+      }
+      return {
+        notes: await Note.find(filter)
+          .sort({ createdAt: -1 })
+          .exec()
+          .then(typeEnumFixer),
+        tags: Tag.find(filter).exec(),
+        timestamp: new Date(),
+      }
+    },
     async link(root, { linkId }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch a link.')

@@ -25,7 +25,7 @@ const filterNotes = (
   searchQuery: string,
   archiveState: ArchiveState
 ): FilteredNotes => {
-  let filteredNotes = notes;
+  let filteredNotes = notes.filter((note) => !note.deletedAt);
   if (searchQuery.length !== 0) {
     filteredNotes = filteredNotes.filter(
       (note) =>

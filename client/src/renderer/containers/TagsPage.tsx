@@ -10,10 +10,10 @@ import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator
 import Tag from '../components/Tag';
 import { TagsQuery, TagsQuery_tags } from '../generated/TagsQuery';
 import { UpdateTag2, UpdateTag2Variables } from '../generated/UpdateTag2';
+import useEntitiesUpdatedSince from '../hooks/useEntitiesUpdatedSince';
 import { RootState } from '../reducers';
 import { breakpointDesktop } from '../styles/constants';
 import colorTools, { ColorCache } from '../utils/colorTools';
-import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { stripTypename } from '../utils/graphQl';
 import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
@@ -115,12 +115,18 @@ const TagsPage: React.FC<{}> = () => {
     (state) => state.userInterface.tagsLayout
   );
   const tagsQuery = useDataState(
-    useQuery<TagsQuery>(TAGS_QUERY, { fetchPolicy: gracefulNetworkPolicy() })
+    useQuery<TagsQuery>(TAGS_QUERY, { fetchPolicy: 'cache-only' })
   );
 
   const [updateTag] = useMutation<UpdateTag2, UpdateTag2Variables>(
     UPDATE_TAG_MUTATION
   );
+
+  const entitiesUpdatedSince = useEntitiesUpdatedSince();
+  // todo: display something nice in case there are no tags in cache yet and
+  // useEntitiesUpdatedSince actually performs the first fetch
+  // see e.g. NotesPage, but less relevant here so pending for now
+  // should find a universal solution
 
   const [draggedTag, setDraggedTag] = useState<TagsQuery_tags>();
   const [droppableColor, setDroppableColor] = useState<string | null>();
@@ -234,7 +240,7 @@ const TagsPage: React.FC<{}> = () => {
       }
       wide={layout === TagsLayout.COLOR_COLUMN_LAYOUT}
     >
-      <NetworkOperationsIndicator query={tagsQuery} />
+      <NetworkOperationsIndicator query={entitiesUpdatedSince} />
       {tagsQuery.state === DataState.DATA && renderTags(tagsQuery.data.tags)}
     </ComplexLayout>
   );

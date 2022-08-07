@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
+import { CircularProgress, Stack, Typography } from '@mui/material';
 import Mousetrap from 'mousetrap';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +12,9 @@ import {
   increaseInfiniteScroll,
   LinkLayout,
 } from '../../actions/userInterface';
+import Centered from '../../components/Centered';
 import FatalApolloError from '../../components/FatalApolloError';
+import Gap from '../../components/Gap';
 import NetworkOperationsIndicator, {
   NetworkIndicatorContainer,
 } from '../../components/NetworkOperationsIndicator';
@@ -19,11 +22,15 @@ import NoteBatchEditingBar from '../../components/NoteBatchEditingBar';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
 import { NotesForList } from '../../generated/NotesForList';
+import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince';
 import useFilteredNotes from '../../hooks/useFilteredNotes';
 import { RootState } from '../../reducers';
 import { UserInterfaceStateType } from '../../reducers/userInterface';
 import { BASE_NOTE_FRAGMENT } from '../../utils/sharedQueriesAndFragments';
-import useDataState, { DataState } from '../../utils/useDataState';
+import useDataState, {
+  DataState,
+  OFFLINE_CACHE_MISS,
+} from '../../utils/useDataState';
 import ComplexLayout from '../ComplexLayout';
 
 export const NOTES_QUERY = gql`
@@ -59,7 +66,7 @@ const NotesPage: React.FC = () => {
   const moreElement = useRef<HTMLDivElement | null>(null);
   const notesQuery = useDataState(
     useQuery<NotesForList>(NOTES_QUERY, {
-      fetchPolicy: gracefulNetworkPolicy(),
+      fetchPolicy: 'cache-only',
     })
   );
   const filteredNotesQueryWrapper = useFilteredNotes(
@@ -67,6 +74,8 @@ const NotesPage: React.FC = () => {
     searchQuery,
     archiveState
   );
+
+  const entitiesUpdatedSince = useEntitiesUpdatedSince();
 
   useEffect(() => {
     const handleScrollEvent = () => {
@@ -128,9 +137,27 @@ const NotesPage: React.FC = () => {
   let primaryActions = null;
 
   if (filteredNotesQueryWrapper.state === DataState.ERROR) {
-    content.push(
-      <FatalApolloError key="error" query={filteredNotesQueryWrapper} />
-    );
+    if (
+      filteredNotesQueryWrapper.error.extraInfo === OFFLINE_CACHE_MISS &&
+      (entitiesUpdatedSince.state === DataState.UNCALLED ||
+        entitiesUpdatedSince.state === DataState.LOADING)
+    ) {
+      content.push(
+        <Centered key="first-load">
+          <Stack alignItems="center">
+            <CircularProgress color="inherit" disableShrink />
+            <Gap vertical={1} />
+            <Typography variant="caption">
+              Loading notes for the first time, this might take a while...
+            </Typography>
+          </Stack>
+        </Centered>
+      );
+    } else {
+      content.push(
+        <FatalApolloError key="error" query={filteredNotesQueryWrapper} />
+      );
+    }
   } else if (filteredNotesQueryWrapper.state === DataState.DATA) {
     if (filteredNotesQueryWrapper.loadingBackground) {
       content.push(
@@ -151,7 +178,10 @@ const NotesPage: React.FC = () => {
     );
 
     content.push(
-      <NetworkOperationsIndicator key="refresh-indicator" query={notesQuery} />
+      <NetworkOperationsIndicator
+        key="refresh-indicator"
+        query={entitiesUpdatedSince}
+      />
     );
 
     content.push(

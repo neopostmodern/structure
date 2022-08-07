@@ -1,4 +1,9 @@
-import { ApolloError, QueryResult, QueryTuple } from '@apollo/client';
+import {
+  ApolloError,
+  NetworkStatus,
+  QueryResult,
+  QueryTuple,
+} from '@apollo/client';
 import { pick } from 'lodash';
 import { useMemo } from 'react';
 
@@ -24,7 +29,7 @@ export type PolicedData<QueryData> =
   | { state: DataState.DATA; data: QueryData; loadingBackground: boolean }
   | { state: DataState.ERROR; error: ApolloError };
 
-type LazyPolicedData<QueryData> =
+export type LazyPolicedData<QueryData> =
   | PolicedData<QueryData>
   | { state: DataState.UNCALLED };
 
@@ -79,13 +84,19 @@ function useDataState<QueryData, QueryVariables>(
       ];
     }
     let dataState: PolicedData<QueryData>;
-    if (error) {
-      dataState = { state: DataState.ERROR, error };
-    } else if (data) {
-      dataState = { state: DataState.DATA, data, loadingBackground: loading };
-    } else if (queryResult.loading) {
+    if (data) {
+      dataState = {
+        state: DataState.DATA,
+        data,
+        loadingBackground:
+          loading ||
+          additionalQueryFields.networkStatus === NetworkStatus.refetch,
+      };
+    } else if (loading) {
       dataState = { state: DataState.LOADING };
-    } else if (!navigator.onLine) {
+    } else if (error) {
+      dataState = { state: DataState.ERROR, error };
+    } else if (queryResult.observable.options.fetchPolicy === 'cache-only') {
       // see https://github.com/apollographql/apollo-client/issues/7505 (cache-only queries throw no errors when they can't be fulfilled)
       dataState = {
         state: DataState.ERROR,

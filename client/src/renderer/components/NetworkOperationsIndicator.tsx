@@ -1,7 +1,7 @@
 import { MutationResult } from '@apollo/client';
 import { Box, Typography } from '@mui/material';
 import { PropsWithChildren, useEffect, useState } from 'react';
-import { DataState, PolicedData } from '../utils/useDataState';
+import { DataState, LazyPolicedData } from '../utils/useDataState';
 import ErrorSnackbar from './ErrorSnackbar';
 
 enum NetworkPhase {
@@ -28,7 +28,7 @@ const NetworkOperationsIndicator = ({
   query,
   mutation,
 }: {
-  query?: PolicedData<any>;
+  query?: LazyPolicedData<any>;
   mutation?: MutationResult;
 }) => {
   const [backgroundLoadingState, setBackgroundLoadingState] =
@@ -37,6 +37,7 @@ const NetworkOperationsIndicator = ({
     NetworkPhase.IDLE
   );
 
+  const isLoading = query?.state === DataState.LOADING;
   const isLoadingBackground =
     query?.state === DataState.DATA && query?.loadingBackground;
   const isSaving = mutation?.loading;
@@ -47,7 +48,7 @@ const NetworkOperationsIndicator = ({
       if (savingState === NetworkPhase.IDLE) {
         setSavingState(NetworkPhase.IN_PROGRESS);
       }
-    } else if (isLoadingBackground) {
+    } else if (isLoading || isLoadingBackground) {
       if (backgroundLoadingState === NetworkPhase.IDLE) {
         setBackgroundLoadingState(NetworkPhase.IN_PROGRESS);
       }
@@ -65,7 +66,7 @@ const NetworkOperationsIndicator = ({
         }, DISPLAY_BACKGROUND_LOAD_NOTIFICATION_LENGTH);
       }
     }
-  }, [savingState, setSavingState, isSaving, isLoadingBackground]);
+  }, [savingState, setSavingState, isSaving, isLoadingBackground, isLoading]);
 
   let message;
   if (isError) {
