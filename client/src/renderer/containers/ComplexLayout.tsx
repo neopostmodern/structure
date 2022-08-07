@@ -12,6 +12,7 @@ import { NetworkIndicatorContainer } from '../components/NetworkOperationsIndica
 import UserAndMenuIndicatorDesktop from '../components/UserAndMenuIndicatorDesktop';
 import VersionMarks from '../components/VersionMarks';
 import { ProfileQuery } from '../generated/ProfileQuery';
+import useIsOnline from '../hooks/useIsOnline';
 import usePrevious from '../hooks/usePrevious';
 import { RootState } from '../reducers';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
@@ -90,6 +91,8 @@ const ComplexLayout: React.FC<
     [isLoggedIn, profileQuery]
   );
 
+  const online = useIsOnline();
+
   return (
     <Styled.Container>
       <Styled.Navigation>
@@ -100,7 +103,7 @@ const ComplexLayout: React.FC<
         />
       </Styled.Navigation>
       <Styled.PrimaryContent wide={wide}>
-        {!navigator.onLine && (
+        {!online && (
           <NetworkIndicatorContainer>Offline</NetworkIndicatorContainer>
         )}
         {profileQuery.state === DataState.ERROR ? (

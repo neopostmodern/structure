@@ -7,6 +7,7 @@ import {
   TitleSuggestionsQuery,
   TitleSuggestionsQueryVariables,
 } from '../../generated/TitleSuggestionsQuery';
+import useIsOnline from '../../hooks/useIsOnline';
 import { isUrlValid } from '../../utils/textHelpers';
 import useDataState, { DataState } from '../../utils/useDataState';
 import ErrorSnackbar from '../ErrorSnackbar';
@@ -122,6 +123,8 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name, linkId }) => {
       break;
   }
 
+  const isOnline = useIsOnline();
+
   return (
     <>
       <NameInput
@@ -138,7 +141,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name, linkId }) => {
           inputElement.current = ref;
         }}
         placeholder="Title"
-        disabled={!navigator.onLine}
+        disabled={!isOnline}
       />
       <Suggestions>
         <FormSubheader>Title suggestions</FormSubheader>

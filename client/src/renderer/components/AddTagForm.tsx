@@ -9,6 +9,7 @@ import {
   AddTagByNameToNoteVariables,
 } from '../generated/AddTagByNameToNote';
 import { TagsQuery, TagsQuery_tags } from '../generated/TagsQuery';
+import useIsOnline from '../hooks/useIsOnline';
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
 import InlineTagForm from './InlineTagForm';
 
@@ -100,7 +101,8 @@ const AddTagForm = ({
     }
   };
 
-  if (!navigator.onLine) {
+  const isOnline = useIsOnline();
+  if (!isOnline) {
     return null;
   }
   if (addTagToNoteMutation.loading) {
