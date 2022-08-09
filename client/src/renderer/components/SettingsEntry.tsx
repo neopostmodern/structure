@@ -40,7 +40,7 @@ type SettingsEntryProps = {
   comment?: string | JSX.Element;
 } & (SettingsEntryAction | {});
 
-const SettingsEntry: React.FC<SettingsEntryProps> = ({
+const SettingsEntry: React.FC<React.PropsWithChildren<SettingsEntryProps>> = ({
   title,
   comment,
   children,

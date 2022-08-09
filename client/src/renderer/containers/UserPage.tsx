@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { Button, Link, Typography } from '@mui/material';
 import gql from 'graphql-tag';
-import React from 'react';
+import { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { requestLogout } from '../actions/userInterface';
 import ErrorSnackbar from '../components/ErrorSnackbar';
@@ -25,7 +25,7 @@ const USER_QUERY = gql`
   }
 `;
 
-const UserPage: React.FC = () => {
+const UserPage: FC = () => {
   const dispatch = useDispatch();
   const userQuery = useDataState(
     useQuery<UserQuery>(USER_QUERY, {

@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import React, { useCallback } from 'react';
+import { FC, useCallback } from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
@@ -79,7 +79,7 @@ const UPDATE_TAG_MUTATION = gql`
   }
 `;
 
-const TagPage: React.FC<{}> = () => {
+const TagPage: FC = () => {
   const { tagId } = useParams();
 
   const tagQuery = useDataState(

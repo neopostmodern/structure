@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Centered: React.FC<{ height?: string }> = ({
+const Centered: React.FC<React.PropsWithChildren<{ height?: string }>> = ({
   children,
   height = '60vh',
 }) => {

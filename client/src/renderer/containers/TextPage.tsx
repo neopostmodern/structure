@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import React, { useCallback } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
@@ -53,7 +53,7 @@ const UPDATE_TEXT_MUTATION = gql`
   }
 `;
 
-const TextPage: React.FC = () => {
+const TextPage: FC = () => {
   const isDesktopLayout = useIsDesktopLayout();
   const { textId } = useParams();
   const textQuery = useDataState(

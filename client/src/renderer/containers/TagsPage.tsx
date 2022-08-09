@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Button } from '@mui/material';
 import gql from 'graphql-tag';
-import React, { useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { changeTagsLayout, TagsLayout } from '../actions/userInterface';
@@ -109,7 +109,7 @@ type ColorTagGroups = {
   [color: string]: Array<TagsQuery_tags>;
 };
 
-const TagsPage: React.FC<{}> = () => {
+const TagsPage: FC = () => {
   const dispatch = useDispatch();
   const layout = useSelector<RootState, TagsLayout>(
     (state) => state.userInterface.tagsLayout

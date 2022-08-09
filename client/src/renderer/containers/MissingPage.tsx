@@ -1,9 +1,9 @@
-import React from 'react';
+import { FC } from 'react';
 import { useLocation } from 'react-router';
 import Centered from '../components/Centered';
 import ComplexLayout from './ComplexLayout';
 
-const MissingPage: React.FC<{}> = () => {
+const MissingPage: FC = () => {
   const location = useLocation();
   return (
     <ComplexLayout>

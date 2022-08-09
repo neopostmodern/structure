@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { Typography } from '@mui/material';
 import gql from 'graphql-tag';
-import React from 'react';
+import { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBackendUrl } from '../actions/configuration';
 import AdvancedSettings from '../components/AdvancedSettings';
@@ -22,7 +22,7 @@ const TINY_USER_QUERY = gql`
   }
 `;
 
-const SettingsPage: React.FC = () => {
+const SettingsPage: FC = () => {
   const { backendUrl, backendUrlDefault } = useSelector<
     RootState,
     ConfigurationStateType

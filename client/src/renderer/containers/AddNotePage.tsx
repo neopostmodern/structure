@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
-import { useCallback } from 'react';
+import { FC, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
 import { push, replace } from 'redux-first-history';
@@ -35,7 +35,7 @@ const ADD_TEXT_MUTATION = gql`
   }
 `;
 
-const AddLinkPage: React.FC<{}> = () => {
+const AddLinkPage: FC = () => {
   const dispatch = useDispatch();
 
   const [addLink, addLinkMutation] = useMutation<

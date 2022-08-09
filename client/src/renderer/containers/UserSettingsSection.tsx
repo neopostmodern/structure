@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
 import gql from 'graphql-tag';
-import React from 'react';
+import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { TextField } from '../components/CommonStyles';
 import Credentials, { CredentialsOrLoading } from '../components/Credentials';
@@ -58,7 +58,7 @@ const REVOKE_CREDENTIAL_MUTATION = gql`
   }
 `;
 
-const UserSettingsSection: React.FC = () => {
+const UserSettingsSection: FC = () => {
   const { backendUrl } = useSelector<RootState, ConfigurationStateType>(
     (state) => state.configuration
   );

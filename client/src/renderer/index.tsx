@@ -1,5 +1,5 @@
 import Mousetrap from 'mousetrap';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import apolloClient from './apollo';
 import ErrorBoundary from './components/ErrorBoundary';
 import { history, store } from './configureStore';
@@ -28,9 +28,10 @@ if (process.env.TARGET !== 'web') {
   });
 }
 
-render(
+const root = createRoot(document.getElementById('root')!);
+
+root.render(
   <ErrorBoundary>
     <Root store={store} history={history} client={apolloClient} />
-  </ErrorBoundary>,
-  document.getElementById('root')
+  </ErrorBoundary>
 );
