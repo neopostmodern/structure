@@ -44,7 +44,9 @@ const AddTagForm = ({
   const [addingNew, setAddingNew] = useState<boolean>(false);
   const [submittedTag, setSubmittedTag] = useState<string | null>(null);
 
-  const tagsQuery = useQuery<TagsQuery>(TAGS_QUERY);
+  const tagsQuery = useQuery<TagsQuery>(TAGS_QUERY, {
+    fetchPolicy: 'cache-only',
+  });
 
   const [addTagToNote, addTagToNoteMutation] = useMutation<
     AddTagByNameToNote,
