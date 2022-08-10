@@ -16,10 +16,13 @@ const DISPLAY_SAVED_NOTIFICATION_LENGTH = 1000;
 export const NetworkIndicatorContainer = ({
   children,
   align = 'right',
-}: PropsWithChildren<{ align?: 'left' | 'right' }>) => (
+  color = 'inherit',
+}: PropsWithChildren<{ align?: 'left' | 'right'; color?: string }>) => (
   <Box sx={{ position: 'relative' }}>
     <Box sx={{ position: 'absolute', bottom: 0, [align]: 0 }}>
-      <Typography variant="caption">{children}</Typography>
+      <Typography variant="caption" color={color}>
+        {children}
+      </Typography>
     </Box>
   </Box>
 );
@@ -83,7 +86,9 @@ const NetworkOperationsIndicator = ({
 
   return (
     <>
-      <NetworkIndicatorContainer>{message}</NetworkIndicatorContainer>
+      <NetworkIndicatorContainer color={isError ? 'error' : undefined}>
+        {message}
+      </NetworkIndicatorContainer>
       <ErrorSnackbar error={mutation?.error} actionDescription="save" />
     </>
   );
