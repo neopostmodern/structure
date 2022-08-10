@@ -13,13 +13,17 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useState } from 'react';
+import { NotesForListQuery } from '../generated/graphql';
 import useDeleteNote from '../hooks/useDeleteNote';
 import useToggleArchivedNote from '../hooks/useToggleArchivedNote';
-import { NoteObject } from '../reducers/links';
 import { openInDefaultBrowser, shareUrl } from '../utils/openWith';
 import DeleteNoteTrigger from './DeleteNoteTrigger';
 
-const NotesListActionMenu = ({ note }: { note: NoteObject }) => {
+const NotesListActionMenu = ({
+  note,
+}: {
+  note: NotesForListQuery['notes'][number];
+}) => {
   const {
     toggleArchivedNote,
     errorSnackbar: toggleArchivedNoteErrorSnackbar,

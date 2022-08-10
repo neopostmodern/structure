@@ -21,7 +21,7 @@ import NetworkOperationsIndicator, {
 import NoteBatchEditingBar from '../../components/NoteBatchEditingBar';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
-import { NotesForList } from '../../generated/NotesForList';
+import { NotesForListQuery } from '../../generated/graphql';
 import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince';
 import useFilteredNotes from '../../hooks/useFilteredNotes';
 import { RootState } from '../../reducers';
@@ -65,7 +65,7 @@ const NotesPage: React.FC = () => {
   const searchInput = useRef<HTMLInputElement | null>(null);
   const moreElement = useRef<HTMLDivElement | null>(null);
   const notesQuery = useDataState(
-    useQuery<NotesForList>(NOTES_QUERY, {
+    useQuery<NotesForListQuery>(NOTES_QUERY, {
       fetchPolicy: 'cache-only',
     })
   );

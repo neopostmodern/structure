@@ -3,22 +3,23 @@ import gql from 'graphql-tag';
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
-import LinkForm from '../components/LinkForm';
+import LinkForm, { LinkInForm } from '../components/LinkForm';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
-import { LinkQuery, LinkQueryVariables } from '../generated/LinkQuery';
 import {
+  LinkQuery,
+  LinkQueryVariables,
   UpdateLinkMutation,
   UpdateLinkMutationVariables,
-} from '../generated/UpdateLinkMutation';
+} from '../generated/graphql';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
 const LINK_QUERY = gql`
-  query LinkQuery($linkId: ID) {
+  query Link($linkId: ID) {
     link(linkId: $linkId) {
       _id
       createdAt
@@ -38,7 +39,7 @@ const LINK_QUERY = gql`
 `;
 
 const UPDATE_LINK_MUTATION = gql`
-  mutation UpdateLinkMutation($link: InputLink!) {
+  mutation UpdateLink($link: InputLink!) {
     updateLink(link: $link) {
       _id
       createdAt
@@ -72,7 +73,7 @@ const LinkPage: React.FC = () => {
     UpdateLinkMutationVariables
   >(UPDATE_LINK_MUTATION);
   const handleSubmit = useCallback(
-    (updatedLink): void => {
+    (updatedLink: LinkInForm): void => {
       updateLink({ variables: { link: updatedLink } }).catch((error) => {
         console.error('[LinkPage.updateLink]', error);
       });

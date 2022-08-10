@@ -17,7 +17,7 @@ const handleLogin = (backendUrl: string, popUpOptions: string, dispatch) => {
     popUpOptions
   );
   const onCloseWatcher = setInterval(() => {
-    if (loginPopup.closed) {
+    if (loginPopup?.closed) {
       dispatch(completeLogin());
       clearInterval(onCloseWatcher);
     }

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import React from 'react';
 import styled from 'styled-components';
-import { TagsQuery_tags } from '../generated/TagsQuery';
+import { DisplayOnlyTag } from '../utils/types';
 import AddTagForm from './AddTagForm';
 import TagWithContextMenu from './TagWithContextMenu';
 
@@ -29,7 +29,7 @@ const TagContainer = styled.div`
 `;
 
 interface TagsProps {
-  tags: Array<TagsQuery_tags>;
+  tags: Array<DisplayOnlyTag>;
   noteId: string;
   withShortcuts?: boolean;
   size?: 'small' | 'medium';

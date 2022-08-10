@@ -8,14 +8,14 @@ import AdvancedSettings from '../components/AdvancedSettings';
 import { TextField } from '../components/CommonStyles';
 import Gap from '../components/Gap';
 import SettingsEntry from '../components/SettingsEntry';
-import { TinyUserQuery } from '../generated/TinyUserQuery';
+import { TinyUserQuery } from '../generated/graphql';
 import { RootState } from '../reducers';
 import { ConfigurationStateType } from '../reducers/configuration';
 import ComplexLayout from './ComplexLayout';
 import UserSettingsSection from './UserSettingsSection';
 
 const TINY_USER_QUERY = gql`
-  query TinyUserQuery {
+  query TinyUser {
     currentUser {
       _id
     }
@@ -51,7 +51,11 @@ const SettingsPage: FC = () => {
         actionHandler={(): void => {
           dispatch(
             setBackendUrl(
-              document.getElementById('configuration__backend-url').value
+              (
+                document.getElementById(
+                  'configuration__backend-url'
+                ) as HTMLInputElement
+              ).value
             )
           );
         }}

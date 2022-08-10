@@ -1,7 +1,7 @@
 import { pick } from 'lodash';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { LinkQuery_link } from '../generated/LinkQuery';
+import { LinkQuery } from '../generated/graphql';
 import { isUrlValid } from '../utils/textHelpers';
 import { OptionalReactComponent } from '../utils/types';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
@@ -11,7 +11,7 @@ import { FormSubheader } from './formComponents';
 import Gap from './Gap';
 import MarkedTextarea from './MarkedTextarea';
 
-const linkFormFields: Array<keyof LinkQuery_link> = [
+const linkFormFields: Array<keyof LinkQuery['link']> = [
   '_id',
   'updatedAt',
   'url',
@@ -19,11 +19,11 @@ const linkFormFields: Array<keyof LinkQuery_link> = [
   'description',
   'archivedAt',
 ];
-type LinkInForm = Pick<LinkQuery_link, typeof linkFormFields[number]>;
+export type LinkInForm = Pick<LinkQuery['link'], typeof linkFormFields[number]>;
 
 type LinkFormProps = {
-  link: LinkQuery_link;
-  onSubmit: (updatedLink: LinkQuery_link) => void;
+  link: LinkQuery['link'];
+  onSubmit: (updatedLink: LinkInForm) => void;
   tagsComponent?: OptionalReactComponent;
 };
 

@@ -11,12 +11,10 @@ import SettingsEntry from '../components/SettingsEntry';
 import {
   RequestNewCredentialMutation,
   RequestNewCredentialMutationVariables,
-} from '../generated/RequestNewCredentialMutation';
-import {
   RevokeCredentialMutation,
   RevokeCredentialMutationVariables,
-} from '../generated/RevokeCredentialMutation';
-import { UserCredentialsQuery } from '../generated/UserCredentialsQuery';
+  UserCredentialsQuery,
+} from '../generated/graphql';
 import { RootState } from '../reducers';
 import { ConfigurationStateType } from '../reducers/configuration';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
@@ -35,7 +33,7 @@ const userCredentialsFragment = gql`
 
 const USER_CREDENTIALS_QUERY = gql`
   ${userCredentialsFragment}
-  query UserCredentialsQuery {
+  query UserCredentials {
     currentUser {
       ...UserCredentialsFragment
     }
@@ -43,7 +41,7 @@ const USER_CREDENTIALS_QUERY = gql`
 `;
 const REQUEST_NEW_CREDENTIAL_MUTATION = gql`
   ${userCredentialsFragment}
-  mutation RequestNewCredentialMutation($purpose: String!) {
+  mutation RequestNewCredential($purpose: String!) {
     requestNewCredential(purpose: $purpose) {
       ...UserCredentialsFragment
     }
@@ -51,7 +49,7 @@ const REQUEST_NEW_CREDENTIAL_MUTATION = gql`
 `;
 const REVOKE_CREDENTIAL_MUTATION = gql`
   ${userCredentialsFragment}
-  mutation RevokeCredentialMutation($purpose: String!) {
+  mutation RevokeCredential($purpose: String!) {
     revokeCredential(purpose: $purpose) {
       ...UserCredentialsFragment
     }

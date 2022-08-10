@@ -2,8 +2,12 @@ import { gql, useApolloClient, useLazyQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { NOTES_QUERY } from '../containers/NotesPage/NotesPage';
 import { TAGS_QUERY } from '../containers/TagsPage';
-import { NotesForList } from '../generated/NotesForList';
-import { TagsQuery } from '../generated/TagsQuery';
+import {
+  EntitiesUpdatedSinceQuery,
+  EntitiesUpdatedSinceQueryVariables,
+  NotesForListQuery,
+  TagsQuery,
+} from '../generated/graphql';
 import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
@@ -38,75 +42,78 @@ const useEntitiesUpdatedSince = () => {
   const isOnline = useIsOnline();
 
   const [fetchEntitiesUpdatedSince, entitiesUpdatedSince] = useDataState(
-    useLazyQuery(ENTITIES_UPDATED_SINCE_QUERY, {
-      onCompleted({ entitiesUpdatedSince }) {
-        const { cache } = apolloClient;
-        const lastUpdate = getUpdatedSince();
+    useLazyQuery<EntitiesUpdatedSinceQuery, EntitiesUpdatedSinceQueryVariables>(
+      ENTITIES_UPDATED_SINCE_QUERY,
+      {
+        onCompleted({ entitiesUpdatedSince }) {
+          const { cache } = apolloClient;
+          const lastUpdate = getUpdatedSince();
 
-        if (entitiesUpdatedSince.notes.length) {
-          const notesCacheValue = cache.readQuery<NotesForList>({
-            query: NOTES_QUERY,
-          });
+          if (entitiesUpdatedSince.notes.length) {
+            const notesCacheValue = cache.readQuery<NotesForListQuery>({
+              query: NOTES_QUERY,
+            });
 
-          let cachedNotes;
+            let cachedNotes;
 
-          if (lastUpdate) {
-            if (!notesCacheValue) {
-              throw Error(
-                '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for notes.'
-              );
+            if (lastUpdate) {
+              if (!notesCacheValue) {
+                throw Error(
+                  '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for notes.'
+                );
+              }
+
+              entitiesUpdatedSince.notes.forEach((note) => {
+                if (note.createdAt > lastUpdate) {
+                  cachedNotes = [...notesCacheValue.notes, note];
+                }
+              });
+            } else {
+              cachedNotes = entitiesUpdatedSince.notes;
             }
 
-            entitiesUpdatedSince.notes.forEach((note) => {
-              if (note.createdAt > lastUpdate) {
-                cachedNotes = [...notesCacheValue.notes, note];
-              }
+            cache.writeQuery({
+              query: NOTES_QUERY,
+              data: { notes: cachedNotes },
             });
-          } else {
-            cachedNotes = entitiesUpdatedSince.notes;
           }
 
-          cache.writeQuery({
-            query: NOTES_QUERY,
-            data: { notes: cachedNotes },
-          });
-        }
+          if (entitiesUpdatedSince.tags.length) {
+            const tagsCacheValue = cache.readQuery<TagsQuery>({
+              query: TAGS_QUERY,
+            });
 
-        if (entitiesUpdatedSince.tags.length) {
-          const tagsCacheValue = cache.readQuery<TagsQuery>({
-            query: TAGS_QUERY,
-          });
+            let cachedTags;
 
-          let cachedTags;
+            if (lastUpdate) {
+              if (!tagsCacheValue) {
+                throw Error(
+                  '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for tags.'
+                );
+              }
 
-          if (lastUpdate) {
-            if (!tagsCacheValue) {
-              throw Error(
-                '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for tags.'
-              );
+              entitiesUpdatedSince.notes.forEach((tag) => {
+                if (tag.createdAt > lastUpdate) {
+                  cachedTags = [...tagsCacheValue.tags, tag];
+                }
+              });
+            } else {
+              cachedTags = entitiesUpdatedSince.tags;
             }
 
-            entitiesUpdatedSince.notes.forEach((tag) => {
-              if (tag.createdAt > lastUpdate) {
-                cachedTags = [...tagsCacheValue.tags, tag];
-              }
+            cache.writeQuery({
+              query: TAGS_QUERY,
+              data: { tags: cachedTags },
             });
-          } else {
-            cachedTags = entitiesUpdatedSince.tags;
           }
 
-          cache.writeQuery({
-            query: TAGS_QUERY,
-            data: { tags: cachedTags },
-          });
-        }
-
-        localStorage.setItem(
-          ENTITIES_UPDATED_SINCE_STORAGE_KEY,
-          entitiesUpdatedSince.timestamp
-        );
-      },
-    })
+          localStorage.setItem(
+            ENTITIES_UPDATED_SINCE_STORAGE_KEY,
+            entitiesUpdatedSince.timestamp
+          );
+        },
+      }
+    )
   );
 
   useEffect(() => {

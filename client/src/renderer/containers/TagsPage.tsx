@@ -8,8 +8,11 @@ import { changeTagsLayout, TagsLayout } from '../actions/userInterface';
 import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import Tag from '../components/Tag';
-import { TagsQuery, TagsQuery_tags } from '../generated/TagsQuery';
-import { UpdateTag2, UpdateTag2Variables } from '../generated/UpdateTag2';
+import {
+  TagsQuery,
+  UpdateTag2Mutation,
+  UpdateTag2MutationVariables,
+} from '../generated/graphql';
 import useEntitiesUpdatedSince from '../hooks/useEntitiesUpdatedSince';
 import { RootState } from '../reducers';
 import { breakpointDesktop } from '../styles/constants';
@@ -88,7 +91,7 @@ export const layoutToName = (layout: TagsLayout): string => {
 };
 
 export const TAGS_QUERY = gql`
-  query TagsQuery {
+  query Tags {
     tags {
       ...BaseTag
     }
@@ -106,7 +109,7 @@ const UPDATE_TAG_MUTATION = gql`
 `;
 
 type ColorTagGroups = {
-  [color: string]: Array<TagsQuery_tags>;
+  [color: string]: TagsQuery['tags'];
 };
 
 const TagsPage: FC = () => {
@@ -118,9 +121,10 @@ const TagsPage: FC = () => {
     useQuery<TagsQuery>(TAGS_QUERY, { fetchPolicy: 'cache-only' })
   );
 
-  const [updateTag] = useMutation<UpdateTag2, UpdateTag2Variables>(
-    UPDATE_TAG_MUTATION
-  );
+  const [updateTag] = useMutation<
+    UpdateTag2Mutation,
+    UpdateTag2MutationVariables
+  >(UPDATE_TAG_MUTATION);
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince();
   // todo: display something nice in case there are no tags in cache yet and
@@ -128,7 +132,7 @@ const TagsPage: FC = () => {
   // see e.g. NotesPage, but less relevant here so pending for now
   // should find a universal solution
 
-  const [draggedTag, setDraggedTag] = useState<TagsQuery_tags>();
+  const [draggedTag, setDraggedTag] = useState<TagsQuery['tags'][number]>();
   const [droppableColor, setDroppableColor] = useState<string | null>();
   const colorTagGroups = useMemo<ColorTagGroups>(() => {
     const groups: ColorTagGroups = {};
@@ -151,7 +155,7 @@ const TagsPage: FC = () => {
     dispatch(changeTagsLayout(TagsLayout[layouts[nextLayoutIndex]]));
   };
 
-  const renderChaosLayout = (tags: Array<TagsQuery_tags>): JSX.Element => {
+  const renderChaosLayout = (tags: TagsQuery['tags']): JSX.Element => {
     return (
       <TagContainer>
         {tags.map((tag) => (
@@ -180,7 +184,7 @@ const TagsPage: FC = () => {
           setDroppableColor(null);
         }}
         onDrop={(): void => {
-          if (!droppableColor) {
+          if (!droppableColor || !draggedTag) {
             return;
           }
           const recoloredTag = {
@@ -215,7 +219,7 @@ const TagsPage: FC = () => {
     return <>{tagContainers}</>;
   };
 
-  const renderTags = (tags: Array<TagsQuery_tags>): JSX.Element => {
+  const renderTags = (tags: TagsQuery['tags']): JSX.Element => {
     switch (layout) {
       case TagsLayout.CHAOS_LAYOUT:
         return renderChaosLayout(tags);

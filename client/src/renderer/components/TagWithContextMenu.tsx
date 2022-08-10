@@ -5,10 +5,10 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { push } from 'redux-first-history';
 import {
-  RemoveTagByIdFromNote,
-  RemoveTagByIdFromNoteVariables,
-} from '../generated/RemoveTagByIdFromNote';
-import { TagsQuery_tags } from '../generated/TagsQuery';
+  RemoveTagByIdFromNoteMutation,
+  RemoveTagByIdFromNoteMutationVariables,
+} from '../generated/graphql';
+import { DisplayOnlyTag } from '../utils/types';
 import ErrorSnackbar from './ErrorSnackbar';
 import Tag from './Tag';
 import { REMOVE_TAG_MUTATION } from './Tags';
@@ -18,7 +18,7 @@ const TagWithContextMenu = ({
   size,
   noteId,
 }: {
-  tag: TagsQuery_tags;
+  tag: DisplayOnlyTag;
   size?: 'small' | 'medium';
   noteId: string;
 }) => {
@@ -30,8 +30,8 @@ const TagWithContextMenu = ({
   };
 
   const [removeTagFromNote, removeTagFromNoteMutation] = useMutation<
-    RemoveTagByIdFromNote,
-    RemoveTagByIdFromNoteVariables
+    RemoveTagByIdFromNoteMutation,
+    RemoveTagByIdFromNoteMutationVariables
   >(REMOVE_TAG_MUTATION);
 
   const doRemoveTagFromNote = () => {

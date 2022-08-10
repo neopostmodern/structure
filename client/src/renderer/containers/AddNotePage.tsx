@@ -8,19 +8,17 @@ import AddNoteForm from '../components/AddNoteForm';
 import {
   AddLinkMutation,
   AddLinkMutationVariables,
-} from '../generated/AddLinkMutation';
-import {
   AddTextMutation,
   AddTextMutationVariables,
-} from '../generated/AddTextMutation';
-import { NotesForList } from '../generated/NotesForList';
+  NotesForListQuery,
+} from '../generated/graphql';
 import { BASE_NOTE_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import ComplexLayout from './ComplexLayout';
 import { NOTES_QUERY } from './NotesPage/NotesPage';
 
 const ADD_LINK_MUTATION = gql`
   ${BASE_NOTE_FRAGMENT}
-  mutation AddLinkMutation($url: String!) {
+  mutation AddLink($url: String!) {
     submitLink(url: $url) {
       ...BaseNote
     }
@@ -28,7 +26,7 @@ const ADD_LINK_MUTATION = gql`
 `;
 const ADD_TEXT_MUTATION = gql`
   ${BASE_NOTE_FRAGMENT}
-  mutation AddTextMutation($title: String) {
+  mutation AddText($title: String) {
     createText(title: $title) {
       ...BaseNote
     }
@@ -48,8 +46,13 @@ const AddLinkPage: FC = () => {
     onError: (error) => {
       console.error(error);
     },
-    update: (cache, { data: { submitLink } }) => {
-      const cacheValue = cache.readQuery<NotesForList>({
+    update: (cache, { data }) => {
+      if (!data) {
+        return;
+      }
+      const { submitLink } = data;
+
+      const cacheValue = cache.readQuery<NotesForListQuery>({
         query: NOTES_QUERY,
       });
 
@@ -65,7 +68,7 @@ const AddLinkPage: FC = () => {
     },
   });
   const handleSubmitUrl = useCallback(
-    (url): void => {
+    (url: string): void => {
       addLink({ variables: { url } });
     },
     [addLink]
@@ -78,8 +81,13 @@ const AddLinkPage: FC = () => {
     onCompleted: ({ createText }) => {
       dispatch(replace(`/texts/${createText._id}`));
     },
-    update: (cache, { data: { createText } }) => {
-      const cacheValue = cache.readQuery<NotesForList>({
+    update: (cache, { data }) => {
+      if (!data) {
+        return;
+      }
+      const { createText } = data;
+
+      const cacheValue = cache.readQuery<NotesForListQuery>({
         query: NOTES_QUERY,
       });
 

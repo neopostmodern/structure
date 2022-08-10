@@ -17,7 +17,7 @@
     "build:web": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true TARGET=web webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
-    "generate-graphql-types": "apollo client:codegen --target typescript --includes='src/renderer/**/*.{ts,tsx}' --outputFlat src/renderer/generated --localSchemaFile=../schema.graphql",
+    "generate-graphql-types": "graphql-codegen --config codegen.yml",
     "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
     "package-publish": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish always",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
@@ -175,6 +175,7 @@
     "@babel/preset-env": "^7.17.10",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
+    "@graphql-codegen/cli": "2.11.5",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.4",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.1",
@@ -192,7 +193,6 @@
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
     "apollo": "2.33.4",
-    "apollo-codegen-core": "0.40.3",
     "apollo-language-server": "1.26.3",
     "babel-loader": "^8.2.5",
     "browserslist": "^4.20.3",
@@ -246,7 +246,11 @@
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.7.1",
     "webpack-merge": "^5.8.0",
-    "workbox-webpack-plugin": "^6.5.3"
+    "workbox-webpack-plugin": "^6.5.3",
+    "@graphql-codegen/typescript-operations": "2.5.3",
+    "@graphql-codegen/typescript": "2.7.3",
+    "@graphql-codegen/typescript-react-apollo": "3.3.3",
+    "@graphql-codegen/fragment-matcher": "3.3.1"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",

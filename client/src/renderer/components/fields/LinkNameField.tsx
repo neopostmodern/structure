@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import {
   TitleSuggestionsQuery,
   TitleSuggestionsQueryVariables,
-} from '../../generated/TitleSuggestionsQuery';
+} from '../../generated/graphql';
 import useIsOnline from '../../hooks/useIsOnline';
 import { isUrlValid } from '../../utils/textHelpers';
 import useDataState, { DataState } from '../../utils/useDataState';
@@ -48,7 +48,7 @@ const Suggestion = styled.button`
 `;
 
 const TITLE_SUGGESTIONS_QUERY = gql`
-  query TitleSuggestionsQuery($linkId: ID!) {
+  query TitleSuggestions($linkId: ID!) {
     titleSuggestions(linkId: $linkId)
   }
 `;

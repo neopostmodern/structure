@@ -11,7 +11,7 @@ import Navigation from '../components/Navigation';
 import { NetworkIndicatorContainer } from '../components/NetworkOperationsIndicator';
 import UserAndMenuIndicatorDesktop from '../components/UserAndMenuIndicatorDesktop';
 import VersionMarks from '../components/VersionMarks';
-import { ProfileQuery } from '../generated/ProfileQuery';
+import { ProfileQuery } from '../generated/graphql';
 import useIsOnline from '../hooks/useIsOnline';
 import usePrevious from '../hooks/usePrevious';
 import { RootState } from '../reducers';

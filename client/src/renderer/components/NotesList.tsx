@@ -1,11 +1,11 @@
 import React from 'react';
-import { NoteObject } from '../reducers/links';
+import { NotesForListQuery } from '../generated/graphql';
 import Centered from './Centered';
 import Gap from './Gap';
 import NoteInList from './NoteInList';
 
 const NotesList: React.FC<{
-  notes: Array<NoteObject>;
+  notes: NotesForListQuery['notes'];
   expanded: boolean;
 }> = ({ notes, expanded }) => {
   if (notes.length === 0) {

@@ -5,12 +5,13 @@ import Mousetrap from 'mousetrap';
 import { useEffect, useState } from 'react';
 import { TAGS_QUERY } from '../containers/TagsPage';
 import {
-  AddTagByNameToNote,
-  AddTagByNameToNoteVariables,
-} from '../generated/AddTagByNameToNote';
-import { TagsQuery, TagsQuery_tags } from '../generated/TagsQuery';
+  AddTagByNameToNoteMutation,
+  AddTagByNameToNoteMutationVariables,
+  TagsQuery,
+} from '../generated/graphql';
 import useIsOnline from '../hooks/useIsOnline';
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
+import { DisplayOnlyTag } from '../utils/types';
 import InlineTagForm from './InlineTagForm';
 
 export const ADD_TAG_MUTATION = gql`
@@ -39,7 +40,7 @@ const AddTagForm = ({
 }: {
   noteId: string;
   withShortcuts?: boolean;
-  currentTags: Array<TagsQuery_tags>;
+  currentTags: Array<DisplayOnlyTag>;
 }) => {
   const [addingNew, setAddingNew] = useState<boolean>(false);
   const [submittedTag, setSubmittedTag] = useState<string | null>(null);
@@ -49,10 +50,15 @@ const AddTagForm = ({
   });
 
   const [addTagToNote, addTagToNoteMutation] = useMutation<
-    AddTagByNameToNote,
-    AddTagByNameToNoteVariables
+    AddTagByNameToNoteMutation,
+    AddTagByNameToNoteMutationVariables
   >(ADD_TAG_MUTATION, {
-    update: (cache, { data: { addTagByNameToNote } }) => {
+    update: (cache, { data }) => {
+      if (!data) {
+        return;
+      }
+      const { addTagByNameToNote } = data;
+
       const cacheValue = cache.readQuery<TagsQuery>({ query: TAGS_QUERY });
 
       if (!cacheValue) {

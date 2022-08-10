@@ -5,26 +5,22 @@ import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotesList from '../components/NotesList';
-import TagForm from '../components/TagForm';
+import TagForm, { TagInForm } from '../components/TagForm';
 import {
   TagWithNotesQuery,
   TagWithNotesQueryVariables,
-} from '../generated/TagWithNotesQuery';
-import {
   UpdateTagMutation,
   UpdateTagMutationVariables,
-} from '../generated/UpdateTagMutation';
+} from '../generated/graphql';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
+import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
 const TAG_QUERY = gql`
-  query TagWithNotesQuery($tagId: ID!) {
+  query TagWithNotes($tagId: ID!) {
     tag(tagId: $tagId) {
-      _id
-      updatedAt
-      name
-      color
+      ...BaseTag
 
       notes {
         ... on INote {
@@ -47,14 +43,13 @@ const TAG_QUERY = gql`
       }
     }
   }
+
+  ${BASE_TAG_FRAGMENT}
 `;
 const UPDATE_TAG_MUTATION = gql`
-  mutation UpdateTagMutation($tag: InputTag!) {
+  mutation UpdateTag($tag: InputTag!) {
     updateTag(tag: $tag) {
-      _id
-      updatedAt
-      name
-      color
+      ...BaseTag
 
       notes {
         ... on INote {
@@ -77,10 +72,16 @@ const UPDATE_TAG_MUTATION = gql`
       }
     }
   }
+
+  ${BASE_TAG_FRAGMENT}
 `;
 
 const TagPage: FC = () => {
   const { tagId } = useParams();
+
+  if (!tagId) {
+    throw Error('[TagPage] No tagId found in URL parameters.');
+  }
 
   const tagQuery = useDataState(
     useQuery<TagWithNotesQuery, TagWithNotesQueryVariables>(TAG_QUERY, {
@@ -93,7 +94,7 @@ const TagPage: FC = () => {
     UpdateTagMutationVariables
   >(UPDATE_TAG_MUTATION);
   const handleSubmit = useCallback(
-    (updatedTag): void => {
+    (updatedTag: TagInForm): void => {
       updateTag({
         variables: { tag: updatedTag },
       }).catch((error) => {

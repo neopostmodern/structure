@@ -1,24 +1,26 @@
 import { pick } from 'lodash';
 import React, { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { NoteObject } from '../reducers/links';
+import { NotesForListQuery } from '../generated/graphql';
 import { OptionalReactComponent } from '../utils/types';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
 import { NameInput } from './formComponents';
 import Gap from './Gap';
 import MarkedTextarea from './MarkedTextarea';
 
-const textFormFields: Array<keyof NoteObject> = [
+type NoteType = NotesForListQuery['notes'][number];
+
+const textFormFields: Array<keyof NoteType> = [
   '_id',
   'updatedAt',
   'name',
   'description',
 ];
-type TextInForm = Pick<NoteObject, typeof textFormFields[number]>;
+export type TextInForm = Pick<NoteType, typeof textFormFields[number]>;
 
 interface TextFormProps {
-  text: NoteObject;
-  onSubmit: (text: NoteObject) => void;
+  text: NoteType;
+  onSubmit: (text: TextInForm) => void;
   tagsComponent?: OptionalReactComponent;
 }
 

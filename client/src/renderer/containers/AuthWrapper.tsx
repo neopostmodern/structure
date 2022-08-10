@@ -6,7 +6,7 @@ import { requestLogin } from '../actions/userInterface';
 import FatalApolloError from '../components/FatalApolloError';
 import LoginView from '../components/LoginView';
 import VersionMarks from '../components/VersionMarks';
-import { ProfileQuery, ProfileQueryVariables } from '../generated/ProfileQuery';
+import { ProfileQuery, ProfileQueryVariables } from '../generated/graphql';
 import { RootState } from '../reducers';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { PROFILE_QUERY } from '../utils/sharedQueriesAndFragments';

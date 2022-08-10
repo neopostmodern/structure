@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TagObject } from '../reducers/links';
 import { ColorCache } from '../utils/colorTools';
+import { DisplayOnlyTag } from '../utils/types';
 import Tag from './Tag';
 
 const AutocompleteTagMore = styled.div`
@@ -9,9 +9,9 @@ const AutocompleteTagMore = styled.div`
 `;
 
 const TagAutocompleteSuggestions: React.FC<{
-  autocompleteSuggestions: Array<TagObject>;
+  autocompleteSuggestions: Array<DisplayOnlyTag>;
   focusedAutocompleteIndex: number | null;
-  onSelectTag: (tag: TagObject) => void;
+  onSelectTag: (tag: DisplayOnlyTag) => void;
   maxSuggestionCount: number;
 }> = ({
   autocompleteSuggestions,

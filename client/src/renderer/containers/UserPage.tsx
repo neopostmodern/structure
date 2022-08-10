@@ -9,13 +9,13 @@ import Gap from '../components/Gap';
 import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import UserInfo from '../components/UserInfo';
-import { UserQuery } from '../generated/UserQuery';
+import { UserQuery } from '../generated/graphql';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
 const USER_QUERY = gql`
-  query UserQuery {
+  query User {
     currentUser {
       _id
       authenticationProvider

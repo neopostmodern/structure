@@ -8,7 +8,7 @@ import {
   setBatchSelection,
   toggleBatchEditing,
 } from '../actions/userInterface';
-import { NotesForList_notes } from '../generated/NotesForList';
+import { NotesForListQuery } from '../generated/graphql';
 import { RootState } from '../reducers';
 import {
   BatchSelectionType,
@@ -32,7 +32,7 @@ const selectAllShortcutKeys = ['ctrl+a', 'command+a'];
 const NoteBatchEditingBar = ({
   notes,
 }: {
-  notes: Array<NotesForList_notes>;
+  notes: NotesForListQuery['notes'];
 }) => {
   const { batchEditing, batchSelections } = useSelector<
     RootState,

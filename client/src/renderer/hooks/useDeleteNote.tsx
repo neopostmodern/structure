@@ -3,14 +3,14 @@ import { useDispatch } from 'react-redux';
 import { push } from 'redux-first-history';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import { NOTES_QUERY } from '../containers/NotesPage/NotesPage';
-import { NotesForList } from '../generated/NotesForList';
 import {
+  NotesForListQuery,
   ToggleDeletedNoteMutation,
   ToggleDeletedNoteMutationVariables,
-} from '../generated/ToggleDeletedNoteMutation';
+} from '../generated/graphql';
 
 const TOGGLE_DELETED_NOTE_MUTATION = gql`
-  mutation ToggleDeletedNoteMutation($noteId: ID!) {
+  mutation ToggleDeletedNote($noteId: ID!) {
     toggleDeletedNote(noteId: $noteId) {
       ... on INote {
         _id
@@ -33,7 +33,9 @@ const useDeleteNote = (note: { _id: string }) => {
       if (!data) {
         throw Error('[useDeletedLink.update] No data returned from mutation');
       }
-      const cacheData = cache.readQuery<NotesForList>({ query: NOTES_QUERY });
+      const cacheData = cache.readQuery<NotesForListQuery>({
+        query: NOTES_QUERY,
+      });
       if (!cacheData) {
         throw Error('[useDeletedLink.update] No data returned from cache');
       }

@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
-import { TagsQuery_tags } from '../generated/TagsQuery';
+import { TagsQuery } from '../generated/graphql';
 import { TextField } from './CommonStyles';
 import TagAutocompleteSuggestions from './TagAutocompleteSuggestions';
 
@@ -22,12 +22,12 @@ const AutocompleteSuggestionsContainer = styled(Paper)`
 `;
 
 type InlineTagFormProps = {
-  tags: 'loading' | Array<TagsQuery_tags>;
+  tags: 'loading' | TagsQuery['tags'];
   onAddTag: (tagName: string) => void;
   onAbort: () => void;
 };
 
-type TagMap = { [tagId: string]: TagsQuery_tags };
+type TagMap = { [tagId: string]: TagsQuery['tags'][number] };
 
 const MAX_AUTOCOMPLETE_LENGTH = 5;
 const INLINE_TAG_FORM_ID = 'inline-tag-form';
@@ -64,7 +64,7 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
     return nextTagMap;
   }, [tags]);
 
-  const autocompleteSuggestions = useMemo<TagsQuery_tags[]>(() => {
+  const autocompleteSuggestions = useMemo<TagsQuery['tags']>(() => {
     if (tags === 'loading') {
       return [];
     }

@@ -1,9 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import {
-  ToggleArchivedNote,
-  ToggleArchivedNoteVariables,
-} from '../generated/ToggleArchivedNote';
+  ToggleArchivedNoteMutation,
+  ToggleArchivedNoteMutationVariables,
+} from '../generated/graphql';
 import { DateOrTimestamp } from '../utils/textHelpers';
 
 const TOGGLE_ARCHIVED_MUTATION = gql`
@@ -18,11 +18,11 @@ const TOGGLE_ARCHIVED_MUTATION = gql`
 `;
 const useToggleArchivedNote = (note: {
   _id: string;
-  archivedAt: DateOrTimestamp | null;
+  archivedAt?: DateOrTimestamp | null;
 }) => {
   const [toggleArchivedNote, toggleArchivedNoteMutation] = useMutation<
-    ToggleArchivedNote,
-    ToggleArchivedNoteVariables
+    ToggleArchivedNoteMutation,
+    ToggleArchivedNoteMutationVariables
   >(TOGGLE_ARCHIVED_MUTATION);
   const doToggleArchivedNote = async () => {
     toggleArchivedNoteMutation.reset();

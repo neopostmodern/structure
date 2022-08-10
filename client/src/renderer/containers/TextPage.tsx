@@ -1,24 +1,24 @@
 import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import React, { FC, useCallback } from 'react';
+import { FC, useCallback } from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
-import TextForm from '../components/TextForm';
-import { TextQuery } from '../generated/TextQuery';
+import TextForm, { TextInForm } from '../components/TextForm';
 import {
+  TextQuery,
   UpdateTextMutation,
   UpdateTextMutationVariables,
-} from '../generated/UpdateTextMutation';
+} from '../generated/graphql';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
 const TEXT_QUERY = gql`
-  query TextQuery($textId: ID) {
+  query Text($textId: ID) {
     text(textId: $textId) {
       _id
       createdAt
@@ -36,7 +36,7 @@ const TEXT_QUERY = gql`
 `;
 
 const UPDATE_TEXT_MUTATION = gql`
-  mutation UpdateTextMutation($text: InputText!) {
+  mutation UpdateText($text: InputText!) {
     updateText(text: $text) {
       _id
       createdAt
@@ -67,7 +67,7 @@ const TextPage: FC = () => {
     UpdateTextMutationVariables
   >(UPDATE_TEXT_MUTATION);
   const handleSubmit = useCallback(
-    (updatedText) => {
+    (updatedText: TextInForm) => {
       updateText({ variables: { text: updatedText } }).catch((error) => {
         console.error('[TextPage.updateText]', error);
       });

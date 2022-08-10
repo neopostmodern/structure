@@ -1,16 +1,16 @@
 import React from 'react';
 import TimeAgo from 'react-timeago';
-import { NoteObject } from '../reducers/links';
+import { NotesForListQuery } from '../generated/graphql';
 import * as Styled from './NoteInList.style';
 import NoteInListBatchEditing from './NoteInListBatchEditing';
 import NotesListActionMenu from './NotesListActionMenu';
 import RenderedMarkdown from './RenderedMarkdown';
 import Tags from './Tags';
 
-export const NoteInList: React.FC<{ note: NoteObject; expanded: boolean }> = ({
-  note,
-  expanded,
-}) => {
+export const NoteInList: React.FC<{
+  note: NotesForListQuery['notes'][number];
+  expanded: boolean;
+}> = ({ note, expanded }) => {
   return (
     <Styled.Note archived={Boolean(note.archivedAt)}>
       <NoteInListBatchEditing noteId={note._id} />

@@ -10,7 +10,11 @@ import { Menu } from './Menu';
 const NotePageMenu = ({
   note,
 }: {
-  note: { _id: string; name: string; archivedAt: DateOrTimestamp };
+  note: {
+    _id: string;
+    name: string;
+    archivedAt?: DateOrTimestamp | null;
+  };
 }) => {
   const {
     toggleArchivedNote,

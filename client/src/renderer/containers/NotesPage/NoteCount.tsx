@@ -1,10 +1,10 @@
 import React from 'react';
 import { ArchiveState } from '../../actions/userInterface';
-import { NoteObject } from '../../reducers/links';
+import { NotesForListQuery } from '../../generated/graphql';
 
 interface NoteCountProps {
-  notes: Array<NoteObject>;
-  matchedNotes?: Array<NoteObject>;
+  notes: NotesForListQuery['notes'];
+  matchedNotes?: NotesForListQuery['notes'];
   archivedMatchedNotesCount?: number;
   archiveState: ArchiveState;
 }

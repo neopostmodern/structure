@@ -1,7 +1,7 @@
 import { ApolloError } from '@apollo/client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArchiveState } from '../actions/userInterface';
-import { NotesForList, NotesForList_notes } from '../generated/NotesForList';
+import { NotesForListQuery } from '../generated/graphql';
 import {
   DataState,
   SelectedApolloQueryResultFields,
@@ -17,11 +17,11 @@ const textIncludes = (needle?: string, haystack?: string): boolean => {
 };
 
 interface FilteredNotes {
-  notes: Array<NotesForList_notes>;
+  notes: NotesForListQuery['notes'];
   archivedCount: number | undefined;
 }
 const filterNotes = (
-  notes: Array<NotesForList_notes>,
+  notes: NotesForListQuery['notes'],
   searchQuery: string,
   archiveState: ArchiveState
 ): FilteredNotes => {
@@ -53,18 +53,18 @@ const filterNotes = (
 };
 
 type FilteredNotesAndAllNotes = FilteredNotes & {
-  allNotes: Array<NotesForList_notes>;
+  allNotes: NotesForListQuery['notes'];
 };
 
 type PolicedFilteredNotes =
   | ({ state: DataState.LOADING } & SelectedApolloQueryResultFields<
-      NotesForList,
+      NotesForListQuery,
       undefined
     >)
   | ({
       state: DataState.ERROR;
       error: ApolloError;
-    } & SelectedApolloQueryResultFields<NotesForList, undefined>)
+    } & SelectedApolloQueryResultFields<NotesForListQuery, undefined>)
   | {
       state: DataState.DATA;
       data: FilteredNotesAndAllNotes;
@@ -72,7 +72,7 @@ type PolicedFilteredNotes =
     };
 
 const useFilteredNotes = (
-  notesQuery: UseDataStateResult<NotesForList, undefined>,
+  notesQuery: UseDataStateResult<NotesForListQuery, undefined>,
   searchQuery: string,
   archiveState: ArchiveState
 ): PolicedFilteredNotes => {
@@ -80,7 +80,7 @@ const useFilteredNotes = (
   const [filteredNotes, setFilteredNotes] =
     useState<null | FilteredNotesAndAllNotes>(null);
   const timeoutRef = useRef<null | NodeJS.Timeout>(null);
-  const allNotes = useMemo<Array<NotesForList_notes> | null>(() => {
+  const allNotes = useMemo<NotesForListQuery['notes'] | null>(() => {
     if (notesQuery.state !== DataState.DATA) {
       return null;
     }

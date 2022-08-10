@@ -1,9 +1,13 @@
 import { Link as MaterialLink, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { UserQuery_currentUser } from '../generated/UserQuery';
+import { UserQuery } from '../generated/graphql';
 import { dateToShortISO8601 } from '../utils/textHelpers';
 
-const UserInfo = ({ user }: { user: UserQuery_currentUser }) => {
+const UserInfo = ({
+  user,
+}: {
+  user: NonNullable<UserQuery['currentUser']>;
+}) => {
   return (
     <>
       <Typography variant="h2">{user.name}</Typography>

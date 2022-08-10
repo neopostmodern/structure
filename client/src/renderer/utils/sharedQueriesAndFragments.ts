@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const PROFILE_QUERY = gql`
-  query ProfileQuery($currentVersion: String!) {
+  query Profile($currentVersion: String!) {
     currentUser {
       _id
       name

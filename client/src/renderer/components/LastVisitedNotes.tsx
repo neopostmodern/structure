@@ -7,7 +7,7 @@ import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import { MouseEvent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { push } from 'redux-first-history';
-import { VisitedNotes } from '../generated/VisitedNotes';
+import { VisitedNotes } from '../generated/graphql';
 import { RootState } from '../reducers';
 import { NoteSummary } from '../reducers/history';
 
