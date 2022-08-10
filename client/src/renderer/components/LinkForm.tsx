@@ -2,6 +2,7 @@ import { pick } from 'lodash';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { LinkQuery } from '../generated/graphql';
+import useSyncForm from '../hooks/useSyncForm';
 import { isUrlValid } from '../utils/textHelpers';
 import { OptionalReactComponent } from '../utils/types';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
@@ -51,8 +52,9 @@ const LinkForm: React.FC<LinkFormProps> = ({
       return { values: formValues, errors };
     },
   });
-  const { watch, handleSubmit } = formProps;
+  const { watch, handleSubmit, reset } = formProps;
 
+  useSyncForm(reset, defaultValues, link);
   useSaveOnUnmount({ onSubmit, defaultValues }, formProps);
 
   return (

@@ -1,7 +1,8 @@
 import { pick } from 'lodash';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { NotesForListQuery } from '../generated/graphql';
+import useSyncForm from '../hooks/useSyncForm';
 import { OptionalReactComponent } from '../utils/types';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
 import { NameInput } from './formComponents';
@@ -39,9 +40,8 @@ const TextForm: React.FC<TextFormProps> = ({
     },
   });
   const { register, reset, handleSubmit } = formProps;
-  useEffect(() => {
-    reset(defaultValues);
-  }, [reset, text]);
+
+  useSyncForm(reset, defaultValues, text);
 
   useSaveOnUnmount({ onSubmit, defaultValues }, formProps);
 

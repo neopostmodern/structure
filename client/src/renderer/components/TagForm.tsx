@@ -3,6 +3,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { TagsQuery } from '../generated/graphql';
+import useSyncForm from '../hooks/useSyncForm';
 import colorTools from '../utils/colorTools';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
 import { TextField } from './CommonStyles';
@@ -34,7 +35,7 @@ interface TagFormProps {
 const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
   const defaultValues = pick(tag, tagFormFields);
 
-  const { register, getValues, handleSubmit } = useForm<TagInForm>({
+  const { register, getValues, handleSubmit, reset } = useForm<TagInForm>({
     defaultValues,
     mode: 'onBlur',
     resolver: (formValues) => {
@@ -44,6 +45,7 @@ const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
     },
   });
 
+  useSyncForm(reset, defaultValues, tag);
   useSaveOnUnmount({ onSubmit, defaultValues }, { getValues });
 
   const { ref: registerRef, ...registerProps } = register('color');
