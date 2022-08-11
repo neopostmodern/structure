@@ -180,7 +180,12 @@ const configuration: webpack.Configuration = {
     static: {
       publicPath: '/',
     },
-    allowedHosts: ['local3000.neopostmodern.com'],
+    allowedHosts: [config.WEB_FRONTEND_HOST.replace(/https?:\/\//, '')],
+    client: {
+      webSocketURL: config.WEB_FRONTEND_HOST.includes('localhost')
+        ? undefined
+        : config.WEB_FRONTEND_HOST.replace('http', 'ws') + ':443/ws',
+    },
     setupMiddlewares: (middlewares) => {
       if (process.env.TARGET === 'electron') {
         console.log('Starting Main Process...');
