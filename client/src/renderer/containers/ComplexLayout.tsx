@@ -11,11 +11,10 @@ import Navigation from '../components/Navigation';
 import { NetworkIndicatorContainer } from '../components/NetworkOperationsIndicator';
 import UserAndMenuIndicatorDesktop from '../components/UserAndMenuIndicatorDesktop';
 import VersionMarks from '../components/VersionMarks';
-import { ProfileQuery } from '../generated/graphql';
+import { ProfileQuery, ProfileQueryVariables } from '../generated/graphql';
 import useIsOnline from '../hooks/useIsOnline';
 import usePrevious from '../hooks/usePrevious';
 import { RootState } from '../reducers';
-import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
 import { PROFILE_QUERY } from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
@@ -42,8 +41,8 @@ const ComplexLayout: React.FC<
   loading = false,
 }) => {
   const profileQuery = useDataState(
-    useQuery<ProfileQuery>(PROFILE_QUERY, {
-      fetchPolicy: gracefulNetworkPolicy('cache-first'),
+    useQuery<ProfileQuery, ProfileQueryVariables>(PROFILE_QUERY, {
+      fetchPolicy: 'cache-only', // profile query is always fetched by AuthWrapper (above in hierarchy)
       variables: {
         currentVersion: packageJson.version,
       },
