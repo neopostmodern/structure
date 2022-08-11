@@ -36,7 +36,6 @@ const getUpdatedSince = () =>
   0;
 const ENTITIES_UPDATED_SINCE_INTERVAL_MS = 60 * 1000;
 
-// todo: types, blocked on graphQL/apollo type generation not working (2022-08-07)
 const useEntitiesUpdatedSince = () => {
   const apolloClient = useApolloClient();
   const isOnline = useIsOnline();
@@ -65,7 +64,24 @@ const useEntitiesUpdatedSince = () => {
 
               entitiesUpdatedSince.notes.forEach((note) => {
                 if (note.createdAt > lastUpdate) {
-                  cachedNotes = [...notesCacheValue.notes, note];
+                  // check if the note was created on this device
+                  const possiblyAlreadyCachedNode =
+                    cache.data.data[cache.identify(note)];
+                  const isCachedVersionNewer =
+                    possiblyAlreadyCachedNode?.updatedAt > note.updatedAt;
+
+                  cachedNotes = notesCacheValue.notes;
+
+                  if (possiblyAlreadyCachedNode) {
+                    cachedNotes = cachedNotes.filter(
+                      (noteInCache) => noteInCache._id !== note._id
+                    );
+                  }
+
+                  cachedNotes = [
+                    ...cachedNotes,
+                    isCachedVersionNewer ? possiblyAlreadyCachedNode : note,
+                  ];
                 }
               });
             } else {

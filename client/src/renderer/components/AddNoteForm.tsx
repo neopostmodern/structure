@@ -7,7 +7,7 @@ import {
   Input,
   InputAdornment,
 } from '@mui/material';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -41,6 +41,7 @@ const AddNoteForm: React.FC<AddLinkFormProps> = ({
   onAbort,
 }) => {
   const dispatch = useDispatch();
+  const [shouldAutoSubmit, setShouldAutoSubmit] = useState(autoSubmit);
   const { formState, handleSubmit, setValue, control } = useForm<{
     urlOrTitle: string;
   }>({
@@ -62,10 +63,11 @@ const AddNoteForm: React.FC<AddLinkFormProps> = ({
   });
 
   useEffect(() => {
-    if ('urlOrTitle' in formState.dirtyFields && autoSubmit) {
+    if ('urlOrTitle' in formState.dirtyFields && shouldAutoSubmit) {
+      setShouldAutoSubmit(false);
       submitHandler();
     }
-  }, ['urlOrTitle' in formState.dirtyFields, autoSubmit]);
+  }, ['urlOrTitle' in formState.dirtyFields, shouldAutoSubmit]);
 
   useEffect(() => {
     dispatch(requestClipboard());
