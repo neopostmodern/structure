@@ -6,6 +6,7 @@ import {
   breakPointMobile,
   containerWidth,
 } from '../styles/constants';
+import mediaQueryObjectToCss from '../utils/mediaQueryObjectToCss';
 
 export const Container = styled(Paper).attrs(() => ({
   square: true,
@@ -20,28 +21,13 @@ export const Container = styled(Paper).attrs(() => ({
   }
   @media (max-width: ${breakPointMobile}) {
     ${({ theme }) =>
-      (
-        Object.entries(theme.mixins.toolbar) as Array<
-          [string, number | { minHeight: number }]
-        >
-      )
-        .map(([key, value]): string => {
-          let toolbarHeight = value;
-          let mediaQuery;
-          if (typeof value !== 'number') {
-            mediaQuery = key;
-            toolbarHeight = value.minHeight;
-          }
-          const paddingRule = `padding-bottom: calc(${toolbarHeight}px + ${theme.spacing(
+      mediaQueryObjectToCss(
+        theme.mixins.toolbar,
+        (toolbarRule) =>
+          `padding-bottom: calc(${toolbarRule.minHeight}px + ${theme.spacing(
             2
-          )} + env(safe-area-inset-bottom));`;
-          if (!mediaQuery) {
-            return paddingRule;
-          }
-          return `${mediaQuery} { ${paddingRule} }`;
-        })
-        .join('\n')}
-  }
+          )} + env(safe-area-inset-bottom));`
+      )}
 `;
 
 const cornerMaxWidth = css`calc(calc(100% - ${containerWidth}) / 2)`;
