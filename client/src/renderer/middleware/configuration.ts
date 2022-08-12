@@ -1,4 +1,8 @@
-import { requestRestart, SET_BACKEND_URL } from '../actions/configuration';
+import {
+  requestRestart,
+  SET_BACKEND_URL,
+  SET_NETWORK_MODE,
+} from '../actions/configuration';
 
 let configurationMiddleware;
 
@@ -8,11 +12,18 @@ if (process.env.TARGET !== 'web') {
       window.electron.electronStore.set('backend-url', action.payload);
       store.dispatch(requestRestart());
     }
+    if (action.type === SET_NETWORK_MODE) {
+      window.electron.electronStore.set('network-mode', action.payload);
+    }
     return next(action);
   };
 } else {
-  // eslint-disable-next-line no-unused-vars
-  configurationMiddleware = (store) => (next) => (action) => next(action); // no-op middleware
+  configurationMiddleware = () => (next) => (action) => {
+    if (action.type === SET_NETWORK_MODE) {
+      localStorage.setItem('network-mode', action.payload);
+    }
+    return next(action);
+  };
 }
 
 export default configurationMiddleware;

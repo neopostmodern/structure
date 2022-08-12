@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { NetworkMode } from '../actions/configuration';
+import { RootState } from '../reducers';
 
 const getOnlineStatus = () =>
   typeof navigator !== 'undefined' && typeof navigator.onLine === 'boolean'
@@ -6,6 +9,10 @@ const getOnlineStatus = () =>
     : true;
 
 const useIsOnline = () => {
+  const networkMode = useSelector<RootState, NetworkMode>(
+    (state) => state.configuration.networkMode
+  );
+
   const [status, setStatus] = useState(getOnlineStatus());
 
   const setOnline = () => setStatus(true);
@@ -20,6 +27,13 @@ const useIsOnline = () => {
       window.removeEventListener('offline', setOffline);
     };
   }, []);
+
+  if (networkMode === NetworkMode.FORCE_ONLINE) {
+    return true;
+  }
+  if (networkMode === NetworkMode.FORCE_OFFLINE) {
+    return false;
+  }
 
   return status;
 };
