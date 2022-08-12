@@ -1,7 +1,7 @@
 {
   "name": "@structure/client",
   "description": "Frontend (desktop and web app) for the Structure bookmarking software",
-  "version": "0.20.1",
+  "version": "0.20.2",
   "main": "src/main/main.ts",
   "directories": {
     "lib": "lib",
@@ -176,6 +176,10 @@
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
     "@graphql-codegen/cli": "2.11.5",
+    "@graphql-codegen/fragment-matcher": "3.3.1",
+    "@graphql-codegen/typescript": "2.7.3",
+    "@graphql-codegen/typescript-operations": "2.5.3",
+    "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.4",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.1",
@@ -246,11 +250,7 @@
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.7.1",
     "webpack-merge": "^5.8.0",
-    "workbox-webpack-plugin": "^6.5.3",
-    "@graphql-codegen/typescript-operations": "2.5.3",
-    "@graphql-codegen/typescript": "2.7.3",
-    "@graphql-codegen/typescript-react-apollo": "3.3.3",
-    "@graphql-codegen/fragment-matcher": "3.3.1"
+    "workbox-webpack-plugin": "^6.5.3"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
