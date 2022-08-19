@@ -1,5 +1,8 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { AddCircleOutline as PlusIcon } from '@mui/icons-material';
+import {
+  AddCircleOutline as PlusIcon,
+  Warning as WarningIcon,
+} from '@mui/icons-material';
 import { Button, IconButton, Skeleton, Tooltip } from '@mui/material';
 import Mousetrap from 'mousetrap';
 import { useEffect, useState } from 'react';
@@ -11,7 +14,10 @@ import {
 } from '../generated/graphql';
 import useIsOnline from '../hooks/useIsOnline';
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
+import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import { DisplayOnlyTag } from '../utils/types';
+import useDataState, { DataState } from '../utils/useDataState';
+import ErrorSnackbar from './ErrorSnackbar';
 import InlineTagForm from './InlineTagForm';
 
 export const ADD_TAG_MUTATION = gql`
@@ -20,13 +26,12 @@ export const ADD_TAG_MUTATION = gql`
       ... on INote {
         _id
         tags {
-          _id
-          name
-          color
+          ...BaseTag
         }
       }
     }
   }
+  ${BASE_TAG_FRAGMENT}
 `;
 
 makeMousetrapGlobal(Mousetrap);
@@ -45,9 +50,11 @@ const AddTagForm = ({
   const [addingNew, setAddingNew] = useState<boolean>(false);
   const [submittedTag, setSubmittedTag] = useState<string | null>(null);
 
-  const tagsQuery = useQuery<TagsQuery>(TAGS_QUERY, {
-    fetchPolicy: 'cache-only',
-  });
+  const tagsQuery = useDataState(
+    useQuery<TagsQuery>(TAGS_QUERY, {
+      fetchPolicy: 'cache-only',
+    })
+  );
 
   const [addTagToNote, addTagToNoteMutation] = useMutation<
     AddTagByNameToNoteMutation,
@@ -121,12 +128,26 @@ const AddTagForm = ({
     );
   }
   if (addingNew) {
+    if (tagsQuery.state === DataState.ERROR) {
+      return (
+        <>
+          <ErrorSnackbar
+            error={tagsQuery.error}
+            actionDescription="load tags"
+          />
+          <Tooltip title="Failed to load tags">
+            <WarningIcon color="error" />
+          </Tooltip>
+        </>
+      );
+    }
+
     return (
       <InlineTagForm
         tags={
-          tagsQuery.loading
+          tagsQuery.state === DataState.LOADING
             ? 'loading'
-            : tagsQuery.data!.tags.filter(
+            : tagsQuery.data.tags.filter(
                 (tag) => !currentTags.some(({ _id }) => _id === tag._id)
               )
         }
