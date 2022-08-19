@@ -151,9 +151,7 @@ const rootResolvers = {
         throw new Error(`No link with ID ${linkId}`)
       }
       try {
-        let x = await fetchTitleSuggestions(link.url)
-        console.log(link.url, x)
-        return x
+        return fetchTitleSuggestions(link.url)
       } catch (error) {
         console.warn(`Failed to fetch title suggestions for ${linkId}`, error)
         return []

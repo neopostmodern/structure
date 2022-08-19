@@ -65,7 +65,7 @@ export async function fetchTitleSuggestions(url) {
       const titleBag = [
         dom.window.document.querySelector('title').innerHTML,
         ...metaTitles,
-      ].map((rawTitle) => decode(rawTitle))
+      ].map((rawTitle) => decode(rawTitle).trim())
 
       return titleBag.filter(
         (title, index) => titleBag.indexOf(title) === index,
