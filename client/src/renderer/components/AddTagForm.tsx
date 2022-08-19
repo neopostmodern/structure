@@ -25,6 +25,7 @@ export const ADD_TAG_MUTATION = gql`
     addTagByNameToNote(noteId: $noteId, name: $tagName) {
       ... on INote {
         _id
+        updatedAt
         tags {
           ...BaseTag
         }
