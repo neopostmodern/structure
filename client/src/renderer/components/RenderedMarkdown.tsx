@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
@@ -102,6 +104,13 @@ const RenderedMarkdown = ({
   if (markdown.length) {
     return (
       <MarkdownContainer
+        rehypePlugins={[
+          rehypeRaw,
+          [
+            rehypeSanitize,
+            { ...defaultSchema, tagNames: [...defaultSchema.tagNames!, 'u'] },
+          ],
+        ]}
         remarkPlugins={[remarkBreaks, [remarkGfm, { singleTilde: false }]]}
         components={{
           a({ href, title, children }) {
