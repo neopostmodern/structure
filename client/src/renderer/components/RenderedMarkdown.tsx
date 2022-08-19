@@ -17,10 +17,17 @@ const MarkdownContainer = styled(ReactMarkdown)`
   ol {
     padding-left: ${listIndent};
 
+    ul,
+    ol {
+      padding-left: 0.9em;
+      &.contains-task-list {
+        padding-left: 1.1em;
+      }
+    }
+
     li {
       &.task-list-item {
         list-style: none;
-        margin-left: -${listIndent};
       }
 
       > p {
@@ -71,6 +78,20 @@ const EmptyTextarea = styled.div`
   padding-bottom: 1.3rem;
 `;
 
+const CheckboxWrapper = styled.div`
+  position: relative;
+  width: 0;
+`;
+const CheckboxContainer = styled.div`
+  position: absolute;
+  right: 0.2em;
+`;
+const ReadonlyCheckbox = ({ checked }) => (
+  <CheckboxWrapper>
+    <CheckboxContainer>{checked ? '☑' : '☐'}</CheckboxContainer>
+  </CheckboxWrapper>
+);
+
 const RenderedMarkdown = ({
   markdown,
   showEmpty = true,
@@ -95,9 +116,7 @@ const RenderedMarkdown = ({
               </a>
             );
           },
-          input({ checked }) {
-            return checked ? '☐ ' : '☑ ';
-          },
+          input: ReadonlyCheckbox,
         }}
       >
         {markdown}
