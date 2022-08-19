@@ -280,7 +280,7 @@ export type AddTagByNameToNoteMutationVariables = Exact<{
 }>;
 
 
-export type AddTagByNameToNoteMutation = { __typename: 'Mutation', addTagByNameToNote: { __typename: 'Link', _id: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | { __typename: 'Text', _id: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
+export type AddTagByNameToNoteMutation = { __typename: 'Mutation', addTagByNameToNote: { __typename: 'Link', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } | { __typename: 'Text', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
 
 export type VisitedNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -307,14 +307,14 @@ export type AddLinkMutationVariables = Exact<{
 }>;
 
 
-export type AddLinkMutation = { __typename: 'Mutation', submitLink: { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
+export type AddLinkMutation = { __typename: 'Mutation', submitLink: { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
 
 export type AddTextMutationVariables = Exact<{
   title?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type AddTextMutation = { __typename: 'Mutation', createText: { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
+export type AddTextMutation = { __typename: 'Mutation', createText: { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
 
 export type LinkQueryVariables = Exact<{
   linkId?: InputMaybe<Scalars['ID']>;
@@ -333,7 +333,7 @@ export type UpdateLinkMutation = { __typename: 'Mutation', updateLink: { __typen
 export type NotesForListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotesForListQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> }> };
+export type NotesForListQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> }> };
 
 export type TinyUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -418,7 +418,7 @@ export type EntitiesUpdatedSinceQueryVariables = Exact<{
 }>;
 
 
-export type EntitiesUpdatedSinceQuery = { __typename: 'Query', entitiesUpdatedSince: { __typename: 'EntitiesUpdatedSince', timestamp: any, notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> }>, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
+export type EntitiesUpdatedSinceQuery = { __typename: 'Query', entitiesUpdatedSince: { __typename: 'EntitiesUpdatedSince', timestamp: any, notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> }>, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
 
 export type ToggleArchivedNoteMutationVariables = Exact<{
   noteId: Scalars['ID'];
@@ -434,13 +434,13 @@ export type ProfileQueryVariables = Exact<{
 
 export type ProfileQuery = { __typename: 'Query', currentUser?: { __typename: 'User', _id: string, name: string } | null, versions: { __typename: 'Versions', current: string, minimum?: string | null } };
 
-type BaseNote_Link_Fragment = { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> };
+export type BaseTagFragment = { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string };
 
-type BaseNote_Text_Fragment = { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> };
+type BaseNote_Link_Fragment = { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> };
+
+type BaseNote_Text_Fragment = { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> };
 
 export type BaseNoteFragment = BaseNote_Link_Fragment | BaseNote_Text_Fragment;
-
-export type BaseTagFragment = { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string };
 
 export const UserCredentialsFragmentFragmentDoc = gql`
     fragment UserCredentialsFragment on User {
@@ -449,6 +449,15 @@ export const UserCredentialsFragmentFragmentDoc = gql`
     bookmarklet
     rss
   }
+}
+    `;
+export const BaseTagFragmentDoc = gql`
+    fragment BaseTag on Tag {
+  _id
+  createdAt
+  updatedAt
+  name
+  color
 }
     `;
 export const BaseNoteFragmentDoc = gql`
@@ -462,9 +471,7 @@ export const BaseNoteFragmentDoc = gql`
     deletedAt
     description
     tags {
-      _id
-      name
-      color
+      ...BaseTag
     }
   }
   ... on Link {
@@ -472,30 +479,20 @@ export const BaseNoteFragmentDoc = gql`
     domain
   }
 }
-    `;
-export const BaseTagFragmentDoc = gql`
-    fragment BaseTag on Tag {
-  _id
-  createdAt
-  updatedAt
-  name
-  color
-}
-    `;
+    ${BaseTagFragmentDoc}`;
 export const AddTagByNameToNoteDocument = gql`
     mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
   addTagByNameToNote(noteId: $noteId, name: $tagName) {
     ... on INote {
       _id
+      updatedAt
       tags {
-        _id
-        name
-        color
+        ...BaseTag
       }
     }
   }
 }
-    `;
+    ${BaseTagFragmentDoc}`;
 export type AddTagByNameToNoteMutationFn = Apollo.MutationFunction<AddTagByNameToNoteMutation, AddTagByNameToNoteMutationVariables>;
 
 /**

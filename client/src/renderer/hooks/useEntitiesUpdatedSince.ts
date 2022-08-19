@@ -1,4 +1,10 @@
-import { gql, useApolloClient, useLazyQuery } from '@apollo/client';
+import {
+  gql,
+  StoreObject,
+  useApolloClient,
+  useLazyQuery,
+  type ApolloCache,
+} from '@apollo/client';
 import { useEffect } from 'react';
 import { NOTES_QUERY } from '../containers/NotesPage/NotesPage';
 import { TAGS_QUERY } from '../containers/TagsPage';
@@ -36,6 +42,25 @@ const getUpdatedSince = () =>
   0;
 const ENTITIES_UPDATED_SINCE_INTERVAL_MS = 60 * 1000;
 
+const mergeNewlyCreatedIntoCache = <EntityType extends StoreObject, CacheType>(
+  cache: ApolloCache<CacheType>,
+  cachedEntities: Array<EntityType>,
+  newEntity: EntityType
+) => {
+  // the note is always in the cache, it was already added (it just doesn't respond to the query yet)
+  const noteFromCache = cache.data.data[cache.identify(newEntity)];
+
+  // by default insert at the end, but if note exists, override
+  let noteIndexToUpdate = cachedEntities.findIndex(
+    (noteInCache) => noteInCache._id === newEntity._id
+  );
+  if (noteIndexToUpdate === -1) {
+    noteIndexToUpdate = cachedEntities.length;
+  }
+
+  cachedEntities[noteIndexToUpdate] = noteFromCache;
+};
+
 const useEntitiesUpdatedSince = () => {
   const apolloClient = useApolloClient();
   const isOnline = useIsOnline();
@@ -53,7 +78,7 @@ const useEntitiesUpdatedSince = () => {
               query: NOTES_QUERY,
             });
 
-            let cachedNotes;
+            let cachedNotes: NotesForListQuery['notes'];
 
             if (lastUpdate) {
               if (!notesCacheValue) {
@@ -62,26 +87,11 @@ const useEntitiesUpdatedSince = () => {
                 );
               }
 
+              cachedNotes = notesCacheValue.notes.slice();
+
               entitiesUpdatedSince.notes.forEach((note) => {
                 if (note.createdAt > lastUpdate) {
-                  // check if the note was created on this device
-                  const possiblyAlreadyCachedNode =
-                    cache.data.data[cache.identify(note)];
-                  const isCachedVersionNewer =
-                    possiblyAlreadyCachedNode?.updatedAt > note.updatedAt;
-
-                  cachedNotes = notesCacheValue.notes;
-
-                  if (possiblyAlreadyCachedNode) {
-                    cachedNotes = cachedNotes.filter(
-                      (noteInCache) => noteInCache._id !== note._id
-                    );
-                  }
-
-                  cachedNotes = [
-                    ...cachedNotes,
-                    isCachedVersionNewer ? possiblyAlreadyCachedNode : note,
-                  ];
+                  mergeNewlyCreatedIntoCache(cache, cachedNotes, note);
                 }
               });
             } else {
@@ -99,7 +109,7 @@ const useEntitiesUpdatedSince = () => {
               query: TAGS_QUERY,
             });
 
-            let cachedTags;
+            let cachedTags: TagsQuery['tags'];
 
             if (lastUpdate) {
               if (!tagsCacheValue) {
@@ -108,9 +118,11 @@ const useEntitiesUpdatedSince = () => {
                 );
               }
 
-              entitiesUpdatedSince.notes.forEach((tag) => {
+              cachedTags = tagsCacheValue.tags.slice();
+
+              entitiesUpdatedSince.tags.forEach((tag) => {
                 if (tag.createdAt > lastUpdate) {
-                  cachedTags = [...tagsCacheValue.tags, tag];
+                  mergeNewlyCreatedIntoCache(cache, cachedTags, tag);
                 }
               });
             } else {

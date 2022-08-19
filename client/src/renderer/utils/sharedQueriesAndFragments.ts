@@ -13,6 +13,17 @@ export const PROFILE_QUERY = gql`
   }
 `;
 
+export const BASE_TAG_FRAGMENT = gql`
+  fragment BaseTag on Tag {
+    _id
+    createdAt
+    updatedAt
+
+    name
+    color
+  }
+`;
+
 export const BASE_NOTE_FRAGMENT = gql`
   fragment BaseNote on INote {
     ... on INote {
@@ -26,9 +37,7 @@ export const BASE_NOTE_FRAGMENT = gql`
 
       description
       tags {
-        _id
-        name
-        color
+        ...BaseTag
       }
     }
     ... on Link {
@@ -36,15 +45,5 @@ export const BASE_NOTE_FRAGMENT = gql`
       domain
     }
   }
-`;
-
-export const BASE_TAG_FRAGMENT = gql`
-  fragment BaseTag on Tag {
-    _id
-    createdAt
-    updatedAt
-
-    name
-    color
-  }
+  ${BASE_TAG_FRAGMENT}
 `;
