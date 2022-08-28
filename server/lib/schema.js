@@ -165,7 +165,7 @@ export default gql`
     submitLink(url: String!): Link!
     updateLink(link: InputLink!): Link!
 
-    createText(title: String): Text!
+    createText(title: String, description: String): Text!
     updateText(text: InputText!): Text!
 
     addTagByNameToNote(noteId: ID!, name: String!): Note!

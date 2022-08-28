@@ -113,6 +113,7 @@ export type MutationAddTagByNameToNoteArgs = {
 
 
 export type MutationCreateTextArgs = {
+  description?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
 };
 
@@ -311,6 +312,7 @@ export type AddLinkMutation = { __typename: 'Mutation', submitLink: { __typename
 
 export type AddTextMutationVariables = Exact<{
   title?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -665,8 +667,8 @@ export type AddLinkMutationHookResult = ReturnType<typeof useAddLinkMutation>;
 export type AddLinkMutationResult = Apollo.MutationResult<AddLinkMutation>;
 export type AddLinkMutationOptions = Apollo.BaseMutationOptions<AddLinkMutation, AddLinkMutationVariables>;
 export const AddTextDocument = gql`
-    mutation AddText($title: String) {
-  createText(title: $title) {
+    mutation AddText($title: String, $description: String) {
+  createText(title: $title, description: $description) {
     ...BaseNote
   }
 }
@@ -687,6 +689,7 @@ export type AddTextMutationFn = Apollo.MutationFunction<AddTextMutation, AddText
  * const [addTextMutation, { data, loading, error }] = useAddTextMutation({
  *   variables: {
  *      title: // value for 'title'
+ *      description: // value for 'description'
  *   },
  * });
  */

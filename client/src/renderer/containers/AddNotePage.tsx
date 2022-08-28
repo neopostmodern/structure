@@ -1,10 +1,16 @@
 import { useMutation } from '@apollo/client';
+import { PostAdd } from '@mui/icons-material';
+import { Stack } from '@mui/material';
 import gql from 'graphql-tag';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
 import { push, replace } from 'redux-first-history';
+import AddNoteCard from '../components/AddNoteCard';
 import AddNoteForm from '../components/AddNoteForm';
+import AddNoteFromClipboard from '../components/AddNoteFromClipboard';
+import ErrorSnackbar from '../components/ErrorSnackbar';
+import Gap from '../components/Gap';
 import {
   AddLinkMutation,
   AddLinkMutationVariables,
@@ -13,6 +19,7 @@ import {
   NotesForListQuery,
 } from '../generated/graphql';
 import { BASE_NOTE_FRAGMENT } from '../utils/sharedQueriesAndFragments';
+import { isUrlValid } from '../utils/textHelpers';
 import ComplexLayout from './ComplexLayout';
 import { NOTES_QUERY } from './NotesPage/NotesPage';
 
@@ -26,15 +33,16 @@ const ADD_LINK_MUTATION = gql`
 `;
 const ADD_TEXT_MUTATION = gql`
   ${BASE_NOTE_FRAGMENT}
-  mutation AddText($title: String) {
-    createText(title: $title) {
+  mutation AddText($title: String, $description: String) {
+    createText(title: $title, description: $description) {
       ...BaseNote
     }
   }
 `;
 
-const AddLinkPage: FC = () => {
+const AddNotePage: FC = () => {
   const dispatch = useDispatch();
+  const [defaultValue, setDefaultValue] = useState('');
 
   const [addLink, addLinkMutation] = useMutation<
     AddLinkMutation,
@@ -103,17 +111,56 @@ const AddLinkPage: FC = () => {
     },
   });
   const handleSubmitText = useCallback(
-    (title?: string) => {
-      addText({ variables: { title } });
+    (variables: AddTextMutationVariables) => {
+      (async () => {
+        try {
+          await addText({ variables });
+        } catch (error) {
+          console.error('[AddNotePage.handleSubmitText (addText)]', error);
+        }
+      })();
     },
     [addText]
   );
+  const handleCreateQuickTextNote = useCallback(() => {
+    (async () => {
+      try {
+        await addText();
+      } catch (error) {
+        console.error(
+          '[AddNotePage.handleCreateQuickTextNote (addText)]',
+          error
+        );
+      }
+    })();
+  }, [addText]);
 
   const handleAbort = useCallback((): void => {
     dispatch(push('/'));
   }, [dispatch, push]);
 
+  const [isNoteAddedFromUrl, setIsNoteAddedFromUrl] = useState(false);
   const urlSearchParams = new URLSearchParams(useLocation().search);
+
+  useEffect(() => {
+    if (isNoteAddedFromUrl) {
+      return;
+    }
+    const urlOrText = urlSearchParams.get('url') || urlSearchParams.get('text');
+    const title = urlSearchParams.get('title');
+
+    if (!urlOrText) {
+      return;
+    }
+
+    setIsNoteAddedFromUrl(true);
+
+    if (isUrlValid(urlOrText)) {
+      handleSubmitUrl(urlOrText); // todo: handle title
+    } else {
+      handleSubmitText({ description: urlOrText, title });
+    }
+  }, [urlSearchParams, isNoteAddedFromUrl, setIsNoteAddedFromUrl]);
 
   return (
     <ComplexLayout
@@ -121,15 +168,31 @@ const AddLinkPage: FC = () => {
         (addLinkMutation.loading || addTextMutation.loading) && 'Creating note'
       }
     >
-      <AddNoteForm
-        defaultValue={urlSearchParams.get('url') || undefined}
-        autoSubmit={urlSearchParams.has('autoSubmit')}
-        onSubmitUrl={handleSubmitUrl}
-        onSubmitText={handleSubmitText}
-        onAbort={handleAbort}
+      <ErrorSnackbar
+        error={addTextMutation.error || addLinkMutation.error}
+        actionDescription={'create note'}
       />
+      <Stack gap={1}>
+        <AddNoteForm
+          defaultValue={defaultValue}
+          onSubmitUrl={handleSubmitUrl}
+          onSubmitText={handleSubmitText}
+          onAbort={handleAbort}
+        />
+        <Gap vertical={2} />
+        <AddNoteFromClipboard
+          onEdit={setDefaultValue}
+          onSubmitText={handleSubmitText}
+          onSubmitUrl={handleSubmitUrl}
+        />
+        <AddNoteCard
+          title="Quick text-only note"
+          icon={<PostAdd />}
+          action={handleCreateQuickTextNote}
+        />
+      </Stack>
     </ComplexLayout>
   );
 };
 
-export default AddLinkPage;
+export default AddNotePage;

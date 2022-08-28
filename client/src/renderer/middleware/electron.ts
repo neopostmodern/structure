@@ -10,6 +10,9 @@ import {
 } from '../actions/userInterface';
 import { clearApolloCache } from '../utils/cache';
 
+export const CLIPBOARD_NOT_GRANTED = 'CLIPBOARD_NOT_GRANTED';
+export const CLIPBOARD_NOT_AVAILABLE = 'CLIPBOARD_NOT_AVAILABLE';
+
 const handleLogin = (backendUrl: string, popUpOptions: string, dispatch) => {
   const loginPopup = window.open(
     `${backendUrl}/login/github`,
@@ -52,13 +55,15 @@ if (process.env.TARGET === 'web') {
               .catch((error) => {
                 console.error('[Clipboard] Failed to read clipboard', error);
               });
+          } else if (state === 'prompt') {
+            next(setClipboard(CLIPBOARD_NOT_GRANTED));
+          } else {
+            next(setClipboard(CLIPBOARD_NOT_AVAILABLE));
           }
         })
-        .catch((error) => {
-          console.error(
-            '[Clipboard] Failed to check clipboard permissions',
-            error
-          );
+        .catch(() => {
+          // ignore error on unsupported platforms
+          next(setClipboard(CLIPBOARD_NOT_AVAILABLE));
         });
     }
     if (action.type === REQUEST_RESTART) {
