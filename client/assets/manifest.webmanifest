@@ -17,5 +17,14 @@
   "name": "Structure",
   "short_name": "Structure",
   "start_url": "/",
-  "theme_color": "white"
+  "theme_color": "white",
+  "share_target": {
+    "action": "/notes/add",
+    "method": "GET",
+    "params": {
+      "text": "text",
+      "title": "title",
+      "url": "url"
+    }
+  }
 }
