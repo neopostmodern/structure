@@ -16,7 +16,7 @@ let corsAllowedOrigins = [
   'null',
   config.BACKEND_URL,
   config.WEB_FRONTEND_HOST,
-  config.ELECTRON_FRONTEND_HOST,
+  ...config.ADDITIONAL_FRONTEND_HOSTS,
 ]
 if (process.env.NODE_ENV === 'development') {
   // allow access to GraphiQL in development

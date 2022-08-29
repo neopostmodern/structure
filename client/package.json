@@ -140,7 +140,7 @@
     "react",
     "typescript"
   ],
-  "homepage": "https://structure.neopostmodern.com",
+  "homepage": "https://structure.love",
   "jest": {
     "testURL": "http://localhost/",
     "testEnvironment": "jsdom",

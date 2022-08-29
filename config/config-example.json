@@ -8,7 +8,7 @@
   "GITHUB_CLIENT_SECRET": "YOUR_CLIENT_SECRET_HERE",
   "BACKEND_URL": "https://backend.structure.neopostmodern.com",
   "WEB_FRONTEND_HOST": "https://structure.neopostmodern.com",
-  "ELECTRON_FRONTEND_HOST": "file://",
+  "ADDITIONAL_FRONTEND_HOSTS": ["file://"],
   "SESSION_SECRET": "YOUR_SESSION_SECRET_HERE",
   "USER": "YOU_SERVER_USERNAME_HERE",
   "SERVER": "YOUR_SERVER_URL_HERE",

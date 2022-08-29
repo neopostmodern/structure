@@ -46,11 +46,11 @@ Common scenarios Structure is not (yet) well suited for:
     - Being file-system based (like your file-system)
 
 ## Installing
-The fastest way to get started is the [web version](https://structure.neopostmodern.com). 
+The fastest way to get started is the [web version](https://app.structure.love). 
 You can install it as a PWA from your mobile browser too, there are no dedicated mobile apps yet.
 
 For desktop, it is recommended to use the dedicated electron app, 
-which you can download from the [latest GitHub release page]() under *Assets*.
+which you can download from the [latest GitHub release page](https://github.com/neopostmodern/structure/releases/latest) under *Assets*.
 
 ## Self-hosting
 You can (and depending on your requirements, such as privacy concerns, should) host structure yourself. 

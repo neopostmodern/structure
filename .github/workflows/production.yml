@@ -76,7 +76,7 @@ jobs:
           localDir: ./client/release/app/dist/web/
           remoteDir: ./
           host: amsr102.websitehostserver.net:21
-          user: github@structure.neopostmodern.com
+          user: github@app.structure.love
           password: ${{ secrets.FTP_PASSWORD }}
 
   build-electron:

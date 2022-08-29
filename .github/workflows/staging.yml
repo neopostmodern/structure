@@ -74,10 +74,10 @@ jobs:
         uses: sebastianpopp/ftp-action@releases/v2
         with:
           localDir: ./client/release/app/dist/web/
-          remoteDir: ./dev/
+          remoteDir: ./
           host: amsr102.websitehostserver.net:21
-          user: github@structure.neopostmodern.com
-          password: ${{ secrets.FTP_PASSWORD }}
+          user: github@staging-app.structure.love
+          password: ${{ secrets.FTP_STAGING_PASSWORD }}
 
   build-electron:
     name: Build Electron app
