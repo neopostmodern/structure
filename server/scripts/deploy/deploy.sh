@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -n "$CONFIG_FILE" ]; then
-	  eval "$( jq -r '. | to_entries[] | "\(.key)=\(@sh "\(.value)")"' "${BASH_SOURCE%/*}/../../../config/$CONFIG_FILE" )"
+	  eval "$( jq -r '. | to_entries | .[] | .key + "=" + (.value | tostring | @sh)' "${BASH_SOURCE%/*}/../../../config/$CONFIG_FILE" )"
 fi
 
 echo "Deploying to $SERVER."
