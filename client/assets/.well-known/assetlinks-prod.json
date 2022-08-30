@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "love.structure.app.twa",
+      "sha256_cert_fingerprints": [
+        "77:FC:D1:1C:E0:F4:01:61:D5:98:37:C6:1F:CF:15:01:79:64:A8:65:66:6C:EA:9A:E7:43:D2:92:26:E0:CD:47"
+      ]
+    }
+  }
+]

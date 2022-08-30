@@ -50,10 +50,24 @@ export const createPluginsForPWA = ({
     }),
     new CopyWebpackPlugin({
       patterns: [...assetFileNames, ...additionalAssetFileNames].map(
-        (assetFileName) => ({
-          from: path.join(assetsFolderPath, assetFileName),
-          to: assetFileName.includes('/') ? assetFileName : undefined, // see https://github.com/webpack-contrib/copy-webpack-plugin/issues/137#issuecomment-464339172
-        })
+        (assetFileName) => {
+          let fromAssetFileName;
+          let toAssetFileName;
+          if (Array.isArray(assetFileName)) {
+            fromAssetFileName = assetFileName[0];
+            toAssetFileName = assetFileName[1];
+          } else {
+            fromAssetFileName = assetFileName;
+            toAssetFileName = assetFileName;
+          }
+          return {
+            from: path.join(assetsFolderPath, fromAssetFileName),
+            to:
+              toAssetFileName.includes('/') || !toAssetFileName.startsWith('.')
+                ? toAssetFileName
+                : undefined, // see https://github.com/webpack-contrib/copy-webpack-plugin/issues/137#issuecomment-464339172
+          };
+        }
       ),
     }),
   ];

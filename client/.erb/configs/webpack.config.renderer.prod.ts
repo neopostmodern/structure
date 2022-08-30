@@ -163,7 +163,17 @@ const configuration: webpack.Configuration = {
 
     configPlugin,
 
-    ...createPluginsForPWA({ additionalAssetFileNames: ['.htaccess'] }),
+    ...createPluginsForPWA({
+      additionalAssetFileNames: [
+        '.htaccess',
+        [
+          config.CHANNEL === 'staging'
+            ? '.well-known/assetlinks-staging.json'
+            : '.well-known/assetlinks-prod.json',
+          '.well-known/assetlinks.json',
+        ],
+      ],
+    }),
   ],
 };
 
