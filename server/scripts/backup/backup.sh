@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -n "$CONFIG_FILE" ]; then
-	  eval "$( jq -r '. | to_entries[] | "\(.key)=\(@sh "\(.value)")"' "${BASH_SOURCE%/*}/$CONFIG_FILE" )"
+	  eval "$( jq -r '. |  to_entries | .[] | .key + "=" + (.value | tostring | @sh)' "${BASH_SOURCE%/*}/$CONFIG_FILE" )"
 fi
 
 if [ -z "${BACKUP_DIR+x}" ]; then
