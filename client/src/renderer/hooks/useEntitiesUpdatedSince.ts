@@ -3,7 +3,6 @@ import {
   StoreObject,
   useApolloClient,
   useLazyQuery,
-  type ApolloCache,
 } from '@apollo/client';
 import { useEffect } from 'react';
 import { NOTES_QUERY } from '../containers/NotesPage/NotesPage';
@@ -42,14 +41,10 @@ const getUpdatedSince = () =>
   0;
 const ENTITIES_UPDATED_SINCE_INTERVAL_MS = 60 * 1000;
 
-const mergeNewlyCreatedIntoCache = <EntityType extends StoreObject, CacheType>(
-  cache: ApolloCache<CacheType>,
+const mergeNewlyCreatedIntoCache = <EntityType extends StoreObject>(
   cachedEntities: Array<EntityType>,
   newEntity: EntityType
 ) => {
-  // the note is always in the cache, it was already added (it just doesn't respond to the query yet)
-  const noteFromCache = cache.data.data[cache.identify(newEntity)];
-
   // by default insert at the end, but if note exists, override
   let noteIndexToUpdate = cachedEntities.findIndex(
     (noteInCache) => noteInCache._id === newEntity._id
@@ -58,7 +53,7 @@ const mergeNewlyCreatedIntoCache = <EntityType extends StoreObject, CacheType>(
     noteIndexToUpdate = cachedEntities.length;
   }
 
-  cachedEntities[noteIndexToUpdate] = noteFromCache;
+  cachedEntities[noteIndexToUpdate] = newEntity;
 };
 
 const useEntitiesUpdatedSince = () => {
@@ -91,7 +86,7 @@ const useEntitiesUpdatedSince = () => {
 
               entitiesUpdatedSince.notes.forEach((note) => {
                 if (note.createdAt > lastUpdate) {
-                  mergeNewlyCreatedIntoCache(cache, cachedNotes, note);
+                  mergeNewlyCreatedIntoCache(cachedNotes, note);
                 }
               });
             } else {
@@ -122,7 +117,7 @@ const useEntitiesUpdatedSince = () => {
 
               entitiesUpdatedSince.tags.forEach((tag) => {
                 if (tag.createdAt > lastUpdate) {
-                  mergeNewlyCreatedIntoCache(cache, cachedTags, tag);
+                  mergeNewlyCreatedIntoCache(cachedTags, tag);
                 }
               });
             } else {
