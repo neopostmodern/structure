@@ -8,10 +8,11 @@
   "main": "lib/server.js",
   "type": "module",
   "dependencies": {
+    "@graphql-tools/schema": "^9.0.2",
     "@structure/common": "file:../common",
     "@structure/config": "file:../config",
-    "apollo-server": "^2.24.1",
-    "apollo-server-express": "^2.24.1",
+    "apollo-server": "^3.10.2",
+    "apollo-server-express": "^3.10.2",
     "body-parser": "^1.19.0",
     "connect-mongodb-session": "^3.1.1",
     "cors": "^2.8.5",
@@ -26,7 +27,7 @@
     "moment": "^2.29.1",
     "mongoose": "^6.3.3",
     "node-fetch": "^3.2.3",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-github": "^1.1.0"
   },
   "directories": {

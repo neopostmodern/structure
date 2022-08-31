@@ -1,4 +1,4 @@
-import { makeExecutableSchema } from 'apollo-server'
+import { makeExecutableSchema } from '@graphql-tools/schema'
 import { GraphQLScalarType, Kind } from 'graphql'
 import Moment from 'moment'
 import packageJson from '../package.json' assert { type: 'json' }

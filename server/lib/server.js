@@ -55,6 +55,8 @@ const runExpressServer = async () => {
     },
   })
 
+  await apolloServer.start()
+
   apolloServer.applyMiddleware({ app, cors: corsOptions })
 
   const server = createServer(app)
