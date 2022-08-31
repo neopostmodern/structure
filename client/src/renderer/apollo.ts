@@ -7,6 +7,11 @@ if (process.env.TARGET === 'web') {
   backendUrl = BACKEND_URL;
 } else {
   backendUrl = window.electron.electronStore.get('backend-url', BACKEND_URL);
+
+  if (backendUrl.endsWith('structure.neopostmodern.com')) {
+    window.electron.electronStore.set('backend-url', BACKEND_URL);
+    backendUrl = BACKEND_URL;
+  }
 }
 
 const cache = new InMemoryCache({
