@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
-import { CircularProgress, Stack, Typography } from '@mui/material';
+import { ScreenSearchDesktop } from '@mui/icons-material';
+import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 import Mousetrap from 'mousetrap';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +14,7 @@ import {
   LinkLayout,
 } from '../../actions/userInterface';
 import Centered from '../../components/Centered';
+import EmptyPageInfo from '../../components/EmptyPageInfo';
 import FatalApolloError from '../../components/FatalApolloError';
 import Gap from '../../components/Gap';
 import NetworkOperationsIndicator, {
@@ -21,6 +23,7 @@ import NetworkOperationsIndicator, {
 import NoteBatchEditingBar from '../../components/NoteBatchEditingBar';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
+import Shortcut from '../../components/Shortcut';
 import { NotesForListQuery } from '../../generated/graphql';
 import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince';
 import useFilteredNotes from '../../hooks/useFilteredNotes';
@@ -185,13 +188,60 @@ const NotesPage: React.FC = () => {
       />
     );
 
-    content.push(
-      <NotesList
-        key="notes-list"
-        notes={matchedNotes.slice(0, infiniteScrollLimit)}
-        expanded={layout === LinkLayout.EXPANDED_LIST_LAYOUT}
-      />
-    );
+    if (
+      matchedNotes.length === 0 &&
+      (searchQuery || archivedMatchedNotesCount > 0)
+    ) {
+      content.push(
+        <EmptyPageInfo
+          key="empty-search-filter"
+          icon={ScreenSearchDesktop}
+          title="Nothing matches your search or filters."
+          subtitle={
+            <>
+              Did you know you can use{' '}
+              <Shortcut ctrlOrCommand>
+                {process.env.TARGET === 'web' ? 'K' : 'F'}
+              </Shortcut>{' '}
+              to focus the search field?
+            </>
+          }
+          actions={
+            <>
+              {searchQuery && (
+                <Button
+                  variant="outlined"
+                  onClick={() => dispatch(changeSearchQuery(''))}
+                >
+                  Reset search
+                </Button>
+              )}
+              {archivedMatchedNotesCount > 0 && (
+                <Button
+                  variant="outlined"
+                  onClick={() =>
+                    dispatch(changeArchiveState(ArchiveState.BOTH))
+                  }
+                >
+                  Include{' '}
+                  {archiveState === ArchiveState.NO_ARCHIVE
+                    ? 'archive'
+                    : 'not archived'}
+                </Button>
+              )}
+            </>
+          }
+        ></EmptyPageInfo>
+      );
+    } else {
+      content.push(
+        <NotesList
+          key="notes-list"
+          notes={matchedNotes.slice(0, infiniteScrollLimit)}
+          expanded={layout === LinkLayout.EXPANDED_LIST_LAYOUT}
+        />
+      );
+    }
 
     if (matchedNotes.length > infiniteScrollLimit) {
       content.push(

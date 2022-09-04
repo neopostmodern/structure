@@ -1,10 +1,13 @@
 import { useMutation, useQuery } from '@apollo/client';
+import { LocalOffer } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import gql from 'graphql-tag';
 import { FC, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { changeTagsLayout, TagsLayout } from '../actions/userInterface';
+import EmptyPageInfo from '../components/EmptyPageInfo';
+import FatalApolloError from '../components/FatalApolloError';
 import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import Tag from '../components/Tag';
@@ -220,6 +223,17 @@ const TagsPage: FC = () => {
   };
 
   const renderTags = (tags: TagsQuery['tags']): JSX.Element => {
+    if (tags.length === 0) {
+      return (
+        <EmptyPageInfo
+          icon={LocalOffer}
+          title="You have not created any tags yet"
+          subtitle="Tags are created on the fly when you add a tag that doesn't exist
+            yet to a note."
+        />
+      );
+    }
+
     switch (layout) {
       case TagsLayout.CHAOS_LAYOUT:
         return renderChaosLayout(tags);
@@ -232,9 +246,20 @@ const TagsPage: FC = () => {
     }
   };
 
+  if (tagsQuery.state === DataState.LOADING) {
+    return <ComplexLayout loading />;
+  }
+
+  if (tagsQuery.state === DataState.ERROR) {
+    return (
+      <ComplexLayout>
+        <FatalApolloError key="error" query={tagsQuery} />
+      </ComplexLayout>
+    );
+  }
+
   return (
     <ComplexLayout
-      loading={tagsQuery.state === DataState.LOADING}
       primaryActions={
         <Menu>
           <Button size="huge" onClick={selectNextLayout}>
@@ -245,7 +270,7 @@ const TagsPage: FC = () => {
       wide={layout === TagsLayout.COLOR_COLUMN_LAYOUT}
     >
       <NetworkOperationsIndicator query={entitiesUpdatedSince} />
-      {tagsQuery.state === DataState.DATA && renderTags(tagsQuery.data.tags)}
+      {renderTags(tagsQuery.data.tags)}
     </ComplexLayout>
   );
 };

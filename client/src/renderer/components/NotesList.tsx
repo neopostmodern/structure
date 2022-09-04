@@ -1,17 +1,36 @@
+import { AddCircle, Create } from '@mui/icons-material';
 import React from 'react';
 import { NotesForListQuery } from '../generated/graphql';
-import Centered from './Centered';
+import EmptyPageInfo from './EmptyPageInfo';
 import Gap from './Gap';
 import NoteInList from './NoteInList';
+import Shortcut from './Shortcut';
 
 const NotesList: React.FC<{
   notes: NotesForListQuery['notes'];
   expanded: boolean;
 }> = ({ notes, expanded }) => {
   if (notes.length === 0) {
-    // todo: style
-    // todo: offer to reset search
-    return <Centered>Nothing here.</Centered>;
+    return (
+      <EmptyPageInfo
+        icon={Create}
+        title="A blank page"
+        subtitle={
+          <>
+            You can add a new note by hitting the{' '}
+            <AddCircle
+              color="primary"
+              fontSize="inherit"
+              style={{ position: 'relative', top: '0.2em' }}
+            />{' '}
+            or using the shortcut{' '}
+            <Shortcut ctrlOrCommand canHotkey>
+              N
+            </Shortcut>
+          </>
+        }
+      />
+    );
   }
 
   return (
