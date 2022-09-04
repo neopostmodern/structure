@@ -68,6 +68,17 @@ const useEntitiesUpdatedSince = () => {
           const { cache } = apolloClient;
           const lastUpdate = getUpdatedSince();
 
+          if (!lastUpdate) {
+            cache.writeQuery({
+              query: NOTES_QUERY,
+              data: { notes: [] },
+            });
+            cache.writeQuery({
+              query: TAGS_QUERY,
+              data: { tags: [] },
+            });
+          }
+
           if (entitiesUpdatedSince.notes.length) {
             const notesCacheValue = cache.readQuery<NotesForListQuery>({
               query: NOTES_QUERY,
