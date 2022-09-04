@@ -22,6 +22,13 @@ Mousetrap.bind(['esc'], () => {
 Mousetrap.bindGlobal(['ctrl+n', 'command+n'], () => {
   history.push('/notes/add');
 });
+Mousetrap.bindGlobal(['n'], (event: KeyboardEvent) => {
+  // @ts-ignore
+  if (event.target?.nodeName === 'INPUT') {
+    return;
+  }
+  history.push('/notes/add');
+});
 if (process.env.TARGET !== 'web') {
   Mousetrap.bindGlobal(['f12', 'ctrl+shift+i'], () => {
     window.electron.ipcRenderer.toggleDevTools();

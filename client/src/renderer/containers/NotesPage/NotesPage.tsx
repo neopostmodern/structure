@@ -42,8 +42,10 @@ export const NOTES_QUERY = gql`
   ${BASE_NOTE_FRAGMENT}
 `;
 
-const searchFieldShortcutKeys = ['ctrl+f', 'command+f'];
-const reloadShortcutKeys = ['ctrl+r', 'command+r'];
+const searchFieldShortcutKeys =
+  process.env.TARGET === 'web'
+    ? ['ctrl+k', 'command+k']
+    : ['ctrl+f', 'command+f'];
 
 const ShowMore = styled.div`
   color: black;
@@ -90,19 +92,18 @@ const NotesPage: React.FC = () => {
       }
     };
 
-    Mousetrap.bind(searchFieldShortcutKeys, (): void => {
+    Mousetrap.bind(searchFieldShortcutKeys, (event): void => {
+      event.preventDefault();
       searchInput.current?.focus();
       setTimeout(
         () => searchInput.current?.setSelectionRange(0, searchQuery.length),
         10
       );
     });
-    Mousetrap.bind(reloadShortcutKeys, () => notesQuery.refetch());
     window.addEventListener('scroll', handleScrollEvent);
 
     return (): void => {
       Mousetrap.unbind(searchFieldShortcutKeys);
-      Mousetrap.unbind(reloadShortcutKeys);
       window.removeEventListener('scroll', handleScrollEvent);
     };
   }, []);
