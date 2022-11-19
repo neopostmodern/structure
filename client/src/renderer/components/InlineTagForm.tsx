@@ -1,12 +1,11 @@
-import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
+import { Autocomplete, TextField } from '@mui/material';
+import { matchSorter } from 'match-sorter';
 import React from 'react';
 import { TagsQuery } from '../generated/graphql';
 import Tag from './Tag';
 
 type TagType = TagsQuery['tags'][number];
 type TagOrNewTagType = TagType | { newTagName: string; title: string };
-
-const filter = createFilterOptions<TagType>({ limit: 50 });
 
 type InlineTagFormProps = {
   tags: 'loading' | TagsQuery['tags'];
@@ -52,12 +51,12 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
           }}
           freeSolo
           filterOptions={(options, params) => {
-            const filtered: Array<TagOrNewTagType> = filter(
-              options as Array<TagType>,
-              params
-            );
-
             const { inputValue } = params;
+
+            const filtered = matchSorter(options, inputValue, {
+              keys: ['name'],
+            });
+
             // Suggest the creation of a new value
             const isExisting = options.some(
               (option) => inputValue === (option as TagType).name
