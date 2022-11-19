@@ -1,25 +1,12 @@
-import { Paper } from '@mui/material';
-import React, {
-  KeyboardEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { useForm } from 'react-hook-form';
-import styled from 'styled-components';
+import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
+import React from 'react';
 import { TagsQuery } from '../generated/graphql';
-import { TextField } from './CommonStyles';
-import TagAutocompleteSuggestions from './TagAutocompleteSuggestions';
+import Tag from './Tag';
 
-const AutocompleteSuggestionsContainer = styled(Paper)`
-  position: absolute;
-  z-index: 1;
-  left: -0.5em;
-  padding: 0.5em;
-  width: calc(100% + 1em);
-`;
+type TagType = TagsQuery['tags'][number];
+type TagOrNewTagType = TagType | { newTagName: string; title: string };
+
+const filter = createFilterOptions<TagType>({ limit: 50 });
 
 type InlineTagFormProps = {
   tags: 'loading' | TagsQuery['tags'];
@@ -27,195 +14,111 @@ type InlineTagFormProps = {
   onAbort: () => void;
 };
 
-type TagMap = { [tagId: string]: TagsQuery['tags'][number] };
-
-const MAX_AUTOCOMPLETE_LENGTH = 5;
-const INLINE_TAG_FORM_ID = 'inline-tag-form';
-
 const InlineTagForm: React.FC<InlineTagFormProps> = ({
   onAddTag,
   onAbort,
   tags,
 }) => {
-  const { handleSubmit, register, formState, watch } = useForm();
-  const nameValue = watch('tagName');
-  const [focusedAutocompleteIndex, setFocusedAutocompleteIndex] = useState<
-    number | null
-  >(0);
-  const [touched, setTouched] = useState(false);
-
-  const handleFormSubmit = useCallback(
-    (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      handleSubmit(({ tagName }) => onAddTag(tagName))(event);
-    },
-    [handleSubmit, onAddTag]
-  );
-
-  const tagMap = useMemo<TagMap>(() => {
-    if (tags === 'loading') {
-      return {};
-    }
-    const nextTagMap: TagMap = {};
-    tags.forEach((tag) => {
-      nextTagMap[tag._id] = tag;
-    });
-    return nextTagMap;
-  }, [tags]);
-
-  const autocompleteSuggestions = useMemo<TagsQuery['tags']>(() => {
-    if (tags === 'loading') {
-      return [];
-    }
-
-    if (!nameValue) {
-      return tags;
-    }
-
-    return tags
-      .map(({ _id, name }) => ({
-        _id,
-        index: name.toLowerCase().indexOf(nameValue.toLowerCase()),
-        name,
-      }))
-      .filter(({ index }) => index !== -1)
-      .sort(
-        (tag1, tag2) =>
-          tag1.index +
-          tag1.name.length / 100 -
-          (tag2.index + tag2.name.length / 100)
-      )
-      .map(({ _id }) => tagMap[_id]);
-  }, [nameValue, tags]);
-
-  const lastAutocompleteSuggestionsLength = useRef<number>(
-    autocompleteSuggestions.length
-  );
-
-  useEffect(() => {
-    if (focusedAutocompleteIndex !== null) {
-      if (autocompleteSuggestions.length === 0) {
-        setFocusedAutocompleteIndex(null);
-      } else if (focusedAutocompleteIndex > autocompleteSuggestions.length) {
-        setFocusedAutocompleteIndex(autocompleteSuggestions.length - 1);
-      }
-    } else if (
-      lastAutocompleteSuggestionsLength.current === 0 &&
-      autocompleteSuggestions.length > 0
-    ) {
-      setFocusedAutocompleteIndex(0);
-    }
-    lastAutocompleteSuggestionsLength.current = autocompleteSuggestions.length;
-  }, [autocompleteSuggestions, focusedAutocompleteIndex]);
-
-  const handleInputKeydown = (event: KeyboardEvent<HTMLElement>): void => {
-    let nextFocusedAutocompleteIndex: number | null = focusedAutocompleteIndex;
-    switch (event.key) {
-      case 'Escape':
-        onAbort();
-        return;
-      case 'Enter':
-        // if either shift key is pressed or the input field itself is focused, let default input
-        // field behavior kick in (instead of using suggestion)
-        if (!event.shiftKey && focusedAutocompleteIndex !== null) {
-          onAddTag(autocompleteSuggestions[focusedAutocompleteIndex].name);
-        }
-        return;
-      case 'ArrowDown':
-        if (focusedAutocompleteIndex === null) {
-          nextFocusedAutocompleteIndex = 0;
-        } else {
-          nextFocusedAutocompleteIndex = focusedAutocompleteIndex + 1;
-        }
-        break;
-      case 'ArrowUp':
-        if (focusedAutocompleteIndex === null) {
-          nextFocusedAutocompleteIndex = MAX_AUTOCOMPLETE_LENGTH - 1;
-        } else {
-          nextFocusedAutocompleteIndex = focusedAutocompleteIndex - 1;
-        }
-        break;
-      case 'ArrowLeft':
-        if (focusedAutocompleteIndex !== null) {
-          nextFocusedAutocompleteIndex = focusedAutocompleteIndex - 1;
-        }
-        break;
-      case 'ArrowRight':
-        if (focusedAutocompleteIndex !== null) {
-          nextFocusedAutocompleteIndex = focusedAutocompleteIndex + 1;
-        }
-        break;
-      default:
-        break;
-    }
-
-    if (
-      nextFocusedAutocompleteIndex !== null &&
-      (nextFocusedAutocompleteIndex < 0 ||
-        nextFocusedAutocompleteIndex >=
-          Math.min(MAX_AUTOCOMPLETE_LENGTH, autocompleteSuggestions.length))
-    ) {
-      nextFocusedAutocompleteIndex = null;
-    }
-    if (nextFocusedAutocompleteIndex !== focusedAutocompleteIndex) {
-      setFocusedAutocompleteIndex(nextFocusedAutocompleteIndex);
-      event.preventDefault();
-    }
-  };
-
   return (
-    <form
-      onSubmitCapture={handleFormSubmit}
-      style={{ position: 'relative' }}
-      id={INLINE_TAG_FORM_ID}
-    >
-      {formState.errors.tagName && (
-        <div
-          style={{
-            color: 'darkred',
-            position: 'absolute',
-            bottom: '100%',
-            right: 0,
-            fontSize: '70%',
+    <>
+      {tags === 'loading' ? (
+        '...'
+      ) : (
+        <Autocomplete<TagOrNewTagType, false, false, true>
+          open
+          autoHighlight
+          disablePortal
+          onChange={(_event, newValue) => {
+            if (typeof newValue === 'string') {
+              throw Error(
+                `[InlineTagForm.onChange] Illegal input - shouldn't receive string '${newValue}'!`
+              );
+            }
+            if (newValue) {
+              onAddTag(
+                'newTagName' in newValue ? newValue.newTagName : newValue.name
+              );
+            }
           }}
-        >
-          {formState.errors.tagName.message}
-        </div>
-      )}
-      <TextField
-        {...register('tagName', { required: 'no empty tags' })}
-        placeholder="tag name"
-        type="text"
-        form={INLINE_TAG_FORM_ID}
-        onKeyDown={handleInputKeydown}
-        autoFocus
-        autoComplete="off"
-        style={
-          focusedAutocompleteIndex === null
-            ? { borderBottomStyle: 'dotted', borderBottomWidth: '2px' }
-            : { marginBottom: '1px' }
-        }
-        onFocus={(): void => {
-          setTouched(true);
-        }}
-      />
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              onAbort();
+            }
+          }}
+          onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
+            if (event.target.value.length === 0) {
+              onAbort();
+            }
+          }}
+          freeSolo
+          filterOptions={(options, params) => {
+            const filtered: Array<TagOrNewTagType> = filter(
+              options as Array<TagType>,
+              params
+            );
 
-      {touched && (
-        <AutocompleteSuggestionsContainer>
-          {tags === 'loading' ? (
-            <>Tags loading...</>
-          ) : (
-            <TagAutocompleteSuggestions
-              autocompleteSuggestions={autocompleteSuggestions}
-              focusedAutocompleteIndex={focusedAutocompleteIndex}
-              onSelectTag={({ name }): void => onAddTag(name)}
-              maxSuggestionCount={MAX_AUTOCOMPLETE_LENGTH}
+            const { inputValue } = params;
+            // Suggest the creation of a new value
+            const isExisting = options.some(
+              (option) => inputValue === (option as TagType).name
+            );
+            if (inputValue !== '' && !isExisting) {
+              filtered.push({
+                newTagName: inputValue,
+                title: `Add "${inputValue}"`,
+              });
+            }
+
+            return filtered;
+          }}
+          getOptionLabel={(option) => {
+            if (typeof option === 'string') {
+              throw Error(
+                `[InlineTagForm.getOptionLabel] Illegal input - shouldn't receive string '${option}'!`
+              );
+            }
+
+            return 'newTagName' in option ? option.newTagName : option.name;
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Add tag"
+              autoFocus
+              size="small"
+              style={{ width: '200px' }}
             />
           )}
-        </AutocompleteSuggestionsContainer>
+          options={tags}
+          renderOption={(props, tag) => {
+            let tagElement;
+            if ('newTagName' in tag) {
+              tagElement = (
+                <>
+                  <div style={{ marginRight: '0.5em' }}>Create&nbsp;tag</div>
+                  <Tag
+                    onClick={() => {}}
+                    tag={{
+                      _id: 'NEW_TAG',
+                      name: tag.newTagName,
+                      color: 'gray',
+                    }}
+                  />
+                </>
+              );
+            } else {
+              tagElement = <Tag onClick={() => {}} tag={tag} />;
+            }
+            const { key, ...propsToPass } = props;
+            return (
+              <li key={'_id' in tag ? tag._id : 'NEW_TAG'} {...propsToPass}>
+                {tagElement}
+              </li>
+            );
+          }}
+        />
       )}
-    </form>
+    </>
   );
 };
 
