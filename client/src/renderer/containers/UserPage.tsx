@@ -1,8 +1,10 @@
 import { useQuery } from '@apollo/client';
+import { Launch } from '@mui/icons-material';
 import { Button, Link, Typography } from '@mui/material';
 import gql from 'graphql-tag';
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 import { requestLogout } from '../actions/userInterface';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import Gap from '../components/Gap';
@@ -25,6 +27,10 @@ const USER_QUERY = gql`
   }
 `;
 
+const LinkButton = styled(Button)`
+  text-decoration: none;
+` as typeof Button;
+
 const UserPage: FC = () => {
   const dispatch = useDispatch();
   const userQuery = useDataState(
@@ -37,13 +43,16 @@ const UserPage: FC = () => {
     <ComplexLayout
       primaryActions={
         <Menu direction="vertical-horizontal">
-          <Button
+          <LinkButton
             size="huge"
-            onClick={(): void => alert('This feature is not yet available')}
-            disabled
+            component={Link}
+            href={BACKEND_URL + '/export.json'}
+            target="_blank"
+            rel="noopener noreferrer"
+            endIcon={<Launch />}
           >
             Export my data
-          </Button>
+          </LinkButton>
           <Button
             size="huge"
             onClick={(): void => alert('This feature is not yet available')}

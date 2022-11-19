@@ -1,8 +1,9 @@
 import { rssFeedUrl } from '@structure/common'
 import config from '@structure/config'
 import { Feed } from 'feed'
+import _ from 'lodash'
 import { addTagByNameToNote, submitLink } from './methods.js'
-import { Link, User } from './mongo.js'
+import { Link, Note, Tag, User } from './mongo.js'
 
 const restApi = (app) => {
   app.get('/bookmarklet', (request, response) => {
@@ -113,6 +114,38 @@ const restApi = (app) => {
             '<html><body><h1>Structure error.</h1>Failed to generate your RSS feed :(</body></html>',
           )
       })
+  })
+
+  app.get('/export.json', async (request, response) => {
+    const { user } = request
+    if (!user) {
+      response.status(400).send({
+        error: `Must be logged in to export! Please go to ${config.WEB_FRONTEND_HOST} to sign in.`,
+      })
+      return
+    }
+
+    const processEntities = async (mongooseQuery) =>
+      (await mongooseQuery.exec()).map((mongooseObject) => {
+        const plainObject = mongooseObject.toObject()
+        delete plainObject.__v
+        return plainObject
+      })
+    const tags = await processEntities(Tag.find({ user: user._id }))
+    const notes = await processEntities(Note.find({ user: user._id }))
+    const allData = {
+      user: _.pick(user, [
+        '_id',
+        'name',
+        'authenticationProvider',
+        'createdAt',
+        'updatedAt',
+      ]),
+      tags,
+      notes,
+      meta: { exportedAt: new Date(), exportedFrom: config.BACKEND_URL },
+    }
+    response.send(allData)
   })
 
   app.use('/hello', (request, response) => {
