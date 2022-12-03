@@ -1,7 +1,6 @@
 import { useMutation } from '@apollo/client';
 import { PostAdd } from '@mui/icons-material';
 import { Stack } from '@mui/material';
-import gql from 'graphql-tag';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
@@ -18,27 +17,13 @@ import {
   AddTextMutationVariables,
   NotesForListQuery,
 } from '../generated/graphql';
-import { BASE_NOTE_FRAGMENT } from '../utils/sharedQueriesAndFragments';
+import {
+  ADD_LINK_MUTATION,
+  ADD_TEXT_MUTATION,
+} from '../utils/sharedQueriesAndFragments';
 import { isUrlValid } from '../utils/textHelpers';
 import ComplexLayout from './ComplexLayout';
 import { NOTES_QUERY } from './NotesPage/NotesPage';
-
-const ADD_LINK_MUTATION = gql`
-  ${BASE_NOTE_FRAGMENT}
-  mutation AddLink($url: String!) {
-    submitLink(url: $url) {
-      ...BaseNote
-    }
-  }
-`;
-const ADD_TEXT_MUTATION = gql`
-  ${BASE_NOTE_FRAGMENT}
-  mutation AddText($title: String, $description: String) {
-    createText(title: $title, description: $description) {
-      ...BaseNote
-    }
-  }
-`;
 
 const AddNotePage: FC = () => {
   const dispatch = useDispatch();

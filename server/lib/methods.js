@@ -4,9 +4,11 @@ import { JSDOM } from 'jsdom'
 import fetch from 'node-fetch'
 import { Link, Note, Tag, User } from './mongo.js'
 
-export function submitLink(user, url) {
+export function submitLink(user, { url, title, description }) {
   return new Link({
     url,
+    name: title,
+    description,
     user,
   }).save()
 }

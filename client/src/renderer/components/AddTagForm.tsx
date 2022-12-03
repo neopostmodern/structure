@@ -59,7 +59,7 @@ const AddTagForm = ({
   const [addTagToNote, addTagToNoteMutation] = useMutation<
     AddTagByNameToNoteMutation,
     AddTagByNameToNoteMutationVariables
-  >(ADD_TAG_MUTATION, {
+  >(ADD_TAG_BY_NAME_TO_NOTE_MUTATION, {
     update: (cache, { data }) => {
       if (!data) {
         return;

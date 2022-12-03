@@ -46,3 +46,40 @@ export const BASE_NOTE_FRAGMENT = gql`
     }
   }
 `;
+export const ADD_LINK_MUTATION = gql`
+  ${BASE_NOTE_FRAGMENT}
+  mutation AddLink($url: String!, $title: String, $description: String) {
+    submitLink(url: $url, title: $title, description: $description) {
+      ...BaseNote
+    }
+  }
+`;
+
+export const ADD_TEXT_MUTATION = gql`
+  ${BASE_NOTE_FRAGMENT}
+  mutation AddText($title: String, $description: String) {
+    createText(title: $title, description: $description) {
+      ...BaseNote
+    }
+  }
+`;
+
+export const ADD_TAG_BY_NAME_TO_NOTE_MUTATION = gql`
+  mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
+    addTagByNameToNote(noteId: $noteId, name: $tagName) {
+      ... on INote {
+        _id
+        updatedAt
+        tags {
+          ...BaseTag
+          notes {
+            ... on INote {
+              _id
+            }
+          }
+        }
+      }
+    }
+  }
+  ${BASE_TAG_FRAGMENT}
+`;

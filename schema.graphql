@@ -73,11 +73,12 @@ type Link implements BaseObject & INote {
 
 type Mutation {
   addTagByNameToNote(name: String!, noteId: ID!): Note!
+  createTag(color: String, name: String!): Tag!
   createText(description: String, title: String): Text!
   removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
   requestNewCredential(purpose: String!): User!
   revokeCredential(purpose: String!): User!
-  submitLink(url: String!): Link!
+  submitLink(description: String, title: String, url: String!): Link!
   toggleArchivedNote(noteId: ID!): Note!
   toggleDeletedNote(noteId: ID!): Note!
   updateLink(link: InputLink!): Link!

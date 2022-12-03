@@ -93,6 +93,7 @@ export type Link = BaseObject & INote & {
 export type Mutation = {
   __typename: 'Mutation';
   addTagByNameToNote: Note;
+  createTag: Tag;
   createText: Text;
   removeTagByIdFromNote: Note;
   requestNewCredential: User;
@@ -109,6 +110,12 @@ export type Mutation = {
 export type MutationAddTagByNameToNoteArgs = {
   name: Scalars['String'];
   noteId: Scalars['ID'];
+};
+
+
+export type MutationCreateTagArgs = {
+  color?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 
@@ -135,6 +142,8 @@ export type MutationRevokeCredentialArgs = {
 
 
 export type MutationSubmitLinkArgs = {
+  description?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
   url: Scalars['String'];
 };
 
@@ -238,6 +247,7 @@ export type Tag = BaseObject & {
   color: Scalars['String'];
   createdAt: Scalars['Date'];
   name: Scalars['String'];
+  noteCount: Scalars['Int'];
   notes?: Maybe<Array<Maybe<Note>>>;
   updatedAt: Scalars['Date'];
   user: User;
@@ -275,6 +285,11 @@ export type Versions = {
   recommended?: Maybe<Scalars['String']>;
 };
 
+export type TagsWithCountsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TagsWithCountsQuery = { __typename: 'Query', tags: Array<{ __typename: 'Tag', noteCount: number, _id: string, createdAt: any, updatedAt: any, name: string, color: string }> };
+
 export type AddTagByNameToNoteMutationVariables = Exact<{
   noteId: Scalars['ID'];
   tagName: Scalars['String'];
@@ -303,21 +318,6 @@ export type TitleSuggestionsQueryVariables = Exact<{
 
 export type TitleSuggestionsQuery = { __typename: 'Query', titleSuggestions: Array<string> };
 
-export type AddLinkMutationVariables = Exact<{
-  url: Scalars['String'];
-}>;
-
-
-export type AddLinkMutation = { __typename: 'Mutation', submitLink: { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
-
-export type AddTextMutationVariables = Exact<{
-  title?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type AddTextMutation = { __typename: 'Mutation', createText: { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
-
 export type LinkQueryVariables = Exact<{
   linkId?: InputMaybe<Scalars['ID']>;
 }>;
@@ -335,7 +335,7 @@ export type UpdateLinkMutation = { __typename: 'Mutation', updateLink: { __typen
 export type NotesForListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotesForListQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> }> };
+export type NotesForListQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> }> };
 
 export type TinyUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -408,6 +408,14 @@ export type RevokeCredentialMutationVariables = Exact<{
 
 export type RevokeCredentialMutation = { __typename: 'Mutation', revokeCredential: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null } | null } };
 
+export type CreateTagMutationVariables = Exact<{
+  name: Scalars['String'];
+  color?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CreateTagMutation = { __typename: 'Mutation', createTag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string } };
+
 export type ToggleDeletedNoteMutationVariables = Exact<{
   noteId: Scalars['ID'];
 }>;
@@ -420,7 +428,7 @@ export type EntitiesUpdatedSinceQueryVariables = Exact<{
 }>;
 
 
-export type EntitiesUpdatedSinceQuery = { __typename: 'Query', entitiesUpdatedSince: { __typename: 'EntitiesUpdatedSince', timestamp: any, notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> }>, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
+export type EntitiesUpdatedSinceQuery = { __typename: 'Query', entitiesUpdatedSince: { __typename: 'EntitiesUpdatedSince', timestamp: any, notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }> }>, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null }> } };
 
 export type ToggleArchivedNoteMutationVariables = Exact<{
   noteId: Scalars['ID'];
@@ -438,11 +446,28 @@ export type ProfileQuery = { __typename: 'Query', currentUser?: { __typename: 'U
 
 export type BaseTagFragment = { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string };
 
-type BaseNote_Link_Fragment = { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> };
+type BaseNote_Link_Fragment = { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }> };
 
-type BaseNote_Text_Fragment = { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> };
+type BaseNote_Text_Fragment = { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }> };
 
 export type BaseNoteFragment = BaseNote_Link_Fragment | BaseNote_Text_Fragment;
+
+export type AddLinkMutationVariables = Exact<{
+  url: Scalars['String'];
+  title?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type AddLinkMutation = { __typename: 'Mutation', submitLink: { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }> } };
+
+export type AddTextMutationVariables = Exact<{
+  title?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type AddTextMutation = { __typename: 'Mutation', createText: { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }> } };
 
 export const UserCredentialsFragmentFragmentDoc = gql`
     fragment UserCredentialsFragment on User {
@@ -473,7 +498,7 @@ export const BaseNoteFragmentDoc = gql`
     deletedAt
     description
     tags {
-      ...BaseTag
+      _id
     }
   }
   ... on Link {
@@ -481,7 +506,42 @@ export const BaseNoteFragmentDoc = gql`
     domain
   }
 }
+    `;
+export const TagsWithCountsDocument = gql`
+    query TagsWithCounts {
+  tags {
+    ...BaseTag
+    noteCount @client
+  }
+}
     ${BaseTagFragmentDoc}`;
+
+/**
+ * __useTagsWithCountsQuery__
+ *
+ * To run a query within a React component, call `useTagsWithCountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTagsWithCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTagsWithCountsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTagsWithCountsQuery(baseOptions?: Apollo.QueryHookOptions<TagsWithCountsQuery, TagsWithCountsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TagsWithCountsQuery, TagsWithCountsQueryVariables>(TagsWithCountsDocument, options);
+      }
+export function useTagsWithCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TagsWithCountsQuery, TagsWithCountsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TagsWithCountsQuery, TagsWithCountsQueryVariables>(TagsWithCountsDocument, options);
+        }
+export type TagsWithCountsQueryHookResult = ReturnType<typeof useTagsWithCountsQuery>;
+export type TagsWithCountsLazyQueryHookResult = ReturnType<typeof useTagsWithCountsLazyQuery>;
+export type TagsWithCountsQueryResult = Apollo.QueryResult<TagsWithCountsQuery, TagsWithCountsQueryVariables>;
 export const AddTagByNameToNoteDocument = gql`
     mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
   addTagByNameToNote(noteId: $noteId, name: $tagName) {
@@ -633,73 +693,6 @@ export function useTitleSuggestionsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type TitleSuggestionsQueryHookResult = ReturnType<typeof useTitleSuggestionsQuery>;
 export type TitleSuggestionsLazyQueryHookResult = ReturnType<typeof useTitleSuggestionsLazyQuery>;
 export type TitleSuggestionsQueryResult = Apollo.QueryResult<TitleSuggestionsQuery, TitleSuggestionsQueryVariables>;
-export const AddLinkDocument = gql`
-    mutation AddLink($url: String!) {
-  submitLink(url: $url) {
-    ...BaseNote
-  }
-}
-    ${BaseNoteFragmentDoc}`;
-export type AddLinkMutationFn = Apollo.MutationFunction<AddLinkMutation, AddLinkMutationVariables>;
-
-/**
- * __useAddLinkMutation__
- *
- * To run a mutation, you first call `useAddLinkMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddLinkMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addLinkMutation, { data, loading, error }] = useAddLinkMutation({
- *   variables: {
- *      url: // value for 'url'
- *   },
- * });
- */
-export function useAddLinkMutation(baseOptions?: Apollo.MutationHookOptions<AddLinkMutation, AddLinkMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddLinkMutation, AddLinkMutationVariables>(AddLinkDocument, options);
-      }
-export type AddLinkMutationHookResult = ReturnType<typeof useAddLinkMutation>;
-export type AddLinkMutationResult = Apollo.MutationResult<AddLinkMutation>;
-export type AddLinkMutationOptions = Apollo.BaseMutationOptions<AddLinkMutation, AddLinkMutationVariables>;
-export const AddTextDocument = gql`
-    mutation AddText($title: String, $description: String) {
-  createText(title: $title, description: $description) {
-    ...BaseNote
-  }
-}
-    ${BaseNoteFragmentDoc}`;
-export type AddTextMutationFn = Apollo.MutationFunction<AddTextMutation, AddTextMutationVariables>;
-
-/**
- * __useAddTextMutation__
- *
- * To run a mutation, you first call `useAddTextMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddTextMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addTextMutation, { data, loading, error }] = useAddTextMutation({
- *   variables: {
- *      title: // value for 'title'
- *      description: // value for 'description'
- *   },
- * });
- */
-export function useAddTextMutation(baseOptions?: Apollo.MutationHookOptions<AddTextMutation, AddTextMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddTextMutation, AddTextMutationVariables>(AddTextDocument, options);
-      }
-export type AddTextMutationHookResult = ReturnType<typeof useAddTextMutation>;
-export type AddTextMutationResult = Apollo.MutationResult<AddTextMutation>;
-export type AddTextMutationOptions = Apollo.BaseMutationOptions<AddTextMutation, AddTextMutationVariables>;
 export const LinkDocument = gql`
     query Link($linkId: ID) {
   link(linkId: $linkId) {
@@ -795,6 +788,13 @@ export const NotesForListDocument = gql`
     query NotesForList {
   notes {
     ...BaseNote
+    ... on INote {
+      tags {
+        _id
+        name
+        color
+      }
+    }
   }
 }
     ${BaseNoteFragmentDoc}`;
@@ -1257,6 +1257,40 @@ export function useRevokeCredentialMutation(baseOptions?: Apollo.MutationHookOpt
 export type RevokeCredentialMutationHookResult = ReturnType<typeof useRevokeCredentialMutation>;
 export type RevokeCredentialMutationResult = Apollo.MutationResult<RevokeCredentialMutation>;
 export type RevokeCredentialMutationOptions = Apollo.BaseMutationOptions<RevokeCredentialMutation, RevokeCredentialMutationVariables>;
+export const CreateTagDocument = gql`
+    mutation CreateTag($name: String!, $color: String) {
+  createTag(name: $name, color: $color) {
+    ...BaseTag
+  }
+}
+    ${BaseTagFragmentDoc}`;
+export type CreateTagMutationFn = Apollo.MutationFunction<CreateTagMutation, CreateTagMutationVariables>;
+
+/**
+ * __useCreateTagMutation__
+ *
+ * To run a mutation, you first call `useCreateTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTagMutation, { data, loading, error }] = useCreateTagMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      color: // value for 'color'
+ *   },
+ * });
+ */
+export function useCreateTagMutation(baseOptions?: Apollo.MutationHookOptions<CreateTagMutation, CreateTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTagMutation, CreateTagMutationVariables>(CreateTagDocument, options);
+      }
+export type CreateTagMutationHookResult = ReturnType<typeof useCreateTagMutation>;
+export type CreateTagMutationResult = Apollo.MutationResult<CreateTagMutation>;
+export type CreateTagMutationOptions = Apollo.BaseMutationOptions<CreateTagMutation, CreateTagMutationVariables>;
 export const ToggleDeletedNoteDocument = gql`
     mutation ToggleDeletedNote($noteId: ID!) {
   toggleDeletedNote(noteId: $noteId) {
@@ -1301,6 +1335,11 @@ export const EntitiesUpdatedSinceDocument = gql`
     }
     tags {
       ...BaseTag
+      notes {
+        ... on INote {
+          _id
+        }
+      }
     }
     timestamp
   }
@@ -1411,6 +1450,75 @@ export function useProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Pr
 export type ProfileQueryHookResult = ReturnType<typeof useProfileQuery>;
 export type ProfileLazyQueryHookResult = ReturnType<typeof useProfileLazyQuery>;
 export type ProfileQueryResult = Apollo.QueryResult<ProfileQuery, ProfileQueryVariables>;
+export const AddLinkDocument = gql`
+    mutation AddLink($url: String!, $title: String, $description: String) {
+  submitLink(url: $url, title: $title, description: $description) {
+    ...BaseNote
+  }
+}
+    ${BaseNoteFragmentDoc}`;
+export type AddLinkMutationFn = Apollo.MutationFunction<AddLinkMutation, AddLinkMutationVariables>;
+
+/**
+ * __useAddLinkMutation__
+ *
+ * To run a mutation, you first call `useAddLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddLinkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addLinkMutation, { data, loading, error }] = useAddLinkMutation({
+ *   variables: {
+ *      url: // value for 'url'
+ *      title: // value for 'title'
+ *      description: // value for 'description'
+ *   },
+ * });
+ */
+export function useAddLinkMutation(baseOptions?: Apollo.MutationHookOptions<AddLinkMutation, AddLinkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddLinkMutation, AddLinkMutationVariables>(AddLinkDocument, options);
+      }
+export type AddLinkMutationHookResult = ReturnType<typeof useAddLinkMutation>;
+export type AddLinkMutationResult = Apollo.MutationResult<AddLinkMutation>;
+export type AddLinkMutationOptions = Apollo.BaseMutationOptions<AddLinkMutation, AddLinkMutationVariables>;
+export const AddTextDocument = gql`
+    mutation AddText($title: String, $description: String) {
+  createText(title: $title, description: $description) {
+    ...BaseNote
+  }
+}
+    ${BaseNoteFragmentDoc}`;
+export type AddTextMutationFn = Apollo.MutationFunction<AddTextMutation, AddTextMutationVariables>;
+
+/**
+ * __useAddTextMutation__
+ *
+ * To run a mutation, you first call `useAddTextMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddTextMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addTextMutation, { data, loading, error }] = useAddTextMutation({
+ *   variables: {
+ *      title: // value for 'title'
+ *      description: // value for 'description'
+ *   },
+ * });
+ */
+export function useAddTextMutation(baseOptions?: Apollo.MutationHookOptions<AddTextMutation, AddTextMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTextMutation, AddTextMutationVariables>(AddTextDocument, options);
+      }
+export type AddTextMutationHookResult = ReturnType<typeof useAddTextMutation>;
+export type AddTextMutationResult = Apollo.MutationResult<AddTextMutation>;
+export type AddTextMutationOptions = Apollo.BaseMutationOptions<AddTextMutation, AddTextMutationVariables>;
 
       export interface PossibleTypesResultData {
         possibleTypes: {

@@ -160,9 +160,10 @@ export default gql`
   }
 
   type Mutation {
+    createTag(name: String!, color: String): Tag!
     updateTag(tag: InputTag!): Tag!
 
-    submitLink(url: String!): Link!
+    submitLink(url: String!, title: String, description: String): Link!
     updateLink(link: InputLink!): Link!
 
     createText(title: String, description: String): Text!

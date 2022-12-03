@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { requestLogout } from '../actions/userInterface';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import Gap from '../components/Gap';
+import ImportDataWithButton from '../components/ImportDataWithButton';
 import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import UserInfo from '../components/UserInfo';
@@ -53,6 +54,7 @@ const UserPage: FC = () => {
           >
             Export my data
           </LinkButton>
+          <ImportDataWithButton />
           <Button
             size="huge"
             onClick={(): void => alert('This feature is not yet available')}

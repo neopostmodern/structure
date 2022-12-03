@@ -159,6 +159,19 @@ const rootResolvers = {
     },
   },
   Mutation: {
+    createTag(root, { name, color }, context) {
+      const { user } = context
+      if (!user) {
+        throw new Error('Need to be logged in to create tags.')
+      }
+      return Tag.findOne({ name, user }).then((tag) => {
+        if (tag) {
+          throw new Error(`Tag with name '${name}' already exists.`)
+        }
+
+        return new Tag({ name, color: color || 'lightgray', user }).save()
+      })
+    },
     updateTag(root, { tag: { _id, ...props } }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to update tags.')
@@ -180,11 +193,11 @@ const rootResolvers = {
         return tag.save()
       })
     },
-    submitLink(root, { url }, context) {
+    submitLink(root, { url, title, description }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to submit links.')
       }
-      return submitLink(context.user, url)
+      return submitLink(context.user, { url, title, description })
     },
     updateLink(root, { link: { _id, ...props } }, context) {
       if (!context.user) {
