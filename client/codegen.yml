@@ -1,5 +1,7 @@
 overwrite: true
-schema: "../schema.graphql"
+schema:
+  - "../schema.graphql"
+  - "./local-schema.graphql"
 documents: "src/**/*.{ts,tsx}"
 config:
   nonOptionalTypename: true

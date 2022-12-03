@@ -11,25 +11,24 @@ import {
   AddTagByNameToNoteMutation,
   AddTagByNameToNoteMutationVariables,
   TagsQuery,
+  TagsWithCountsQuery,
 } from '../generated/graphql';
 import useIsOnline from '../hooks/useIsOnline';
 import makeMousetrapGlobal from '../utils/mousetrapGlobal';
-import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
+import {
+  ADD_TAG_BY_NAME_TO_NOTE_MUTATION,
+  BASE_TAG_FRAGMENT,
+} from '../utils/sharedQueriesAndFragments';
 import { DisplayOnlyTag } from '../utils/types';
 import useDataState, { DataState } from '../utils/useDataState';
 import ErrorSnackbar from './ErrorSnackbar';
 import InlineTagForm from './InlineTagForm';
 
-export const ADD_TAG_MUTATION = gql`
-  mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
-    addTagByNameToNote(noteId: $noteId, name: $tagName) {
-      ... on INote {
-        _id
-        updatedAt
-        tags {
-          ...BaseTag
-        }
-      }
+export const TAGS_WITH_COUNTS_QUERY = gql`
+  query TagsWithCounts {
+    tags {
+      ...BaseTag
+      noteCount @client
     }
   }
   ${BASE_TAG_FRAGMENT}
@@ -52,7 +51,7 @@ const AddTagForm = ({
   const [submittedTag, setSubmittedTag] = useState<string | null>(null);
 
   const tagsQuery = useDataState(
-    useQuery<TagsQuery>(TAGS_QUERY, {
+    useQuery<TagsWithCountsQuery>(TAGS_WITH_COUNTS_QUERY, {
       fetchPolicy: 'cache-only',
     })
   );

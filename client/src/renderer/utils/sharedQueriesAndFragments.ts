@@ -37,7 +37,7 @@ export const BASE_NOTE_FRAGMENT = gql`
 
       description
       tags {
-        ...BaseTag
+        _id
       }
     }
     ... on Link {
@@ -45,5 +45,4 @@ export const BASE_NOTE_FRAGMENT = gql`
       domain
     }
   }
-  ${BASE_TAG_FRAGMENT}
 `;

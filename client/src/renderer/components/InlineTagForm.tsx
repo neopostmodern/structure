@@ -1,17 +1,20 @@
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, TextField, Typography } from '@mui/material';
 import { matchSorter } from 'match-sorter';
 import React from 'react';
-import { TagsQuery } from '../generated/graphql';
+import { TagsWithCountsQuery } from '../generated/graphql';
 import Tag from './Tag';
 
-type TagType = TagsQuery['tags'][number];
+type TagType = TagsWithCountsQuery['tags'][number];
 type TagOrNewTagType = TagType | { newTagName: string; title: string };
 
 type InlineTagFormProps = {
-  tags: 'loading' | TagsQuery['tags'];
+  tags: 'loading' | Array<TagType>;
   onAddTag: (tagName: string) => void;
   onAbort: () => void;
 };
+
+const MAX_TAG_SUGGESTIONS = 20;
+const TAG_OVERFLOW = 'TAG_OVERFLOW';
 
 const InlineTagForm: React.FC<InlineTagFormProps> = ({
   onAddTag,
@@ -53,9 +56,21 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
           filterOptions={(options, params) => {
             const { inputValue } = params;
 
-            const filtered = matchSorter(options, inputValue, {
-              keys: ['name'],
-            });
+            let filtered: Array<TagOrNewTagType> = matchSorter(
+              options as Array<TagType>,
+              inputValue,
+              {
+                keys: [(tag) => tag.name.replace(/[:›>]/g, ' ')],
+                baseSort: ({ item: tagA }, { item: tagB }) =>
+                  Math.sign(tagB.noteCount - tagA.noteCount),
+              }
+            );
+
+            let hiddenCount = 0;
+            if (filtered.length > MAX_TAG_SUGGESTIONS) {
+              hiddenCount = filtered.length - MAX_TAG_SUGGESTIONS;
+              filtered = filtered.slice(0, MAX_TAG_SUGGESTIONS);
+            }
 
             // Suggest the creation of a new value
             const isExisting = options.some(
@@ -65,6 +80,13 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
               filtered.push({
                 newTagName: inputValue,
                 title: `Add "${inputValue}"`,
+              });
+            }
+
+            if (hiddenCount) {
+              filtered.push({
+                newTagName: TAG_OVERFLOW,
+                title: `${hiddenCount} more matches, refine your search`,
               });
             }
 
@@ -92,19 +114,29 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
           renderOption={(props, tag) => {
             let tagElement;
             if ('newTagName' in tag) {
-              tagElement = (
-                <>
-                  <div style={{ marginRight: '0.5em' }}>Create&nbsp;tag</div>
-                  <Tag
-                    onClick={() => {}}
-                    tag={{
-                      _id: 'NEW_TAG',
-                      name: tag.newTagName,
-                      color: 'gray',
-                    }}
-                  />
-                </>
-              );
+              if (tag.newTagName === TAG_OVERFLOW) {
+                return (
+                  <li className={props.className} style={{ cursor: 'initial' }}>
+                    <Typography variant="caption" key={TAG_OVERFLOW}>
+                      {tag.title}
+                    </Typography>
+                  </li>
+                );
+              } else {
+                tagElement = (
+                  <>
+                    <div style={{ marginRight: '0.5em' }}>Create&nbsp;tag</div>
+                    <Tag
+                      onClick={() => {}}
+                      tag={{
+                        _id: 'NEW_TAG',
+                        name: tag.newTagName,
+                        color: 'gray',
+                      }}
+                    />
+                  </>
+                );
+              }
             } else {
               tagElement = <Tag onClick={() => {}} tag={tag} />;
             }

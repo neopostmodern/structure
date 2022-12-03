@@ -40,6 +40,14 @@ export const NOTES_QUERY = gql`
   query NotesForList {
     notes {
       ...BaseNote
+
+      ... on INote {
+        tags {
+          _id
+          name
+          color
+        }
+      }
     }
   }
   ${BASE_NOTE_FRAGMENT}

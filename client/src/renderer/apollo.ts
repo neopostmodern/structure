@@ -19,6 +19,20 @@ const cache = new InMemoryCache({
     INote: ['Link', 'Text'],
   },
   typePolicies: {
+    Tag: {
+      fields: {
+        noteCount: {
+          read(_, args) {
+            const notesWithTag: readonly unknown[] | undefined =
+              args.readField('notes');
+            if (notesWithTag && 'length' in notesWithTag) {
+              return notesWithTag.length;
+            }
+            return 0;
+          },
+        },
+      },
+    },
     Query: {
       fields: {
         link(_, { args: { linkId }, toReference }) {
