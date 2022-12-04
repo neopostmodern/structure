@@ -1,5 +1,6 @@
+import { ApolloServer } from '@apollo/server'
+import { expressMiddleware } from '@apollo/server/express4'
 import config from '@structure/config'
-import { ApolloServer } from 'apollo-server-express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
@@ -10,6 +11,8 @@ import { migrateTo } from './migrationSystem.js'
 import { User } from './mongo.js'
 import { resolvers, typeDefs } from './resolvers.js'
 import restApi from './restApi.js'
+
+const graphQlPath = '/graphql'
 
 let corsAllowedOrigins = [
   undefined,
@@ -52,7 +55,7 @@ const runExpressServer = async () => {
       console.error(
         '[Apollo Error]',
         formattedError,
-        formattedError.extensions.exception.stacktrace,
+        formattedError.extensions.stacktrace,
       )
       return formattedError
     },
@@ -65,7 +68,16 @@ const runExpressServer = async () => {
 
   await apolloServer.start()
 
-  apolloServer.applyMiddleware({ app, cors: corsOptions })
+  app.use(
+    graphQlPath,
+    cors(corsOptions),
+    bodyParser.json(),
+    expressMiddleware(apolloServer, {
+      context: async ({ req: { user } }) => {
+        return { user }
+      },
+    }),
+  )
 
   const server = createServer(app)
 
@@ -74,7 +86,7 @@ const runExpressServer = async () => {
   await new Promise((resolve) => server.listen(config.PORT, resolve))
   console.log(`REST Server running at http://localhost:${config.PORT}...`)
   console.log(
-    `GraphQL Server running at http://localhost:${config.PORT}${apolloServer.graphqlPath}...`,
+    `GraphQL Server running at http://localhost:${config.PORT}${graphQlPath}...`,
   )
 }
 
