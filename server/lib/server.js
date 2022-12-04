@@ -48,6 +48,14 @@ const runExpressServer = async () => {
     context: ({ req: { user } }) => {
       return { user }
     },
+    formatError: (formattedError) => {
+      console.error(
+        '[Apollo Error]',
+        formattedError,
+        formattedError.extensions.exception.stacktrace,
+      )
+      return formattedError
+    },
     playground: {
       settings: {
         'request.credentials': 'same-origin',
