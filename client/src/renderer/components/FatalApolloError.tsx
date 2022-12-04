@@ -1,6 +1,7 @@
 import { ApolloError, NetworkStatus } from '@apollo/client';
-import { SyncProblem } from '@mui/icons-material';
+import { AppsOutage, SyncProblem } from '@mui/icons-material';
 import { Button } from '@mui/material';
+import { GraphQLErrorCodes } from '@structure/common';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { OFFLINE_CACHE_MISS } from '../utils/useDataState';
@@ -69,6 +70,7 @@ type NetworkErrorProps =
 const FatalApolloError: React.FC<NetworkErrorProps> = (props) => {
   const { error, refetch, ...optionalProps } =
     'query' in props ? props.query : props;
+
   if (!error) {
     return (
       <ErrorContainer>
@@ -91,6 +93,23 @@ const FatalApolloError: React.FC<NetworkErrorProps> = (props) => {
       Reload
     </Button>
   );
+
+  if (
+    error.graphQLErrors?.[0]?.extensions.code ===
+    GraphQLErrorCodes.ENTITY_NOT_FOUND
+  ) {
+    return (
+      <ErrorContainer variant="outlined">
+        <ErrorTitle>Requested data not found!</ErrorTitle>
+        <Gap vertical={1} />
+        <AppsOutage sx={{ fontSize: '4rem', color: 'gray' }} />
+        <Gap vertical={0.5} />
+        <ErrorInformationSmall>
+          {error.graphQLErrors[0].message}
+        </ErrorInformationSmall>
+      </ErrorContainer>
+    );
+  }
 
   if (error.extraInfo === OFFLINE_CACHE_MISS) {
     return (

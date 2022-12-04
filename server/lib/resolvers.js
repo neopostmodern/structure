@@ -1,5 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import { GraphQLScalarType, Kind } from 'graphql'
+import { GraphQLErrorCodes } from '@structure/common'
+import { GraphQLError, GraphQLScalarType, Kind } from 'graphql'
 import Moment from 'moment'
 import packageJson from '../package.json' assert { type: 'json' }
 import {
@@ -105,11 +106,22 @@ const rootResolvers = {
         timestamp: new Date(),
       }
     },
-    async link(root, { linkId }, context) {
-      if (!context.user) {
+    async link(root, { linkId }, { user }) {
+      if (!user) {
         throw new Error('Need to be logged in to fetch a link.')
       }
-      return Link.findById(linkId)
+      const link = await Link.findOne({ _id: linkId, user })
+      if (!link) {
+        throw new GraphQLError(
+          `No link with ID '${linkId}' found for this user.`,
+          {
+            extensions: {
+              code: GraphQLErrorCodes.ENTITY_NOT_FOUND,
+            },
+          },
+        )
+      }
+      return link
     },
     async links(root, { offset, limit }, context) {
       if (!context.user) {
@@ -121,17 +133,42 @@ const rootResolvers = {
         .limit(protectedLimit)
         .exec()
     },
-    async text(root, { textId }, context) {
-      if (!context.user) {
+    async text(root, { textId }, { user }) {
+      if (!user) {
         throw new Error('Need to be logged in to fetch a text.')
       }
-      return Text.findById(textId)
+
+      const text = await Text.findOne({ _id: textId, user })
+      if (!text) {
+        throw new GraphQLError(
+          `No text with ID '${textId}' found for this user.`,
+          {
+            extensions: {
+              code: GraphQLErrorCodes.ENTITY_NOT_FOUND,
+            },
+          },
+        )
+      }
+
+      return text
     },
-    async tag(root, { tagId }, context) {
-      if (!context.user) {
+    async tag(root, { tagId }, { user }) {
+      if (!user) {
         throw new Error('Need to be logged in to fetch a tag.')
       }
-      return Tag.findById(tagId)
+
+      const tag = await Tag.findOne({ _id: tagId, user })
+      if (!tag) {
+        throw new GraphQLError(
+          `No tag with ID '${tagId}' found for this user.`,
+          {
+            extensions: {
+              code: GraphQLErrorCodes.ENTITY_NOT_FOUND,
+            },
+          },
+        )
+      }
+      return tag
     },
     async tags(root, { offset, limit }, context) {
       if (!context.user) {
@@ -150,7 +187,7 @@ const rootResolvers = {
       if (!user) {
         throw new Error('Need to be logged in to fetch title suggestions.')
       }
-      const link = await Link.findById(linkId)
+      const link = await Link.findOne({ _id: linkId, user })
       if (!link) {
         throw new Error(`No link with ID ${linkId}`)
       }
@@ -217,8 +254,6 @@ const rootResolvers = {
 
       context.__skip_notes_population = true
       tag.notes = updatedNotes
-
-      console.log('tag after deletion', tag)
 
       return tag
     },

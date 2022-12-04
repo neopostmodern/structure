@@ -6,10 +6,7 @@
   "homepage": "",
   "license": "ISC",
   "exports": {
-    ".": {
-      "node": "./dist/index.js",
-      "default": "./lib/index.ts"
-    }
+    "default": "./dist/index.js"
   },
   "type": "module",
   "directories": {
