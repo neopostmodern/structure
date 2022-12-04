@@ -5,6 +5,7 @@ import packageJson from '../package.json' assert { type: 'json' }
 import {
   addTagByNameToNote,
   fetchTitleSuggestions,
+  removeTagByIdFromNote,
   requestNewCredential,
   revokeCredential,
   submitLink,
@@ -50,6 +51,9 @@ const rootResolvers = {
   Text: INoteResolvers,
   Tag: {
     async notes(tag, args, context) {
+      if (tag.notes && context.__skip_notes_population) {
+        return tag.notes
+      }
       return Note.find({ tags: tag, deletedAt: null }).then(typeEnumFixer)
     },
   },
@@ -193,6 +197,31 @@ const rootResolvers = {
         return tag.save()
       })
     },
+    async permanentlyDeleteTag(root, { tagId: _id }, { user, ...context }) {
+      if (!user) {
+        throw new Error('Need to be logged in to update tags.')
+      }
+      const tag = await Tag.findOne({ _id, user }).exec()
+      if (!tag) {
+        throw new Error('Tag could not be found.')
+      }
+
+      const updatedNotes = []
+
+      const notes = await Note.find({ tags: tag._id, user }).exec()
+      for (const note of notes) {
+        updatedNotes.push(await removeTagByIdFromNote(user, note._id, tag._id))
+      }
+
+      await tag.remove()
+
+      context.__skip_notes_population = true
+      tag.notes = updatedNotes
+
+      console.log('tag after deletion', tag)
+
+      return tag
+    },
     submitLink(root, { url, title, description }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to submit links.')
@@ -262,16 +291,11 @@ const rootResolvers = {
         Note.findOne({ _id: noteId }),
       )
     },
-    removeTagByIdFromNote(root, { noteId, tagId }, context) {
-      if (!context.user) {
+    removeTagByIdFromNote(root, { noteId, tagId }, { user }) {
+      if (!user) {
         throw new Error('Need to be logged in to untag notes.')
       }
-      return Note.findOneAndUpdate(
-        { _id: noteId, user: context.user },
-        { $pull: { tags: tagId } },
-      )
-        .exec()
-        .then(({ _id }) => Note.findOne({ _id }))
+      return removeTagByIdFromNote(user, noteId, tagId)
     },
     toggleArchivedNote(root, { noteId }, context) {
       if (!context.user) {

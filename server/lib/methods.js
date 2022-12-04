@@ -29,6 +29,15 @@ export function addTagByNameToNote(user, noteId, name) {
     )
 }
 
+export function removeTagByIdFromNote(user, noteId, tagId) {
+  return Note.findOneAndUpdate(
+    { _id: noteId, user },
+    { $pull: { tags: tagId } },
+  )
+    .exec()
+    .then(({ _id }) => Note.findOne({ _id }))
+}
+
 export function requestNewCredential(userId, purpose) {
   return User.findOne({ _id: userId }).then((user) => {
     // eslint-disable-next-line no-param-reassign

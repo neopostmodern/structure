@@ -75,6 +75,7 @@ type Mutation {
   addTagByNameToNote(name: String!, noteId: ID!): Note!
   createTag(color: String, name: String!): Tag!
   createText(description: String, title: String): Text!
+  permanentlyDeleteTag(tagId: ID!): Tag!
   removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
   requestNewCredential(purpose: String!): User!
   revokeCredential(purpose: String!): User!

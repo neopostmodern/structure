@@ -1,12 +1,19 @@
 import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { FC, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
+import { goBack } from 'redux-first-history';
+import DeleteTagTrigger from '../components/DeleteTagTrigger';
 import FatalApolloError from '../components/FatalApolloError';
+import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotesList from '../components/NotesList';
 import TagForm, { TagInForm } from '../components/TagForm';
 import {
+  DeleteTagMutation,
+  DeleteTagMutationVariables,
+  TagsQuery,
   TagWithNotesQuery,
   TagWithNotesQueryVariables,
   UpdateTagMutation,
@@ -16,6 +23,7 @@ import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
+import { TAGS_QUERY } from './TagsPage';
 
 const TAG_QUERY = gql`
   query TagWithNotes($tagId: ID!) {
@@ -75,8 +83,23 @@ const UPDATE_TAG_MUTATION = gql`
 
   ${BASE_TAG_FRAGMENT}
 `;
+const DELETE_TAG_MUTATION = gql`
+  mutation DeleteTag($tagId: ID!) {
+    permanentlyDeleteTag(tagId: $tagId) {
+      _id
+      notes {
+        ... on INote {
+          tags {
+            _id
+          }
+        }
+      }
+    }
+  }
+`;
 
 const TagPage: FC = () => {
+  const dispatch = useDispatch();
   const { tagId } = useParams();
 
   if (!tagId) {
@@ -93,6 +116,11 @@ const TagPage: FC = () => {
     UpdateTagMutation,
     UpdateTagMutationVariables
   >(UPDATE_TAG_MUTATION);
+  const [deleteTag, deleteTagMutation] = useMutation<
+    DeleteTagMutation,
+    DeleteTagMutationVariables
+  >(DELETE_TAG_MUTATION);
+
   const handleSubmit = useCallback(
     (updatedTag: TagInForm): void => {
       updateTag({
@@ -103,6 +131,39 @@ const TagPage: FC = () => {
     },
     [updateTag]
   );
+  const handleDeleteTag = useCallback((): void => {
+    deleteTag({
+      variables: { tagId },
+      onCompleted: () => {
+        dispatch(goBack());
+      },
+      update: (cache, { data }) => {
+        if (!data) {
+          return;
+        }
+        const { permanentlyDeleteTag } = data;
+
+        const cacheValue = cache.readQuery<TagsQuery>({
+          query: TAGS_QUERY,
+        });
+
+        if (!cacheValue) {
+          return;
+        }
+
+        cache.writeQuery({
+          query: TAGS_QUERY,
+          data: {
+            tags: cacheValue.tags.filter(
+              (tag) => tag._id !== permanentlyDeleteTag._id
+            ),
+          },
+        });
+      },
+    }).catch((error) => {
+      console.error('[TagPage.deleteTag]', error);
+    });
+  }, [tagId]);
 
   if (tagQuery.state === DataState.LOADING) {
     return <ComplexLayout loading />;
@@ -116,7 +177,17 @@ const TagPage: FC = () => {
   }
 
   return (
-    <ComplexLayout>
+    <ComplexLayout
+      secondaryActions={
+        <Menu>
+          <DeleteTagTrigger
+            tag={tagQuery.data.tag}
+            loading={deleteTagMutation.loading}
+            deleteNote={handleDeleteTag}
+          />
+        </Menu>
+      }
+    >
       <NetworkOperationsIndicator
         query={tagQuery}
         mutation={updateTagMutation}

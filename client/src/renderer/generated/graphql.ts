@@ -95,6 +95,7 @@ export type Mutation = {
   addTagByNameToNote: Note;
   createTag: Tag;
   createText: Text;
+  permanentlyDeleteTag: Tag;
   removeTagByIdFromNote: Note;
   requestNewCredential: User;
   revokeCredential: User;
@@ -122,6 +123,11 @@ export type MutationCreateTagArgs = {
 export type MutationCreateTextArgs = {
   description?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationPermanentlyDeleteTagArgs = {
+  tagId: Scalars['ID'];
 };
 
 
@@ -290,14 +296,6 @@ export type TagsWithCountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type TagsWithCountsQuery = { __typename: 'Query', tags: Array<{ __typename: 'Tag', noteCount: number, _id: string, createdAt: any, updatedAt: any, name: string, color: string }> };
 
-export type AddTagByNameToNoteMutationVariables = Exact<{
-  noteId: Scalars['ID'];
-  tagName: Scalars['String'];
-}>;
-
-
-export type AddTagByNameToNoteMutation = { __typename: 'Mutation', addTagByNameToNote: { __typename: 'Link', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } | { __typename: 'Text', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
-
 export type VisitedNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -309,7 +307,7 @@ export type RemoveTagByIdFromNoteMutationVariables = Exact<{
 }>;
 
 
-export type RemoveTagByIdFromNoteMutation = { __typename: 'Mutation', removeTagByIdFromNote: { __typename: 'Link', _id: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | { __typename: 'Text', _id: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
+export type RemoveTagByIdFromNoteMutation = { __typename: 'Mutation', removeTagByIdFromNote: { __typename: 'Link', _id: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null }> } | { __typename: 'Text', _id: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null }> } };
 
 export type TitleSuggestionsQueryVariables = Exact<{
   linkId: Scalars['ID'];
@@ -355,6 +353,13 @@ export type UpdateTagMutationVariables = Exact<{
 
 
 export type UpdateTagMutation = { __typename: 'Mutation', updateTag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', type: NoteType, _id: string, name: string, createdAt: any, archivedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | { __typename: 'Text', type: NoteType, _id: string, name: string, createdAt: any, archivedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | null> | null } };
+
+export type DeleteTagMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+}>;
+
+
+export type DeleteTagMutation = { __typename: 'Mutation', permanentlyDeleteTag: { __typename: 'Tag', _id: string, notes?: Array<{ __typename: 'Link', tags: Array<{ __typename: 'Tag', _id: string }> } | { __typename: 'Text', tags: Array<{ __typename: 'Tag', _id: string }> } | null> | null } };
 
 export type TagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -428,7 +433,7 @@ export type EntitiesUpdatedSinceQueryVariables = Exact<{
 }>;
 
 
-export type EntitiesUpdatedSinceQuery = { __typename: 'Query', entitiesUpdatedSince: { __typename: 'EntitiesUpdatedSince', timestamp: any, notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }> }>, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null }> } };
+export type EntitiesUpdatedSinceQuery = { __typename: 'Query', entitiesUpdatedSince: { __typename: 'EntitiesUpdatedSince', timestamp: any, notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }> } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }> }>, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string }> } };
 
 export type ToggleArchivedNoteMutationVariables = Exact<{
   noteId: Scalars['ID'];
@@ -468,6 +473,14 @@ export type AddTextMutationVariables = Exact<{
 
 
 export type AddTextMutation = { __typename: 'Mutation', createText: { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }> } };
+
+export type AddTagByNameToNoteMutationVariables = Exact<{
+  noteId: Scalars['ID'];
+  tagName: Scalars['String'];
+}>;
+
+
+export type AddTagByNameToNoteMutation = { __typename: 'Mutation', addTagByNameToNote: { __typename: 'Link', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null }> } | { __typename: 'Text', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null }> } };
 
 export const UserCredentialsFragmentFragmentDoc = gql`
     fragment UserCredentialsFragment on User {
@@ -542,46 +555,6 @@ export function useTagsWithCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type TagsWithCountsQueryHookResult = ReturnType<typeof useTagsWithCountsQuery>;
 export type TagsWithCountsLazyQueryHookResult = ReturnType<typeof useTagsWithCountsLazyQuery>;
 export type TagsWithCountsQueryResult = Apollo.QueryResult<TagsWithCountsQuery, TagsWithCountsQueryVariables>;
-export const AddTagByNameToNoteDocument = gql`
-    mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
-  addTagByNameToNote(noteId: $noteId, name: $tagName) {
-    ... on INote {
-      _id
-      updatedAt
-      tags {
-        ...BaseTag
-      }
-    }
-  }
-}
-    ${BaseTagFragmentDoc}`;
-export type AddTagByNameToNoteMutationFn = Apollo.MutationFunction<AddTagByNameToNoteMutation, AddTagByNameToNoteMutationVariables>;
-
-/**
- * __useAddTagByNameToNoteMutation__
- *
- * To run a mutation, you first call `useAddTagByNameToNoteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddTagByNameToNoteMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addTagByNameToNoteMutation, { data, loading, error }] = useAddTagByNameToNoteMutation({
- *   variables: {
- *      noteId: // value for 'noteId'
- *      tagName: // value for 'tagName'
- *   },
- * });
- */
-export function useAddTagByNameToNoteMutation(baseOptions?: Apollo.MutationHookOptions<AddTagByNameToNoteMutation, AddTagByNameToNoteMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddTagByNameToNoteMutation, AddTagByNameToNoteMutationVariables>(AddTagByNameToNoteDocument, options);
-      }
-export type AddTagByNameToNoteMutationHookResult = ReturnType<typeof useAddTagByNameToNoteMutation>;
-export type AddTagByNameToNoteMutationResult = Apollo.MutationResult<AddTagByNameToNoteMutation>;
-export type AddTagByNameToNoteMutationOptions = Apollo.BaseMutationOptions<AddTagByNameToNoteMutation, AddTagByNameToNoteMutationVariables>;
 export const VisitedNotesDocument = gql`
     query VisitedNotes {
   notes {
@@ -628,6 +601,11 @@ export const RemoveTagByIdFromNoteDocument = gql`
         _id
         name
         color
+        notes {
+          ... on INote {
+            _id
+          }
+        }
       }
     }
   }
@@ -965,6 +943,46 @@ export function useUpdateTagMutation(baseOptions?: Apollo.MutationHookOptions<Up
 export type UpdateTagMutationHookResult = ReturnType<typeof useUpdateTagMutation>;
 export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<UpdateTagMutation, UpdateTagMutationVariables>;
+export const DeleteTagDocument = gql`
+    mutation DeleteTag($tagId: ID!) {
+  permanentlyDeleteTag(tagId: $tagId) {
+    _id
+    notes {
+      ... on INote {
+        tags {
+          _id
+        }
+      }
+    }
+  }
+}
+    `;
+export type DeleteTagMutationFn = Apollo.MutationFunction<DeleteTagMutation, DeleteTagMutationVariables>;
+
+/**
+ * __useDeleteTagMutation__
+ *
+ * To run a mutation, you first call `useDeleteTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTagMutation, { data, loading, error }] = useDeleteTagMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *   },
+ * });
+ */
+export function useDeleteTagMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTagMutation, DeleteTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTagMutation, DeleteTagMutationVariables>(DeleteTagDocument, options);
+      }
+export type DeleteTagMutationHookResult = ReturnType<typeof useDeleteTagMutation>;
+export type DeleteTagMutationResult = Apollo.MutationResult<DeleteTagMutation>;
+export type DeleteTagMutationOptions = Apollo.BaseMutationOptions<DeleteTagMutation, DeleteTagMutationVariables>;
 export const TagsDocument = gql`
     query Tags {
   tags {
@@ -1335,11 +1353,6 @@ export const EntitiesUpdatedSinceDocument = gql`
     }
     tags {
       ...BaseTag
-      notes {
-        ... on INote {
-          _id
-        }
-      }
     }
     timestamp
   }
@@ -1519,6 +1532,51 @@ export function useAddTextMutation(baseOptions?: Apollo.MutationHookOptions<AddT
 export type AddTextMutationHookResult = ReturnType<typeof useAddTextMutation>;
 export type AddTextMutationResult = Apollo.MutationResult<AddTextMutation>;
 export type AddTextMutationOptions = Apollo.BaseMutationOptions<AddTextMutation, AddTextMutationVariables>;
+export const AddTagByNameToNoteDocument = gql`
+    mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
+  addTagByNameToNote(noteId: $noteId, name: $tagName) {
+    ... on INote {
+      _id
+      updatedAt
+      tags {
+        ...BaseTag
+        notes {
+          ... on INote {
+            _id
+          }
+        }
+      }
+    }
+  }
+}
+    ${BaseTagFragmentDoc}`;
+export type AddTagByNameToNoteMutationFn = Apollo.MutationFunction<AddTagByNameToNoteMutation, AddTagByNameToNoteMutationVariables>;
+
+/**
+ * __useAddTagByNameToNoteMutation__
+ *
+ * To run a mutation, you first call `useAddTagByNameToNoteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddTagByNameToNoteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addTagByNameToNoteMutation, { data, loading, error }] = useAddTagByNameToNoteMutation({
+ *   variables: {
+ *      noteId: // value for 'noteId'
+ *      tagName: // value for 'tagName'
+ *   },
+ * });
+ */
+export function useAddTagByNameToNoteMutation(baseOptions?: Apollo.MutationHookOptions<AddTagByNameToNoteMutation, AddTagByNameToNoteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTagByNameToNoteMutation, AddTagByNameToNoteMutationVariables>(AddTagByNameToNoteDocument, options);
+      }
+export type AddTagByNameToNoteMutationHookResult = ReturnType<typeof useAddTagByNameToNoteMutation>;
+export type AddTagByNameToNoteMutationResult = Apollo.MutationResult<AddTagByNameToNoteMutation>;
+export type AddTagByNameToNoteMutationOptions = Apollo.BaseMutationOptions<AddTagByNameToNoteMutation, AddTagByNameToNoteMutationVariables>;
 
       export interface PossibleTypesResultData {
         possibleTypes: {
