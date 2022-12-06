@@ -37,8 +37,11 @@ export const createPluginsForPWA = ({
   const assetsFolderPath = path.join(__dirname, '../../assets');
   const assetFileNames = [
     'manifest.webmanifest',
-    'icons/256x256.png',
-    'icons/512x512.png',
+    'favicon.ico',
+    'icons/favicon.svg',
+    'icons/favicon_256x256.png',
+    'icons/maskable_192x192.png',
+    'icons/maskable_512x512.png',
   ];
   return [
     new GenerateSW({

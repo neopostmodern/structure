@@ -4,14 +4,16 @@
   "display": "standalone",
   "icons": [
     {
-      "src": "icons/256x256.png",
-      "sizes": "256x256",
-      "type": "image/png"
+      "src": "icons/maskable_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
-      "src": "icons/512x512.png",
+      "src": "icons/maskable_512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "maskable any"
     }
   ],
   "name": "Structure",
