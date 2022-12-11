@@ -41,12 +41,16 @@ type Action = { type: string; payload?: any };
 // | { type: COMPLETE_LOGIN }
 // | { type: CHANGE_LINK_LAYOUT, payload: LinkLayoutType };
 
+export const DEFAULT_NOTE_LAYOUT = LinkLayout.LIST_LAYOUT;
+export const DEFAULT_ARCHIVE_STATE = ArchiveState.NO_ARCHIVE;
+export const DEFAULT_SORT_BY = SortBy.UPDATED_AT;
+
 const initialState: UserInterfaceStateType = {
   loggingIn: false,
-  linkLayout: LinkLayout.LIST_LAYOUT,
+  linkLayout: DEFAULT_NOTE_LAYOUT,
   tagsLayout: TagsLayout.CHAOS_LAYOUT,
-  archiveState: ArchiveState.NO_ARCHIVE,
-  sortBy: SortBy.UPDATED_AT,
+  archiveState: DEFAULT_ARCHIVE_STATE,
+  sortBy: DEFAULT_SORT_BY,
   searchQuery: '',
   infiniteScrollLimit: 15,
   batchEditing: false,

@@ -123,39 +123,26 @@ const NotesPage: React.FC = () => {
     };
   }, []);
 
-  const toggleLayout = (): void => {
-    dispatch(
-      changeLinkLayout(
-        layout === LinkLayout.LIST_LAYOUT
-          ? LinkLayout.EXPANDED_LIST_LAYOUT
-          : LinkLayout.LIST_LAYOUT
-      )
-    );
-  };
+  const updateLayout = useCallback(
+    (newLayout: LinkLayout): void => {
+      dispatch(changeLinkLayout(newLayout));
+    },
+    [dispatch]
+  );
 
-  const nextArchiveState = (): void => {
-    switch (archiveState) {
-      case ArchiveState.ONLY_ARCHIVE:
-        dispatch(changeArchiveState(ArchiveState.BOTH));
-        break;
-      case ArchiveState.BOTH:
-        dispatch(changeArchiveState(ArchiveState.NO_ARCHIVE));
-        break;
-      case ArchiveState.NO_ARCHIVE:
-        dispatch(changeArchiveState(ArchiveState.ONLY_ARCHIVE));
-        break;
-      default:
-        console.error('Unknown layout', archiveState);
-    }
-  };
+  const updateArchiveState = useCallback(
+    (newArchiveState: ArchiveState): void => {
+      dispatch(changeArchiveState(newArchiveState));
+    },
+    [dispatch]
+  );
 
-  const toggleSortBy = useCallback(() => {
-    if (sortBy === SortBy.CREATED_AT) {
-      dispatch(changeSortBy(SortBy.UPDATED_AT));
-    } else {
-      dispatch(changeSortBy(SortBy.CREATED_AT));
-    }
-  }, [dispatch, sortBy]);
+  const updateSortBy = useCallback(
+    (newSortBy: SortBy) => {
+      dispatch(changeSortBy(newSortBy));
+    },
+    [dispatch]
+  );
 
   const content = [];
   let primaryActions = null;
@@ -278,11 +265,11 @@ const NotesPage: React.FC = () => {
           dispatch(changeSearchQuery(value));
         }}
         layout={layout}
-        toggleLayout={toggleLayout}
+        updateLayout={updateLayout}
         matchedNotes={matchedNotes}
-        nextArchiveState={nextArchiveState}
+        updateArchiveState={updateArchiveState}
         sortBy={sortBy}
-        toggleSortBy={toggleSortBy}
+        updateSortBy={updateSortBy}
         notes={allNotes}
         searchQuery={searchQuery}
         searchInput={searchInput}

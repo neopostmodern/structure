@@ -1,9 +1,12 @@
 import {
   BackspaceOutlined as ClearIcon,
+  FilterAlt,
+  List,
   Search as SearchIcon,
+  Sort,
+  ViewList,
 } from '@mui/icons-material';
 import {
-  Button,
   FormControl,
   FormHelperText,
   IconButton,
@@ -12,21 +15,27 @@ import {
   InputLabel,
 } from '@mui/material';
 import { useCallback } from 'react';
+import { ArchiveState, LinkLayout, SortBy } from '../actions/userInterface';
 import NoteCount from '../containers/NotesPage/NoteCount';
+import {
+  DEFAULT_ARCHIVE_STATE,
+  DEFAULT_SORT_BY,
+} from '../reducers/userInterface';
 import {
   archiveStateToName,
   layoutToName,
   sortByToName,
 } from '../utils/textHelpers';
 import { Menu, MenuSearchFieldContainer } from './Menu';
+import NotesMenuButton from './NotesMenuButton';
 
 const NotesMenu = ({
   notes,
-  toggleLayout,
+  updateLayout,
   archiveState,
-  nextArchiveState,
+  updateArchiveState,
   sortBy,
-  toggleSortBy,
+  updateSortBy,
   layout,
   searchQuery,
   onChangeSearchQuery,
@@ -40,16 +49,30 @@ const NotesMenu = ({
   );
 
   return (
-    <Menu direction="vertical-horizontal">
-      <Button onClick={toggleLayout} size="huge">
-        {layoutToName(layout)}
-      </Button>
-      <Button onClick={nextArchiveState} size="huge">
-        {archiveStateToName(archiveState)}
-      </Button>
-      <Button onClick={toggleSortBy} size="huge">
-        {sortByToName(sortBy)}
-      </Button>
+    <Menu direction="vertical-horizontal" style={{ marginTop: '-12px' }}>
+      <NotesMenuButton
+        icons={[<List />, <ViewList />]}
+        options={Object.values(LinkLayout)}
+        optionToName={layoutToName}
+        onSelectOption={updateLayout}
+        value={layout}
+      />
+      <NotesMenuButton
+        icon={<FilterAlt />}
+        options={Object.values(ArchiveState)}
+        optionToName={archiveStateToName}
+        onSelectOption={updateArchiveState}
+        value={archiveState}
+        defaultValue={DEFAULT_ARCHIVE_STATE}
+      />
+      <NotesMenuButton
+        icon={<Sort />}
+        options={Object.values(SortBy)}
+        optionToName={sortByToName}
+        onSelectOption={updateSortBy}
+        value={sortBy}
+        defaultValue={DEFAULT_SORT_BY}
+      />
       <MenuSearchFieldContainer>
         <FormControl variant="standard" sx={{ width: '100%' }}>
           <InputLabel>Search</InputLabel>

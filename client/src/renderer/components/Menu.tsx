@@ -12,6 +12,7 @@ export const Menu = styled.div<{
     css`
       @media (max-width: ${breakpointDesktop - 0.001}rem) {
         flex-direction: row;
+        gap: 1rem;
         align-items: center;
         flex-wrap: wrap;
         button {
