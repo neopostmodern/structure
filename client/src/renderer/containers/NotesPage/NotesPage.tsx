@@ -1,22 +1,14 @@
 import { gql, useQuery } from '@apollo/client';
-import { ScreenSearchDesktop } from '@mui/icons-material';
-import { Button, CircularProgress, Stack, Typography } from '@mui/material';
+import { CircularProgress, Stack, Typography } from '@mui/material';
 import Mousetrap from 'mousetrap';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import {
-  ArchiveState,
-  changeArchiveState,
-  changeLinkLayout,
-  changeSearchQuery,
-  changeSortBy,
   increaseInfiniteScroll,
   LinkLayout,
-  SortBy,
 } from '../../actions/userInterface';
 import Centered from '../../components/Centered';
-import EmptyPageInfo from '../../components/EmptyPageInfo';
 import FatalApolloError from '../../components/FatalApolloError';
 import Gap from '../../components/Gap';
 import NetworkOperationsIndicator, {
@@ -25,7 +17,7 @@ import NetworkOperationsIndicator, {
 import NoteBatchEditingBar from '../../components/NoteBatchEditingBar';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
-import Shortcut from '../../components/Shortcut';
+import NotesPageEmpty from '../../components/NotesPageEmpty';
 import { NotesForListQuery } from '../../generated/graphql';
 import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince';
 import useFilteredNotes from '../../hooks/useFilteredNotes';
@@ -68,15 +60,10 @@ const ShowMore = styled.div`
 `;
 
 const NotesPage: React.FC = () => {
-  const {
-    linkLayout: layout,
-    archiveState,
-    sortBy,
-    searchQuery,
-    infiniteScrollLimit,
-  } = useSelector<RootState, UserInterfaceStateType>(
-    (state) => state.userInterface
-  );
+  const { linkLayout: layout, infiniteScrollLimit } = useSelector<
+    RootState,
+    UserInterfaceStateType
+  >((state) => state.userInterface);
   const dispatch = useDispatch();
   const searchInput = useRef<HTMLInputElement | null>(null);
   const moreElement = useRef<HTMLDivElement | null>(null);
@@ -85,12 +72,7 @@ const NotesPage: React.FC = () => {
       fetchPolicy: 'cache-only',
     })
   );
-  const filteredNotesQueryWrapper = useFilteredNotes(
-    notesQuery,
-    searchQuery,
-    archiveState,
-    sortBy
-  );
+  const filteredNotesQueryWrapper = useFilteredNotes(notesQuery);
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince();
 
@@ -107,11 +89,15 @@ const NotesPage: React.FC = () => {
       }
     };
 
-    Mousetrap.bind(searchFieldShortcutKeys, (event): void => {
+    Mousetrap.bind(searchFieldShortcutKeys, (event: KeyboardEvent): void => {
       event.preventDefault();
       searchInput.current?.focus();
       setTimeout(
-        () => searchInput.current?.setSelectionRange(0, searchQuery.length),
+        () =>
+          searchInput.current?.setSelectionRange(
+            0,
+            searchInput.current?.value.length
+          ),
         10
       );
     });
@@ -122,27 +108,6 @@ const NotesPage: React.FC = () => {
       window.removeEventListener('scroll', handleScrollEvent);
     };
   }, []);
-
-  const updateLayout = useCallback(
-    (newLayout: LinkLayout): void => {
-      dispatch(changeLinkLayout(newLayout));
-    },
-    [dispatch]
-  );
-
-  const updateArchiveState = useCallback(
-    (newArchiveState: ArchiveState): void => {
-      dispatch(changeArchiveState(newArchiveState));
-    },
-    [dispatch]
-  );
-
-  const updateSortBy = useCallback(
-    (newSortBy: SortBy) => {
-      dispatch(changeSortBy(newSortBy));
-    },
-    [dispatch]
-  );
 
   const content = [];
   let primaryActions = null;
@@ -197,48 +162,14 @@ const NotesPage: React.FC = () => {
 
     if (
       matchedNotes.length === 0 &&
-      (searchQuery || archivedMatchedNotesCount > 0)
+      notesQuery.state === DataState.DATA &&
+      notesQuery.data.notes.length > 0
     ) {
       content.push(
-        <EmptyPageInfo
+        <NotesPageEmpty
           key="empty-search-filter"
-          icon={ScreenSearchDesktop}
-          title="Nothing matches your search or filters."
-          subtitle={
-            <>
-              Did you know you can use{' '}
-              <Shortcut ctrlOrCommand>
-                {process.env.TARGET === 'web' ? 'K' : 'F'}
-              </Shortcut>{' '}
-              to focus the search field?
-            </>
-          }
-          actions={
-            <>
-              {searchQuery && (
-                <Button
-                  variant="outlined"
-                  onClick={() => dispatch(changeSearchQuery(''))}
-                >
-                  Reset search
-                </Button>
-              )}
-              {archivedMatchedNotesCount > 0 && (
-                <Button
-                  variant="outlined"
-                  onClick={() =>
-                    dispatch(changeArchiveState(ArchiveState.BOTH))
-                  }
-                >
-                  Include{' '}
-                  {archiveState === ArchiveState.NO_ARCHIVE
-                    ? 'archive'
-                    : 'not archived'}
-                </Button>
-              )}
-            </>
-          }
-        ></EmptyPageInfo>
+          archivedMatchedNotesCount={archivedMatchedNotesCount}
+        />
       );
     } else {
       content.push(
@@ -260,18 +191,8 @@ const NotesPage: React.FC = () => {
 
     primaryActions = (
       <NotesMenu
-        archiveState={archiveState}
-        onChangeSearchQuery={(value: string): void => {
-          dispatch(changeSearchQuery(value));
-        }}
-        layout={layout}
-        updateLayout={updateLayout}
         matchedNotes={matchedNotes}
-        updateArchiveState={updateArchiveState}
-        sortBy={sortBy}
-        updateSortBy={updateSortBy}
         notes={allNotes}
-        searchQuery={searchQuery}
         searchInput={searchInput}
         archivedMatchedNotesCount={archivedMatchedNotesCount}
       />

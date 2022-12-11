@@ -1,7 +1,10 @@
 import { ApolloError } from '@apollo/client';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { ArchiveState, SortBy } from '../actions/userInterface';
 import { NotesForListQuery } from '../generated/graphql';
+import { RootState } from '../reducers';
+import { UserInterfaceStateType } from '../reducers/userInterface';
 import {
   DataState,
   SelectedApolloQueryResultFields,
@@ -79,11 +82,13 @@ const sortByToFieldName: {
 };
 
 const useFilteredNotes = (
-  notesQuery: UseDataStateResult<NotesForListQuery, undefined>,
-  searchQuery: string,
-  archiveState: ArchiveState,
-  sortBy: SortBy
+  notesQuery: UseDataStateResult<NotesForListQuery, undefined>
 ): PolicedFilteredNotes => {
+  const { archiveState, sortBy, searchQuery } = useSelector<
+    RootState,
+    UserInterfaceStateType
+  >((state) => state.userInterface);
+
   const [isFilteringNotes, setIsFilteringNotes] = useState(false);
   const [filteredNotes, setFilteredNotes] =
     useState<null | FilteredNotesAndAllNotes>(null);

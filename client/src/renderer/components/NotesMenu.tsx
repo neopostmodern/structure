@@ -14,12 +14,24 @@ import {
   InputAdornment,
   InputLabel,
 } from '@mui/material';
-import { useCallback } from 'react';
-import { ArchiveState, LinkLayout, SortBy } from '../actions/userInterface';
+import { Ref, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  ArchiveState,
+  changeArchiveState,
+  changeLinkLayout,
+  changeSearchQuery,
+  changeSortBy,
+  LinkLayout,
+  SortBy,
+} from '../actions/userInterface';
 import NoteCount from '../containers/NotesPage/NoteCount';
+import { NotesForListQuery } from '../generated/graphql';
+import { RootState } from '../reducers';
 import {
   DEFAULT_ARCHIVE_STATE,
   DEFAULT_SORT_BY,
+  UserInterfaceStateType,
 } from '../reducers/userInterface';
 import {
   archiveStateToName,
@@ -29,23 +41,60 @@ import {
 import { Menu, MenuSearchFieldContainer } from './Menu';
 import NotesMenuButton from './NotesMenuButton';
 
+interface NotesMenuProps {
+  notes: NotesForListQuery['notes'];
+  matchedNotes: NotesForListQuery['notes'];
+  archivedMatchedNotesCount: number | undefined;
+  searchInput: Ref<HTMLInputElement>;
+}
+
 const NotesMenu = ({
   notes,
-  updateLayout,
-  archiveState,
-  updateArchiveState,
-  sortBy,
-  updateSortBy,
-  layout,
-  searchQuery,
-  onChangeSearchQuery,
   matchedNotes,
   archivedMatchedNotesCount,
   searchInput,
-}) => {
+}: NotesMenuProps) => {
+  const {
+    linkLayout: layout,
+    archiveState,
+    sortBy,
+    searchQuery,
+  } = useSelector<RootState, UserInterfaceStateType>(
+    (state) => state.userInterface
+  );
+
+  const dispatch = useDispatch();
+
+  const onChangeSearchQuery = useCallback(
+    (value: string): void => {
+      dispatch(changeSearchQuery(value));
+    },
+    [dispatch]
+  );
   const handleClearSearchText = useCallback(
     (): void => onChangeSearchQuery(''),
     [onChangeSearchQuery]
+  );
+
+  const handleChangeLayout = useCallback(
+    (newLayout: LinkLayout): void => {
+      dispatch(changeLinkLayout(newLayout));
+    },
+    [dispatch]
+  );
+
+  const handleChangeArchiveState = useCallback(
+    (newArchiveState: ArchiveState): void => {
+      dispatch(changeArchiveState(newArchiveState));
+    },
+    [dispatch]
+  );
+
+  const handleChangeSortBy = useCallback(
+    (newSortBy: SortBy) => {
+      dispatch(changeSortBy(newSortBy));
+    },
+    [dispatch]
   );
 
   return (
@@ -54,14 +103,14 @@ const NotesMenu = ({
         icons={[<List />, <ViewList />]}
         options={Object.values(LinkLayout)}
         optionToName={layoutToName}
-        onSelectOption={updateLayout}
+        onSelectOption={handleChangeLayout}
         value={layout}
       />
       <NotesMenuButton
         icon={<FilterAlt />}
         options={Object.values(ArchiveState)}
         optionToName={archiveStateToName}
-        onSelectOption={updateArchiveState}
+        onSelectOption={handleChangeArchiveState}
         value={archiveState}
         defaultValue={DEFAULT_ARCHIVE_STATE}
       />
@@ -69,7 +118,7 @@ const NotesMenu = ({
         icon={<Sort />}
         options={Object.values(SortBy)}
         optionToName={sortByToName}
-        onSelectOption={updateSortBy}
+        onSelectOption={handleChangeSortBy}
         value={sortBy}
         defaultValue={DEFAULT_SORT_BY}
       />
