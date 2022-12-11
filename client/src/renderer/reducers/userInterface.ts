@@ -3,6 +3,7 @@ import {
   CHANGE_ARCHIVE_STATE,
   CHANGE_LINK_LAYOUT,
   CHANGE_SEARCH_QUERY,
+  CHANGE_SORT_BY,
   CHANGE_TAGS_LAYOUT,
   CLEAR_CLIPBOARD,
   COMPLETE_LOGIN,
@@ -13,6 +14,7 @@ import {
   SET_BATCH_SELECTED,
   SET_BATCH_SELECTION,
   SET_CLIPBOARD,
+  SortBy,
   TagsLayout,
   TOGGLE_BATCH_EDITING,
 } from '../actions/userInterface';
@@ -26,6 +28,7 @@ export interface UserInterfaceStateType {
   linkLayout: LinkLayout;
   tagsLayout: TagsLayout;
   archiveState: ArchiveState;
+  sortBy: SortBy;
   searchQuery: string;
   infiniteScrollLimit: number;
   batchEditing: boolean;
@@ -43,6 +46,7 @@ const initialState: UserInterfaceStateType = {
   linkLayout: LinkLayout.LIST_LAYOUT,
   tagsLayout: TagsLayout.CHAOS_LAYOUT,
   archiveState: ArchiveState.NO_ARCHIVE,
+  sortBy: SortBy.UPDATED_AT,
   searchQuery: '',
   infiniteScrollLimit: 15,
   batchEditing: false,
@@ -66,6 +70,8 @@ const links = (
       return { ...state, tagsLayout: action.payload };
     case CHANGE_ARCHIVE_STATE:
       return { ...state, archiveState: action.payload };
+    case CHANGE_SORT_BY:
+      return { ...state, sortBy: action.payload };
     case CHANGE_SEARCH_QUERY:
       return { ...state, searchQuery: action.payload };
     case INCREASE_INFINITE_SCROLL:

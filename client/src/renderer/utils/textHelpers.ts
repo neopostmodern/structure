@@ -1,4 +1,4 @@
-import { ArchiveState, LinkLayout } from '../actions/userInterface';
+import { ArchiveState, LinkLayout, SortBy } from '../actions/userInterface';
 
 export const layoutToName = (layout: LinkLayout): string => {
   switch (layout) {
@@ -20,6 +20,15 @@ export const archiveStateToName = (archiveState: ArchiveState): string => {
     default:
       console.error('Unkown layout', archiveState);
       return 'Unknown layout';
+  }
+};
+
+export const sortByToName = (sortBy: SortBy): string => {
+  switch (sortBy) {
+    case SortBy.CREATED_AT:
+      return 'Recently created first';
+    case SortBy.UPDATED_AT:
+      return 'Recently updated first';
   }
 };
 

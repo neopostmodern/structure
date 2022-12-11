@@ -15,6 +15,10 @@ export enum ArchiveState {
   ONLY_ARCHIVE = 'ONLY_ARCHIVE',
   BOTH = 'BOTH',
 }
+export enum SortBy {
+  CREATED_AT = 'CREATED_AT',
+  UPDATED_AT = 'UPDATED_AT',
+}
 
 export const REQUEST_LOGIN = 'REQUEST_LOGIN';
 export const COMPLETE_LOGIN = 'COMPLETE_LOGIN';
@@ -22,6 +26,7 @@ export const REQUEST_LOGOUT = 'REQUEST_LOGOUT';
 export const CHANGE_LINK_LAYOUT = 'CHANGE_LINK_LAYOUT';
 export const CHANGE_TAGS_LAYOUT = 'CHANGE_TAGS_LAYOUT';
 export const CHANGE_ARCHIVE_STATE = 'CHANGE_ARCHIVE_STATE';
+export const CHANGE_SORT_BY = 'CHANGE_SORT_BY';
 export const CHANGE_SEARCH_QUERY = 'CHANGE_SEARCH_QUERY';
 export const INCREASE_INFINITE_SCROLL = 'INCREASE_INFINITE_SCROLL';
 export const TOGGLE_BATCH_EDITING = 'TOGGLE_BATCH_EDITING';
@@ -62,6 +67,12 @@ export function changeArchiveState(archiveState: ArchiveState) {
   return {
     type: CHANGE_ARCHIVE_STATE,
     payload: archiveState,
+  };
+}
+export function changeSortBy(sortBy: SortBy) {
+  return {
+    type: CHANGE_SORT_BY,
+    payload: sortBy,
   };
 }
 export function changeSearchQuery(query: string) {

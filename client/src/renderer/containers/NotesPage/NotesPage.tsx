@@ -2,7 +2,7 @@ import { gql, useQuery } from '@apollo/client';
 import { ScreenSearchDesktop } from '@mui/icons-material';
 import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 import Mousetrap from 'mousetrap';
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import {
@@ -10,8 +10,10 @@ import {
   changeArchiveState,
   changeLinkLayout,
   changeSearchQuery,
+  changeSortBy,
   increaseInfiniteScroll,
   LinkLayout,
+  SortBy,
 } from '../../actions/userInterface';
 import Centered from '../../components/Centered';
 import EmptyPageInfo from '../../components/EmptyPageInfo';
@@ -69,6 +71,7 @@ const NotesPage: React.FC = () => {
   const {
     linkLayout: layout,
     archiveState,
+    sortBy,
     searchQuery,
     infiniteScrollLimit,
   } = useSelector<RootState, UserInterfaceStateType>(
@@ -85,7 +88,8 @@ const NotesPage: React.FC = () => {
   const filteredNotesQueryWrapper = useFilteredNotes(
     notesQuery,
     searchQuery,
-    archiveState
+    archiveState,
+    sortBy
   );
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince();
@@ -144,6 +148,14 @@ const NotesPage: React.FC = () => {
         console.error('Unknown layout', archiveState);
     }
   };
+
+  const toggleSortBy = useCallback(() => {
+    if (sortBy === SortBy.CREATED_AT) {
+      dispatch(changeSortBy(SortBy.UPDATED_AT));
+    } else {
+      dispatch(changeSortBy(SortBy.CREATED_AT));
+    }
+  }, [dispatch, sortBy]);
 
   const content = [];
   let primaryActions = null;
@@ -269,6 +281,8 @@ const NotesPage: React.FC = () => {
         toggleLayout={toggleLayout}
         matchedNotes={matchedNotes}
         nextArchiveState={nextArchiveState}
+        sortBy={sortBy}
+        toggleSortBy={toggleSortBy}
         notes={allNotes}
         searchQuery={searchQuery}
         searchInput={searchInput}

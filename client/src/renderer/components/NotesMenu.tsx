@@ -13,7 +13,11 @@ import {
 } from '@mui/material';
 import { useCallback } from 'react';
 import NoteCount from '../containers/NotesPage/NoteCount';
-import { archiveStateToName, layoutToName } from '../utils/textHelpers';
+import {
+  archiveStateToName,
+  layoutToName,
+  sortByToName,
+} from '../utils/textHelpers';
 import { Menu, MenuSearchFieldContainer } from './Menu';
 
 const NotesMenu = ({
@@ -21,6 +25,8 @@ const NotesMenu = ({
   toggleLayout,
   archiveState,
   nextArchiveState,
+  sortBy,
+  toggleSortBy,
   layout,
   searchQuery,
   onChangeSearchQuery,
@@ -40,6 +46,9 @@ const NotesMenu = ({
       </Button>
       <Button onClick={nextArchiveState} size="huge">
         {archiveStateToName(archiveState)}
+      </Button>
+      <Button onClick={toggleSortBy} size="huge">
+        {sortByToName(sortBy)}
       </Button>
       <MenuSearchFieldContainer>
         <FormControl variant="standard" sx={{ width: '100%' }}>

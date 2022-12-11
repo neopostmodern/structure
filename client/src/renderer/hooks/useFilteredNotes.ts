@@ -1,6 +1,6 @@
 import { ApolloError } from '@apollo/client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArchiveState } from '../actions/userInterface';
+import { ArchiveState, SortBy } from '../actions/userInterface';
 import { NotesForListQuery } from '../generated/graphql';
 import {
   DataState,
@@ -71,10 +71,18 @@ type PolicedFilteredNotes =
       loadingBackground: boolean;
     };
 
+const sortByToFieldName: {
+  [sortBy in SortBy]: keyof NotesForListQuery['notes'][number];
+} = {
+  [SortBy.CREATED_AT]: 'createdAt',
+  [SortBy.UPDATED_AT]: 'updatedAt',
+};
+
 const useFilteredNotes = (
   notesQuery: UseDataStateResult<NotesForListQuery, undefined>,
   searchQuery: string,
-  archiveState: ArchiveState
+  archiveState: ArchiveState,
+  sortBy: SortBy
 ): PolicedFilteredNotes => {
   const [isFilteringNotes, setIsFilteringNotes] = useState(false);
   const [filteredNotes, setFilteredNotes] =
@@ -86,9 +94,12 @@ const useFilteredNotes = (
     }
 
     const notes = [...notesQuery.data.notes]; // unfreeze
-    notes.sort((noteA, noteB) => noteB.createdAt - noteA.createdAt);
+    notes.sort(
+      (noteA, noteB) =>
+        noteB[sortByToFieldName[sortBy]] - noteA[sortByToFieldName[sortBy]]
+    );
     return notes;
-  }, ['data' in notesQuery && notesQuery.data]);
+  }, ['data' in notesQuery && notesQuery.data, sortBy]);
 
   useEffect(() => {
     if (!allNotes) {
