@@ -187,6 +187,7 @@
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.178",
+    "@types/mousetrap": "^1.6.11",
     "@types/node": "17.0.5",
     "@types/react": "^18.0.16",
     "@types/react-dom": "^18.0.6",
