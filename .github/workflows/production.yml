@@ -23,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up node / npm with caching
-        uses: actions/checkout@v3
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
@@ -51,7 +51,7 @@ jobs:
       - name: Pack setup
         run: tar cf setup.tar *
       - name: Store setup (as artifact)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: setup-${{ matrix.os }}
           retention-days: 1
@@ -63,7 +63,7 @@ jobs:
     needs: [setup]
     steps:
       - name: Download setup (from artifact)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: setup-ubuntu-latest
       - name: Unpack setup
@@ -88,7 +88,7 @@ jobs:
     needs: [setup]
     steps:
       - name: Download setup (from artifact)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: setup-${{ matrix.os }}
       - name: Unpack setup
@@ -111,7 +111,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Download setup (from artifact)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: setup-ubuntu-latest
       - name: Unpack setup
