@@ -1,7 +1,7 @@
 {
   "name": "@structure/client",
   "description": "Frontend (desktop and web app) for the Structure bookmarking software",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "main": "src/main/main.ts",
   "directories": {
     "lib": "lib",
