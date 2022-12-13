@@ -14,6 +14,11 @@ export const REMOVE_TAG_MUTATION = gql`
           _id
           name
           color
+          notes {
+            ... on INote {
+              _id
+            }
+          }
         }
       }
     }
