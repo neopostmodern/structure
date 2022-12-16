@@ -23,10 +23,15 @@ Mousetrap.bindGlobal(['ctrl+n', 'command+n'], () => {
   history.push('/notes/add');
 });
 Mousetrap.bindGlobal(['n'], (event: KeyboardEvent) => {
-  // @ts-ignore
-  if (event.target?.nodeName === 'INPUT') {
+  if (
+    // @ts-ignore
+    event.target?.nodeName === 'INPUT' ||
+    // @ts-ignore
+    event.target?.nodeName === 'TEXTAREA'
+  ) {
     return;
   }
+  event.preventDefault();
   history.push('/notes/add');
 });
 if (process.env.TARGET !== 'web') {
