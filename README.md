@@ -1,3 +1,7 @@
+<p align="center">
+<img alt='Structure icon' src='./client/assets/icon.svg' height='100px' />
+</p>
+
 # Structure
 Structure is a knowledge management tool.   
 It provides a fast approach to storing and retrieving thousands of informations. 
