@@ -5,6 +5,7 @@ import useDeleteNote from '../hooks/useDeleteNote';
 import useToggleArchivedNote from '../hooks/useToggleArchivedNote';
 import { DateOrTimestamp, dateToShortISO8601 } from '../utils/textHelpers';
 import DeleteNoteTrigger from './DeleteNoteTrigger';
+import EntityMetadata from './EntityMetadata';
 import { Menu } from './Menu';
 
 const NotePageMenu = ({
@@ -13,7 +14,12 @@ const NotePageMenu = ({
   note: {
     _id: string;
     name: string;
+    createdAt: DateOrTimestamp;
+    updatedAt: DateOrTimestamp;
     archivedAt?: DateOrTimestamp | null;
+    user: {
+      name: string;
+    };
   };
 }) => {
   const {
@@ -31,6 +37,7 @@ const NotePageMenu = ({
       {toggleArchivedNoteErrorSnackbar}
       {deleteLinkErrorSnackbar}
       <Menu>
+        <EntityMetadata entity={note} />
         <Tooltip title={note.archivedAt ? 'Unarchive note' : 'Archive note'}>
           <LoadingButton
             startIcon={<Archive />}
@@ -39,7 +46,7 @@ const NotePageMenu = ({
             endIcon={note.archivedAt ? <Replay /> : undefined}
           >
             {note.archivedAt
-              ? `Archived at ${dateToShortISO8601(note.archivedAt)}`
+              ? `Archived ${dateToShortISO8601(note.archivedAt)}`
               : 'Archive'}
           </LoadingButton>
         </Tooltip>

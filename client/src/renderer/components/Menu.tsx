@@ -23,16 +23,6 @@ export const Menu = styled.div<{
         }
       }
     `}
-
-  a,
-  button {
-    &:disabled,
-    &.disabled {
-      text-decoration: line-through;
-      color: gray;
-      cursor: default;
-    }
-  }
 `;
 
 export const StickyMenu = styled(Menu)`

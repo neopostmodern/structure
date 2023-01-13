@@ -321,7 +321,7 @@ export type LinkQueryVariables = Exact<{
 }>;
 
 
-export type LinkQuery = { __typename: 'Query', link: { __typename: 'Link', _id: string, createdAt: any, updatedAt: any, archivedAt?: any | null, url: string, name: string, description: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
+export type LinkQuery = { __typename: 'Query', link: { __typename: 'Link', _id: string, createdAt: any, updatedAt: any, archivedAt?: any | null, url: string, name: string, description: string, domain: string, user: { __typename: 'User', _id: string, name: string }, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
 
 export type UpdateLinkMutationVariables = Exact<{
   link: InputLink;
@@ -345,7 +345,7 @@ export type TagWithNotesQueryVariables = Exact<{
 }>;
 
 
-export type TagWithNotesQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', type: NoteType, _id: string, name: string, createdAt: any, archivedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | { __typename: 'Text', type: NoteType, _id: string, name: string, createdAt: any, archivedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | null> | null } };
+export type TagWithNotesQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, notes?: Array<{ __typename: 'Link', type: NoteType, _id: string, name: string, createdAt: any, archivedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | { __typename: 'Text', type: NoteType, _id: string, name: string, createdAt: any, archivedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | null> | null } };
 
 export type UpdateTagMutationVariables = Exact<{
   tag: InputTag;
@@ -378,7 +378,7 @@ export type TextQueryVariables = Exact<{
 }>;
 
 
-export type TextQuery = { __typename: 'Query', text: { __typename: 'Text', _id: string, createdAt: any, updatedAt: any, archivedAt?: any | null, name: string, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
+export type TextQuery = { __typename: 'Query', text: { __typename: 'Text', _id: string, createdAt: any, updatedAt: any, archivedAt?: any | null, name: string, description: string, user: { __typename: 'User', _id: string, name: string }, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
 
 export type UpdateTextMutationVariables = Exact<{
   text: InputText;
@@ -449,6 +449,8 @@ export type ProfileQueryVariables = Exact<{
 
 export type ProfileQuery = { __typename: 'Query', currentUser?: { __typename: 'User', _id: string, name: string } | null, versions: { __typename: 'Versions', current: string, minimum?: string | null } };
 
+export type BaseUserFragment = { __typename: 'User', _id: string, name: string };
+
 export type BaseTagFragment = { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, name: string, color: string };
 
 type BaseNote_Link_Fragment = { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }> };
@@ -489,6 +491,12 @@ export const UserCredentialsFragmentFragmentDoc = gql`
     bookmarklet
     rss
   }
+}
+    `;
+export const BaseUserFragmentDoc = gql`
+    fragment BaseUser on User {
+  _id
+  name
 }
     `;
 export const BaseTagFragmentDoc = gql`
@@ -678,6 +686,9 @@ export const LinkDocument = gql`
     createdAt
     updatedAt
     archivedAt
+    user {
+      ...BaseUser
+    }
     url
     name
     description
@@ -689,7 +700,7 @@ export const LinkDocument = gql`
     }
   }
 }
-    `;
+    ${BaseUserFragmentDoc}`;
 
 /**
  * __useLinkQuery__
@@ -841,6 +852,9 @@ export const TagWithNotesDocument = gql`
     query TagWithNotes($tagId: ID!) {
   tag(tagId: $tagId) {
     ...BaseTag
+    user {
+      ...BaseUser
+    }
     notes {
       ... on INote {
         type
@@ -862,7 +876,8 @@ export const TagWithNotesDocument = gql`
     }
   }
 }
-    ${BaseTagFragmentDoc}`;
+    ${BaseTagFragmentDoc}
+${BaseUserFragmentDoc}`;
 
 /**
  * __useTagWithNotesQuery__
@@ -1057,6 +1072,9 @@ export const TextDocument = gql`
     createdAt
     updatedAt
     archivedAt
+    user {
+      ...BaseUser
+    }
     name
     description
     tags {
@@ -1066,7 +1084,7 @@ export const TextDocument = gql`
     }
   }
 }
-    `;
+    ${BaseUserFragmentDoc}`;
 
 /**
  * __useTextQuery__

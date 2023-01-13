@@ -13,6 +13,13 @@ export const PROFILE_QUERY = gql`
   }
 `;
 
+export const BASE_USER_FRAGMENT = gql`
+  fragment BaseUser on User {
+    _id
+    name
+  }
+`;
+
 export const BASE_TAG_FRAGMENT = gql`
   fragment BaseTag on Tag {
     _id

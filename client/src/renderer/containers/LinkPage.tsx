@@ -15,6 +15,7 @@ import {
 } from '../generated/graphql';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
+import { BASE_USER_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
@@ -25,6 +26,9 @@ const LINK_QUERY = gql`
       createdAt
       updatedAt
       archivedAt
+      user {
+        ...BaseUser
+      }
       url
       name
       description
@@ -36,6 +40,7 @@ const LINK_QUERY = gql`
       }
     }
   }
+  ${BASE_USER_FRAGMENT}
 `;
 
 const UPDATE_LINK_MUTATION = gql`

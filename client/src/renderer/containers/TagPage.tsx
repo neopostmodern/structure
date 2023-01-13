@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
 import { goBack } from 'redux-first-history';
 import DeleteTagTrigger from '../components/DeleteTagTrigger';
+import EntityMetadata from '../components/EntityMetadata';
 import FatalApolloError from '../components/FatalApolloError';
 import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
@@ -20,7 +21,10 @@ import {
   UpdateTagMutationVariables,
 } from '../generated/graphql';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
-import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
+import {
+  BASE_TAG_FRAGMENT,
+  BASE_USER_FRAGMENT,
+} from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 import { TAGS_QUERY } from './TagsPage';
@@ -29,6 +33,10 @@ const TAG_QUERY = gql`
   query TagWithNotes($tagId: ID!) {
     tag(tagId: $tagId) {
       ...BaseTag
+
+      user {
+        ...BaseUser
+      }
 
       notes {
         ... on INote {
@@ -53,6 +61,7 @@ const TAG_QUERY = gql`
   }
 
   ${BASE_TAG_FRAGMENT}
+  ${BASE_USER_FRAGMENT}
 `;
 const UPDATE_TAG_MUTATION = gql`
   mutation UpdateTag($tag: InputTag!) {
@@ -180,6 +189,7 @@ const TagPage: FC = () => {
     <ComplexLayout
       secondaryActions={
         <Menu>
+          <EntityMetadata entity={tagQuery.data.tag} />
           <DeleteTagTrigger
             tag={tagQuery.data.tag}
             loading={deleteTagMutation.loading}

@@ -11,12 +11,15 @@ import {
   revokeCredential,
   submitLink,
 } from './methods.js'
-import { Link, Note, Tag, Text } from './mongo.js'
+import { Link, Note, Tag, Text, User } from './mongo.js'
 import schemaDefinition from './schema.js'
 
 const INoteResolvers = {
   async tags(note, args, context) {
     return Tag.find({ _id: { $in: note.tags } })
+  },
+  async user(note, args, context) {
+    return User.findById(note.user, { name: 1 })
   },
 }
 const typeEnumFixer = (notes) =>
@@ -56,6 +59,9 @@ const rootResolvers = {
         return tag.notes
       }
       return Note.find({ tags: tag, deletedAt: null }).then(typeEnumFixer)
+    },
+    async user(note, args, context) {
+      return User.findById(note.user)
     },
   },
   Query: {
