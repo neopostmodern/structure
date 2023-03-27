@@ -7,6 +7,7 @@ const { Schema } = mongoose
 
 await mongoose.connect(config.MONGO_URL)
 mongoose.set('debug', config.MONGOOSE_DEBUG)
+mongoose.set('strictQuery', 'throw')
 
 export const withBaseSchema = (schemaDefinition, schemaOptions = {}) => {
   return new Schema(schemaDefinition, { timestamps: true, ...schemaOptions })
