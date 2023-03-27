@@ -9,7 +9,7 @@ import express from 'express'
 import mongoSanitize from 'express-mongo-sanitize'
 import { createServer } from 'http'
 import { setUpGitHubLogin } from './githubLogin.js'
-import { migrateTo } from './migrationSystem.js'
+import migrationSystem from './migrationSystem.js'
 import { User } from './mongo.js'
 import { resolvers, typeDefs } from './resolvers.js'
 import restApi from './restApi.js'
@@ -96,7 +96,8 @@ const runExpressServer = async () => {
 }
 
 console.log('Running migrations...')
-migrateTo(6)
+migrationSystem
+  .migrateTo(6)
   .then(() => {
     console.log('Migrations complete.')
     runExpressServer()
