@@ -9,6 +9,7 @@
   "type": "module",
   "dependencies": {
     "@apollo/server": "^4.2.2",
+    "@apollo/server-plugin-landing-page-graphql-playground": "^4.0.0",
     "@graphql-tools/schema": "^9.0.12",
     "@structure/common": "file:../common",
     "@structure/config": "file:../config",

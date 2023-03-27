@@ -1,5 +1,7 @@
 import { ApolloServer } from '@apollo/server'
+import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground'
 import { expressMiddleware } from '@apollo/server/express4'
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
 import config from '@structure/config'
 import bodyParser from 'body-parser'
 import cors from 'cors'
@@ -59,11 +61,14 @@ const runExpressServer = async () => {
       )
       return formattedError
     },
-    playground: {
-      settings: {
-        'request.credentials': 'same-origin',
-      },
-    },
+    plugins: [
+      ApolloServerPluginLandingPageGraphQLPlayground({
+        settings: {
+          'request.credentials': 'same-origin',
+        },
+      }),
+      ApolloServerPluginLandingPageDisabled(),
+    ],
   })
 
   await apolloServer.start()
