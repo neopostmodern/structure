@@ -3,6 +3,7 @@ import ConnectMongoDbSession from 'connect-mongodb-session'
 import session from 'express-session'
 import passport from 'passport'
 import PassportGithub from 'passport-github'
+import { User } from './mongo.js'
 
 // named import isn't working at the moment
 const GitHubStrategy = PassportGithub.Strategy
@@ -14,7 +15,7 @@ const store = new MongoDBSession({
   collection: 'sessions',
 })
 
-export function setUpGitHubLogin(app, User) {
+export function setUpGitHubLogin(app) {
   if (!config.GITHUB_CLIENT_ID) {
     console.warn("GitHub client ID not passed; login won't work.") // eslint-disable-line no-console
     return
@@ -50,11 +51,14 @@ export function setUpGitHubLogin(app, User) {
     ),
   )
 
-  // todo: monitor if this is too resource heavy (it helps avoiding caching issues)
   passport.serializeUser((user, cb) => cb(null, user._id))
-  passport.deserializeUser((userId, cb) =>
-    User.findOne({ _id: userId }).then((user) => cb(null, user)),
-  )
+  passport.deserializeUser((userId, cb) => {
+    User.findById(userId)
+      .lean()
+      .then((user) => {
+        cb(null, user)
+      })
+  })
 
   app.use(
     session({

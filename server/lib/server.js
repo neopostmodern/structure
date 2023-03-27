@@ -10,7 +10,6 @@ import mongoSanitize from 'express-mongo-sanitize'
 import { createServer } from 'http'
 import { setUpGitHubLogin } from './githubLogin.js'
 import migrationSystem from './migrationSystem.js'
-import { User } from './mongo.js'
 import { resolvers, typeDefs } from './resolvers.js'
 import restApi from './restApi.js'
 
@@ -43,7 +42,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(mongoSanitize())
 app.use(cors(corsOptions))
-setUpGitHubLogin(app, User)
+setUpGitHubLogin(app)
 
 const runExpressServer = async () => {
   // todo: basic protection against malicious queries (e.g. body length)
