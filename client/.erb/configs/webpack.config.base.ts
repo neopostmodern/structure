@@ -43,14 +43,19 @@ export const createPluginsForPWA = ({
     'icons/maskable_192x192.png',
     'icons/maskable_512x512.png',
   ];
-  return [
-    new GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
-      maximumFileSizeToCacheInBytes: development ? 50000000 : undefined,
-      exclude: [/.*htaccess/, /.*LICENSE.*/],
-      navigateFallback: '/index.html',
-    }),
+  const plugins = [];
+  if (!development) {
+    plugins.push(
+      new GenerateSW({
+        clientsClaim: true,
+        skipWaiting: true,
+        maximumFileSizeToCacheInBytes: development ? 50000000 : undefined,
+        exclude: [/.*htaccess/, /.*LICENSE.*/],
+        navigateFallback: '/index.html',
+      })
+    );
+  }
+  plugins.push(
     new CopyWebpackPlugin({
       patterns: [...assetFileNames, ...additionalAssetFileNames].map(
         (assetFileName) => {
@@ -72,8 +77,10 @@ export const createPluginsForPWA = ({
           };
         }
       ),
-    }),
-  ];
+    })
+  );
+
+  return plugins;
 };
 
 const configuration: webpack.Configuration = {
