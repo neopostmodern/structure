@@ -45,6 +45,41 @@ app.use(cors(corsOptions))
 setUpGitHubLogin(app)
 
 const runExpressServer = async () => {
+  const apolloPlugins = [ApolloServerPluginLandingPageDisabled()]
+  if (config.CHANNEL) {
+    apolloPlugins.unshift(
+      ApolloServerPluginLandingPageGraphQLPlayground({
+        settings: {
+          'request.credentials': 'same-origin',
+        },
+      }),
+    )
+    apolloPlugins.push({
+      requestDidStart(requestContext) {
+        const start = new Date()
+
+        return {
+          willSendResponse(responseContext) {
+            const responseTime = new Date() - start
+            const responseSize = (
+              (JSON.stringify(responseContext.response).length * 2) /
+              1024
+            ).toFixed(1)
+            console.log(
+              `\x1b[33mApollo:\x1b[0m ${
+                requestContext.operation?.operation || 'UNKNOWN'
+              } ${requestContext.operationName || 'UNNAMED'} (${
+                requestContext.contextValue.user?.name || 'ANONYMOUS'
+              }) - ${
+                responseContext.errors ? '\x1b[31mERROR' : '\x1b[32mOKAY'
+              }\x1b[0m - \x1b[34m${responseSize}kB - ${responseTime}ms\x1b[0m`,
+            )
+          },
+        }
+      },
+    })
+  }
+
   // todo: basic protection against malicious queries (e.g. body length)
   const apolloServer = new ApolloServer({
     typeDefs,
@@ -54,20 +89,14 @@ const runExpressServer = async () => {
     },
     formatError: (formattedError) => {
       console.error(
-        '[Apollo Error]',
-        formattedError,
-        formattedError.extensions.stacktrace,
+        `[Apollo Error] ${formattedError.message} @ ${
+          formattedError.path?.join('.') || 'NO PATH'
+        }\n `,
+        formattedError.extensions.stacktrace.join('\n'),
       )
       return formattedError
     },
-    plugins: [
-      ApolloServerPluginLandingPageGraphQLPlayground({
-        settings: {
-          'request.credentials': 'same-origin',
-        },
-      }),
-      ApolloServerPluginLandingPageDisabled(),
-    ],
+    plugins: apolloPlugins,
   })
 
   await apolloServer.start()
