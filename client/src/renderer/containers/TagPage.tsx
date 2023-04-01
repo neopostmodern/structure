@@ -6,6 +6,7 @@ import { useParams } from 'react-router';
 import { goBack } from 'redux-first-history';
 import DeleteTagTrigger from '../components/DeleteTagTrigger';
 import EntityMetadata from '../components/EntityMetadata';
+import ErrorSnackbar from '../components/ErrorSnackbar';
 import FatalApolloError from '../components/FatalApolloError';
 import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
@@ -198,6 +199,12 @@ const TagPage: FC = () => {
         </Menu>
       }
     >
+      <ErrorSnackbar
+        error={deleteTagMutation.error}
+        actionDescription="delete tag"
+        retry={handleDeleteTag}
+      />
+
       <NetworkOperationsIndicator
         query={tagQuery}
         mutation={updateTagMutation}
