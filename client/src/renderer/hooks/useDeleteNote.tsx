@@ -2,12 +2,11 @@ import { gql, useMutation } from '@apollo/client';
 import { useDispatch } from 'react-redux';
 import { push } from 'redux-first-history';
 import ErrorSnackbar from '../components/ErrorSnackbar';
-import { NOTES_QUERY } from '../containers/NotesPage/NotesPage';
 import {
-  NotesForListQuery,
   ToggleDeletedNoteMutation,
   ToggleDeletedNoteMutationVariables,
 } from '../generated/graphql';
+import { removeNoteFromCache } from '../utils/cache';
 
 const TOGGLE_DELETED_NOTE_MUTATION = gql`
   mutation ToggleDeletedNote($noteId: ID!) {
@@ -33,22 +32,11 @@ const useDeleteNote = (note: { _id: string }) => {
       if (!data) {
         throw Error('[useDeletedLink.update] No data returned from mutation');
       }
-      const cacheData = cache.readQuery<NotesForListQuery>({
-        query: NOTES_QUERY,
-      });
-      if (!cacheData) {
-        throw Error('[useDeletedLink.update] No data returned from cache');
-      }
-      const { notes } = cacheData;
       if (!data.toggleDeletedNote.deletedAt) {
         throw Error("[useDeletedLink.update] Can't handle un-delete yet.");
       }
-      cache.writeQuery({
-        query: NOTES_QUERY,
-        data: {
-          notes: notes.filter(({ _id }) => _id !== data.toggleDeletedNote._id),
-        },
-      });
+
+      removeNoteFromCache(cache, data.toggleDeletedNote);
     },
   });
 
