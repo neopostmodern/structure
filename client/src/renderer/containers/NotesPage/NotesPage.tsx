@@ -109,6 +109,16 @@ const NotesPage: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    Mousetrap.bind('r', () => {
+      entitiesUpdatedSince.refetch();
+    });
+
+    return () => {
+      Mousetrap.unbind('r');
+    };
+  }, [entitiesUpdatedSince]);
+
   const content = [];
   let primaryActions = null;
 
