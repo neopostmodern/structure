@@ -327,6 +327,39 @@ const rootResolvers = {
 
       return tag
     },
+    async updatePermissionOnTag(
+      root,
+      { tagId, userId, resource, mode, granted },
+      { user },
+    ) {
+      if (!user) {
+        throw new Error('Need to be logged in to update permissions.')
+      }
+
+      const tag = await Tag.findOne({
+        _id: tagId,
+        ...baseTagsQuery(user, 'share'),
+      })
+      if (!tag) {
+        throw new Error('No such tag or no sufficient privileges.')
+      }
+
+      const userPermissions = tag.permissions.get(userId)
+      if (!userPermissions) {
+        throw new Error(
+          'Cannot update permissions for user with no previous permissions.',
+        )
+      }
+
+      if (typeof userPermissions[resource]?.[mode] === 'undefined') {
+        throw new Error(`No such permission: ${resource}.${mode}`)
+      }
+
+      userPermissions[resource][mode] = granted
+      tag.permissions.set(userId, userPermissions)
+
+      return tag.save()
+    },
     submitLink(root, { url, title, description }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to submit links.')

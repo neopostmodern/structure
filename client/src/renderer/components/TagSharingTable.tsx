@@ -1,3 +1,4 @@
+import { gql, useMutation } from '@apollo/client';
 import {
   Edit,
   LocalOffer,
@@ -5,82 +6,215 @@ import {
   Share,
   Visibility,
 } from '@mui/icons-material';
-import { Tooltip } from '@mui/material';
+import {
+  CircularProgress,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+} from '@mui/material';
+import { MouseEvent, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { TagsQuery } from '../generated/graphql';
+import {
+  TagsQuery,
+  UpdatePermissionOnTagMutation,
+  UpdatePermissionOnTagMutationVariables,
+} from '../generated/graphql';
+import ErrorSnackbar from './ErrorSnackbar';
+import { FORM_SUBHEADER_STYLES } from './formComponents';
 
-const VerticalSpaceCell = styled.td`
-  width: 1em;
+const PermissionsTable = styled.table`
+  thead {
+    ${FORM_SUBHEADER_STYLES}
+  }
+  td:not(:last-of-type) {
+    border-right: transparent 1em solid;
+  }
 `;
 
 type TagType = TagsQuery['tags'][number];
 
-const TagSharingTable = ({ tag }: { tag: TagType }) => {
+const permissionsObjectToGrantedLabels = (
+  permissions:
+    | {
+        [mode: string]: boolean;
+      }
+    | {
+        __typename?: string;
+      }
+): Array<string> =>
+  Object.entries(permissions)
+    .filter(([mode, granted]) => mode !== '__typename' && granted)
+    .map(([mode]) => mode);
+
+const UPDATE_PERMISSION_ON_TAG_MUTATION = gql`
+  mutation UpdatePermissionOnTag(
+    $tagId: ID!
+    $userId: ID!
+    $resource: String!
+    $mode: String!
+    $granted: Boolean!
+  ) {
+    updatePermissionOnTag(
+      tagId: $tagId
+      userId: $userId
+      resource: $resource
+      mode: $mode
+      granted: $granted
+    ) {
+      _id
+      updatedAt
+      permissions {
+        user {
+          _id
+        }
+        tag {
+          read
+          write
+          use
+          share
+        }
+        notes {
+          read
+          write
+        }
+      }
+    }
+  }
+`;
+
+const TagSharingTable = ({
+  tag,
+  readOnly = false,
+}: {
+  tag: TagType;
+  readOnly?: boolean;
+}) => {
+  const [updatePermissionOnTag, updatePermissionOnTagMutation] = useMutation<
+    UpdatePermissionOnTagMutation,
+    UpdatePermissionOnTagMutationVariables
+  >(UPDATE_PERMISSION_ON_TAG_MUTATION);
+  const [mutationActiveOnUserId, setMutationActiveOnUserId] = useState<
+    string | null
+  >();
+
+  const handlePermissionsChange = useCallback(
+    (event: MouseEvent<HTMLElement>, newPermissions: Array<string>) => {
+      const { resource, userId } = (
+        event.currentTarget.parentNode! as HTMLDivElement
+      ).dataset;
+      const mode = (event.currentTarget as HTMLButtonElement).value;
+      const granted = newPermissions.includes(mode);
+
+      (async () => {
+        try {
+          setMutationActiveOnUserId(userId);
+          await updatePermissionOnTag({
+            variables: {
+              tagId: tag._id,
+              userId: userId!,
+              resource: resource!,
+              mode,
+              granted,
+            },
+          });
+        } catch (error) {
+          console.error('[TagSharingTable.handlePermissionsChange]', error);
+        } finally {
+          setMutationActiveOnUserId(null);
+        }
+      })();
+    },
+    [setMutationActiveOnUserId, updatePermissionOnTag]
+  );
+
   if (!tag.permissions || tag.permissions.length === 1) {
-    return 'This tag is not shared with anybody yet';
+    return <div>This tag is not shared with anybody yet</div>;
   }
 
   return (
-    <table>
-      <tbody>
-        {tag.permissions.map((permission) => (
-          <tr key={permission.user._id}>
-            <td>{permission.user.name}</td>
-            <VerticalSpaceCell />
-            <td>
-              {tag.user._id === permission.user._id && (
-                <Tooltip title="Creator">
-                  <Person />
-                </Tooltip>
-              )}
-            </td>
-            <td>
-              {permission.tag.read && (
-                <Tooltip title="See tag">
-                  <Visibility />
-                </Tooltip>
-              )}
-            </td>
-            <td>
-              {permission.tag.write && (
-                <Tooltip title="Edit tag">
-                  <Edit />
-                </Tooltip>
-              )}
-            </td>
-            <td>
-              {permission.tag.use && (
-                <Tooltip title="Use tag">
-                  <LocalOffer />
-                </Tooltip>
-              )}
-            </td>
-            <td>
-              {permission.tag.share && (
-                <Tooltip title="Share tag">
-                  <Share />
-                </Tooltip>
-              )}
-            </td>
-            <VerticalSpaceCell />
-            <td>
-              {permission.notes.read && (
-                <Tooltip title="See tagged notes">
-                  <Visibility />
-                </Tooltip>
-              )}
-            </td>
-            <td>
-              {permission.notes.write && (
-                <Tooltip title="Edit tagged notes">
-                  <Edit />
-                </Tooltip>
-              )}
-            </td>
+    <>
+      <ErrorSnackbar
+        error={updatePermissionOnTagMutation.error}
+        actionDescription="Update tag permission"
+      />
+      <PermissionsTable>
+        <thead>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>Tag</td>
+            <td>Tagged notes</td>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {tag.permissions.map((permission) => (
+            <tr key={permission.user._id}>
+              <td>{permission.user.name}</td>
+              <td>
+                {tag.user._id === permission.user._id && (
+                  <Tooltip title="Creator">
+                    <Person />
+                  </Tooltip>
+                )}
+              </td>
+              <td>
+                <ToggleButtonGroup
+                  value={permissionsObjectToGrantedLabels(permission.tag)}
+                  onChange={handlePermissionsChange}
+                  data-resource="tag"
+                  data-user-id={permission.user._id}
+                >
+                  <ToggleButton value="read" disabled>
+                    <Tooltip title="See tag">
+                      <Visibility />
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton value="write" disabled={readOnly}>
+                    <Tooltip title="Edit tag">
+                      <Edit />
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton value="use" disabled={readOnly}>
+                    <Tooltip title="Use tag">
+                      <LocalOffer />
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton value="share" disabled={readOnly}>
+                    <Tooltip title="Share tag">
+                      <Share />
+                    </Tooltip>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </td>
+              <td>
+                <ToggleButtonGroup
+                  value={permissionsObjectToGrantedLabels(permission.notes)}
+                  onChange={handlePermissionsChange}
+                  data-resource="notes"
+                  data-user-id={permission.user._id}
+                >
+                  <ToggleButton value="read" disabled>
+                    <Tooltip title="See tagged notes">
+                      <Visibility />
+                    </Tooltip>
+                  </ToggleButton>
+                  <ToggleButton value="write" disabled={readOnly}>
+                    <Tooltip title="Edit tagged notes">
+                      <Edit />
+                    </Tooltip>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </td>
+              <td>
+                {mutationActiveOnUserId === permission.user._id && (
+                  <CircularProgress size="1.2em" disableShrink />
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </PermissionsTable>
+    </>
   );
 };
 

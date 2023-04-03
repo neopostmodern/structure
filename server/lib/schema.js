@@ -185,6 +185,13 @@ export default gql`
     createTag(name: String!, color: String): Tag!
     updateTag(tag: InputTag!): Tag!
     permanentlyDeleteTag(tagId: ID!): Tag!
+    updatePermissionOnTag(
+      tagId: ID!
+      userId: ID!
+      resource: String!
+      mode: String!
+      granted: Boolean!
+    ): Tag!
 
     submitLink(url: String!, title: String, description: String): Link!
     updateLink(link: InputLink!): Link!

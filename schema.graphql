@@ -87,6 +87,7 @@ type Mutation {
   toggleArchivedNote(noteId: ID!): Note!
   toggleDeletedNote(noteId: ID!): Note!
   updateLink(link: InputLink!): Link!
+  updatePermissionOnTag(granted: Boolean!, mode: String!, resource: String!, tagId: ID!, userId: ID!): Tag!
   updateTag(tag: InputTag!): Tag!
   updateText(text: InputText!): Text!
 }

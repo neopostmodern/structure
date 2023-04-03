@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { TextField } from './CommonStyles';
 
 export const NameInput = styled(TextField)`
@@ -6,9 +6,12 @@ export const NameInput = styled(TextField)`
   padding-top: 0;
 `;
 
-export const FormSubheader = styled.div`
+export const FORM_SUBHEADER_STYLES = css`
   font-size: 80%;
   text-transform: uppercase;
   color: gray;
+`;
+export const FormSubheader = styled.div`
+  ${FORM_SUBHEADER_STYLES}
   margin-top: 0.5em;
 `;

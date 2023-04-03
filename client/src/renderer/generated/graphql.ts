@@ -107,6 +107,7 @@ export type Mutation = {
   toggleArchivedNote: Note;
   toggleDeletedNote: Note;
   updateLink: Link;
+  updatePermissionOnTag: Tag;
   updateTag: Tag;
   updateText: Text;
 };
@@ -170,6 +171,15 @@ export type MutationToggleDeletedNoteArgs = {
 
 export type MutationUpdateLinkArgs = {
   link: InputLink;
+};
+
+
+export type MutationUpdatePermissionOnTagArgs = {
+  granted: Scalars['Boolean'];
+  mode: Scalars['String'];
+  resource: Scalars['String'];
+  tagId: Scalars['ID'];
+  userId: Scalars['ID'];
 };
 
 
@@ -331,6 +341,17 @@ export type VisitedNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type VisitedNotesQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string } | { __typename: 'Text', _id: string, name: string }> };
+
+export type UpdatePermissionOnTagMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+  userId: Scalars['ID'];
+  resource: Scalars['String'];
+  mode: Scalars['String'];
+  granted: Scalars['Boolean'];
+}>;
+
+
+export type UpdatePermissionOnTagMutation = { __typename: 'Mutation', updatePermissionOnTag: { __typename: 'Tag', _id: string, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
 
 export type RemoveTagByIdFromNoteMutationVariables = Exact<{
   noteId: Scalars['ID'];
@@ -659,6 +680,64 @@ export function useVisitedNotesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type VisitedNotesQueryHookResult = ReturnType<typeof useVisitedNotesQuery>;
 export type VisitedNotesLazyQueryHookResult = ReturnType<typeof useVisitedNotesLazyQuery>;
 export type VisitedNotesQueryResult = Apollo.QueryResult<VisitedNotesQuery, VisitedNotesQueryVariables>;
+export const UpdatePermissionOnTagDocument = gql`
+    mutation UpdatePermissionOnTag($tagId: ID!, $userId: ID!, $resource: String!, $mode: String!, $granted: Boolean!) {
+  updatePermissionOnTag(
+    tagId: $tagId
+    userId: $userId
+    resource: $resource
+    mode: $mode
+    granted: $granted
+  ) {
+    _id
+    permissions {
+      user {
+        _id
+      }
+      tag {
+        read
+        write
+        use
+        share
+      }
+      notes {
+        read
+        write
+      }
+    }
+  }
+}
+    `;
+export type UpdatePermissionOnTagMutationFn = Apollo.MutationFunction<UpdatePermissionOnTagMutation, UpdatePermissionOnTagMutationVariables>;
+
+/**
+ * __useUpdatePermissionOnTagMutation__
+ *
+ * To run a mutation, you first call `useUpdatePermissionOnTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePermissionOnTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePermissionOnTagMutation, { data, loading, error }] = useUpdatePermissionOnTagMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      userId: // value for 'userId'
+ *      resource: // value for 'resource'
+ *      mode: // value for 'mode'
+ *      granted: // value for 'granted'
+ *   },
+ * });
+ */
+export function useUpdatePermissionOnTagMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePermissionOnTagMutation, UpdatePermissionOnTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePermissionOnTagMutation, UpdatePermissionOnTagMutationVariables>(UpdatePermissionOnTagDocument, options);
+      }
+export type UpdatePermissionOnTagMutationHookResult = ReturnType<typeof useUpdatePermissionOnTagMutation>;
+export type UpdatePermissionOnTagMutationResult = Apollo.MutationResult<UpdatePermissionOnTagMutation>;
+export type UpdatePermissionOnTagMutationOptions = Apollo.BaseMutationOptions<UpdatePermissionOnTagMutation, UpdatePermissionOnTagMutationVariables>;
 export const RemoveTagByIdFromNoteDocument = gql`
     mutation RemoveTagByIdFromNote($noteId: ID!, $tagId: ID!) {
   removeTagByIdFromNote(noteId: $noteId, tagId: $tagId) {
