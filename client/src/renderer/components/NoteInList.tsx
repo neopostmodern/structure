@@ -1,6 +1,7 @@
 import React from 'react';
 import TimeAgo from 'react-timeago';
 import { NotesForListQuery } from '../generated/graphql';
+import useUserId from '../hooks/useUserId';
 import * as Styled from './NoteInList.style';
 import NoteInListBatchEditing from './NoteInListBatchEditing';
 import NotesListActionMenu from './NotesListActionMenu';
@@ -11,6 +12,7 @@ export const NoteInList: React.FC<{
   note: NotesForListQuery['notes'][number];
   expanded: boolean;
 }> = ({ note, expanded }) => {
+  const userId = useUserId();
   return (
     <Styled.Note archived={Boolean(note.archivedAt)}>
       <NoteInListBatchEditing noteId={note._id} />
@@ -28,6 +30,11 @@ export const NoteInList: React.FC<{
               &gt;
             </Styled.NoteTypeBadge>
           )}
+          <Styled.UserContainer>
+            {note.user._id !== userId && (
+              <Styled.SmallUserAvatar user={note.user} />
+            )}
+          </Styled.UserContainer>
           <Styled.NoteAddedDate>
             <TimeAgo date={note.createdAt} />
           </Styled.NoteAddedDate>

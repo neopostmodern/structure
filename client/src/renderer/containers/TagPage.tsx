@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
+import { Typography } from '@mui/material';
 import gql from 'graphql-tag';
 import { FC, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -8,10 +9,12 @@ import DeleteTagTrigger from '../components/DeleteTagTrigger';
 import EntityMetadata from '../components/EntityMetadata';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import FatalApolloError from '../components/FatalApolloError';
+import Gap from '../components/Gap';
 import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotesList from '../components/NotesList';
 import TagForm, { TagInForm } from '../components/TagForm';
+import TagSharing from '../components/TagSharing';
 import {
   DeleteTagMutation,
   DeleteTagMutationVariables,
@@ -204,6 +207,12 @@ const TagPage: FC = () => {
       />
       <TagForm tag={tagQuery.data.tag} onSubmit={handleSubmit} />
 
+      <Gap vertical={2} />
+      <Typography variant="h2">Sharing</Typography>
+      <TagSharing tag={tagQuery.data.tag} />
+
+      <Gap vertical={2} />
+      <Typography variant="h2">Tagged notes</Typography>
       <NotesList notes={tagQuery.data.tag.notes} />
     </ComplexLayout>
   );

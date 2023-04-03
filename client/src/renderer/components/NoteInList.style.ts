@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import styled from 'styled-components';
 import { ExternalLink, InternalLink } from './CommonStyles';
+import UserAvatar from './UserAvatar';
 
 export const Note = styled.div<{ archived: boolean }>`
   margin-bottom: 2rem;
@@ -25,11 +26,21 @@ export const NoteTitleLink = styled(InternalLink)`
   text-overflow: ellipsis;
 `;
 
+export const UserContainer = styled.div`
+  margin-left: auto;
+  padding-left: 1em;
+  margin-top: 0.1rem;
+`;
+export const SmallUserAvatar = styled(UserAvatar)`
+  height: 1.8em;
+  width: 1.8em;
+  font-size: 80%;
+`;
+
 export const NoteAddedDate = styled.div`
   flex-shrink: 0;
 
   margin-top: 0.2rem;
-  margin-left: auto;
   padding-left: 0.5rem;
   color: gray;
   font-size: 80%;
