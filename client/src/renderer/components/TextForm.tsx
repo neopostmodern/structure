@@ -2,6 +2,7 @@ import { pick } from 'lodash';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { NotesForListQuery } from '../generated/graphql';
+import useHasPermission from '../hooks/useHasPermission';
 import useSyncForm from '../hooks/useSyncForm';
 import { OptionalReactComponent } from '../utils/types';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
@@ -45,11 +46,17 @@ const TextForm: React.FC<TextFormProps> = ({
 
   useSaveOnUnmount({ onSubmit, defaultValues }, formProps);
 
+  const onlyReadPermission = !useHasPermission(text, 'notes', 'write');
+
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formProps}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <NameInput type="text" {...register('name', { required: true })} />
+        <NameInput
+          type="text"
+          {...register('name', { required: true })}
+          readOnly={onlyReadPermission}
+        />
 
         {tagsComponent && (
           <>
@@ -59,7 +66,7 @@ const TextForm: React.FC<TextFormProps> = ({
         )}
         <Gap vertical={2} />
 
-        <MarkedTextarea name="description" />
+        <MarkedTextarea name="description" readOnly={onlyReadPermission} />
       </form>
     </FormProvider>
   );

@@ -1,9 +1,11 @@
 import { Archive, Replay } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import { Tooltip } from '@mui/material';
+import { LinkQuery, TextQuery } from '../generated/graphql';
 import useDeleteNote from '../hooks/useDeleteNote';
+import useHasPermission from '../hooks/useHasPermission';
 import useToggleArchivedNote from '../hooks/useToggleArchivedNote';
-import { DateOrTimestamp, dateToShortISO8601 } from '../utils/textHelpers';
+import { dateToShortISO8601 } from '../utils/textHelpers';
 import DeleteNoteTrigger from './DeleteNoteTrigger';
 import EntityMetadata from './EntityMetadata';
 import { Menu } from './Menu';
@@ -11,17 +13,10 @@ import { Menu } from './Menu';
 const NotePageMenu = ({
   note,
 }: {
-  note: {
-    _id: string;
-    name: string;
-    createdAt: DateOrTimestamp;
-    updatedAt: DateOrTimestamp;
-    archivedAt?: DateOrTimestamp | null;
-    user: {
-      name: string;
-    };
-  };
+  note: LinkQuery['link'] | TextQuery['text'];
 }) => {
+  const onlyReadPermission = !useHasPermission(note, 'notes', 'write');
+
   const {
     toggleArchivedNote,
     errorSnackbar: toggleArchivedNoteErrorSnackbar,
@@ -38,23 +33,29 @@ const NotePageMenu = ({
       {deleteLinkErrorSnackbar}
       <Menu>
         <EntityMetadata entity={note} />
-        <Tooltip title={note.archivedAt ? 'Unarchive note' : 'Archive note'}>
-          <LoadingButton
-            startIcon={<Archive />}
-            onClick={toggleArchivedNote}
-            loading={toggleArchivedNoteLoading}
-            endIcon={note.archivedAt ? <Replay /> : undefined}
-          >
-            {note.archivedAt
-              ? `Archived ${dateToShortISO8601(note.archivedAt)}`
-              : 'Archive'}
-          </LoadingButton>
-        </Tooltip>
-        <DeleteNoteTrigger
-          note={note}
-          loading={deleteLinkLoading}
-          deleteNote={deleteNote}
-        />
+        {!onlyReadPermission && (
+          <>
+            <Tooltip
+              title={note.archivedAt ? 'Unarchive note' : 'Archive note'}
+            >
+              <LoadingButton
+                startIcon={<Archive />}
+                onClick={toggleArchivedNote}
+                loading={toggleArchivedNoteLoading}
+                endIcon={note.archivedAt ? <Replay /> : undefined}
+              >
+                {note.archivedAt
+                  ? `Archived ${dateToShortISO8601(note.archivedAt)}`
+                  : 'Archive'}
+              </LoadingButton>
+            </Tooltip>
+            <DeleteNoteTrigger
+              note={note}
+              loading={deleteLinkLoading}
+              deleteNote={deleteNote}
+            />
+          </>
+        )}
       </Menu>
     </>
   );

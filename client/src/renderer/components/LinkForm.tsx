@@ -2,6 +2,7 @@ import { pick } from 'lodash';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { LinkQuery } from '../generated/graphql';
+import useHasPermission from '../hooks/useHasPermission';
 import useSyncForm from '../hooks/useSyncForm';
 import { isUrlValid } from '../utils/textHelpers';
 import { OptionalReactComponent } from '../utils/types';
@@ -34,6 +35,7 @@ const LinkForm: React.FC<LinkFormProps> = ({
   tagsComponent,
 }) => {
   const defaultValues = pick(link, linkFormFields);
+  const onlyReadPermission = !useHasPermission(link, 'notes', 'write');
 
   const formProps = useForm<LinkInForm>({
     defaultValues,
@@ -61,8 +63,13 @@ const LinkForm: React.FC<LinkFormProps> = ({
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formProps}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <LinkNameField url={watch('url')} name="name" linkId={link._id} />
-        <UrlField name="url" />
+        <LinkNameField
+          url={watch('url')}
+          name="name"
+          linkId={link._id}
+          readOnly={onlyReadPermission}
+        />
+        <UrlField name="url" readOnly={onlyReadPermission} />
 
         {tagsComponent && (
           <>
@@ -73,7 +80,7 @@ const LinkForm: React.FC<LinkFormProps> = ({
         <Gap vertical={2} />
 
         <FormSubheader>Description / notes</FormSubheader>
-        <MarkedTextarea name="description" />
+        <MarkedTextarea name="description" readOnly={onlyReadPermission} />
       </form>
     </FormProvider>
   );

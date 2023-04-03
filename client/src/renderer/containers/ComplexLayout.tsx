@@ -3,6 +3,7 @@ import { AccountCircle, LocalOffer, Settings } from '@mui/icons-material';
 import { CircularProgress, Stack } from '@mui/material';
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import UserIdContext from 'renderer/utils/UserIdContext';
 import packageJson from '../../../package.json';
 import Centered from '../components/Centered';
 import FatalApolloError from '../components/FatalApolloError';
@@ -54,9 +55,8 @@ const ComplexLayout: React.FC<
     (state) => state.userInterface.loggingIn
   );
   const wasUserLoggingIn = usePrevious(isUserLoggingIn);
-  const isLoggedIn =
-    profileQuery.state === DataState.DATA &&
-    profileQuery.data.currentUser?.name;
+  const isLoggedInThenUserId =
+    profileQuery.state === DataState.DATA && profileQuery.data.currentUser?._id;
 
   useEffect(() => {
     if (wasUserLoggingIn && !isUserLoggingIn) {
@@ -86,63 +86,65 @@ const ComplexLayout: React.FC<
           path: '/me',
           icon: <AccountCircle />,
         },
-      ].filter(({ path }) => isLoggedIn || path === '/settings'),
-    [isLoggedIn, profileQuery]
+      ].filter(({ path }) => isLoggedInThenUserId || path === '/settings'),
+    [isLoggedInThenUserId, profileQuery]
   );
 
   const online = useIsOnline();
 
   return (
-    <Styled.Container>
-      <Styled.Navigation>
-        <Navigation
-          drawerNavigationItems={
-            isDesktopLayout ? undefined : additionalNavigationItems
-          }
-        />
-      </Styled.Navigation>
-      <Styled.PrimaryContent wide={wide}>
-        {!online && (
-          <NetworkIndicatorContainer>Offline</NetworkIndicatorContainer>
+    <UserIdContext.Provider value={isLoggedInThenUserId || ''}>
+      <Styled.Container>
+        <Styled.Navigation>
+          <Navigation
+            drawerNavigationItems={
+              isDesktopLayout ? undefined : additionalNavigationItems
+            }
+          />
+        </Styled.Navigation>
+        <Styled.PrimaryContent wide={wide}>
+          {!online && (
+            <NetworkIndicatorContainer>Offline</NetworkIndicatorContainer>
+          )}
+          {profileQuery.state === DataState.ERROR ? (
+            <FatalApolloError query={profileQuery} />
+          ) : (
+            <>
+              <VersionMarks
+                versions={
+                  profileQuery.state === DataState.DATA
+                    ? profileQuery.data.versions
+                    : 'loading'
+                }
+                currentPackageVersion={packageJson.version}
+              />
+              {profileQuery.state === DataState.LOADING || loading ? (
+                <Centered>
+                  <Stack alignItems="center">
+                    <CircularProgress color="inherit" disableShrink />
+                    <Gap vertical={1} />
+                    {typeof loading === 'string' && loading}
+                  </Stack>
+                </Centered>
+              ) : (
+                children
+              )}
+            </>
+          )}
+        </Styled.PrimaryContent>
+        {primaryActions && (
+          <Styled.PrimaryActions>{primaryActions}</Styled.PrimaryActions>
         )}
-        {profileQuery.state === DataState.ERROR ? (
-          <FatalApolloError query={profileQuery} />
-        ) : (
-          <>
-            <VersionMarks
-              versions={
-                profileQuery.state === DataState.DATA
-                  ? profileQuery.data.versions
-                  : 'loading'
-              }
-              currentPackageVersion={packageJson.version}
-            />
-            {profileQuery.state === DataState.LOADING || loading ? (
-              <Centered>
-                <Stack alignItems="center">
-                  <CircularProgress color="inherit" disableShrink />
-                  <Gap vertical={1} />
-                  {typeof loading === 'string' && loading}
-                </Stack>
-              </Centered>
-            ) : (
-              children
-            )}
-          </>
+        {secondaryActions && (
+          <Styled.SecondaryActions>{secondaryActions}</Styled.SecondaryActions>
         )}
-      </Styled.PrimaryContent>
-      {primaryActions && (
-        <Styled.PrimaryActions>{primaryActions}</Styled.PrimaryActions>
-      )}
-      {secondaryActions && (
-        <Styled.SecondaryActions>{secondaryActions}</Styled.SecondaryActions>
-      )}
-      {isDesktopLayout && (
-        <UserAndMenuIndicatorDesktop
-          additionalNavigationItems={additionalNavigationItems}
-        />
-      )}
-    </Styled.Container>
+        {isDesktopLayout && (
+          <UserAndMenuIndicatorDesktop
+            additionalNavigationItems={additionalNavigationItems}
+          />
+        )}
+      </Styled.Container>
+    </UserIdContext.Provider>
   );
 };
 

@@ -18,9 +18,10 @@ const focusDescriptionShortcutKeys = ['ctrl+e', 'command+e'];
 
 type MarkedTextareaProps = {
   name: string;
+  readOnly?: boolean;
 };
 
-const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
+const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
   const { control, getValues } = useFormContext();
   const [editDescription, setEditDescription] = useState(false);
   const [lastSelection, setLastSelection] = useState<[number, number] | null>(
@@ -95,6 +96,12 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
     }
   }, []);
 
+  const renderMarkdown = () => <RenderedMarkdown markdown={getValues(name)} />;
+
+  if (readOnly) {
+    return renderMarkdown();
+  }
+
   return (
     <TextareaContainer>
       <Tabs
@@ -104,7 +111,7 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
         }}
       >
         <Tab label="View" />
-        <Tab label="Edit" />
+        <Tab label="Edit" disabled={readOnly} />
       </Tabs>
       <div hidden={!editDescription}>
         <Controller
@@ -128,7 +135,7 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name }) => {
           )}
         />
       </div>
-      {!editDescription && <RenderedMarkdown markdown={getValues(name)} />}
+      {!editDescription && renderMarkdown()}
     </TextareaContainer>
   );
 };

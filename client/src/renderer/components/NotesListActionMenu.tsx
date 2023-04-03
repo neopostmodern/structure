@@ -15,6 +15,7 @@ import {
 import { useState } from 'react';
 import { NotesForListQuery } from '../generated/graphql';
 import useDeleteNote from '../hooks/useDeleteNote';
+import useHasPermission from '../hooks/useHasPermission';
 import useToggleArchivedNote from '../hooks/useToggleArchivedNote';
 import { openInDefaultBrowser, shareUrl } from '../utils/openWith';
 import DeleteNoteTrigger from './DeleteNoteTrigger';
@@ -39,6 +40,13 @@ const NotesListActionMenu = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const readOnly = !useHasPermission(note, 'notes', 'write');
+
+  if (readOnly && !('url' in note)) {
+    // the menu would be empty for text notes
+    return null;
+  }
 
   return (
     <>
@@ -76,24 +84,28 @@ const NotesListActionMenu = ({
                 Share URL
               </MenuItem>
             )}
-            <MenuItem
-              onClick={() => {
-                toggleArchivedNote();
-              }}
-            >
-              <ListItemIcon>
-                {note.archivedAt ? <Unarchive /> : <Archive />}
-              </ListItemIcon>
-              {note.archivedAt ? 'Unarchive' : 'Archive'}
-            </MenuItem>
-            <DeleteNoteTrigger
-              variant="menuitem"
-              note={note}
-              loading={deleteLinkLoading}
-              deleteNote={() => {
-                deleteNote();
-              }}
-            />
+            {!readOnly && [
+              <MenuItem
+                key="archive"
+                onClick={() => {
+                  toggleArchivedNote();
+                }}
+              >
+                <ListItemIcon>
+                  {note.archivedAt ? <Unarchive /> : <Archive />}
+                </ListItemIcon>
+                {note.archivedAt ? 'Unarchive' : 'Archive'}
+              </MenuItem>,
+              <DeleteNoteTrigger
+                key="delete"
+                variant="menuitem"
+                note={note}
+                loading={deleteLinkLoading}
+                deleteNote={() => {
+                  deleteNote();
+                }}
+              />,
+            ]}
           </Menu>
         </>
       )}

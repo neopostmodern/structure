@@ -1,7 +1,9 @@
 import { Autocomplete, TextField, Typography } from '@mui/material';
+import { INTERNAL_TAG_PREFIX } from '@structure/common';
 import { matchSorter } from 'match-sorter';
 import React from 'react';
 import { TagsWithCountsQuery } from '../generated/graphql';
+import useUserId from '../hooks/useUserId';
 import Tag from './Tag';
 
 type TagType = TagsWithCountsQuery['tags'][number];
@@ -21,6 +23,8 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
   onAbort,
   tags,
 }) => {
+  const userId = useUserId();
+
   return (
     <>
       {tags === 'loading' ? (
@@ -110,7 +114,9 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
               style={{ width: '200px' }}
             />
           )}
-          options={tags}
+          options={tags.filter(
+            ({ name }) => !name.startsWith(INTERNAL_TAG_PREFIX)
+          )}
           renderOption={(props, tag) => {
             let tagElement;
             if ('newTagName' in tag) {
@@ -132,6 +138,10 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
                         _id: 'NEW_TAG',
                         name: tag.newTagName,
                         color: 'gray',
+                        user: {
+                          _id: userId,
+                        },
+                        permissions: [],
                       }}
                     />
                   </>

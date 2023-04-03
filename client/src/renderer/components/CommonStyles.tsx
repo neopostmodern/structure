@@ -34,7 +34,7 @@ const baseTextFieldDecorations = css`
   color: inherit;
   background-color: transparent;
 
-  &:hover {
+  &:hover:not(:read-only) {
     border-color: lightgray;
   }
   &:focus {

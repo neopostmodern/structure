@@ -1,6 +1,9 @@
 import { gql } from '@apollo/client';
+import { INTERNAL_TAG_PREFIX } from '@structure/common';
 import React from 'react';
 import styled from 'styled-components';
+import useHasPermission from '../hooks/useHasPermission';
+import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import { DisplayOnlyTag } from '../utils/types';
 import AddTagForm from './AddTagForm';
 import TagWithContextMenu from './TagWithContextMenu';
@@ -10,10 +13,13 @@ export const REMOVE_TAG_MUTATION = gql`
     removeTagByIdFromNote(noteId: $noteId, tagId: $tagId) {
       ... on INote {
         _id
-        tags {
+        updatedAt
+        user {
           _id
-          name
-          color
+        }
+        tags {
+          ...BaseTag
+
           notes {
             ... on INote {
               _id
@@ -23,6 +29,7 @@ export const REMOVE_TAG_MUTATION = gql`
       }
     }
   }
+  ${BASE_TAG_FRAGMENT}
 `;
 
 const TagContainer = styled.div`
@@ -46,21 +53,28 @@ const Tags: React.FC<TagsProps> = ({
   size,
   withShortcuts = false,
 }) => {
+  const readOnly = !useHasPermission({ tags }, 'notes', 'write');
+
   return (
     <TagContainer>
-      {tags.map((tag) => (
-        <TagWithContextMenu
-          key={tag._id}
-          tag={tag}
-          size={size}
+      {tags
+        .filter((tag) => !tag.name.startsWith(INTERNAL_TAG_PREFIX))
+        .map((tag) => (
+          <TagWithContextMenu
+            key={tag._id}
+            tag={tag}
+            size={size}
+            noteId={noteId}
+            noteReadOnly={readOnly}
+          />
+        ))}
+      {!readOnly && (
+        <AddTagForm
+          withShortcuts={withShortcuts}
           noteId={noteId}
+          currentTags={tags}
         />
-      ))}
-      <AddTagForm
-        withShortcuts={withShortcuts}
-        noteId={noteId}
-        currentTags={tags}
-      />
+      )}
     </TagContainer>
   );
 };

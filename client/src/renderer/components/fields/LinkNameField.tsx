@@ -57,9 +57,15 @@ interface LinkNameFieldProps {
   linkId: string;
   url: string;
   name: string;
+  readOnly?: boolean;
 }
 
-const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name, linkId }) => {
+const LinkNameField: React.FC<LinkNameFieldProps> = ({
+  url,
+  name,
+  linkId,
+  readOnly = false,
+}) => {
   const { register, setValue, getValues } = useFormContext();
   const inputElement = useRef<HTMLInputElement | null>();
 
@@ -141,7 +147,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({ url, name, linkId }) => {
           inputElement.current = ref;
         }}
         placeholder="Title"
-        disabled={!isOnline}
+        disabled={!isOnline || readOnly}
       />
       <Suggestions>
         <FormSubheader>Title suggestions</FormSubheader>

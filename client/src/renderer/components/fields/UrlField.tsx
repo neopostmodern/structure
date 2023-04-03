@@ -7,15 +7,16 @@ import { TextField } from '../CommonStyles';
 
 interface UrlFieldProps {
   name: string;
+  readOnly?: boolean;
 }
 
-const UrlField: React.FC<UrlFieldProps> = ({ name }) => {
+const UrlField: React.FC<UrlFieldProps> = ({ name, readOnly = false }) => {
   const { watch, register, getValues, formState } = useFormContext();
 
   return (
     <>
       <div style={{ display: 'flex' }}>
-        <TextField type="text" {...register(name)} />
+        <TextField type="text" disabled={readOnly} {...register(name)} />
         <Tooltip title="Open in default browser">
           <IconButton
             style={{ marginLeft: '1rem' }}
