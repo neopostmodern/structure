@@ -4,6 +4,7 @@ import session from 'express-session'
 import passport from 'passport'
 import PassportGithub from 'passport-github'
 import { User } from './mongo.js'
+import { createOwnershipTagOnUser } from './util.js'
 
 // named import isn't working at the moment
 const GitHubStrategy = PassportGithub.Strategy
@@ -31,22 +32,28 @@ export function setUpGitHubLogin(app) {
     new GitHubStrategy(
       gitHubStrategyOptions,
       (accessToken, refreshToken, profile, cb) => {
-        User.findOne({ _id: profile.id }).then((user) => {
+        ;(async () => {
+          const user = await User.findById(profile.id).lean()
           if (user) {
             cb(null, user)
-          } else {
-            new User({
-              _id: profile.id,
-              name: profile.username,
-              createAt: new Date(),
-              authenticationProvider: profile.provider,
-            })
-              .save()
-              .then((newUser) => {
-                cb(null, newUser)
-              })
+            return
           }
-        })
+
+          const newUser = await new User({
+            _id: profile.id,
+            name: profile.username,
+            createAt: new Date(),
+            authenticationProvider: profile.provider,
+            internal: {
+              ownershipTagId: '',
+            },
+          }).save()
+
+          const newUserWithOwnershipTagId = await createOwnershipTagOnUser(
+            newUser,
+          )
+          cb(null, newUserWithOwnershipTagId)
+        })()
       },
     ),
   )

@@ -1,32 +1,38 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import { GraphQLErrorCodes } from '@structure/common'
+import { GraphQLErrorCodes, INTERNAL_TAG_PREFIX } from '@structure/common'
 import { GraphQLError, GraphQLScalarType, Kind } from 'graphql'
 import Moment from 'moment'
 import packageJson from '../package.json' assert { type: 'json' }
 import {
   addTagByNameToNote,
+  entitiesUpdatedSince,
   fetchTitleSuggestions,
   removeTagByIdFromNote,
   requestNewCredential,
   revokeCredential,
   submitLink,
 } from './methods.js'
-import { Link, Note, Tag, Text, User } from './mongo.js'
+import { Link, Note, Tag, Text } from './mongo.js'
 import schemaDefinition from './schema.js'
+import {
+  baseNotesQuery,
+  baseTagsQuery,
+  createTagObject,
+  getCachedUser,
+  leanTypeEnumFixer,
+} from './util.js'
 
 const INoteResolvers = {
   async tags(note, args, context) {
-    return Tag.find({ _id: { $in: note.tags } })
+    return Tag.find({
+      ...baseTagsQuery(context.user, 'read'),
+      _id: { $in: note.tags },
+    }).lean()
   },
   async user(note, args, context) {
-    return User.findById(note.user, { name: 1 })
+    return getCachedUser(note.user, context.user)
   },
 }
-const typeEnumFixer = (notes) =>
-  // eslint-disable-next-line no-underscore-dangle
-  notes.map((note) =>
-    Object.assign({}, note._doc, { type: note.type.toUpperCase() }),
-  )
 
 const rootResolvers = {
   Date: new GraphQLScalarType({
@@ -58,10 +64,50 @@ const rootResolvers = {
       if (tag.notes && context.__skip_notes_population) {
         return tag.notes
       }
-      return Note.find({ tags: tag, deletedAt: null }).then(typeEnumFixer)
+      // todo: check permissions!
+      //  (test: B shares N with A. A adds tag Y to N. B unshares (by untagging X) N, then A should not see N despite it having the tag Y.
+      const notes = await Note.find({ tags: tag, deletedAt: null }).lean()
+      return leanTypeEnumFixer(notes)
     },
     async user(note, args, context) {
-      return User.findById(note.user)
+      return getCachedUser(note.user, context.user)
+    },
+    permissions(tag, { onlyMine }, { user }, info) {
+      // todo: investigate
+      // let path = []
+      // let x = info.path
+      // while (true) {
+      //   path.push(`${x.key} (${x.typename})`)
+      //   if (x.prev) {
+      //     x = x.prev
+      //   } else {
+      //     break
+      //   }
+      // }
+      // const pathString = path.reverse().join(' › ')
+      // console.log(pathString)
+      //
+      // console.log('tag.permissions is a map?', tag.permissions instanceof Map)
+      let permissionsArray =
+        tag.permissions instanceof Map // todo: why is this not always a map?
+          ? [...tag.permissions.entries()]
+          : Object.entries(tag.permissions)
+
+      if (onlyMine) {
+        permissionsArray = permissionsArray.filter(
+          ([userId]) => userId === user._id,
+        )
+      }
+
+      return permissionsArray.map(([userId, permissions]) => ({
+        user: { _id: userId },
+        ...(permissions.toObject ? permissions.toObject() : permissions), // todo: for some reason this is not a plain object when coming from TagPage
+      }))
+    },
+  },
+  UserPermissions: {
+    async user(userPermission, args, context) {
+      return getCachedUser(userPermission.user, context.user)
     },
   },
   Query: {
@@ -71,7 +117,7 @@ const rootResolvers = {
     versions(root, { currentVersion }) {
       if (currentVersion) {
         return {
-          // todo: return the minimum required version depending on the client's current version
+          // todo: set minimum version!
           // minimum: '0.20.0',
           current: packageJson.version,
         }
@@ -83,40 +129,33 @@ const rootResolvers = {
         recommended: 8,
       }
     },
-    async notes(root, { offset, limit }, context) {
-      if (!context.user) {
+    async notes(root, { offset, limit }, { user }) {
+      if (!user) {
         throw new Error('Need to be logged in to fetch links.')
       }
       const protectedLimit = limit < 1 || limit > 10 ? 10 : limit
-      return Note.find({ user: context.user, deletedAt: null })
+
+      return Note.find({
+        ...(await baseNotesQuery(user, 'read')),
+        deletedAt: null,
+      })
         .sort({ createdAt: -1 })
         .limit(protectedLimit)
+        .lean()
         .exec()
-        .then(typeEnumFixer)
+        .then(leanTypeEnumFixer)
     },
-    async entitiesUpdatedSince(root, { updatedSince }, context) {
-      if (!context.user) {
-        throw new Error('Need to be logged in to fetch links.')
-      }
-      const updatedSinceAsDate = new Date(updatedSince)
-      const filter = {
-        user: context.user,
-        updatedAt: { $gt: updatedSinceAsDate },
-      }
-      return {
-        notes: await Note.find(filter)
-          .sort({ createdAt: -1 })
-          .exec()
-          .then(typeEnumFixer),
-        tags: Tag.find(filter).exec(),
-        timestamp: new Date(),
-      }
+    async entitiesUpdatedSince(root, { cacheId }, { user }) {
+      return entitiesUpdatedSince(cacheId, user)
     },
     async link(root, { linkId }, { user }) {
       if (!user) {
         throw new Error('Need to be logged in to fetch a link.')
       }
-      const link = await Link.findOne({ _id: linkId, user })
+      const link = await Link.findOne({
+        _id: linkId,
+        ...(await baseNotesQuery(user, 'read')),
+      })
       if (!link) {
         throw new GraphQLError(
           `No link with ID '${linkId}' found for this user.`,
@@ -134,7 +173,10 @@ const rootResolvers = {
         throw new Error('Need to be logged in to fetch links.')
       }
       const protectedLimit = limit < 1 || limit > 10 ? 10 : limit
-      return Link.find({ user: context.user, deletedAt: null })
+      return Link.find({
+        ...(await baseNotesQuery(context.user, 'read')),
+        deletedAt: null,
+      })
         .sort({ createdAt: -1 })
         .limit(protectedLimit)
         .exec()
@@ -144,7 +186,10 @@ const rootResolvers = {
         throw new Error('Need to be logged in to fetch a text.')
       }
 
-      const text = await Text.findOne({ _id: textId, user })
+      const text = await Text.findOne({
+        ...(await baseNotesQuery(user, 'read')),
+        _id: textId,
+      })
       if (!text) {
         throw new GraphQLError(
           `No text with ID '${textId}' found for this user.`,
@@ -163,7 +208,10 @@ const rootResolvers = {
         throw new Error('Need to be logged in to fetch a tag.')
       }
 
-      const tag = await Tag.findOne({ _id: tagId, user })
+      const tag = await Tag.findOne({
+        _id: tagId,
+        ...baseTagsQuery(user, 'read'),
+      })
       if (!tag) {
         throw new GraphQLError(
           `No tag with ID '${tagId}' found for this user.`,
@@ -182,7 +230,7 @@ const rootResolvers = {
       }
       const protectedLimit = limit < 1 || limit > 10 ? 10 : limit
       return (
-        Tag.find({ user: context.user })
+        Tag.find({ ...baseTagsQuery(context.user, 'read') })
           // .sort({ createdAt: -1 })
           .limit(protectedLimit)
           // .populate("tags")
@@ -193,9 +241,12 @@ const rootResolvers = {
       if (!user) {
         throw new Error('Need to be logged in to fetch title suggestions.')
       }
-      const link = await Link.findOne({ _id: linkId, user })
+      const link = await Link.findOne({
+        _id: linkId,
+        ...(await baseNotesQuery(user, 'write')),
+      })
       if (!link) {
-        throw new Error(`No link with ID ${linkId}`)
+        throw new Error(`No link with ID ${linkId} or no sufficient privileges`)
       }
       try {
         return fetchTitleSuggestions(link.url)
@@ -211,19 +262,32 @@ const rootResolvers = {
       if (!user) {
         throw new Error('Need to be logged in to create tags.')
       }
-      return Tag.findOne({ name, user }).then((tag) => {
+
+      if (name.startsWith(INTERNAL_TAG_PREFIX)) {
+        throw new Error(
+          `User tags can't start with prefix "${INTERNAL_TAG_PREFIX}".`,
+        )
+      }
+
+      return Tag.findOne({
+        name,
+        ...baseTagsQuery(user, 'use'),
+      }).then((tag) => {
         if (tag) {
           throw new Error(`Tag with name '${name}' already exists.`)
         }
 
-        return new Tag({ name, color: color || 'lightgray', user }).save()
+        return new Tag(createTagObject({ name, color, user })).save()
       })
     },
     updateTag(root, { tag: { _id, ...props } }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to update tags.')
       }
-      return Tag.findOne({ _id, user: context.user }).then((tag) => {
+      return Tag.findOne({
+        _id,
+        ...baseTagsQuery(context.user, 'write'),
+      }).then((tag) => {
         if (!tag) {
           throw new Error('Resource could not be found.')
         }
@@ -251,7 +315,7 @@ const rootResolvers = {
 
       const updatedNotes = []
 
-      const notes = await Note.find({ tags: tag._id, user }).exec()
+      const notes = await Note.find({ tags: tag._id }).exec()
       for (const note of notes) {
         updatedNotes.push(await removeTagByIdFromNote(user, note._id, tag._id))
       }
@@ -269,11 +333,14 @@ const rootResolvers = {
       }
       return submitLink(context.user, { url, title, description })
     },
-    updateLink(root, { link: { _id, ...props } }, context) {
-      if (!context.user) {
+    async updateLink(root, { link: { _id, ...props } }, { user }) {
+      if (!user) {
         throw new Error('Need to be logged in to update links.')
       }
-      return Link.findOne({ _id, user: context.user }).then((link) => {
+      return Link.findOne({
+        _id,
+        ...(await baseNotesQuery(user, 'write')),
+      }).then((link) => {
         if (!link) {
           throw new Error('Resource could not be found.')
         }
@@ -291,7 +358,7 @@ const rootResolvers = {
       })
     },
 
-    createText(root, { title, description }, context) {
+    async createText(root, { title, description }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to create texts.')
       }
@@ -300,13 +367,17 @@ const rootResolvers = {
         name: title || new Moment().format('dddd, MMMM Do YYYY'),
         description,
         user: context.user,
+        tags: [context.user.internal.ownershipTagId],
       }).save()
     },
-    updateText(root, { text: { _id, ...props } }, context) {
-      if (!context.user) {
+    async updateText(root, { text: { _id, ...props } }, { user }) {
+      if (!user) {
         throw new Error('Need to be logged in to update texts.')
       }
-      return Text.findOne({ _id, user: context.user }).then((text) => {
+      return Text.findOne({
+        ...(await baseNotesQuery(user, 'write')),
+        _id,
+      }).then((text) => {
         if (!text) {
           throw new Error('Resource could not be found.')
         }
@@ -328,9 +399,12 @@ const rootResolvers = {
       if (!context.user) {
         throw new Error('Need to be logged in to tag notes.')
       }
-      return addTagByNameToNote(context.user, noteId, name).then(() =>
-        Note.findOne({ _id: noteId }),
-      )
+      if (name.startsWith(INTERNAL_TAG_PREFIX)) {
+        throw new Error(
+          `User tags can't start with prefix "${INTERNAL_TAG_PREFIX}".`,
+        )
+      }
+      return addTagByNameToNote(context.user, noteId, name)
     },
     removeTagByIdFromNote(root, { noteId, tagId }, { user }) {
       if (!user) {

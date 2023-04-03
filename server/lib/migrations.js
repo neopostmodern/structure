@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { Link, Meta, Note, Tag, User } from './mongo.js'
+import { ALL_PERMISSIONS, createOwnershipTagOnUser } from './util.js'
 
 const migrations = new Map()
 migrations.set(0, {
@@ -251,6 +252,41 @@ migrations.set(6, {
       )
     }
     console.log('[Migration 6.4] OK\n')
+  },
+})
+
+migrations.set(7, {
+  name: 'permissions-on-tags',
+  async up() {
+    for (const user of await User.find()) {
+      await Tag.updateMany(
+        { user },
+        { $set: { permissions: new Map([[user._id, ALL_PERMISSIONS]]) } },
+        { timestamps: false },
+      )
+
+      const userWithOwnershipTag = await createOwnershipTagOnUser(user)
+
+      await Note.updateMany(
+        { user },
+        { $push: { tags: userWithOwnershipTag.internal.ownershipTagId } },
+        { timestamps: false },
+      )
+    }
+  },
+  async down() {
+    await Tag.updateMany({}, { $unset: { permissions: true } })
+    for (const user of await User.find()) {
+      if (!user.internal?.ownershipTagId) {
+        continue
+      }
+      await Note.updateMany(
+        { tags: user.internal.ownershipTagId },
+        { $pull: { tags: user.internal.ownershipTagId } },
+      )
+      await Tag.findByIdAndRemove(user.internal.ownershipTagId)
+    }
+    await User.updateMany({}, { $unset: { internal: true } })
   },
 })
 

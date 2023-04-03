@@ -23,7 +23,10 @@ import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince';
 import useFilteredNotes from '../../hooks/useFilteredNotes';
 import { RootState } from '../../reducers';
 import { UserInterfaceStateType } from '../../reducers/userInterface';
-import { BASE_NOTE_FRAGMENT } from '../../utils/sharedQueriesAndFragments';
+import {
+  BASE_NOTE_FRAGMENT,
+  BASE_TAG_FRAGMENT,
+} from '../../utils/sharedQueriesAndFragments';
 import useDataState, {
   DataState,
   OFFLINE_CACHE_MISS,
@@ -37,14 +40,13 @@ export const NOTES_QUERY = gql`
 
       ... on INote {
         tags {
-          _id
-          name
-          color
+          ...BaseTag
         }
       }
     }
   }
   ${BASE_NOTE_FRAGMENT}
+  ${BASE_TAG_FRAGMENT}
 `;
 
 const searchFieldShortcutKeys =

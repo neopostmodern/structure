@@ -12,9 +12,13 @@ type Credentials {
 scalar Date
 
 type EntitiesUpdatedSince {
-  notes: [Note!]!
-  tags: [Tag!]!
-  timestamp: Date!
+  addedNotes: [Note!]!
+  addedTags: [Tag!]!
+  cacheId: ID!
+  removedNoteIds: [ID!]!
+  removedTagIds: [ID!]!
+  updatedNotes: [Note!]!
+  updatedTags: [Tag!]!
 }
 
 interface INote {
@@ -94,9 +98,14 @@ enum NoteType {
   TEXT
 }
 
+type NotesPermissions {
+  read: Boolean!
+  write: Boolean!
+}
+
 type Query {
   currentUser: User
-  entitiesUpdatedSince(updatedSince: Date!): EntitiesUpdatedSince!
+  entitiesUpdatedSince(cacheId: ID): EntitiesUpdatedSince!
   link(linkId: ID): Link!
   links(limit: Int, offset: Int): [Link!]!
   notes(limit: Int, offset: Int): [Note!]!
@@ -113,8 +122,16 @@ type Tag implements BaseObject {
   createdAt: Date!
   name: String!
   notes: [Note]
+  permissions(onlyMine: Boolean): [UserPermissions!]!
   updatedAt: Date!
   user: User!
+}
+
+type TagPermissions {
+  read: Boolean!
+  share: Boolean!
+  use: Boolean!
+  write: Boolean!
 }
 
 type Text implements BaseObject & INote {
@@ -137,6 +154,12 @@ type User implements BaseObject {
   credentials: Credentials
   name: String!
   updatedAt: Date!
+}
+
+type UserPermissions {
+  notes: NotesPermissions!
+  tag: TagPermissions!
+  user: User!
 }
 
 type Versions {

@@ -125,7 +125,7 @@ const runExpressServer = async () => {
 
 console.log('Running migrations...')
 migrationSystem
-  .migrateTo(6)
+  .migrateTo(7)
   .then(() => {
     console.log('Migrations complete.')
     runExpressServer()

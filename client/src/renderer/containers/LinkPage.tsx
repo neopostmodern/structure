@@ -15,7 +15,10 @@ import {
 } from '../generated/graphql';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
-import { BASE_USER_FRAGMENT } from '../utils/sharedQueriesAndFragments';
+import {
+  BASE_TAG_FRAGMENT,
+  BASE_USER_FRAGMENT,
+} from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 
@@ -34,13 +37,12 @@ const LINK_QUERY = gql`
       description
       domain
       tags {
-        _id
-        name
-        color
+        ...BaseTag
       }
     }
   }
   ${BASE_USER_FRAGMENT}
+  ${BASE_TAG_FRAGMENT}
 `;
 
 const UPDATE_LINK_MUTATION = gql`

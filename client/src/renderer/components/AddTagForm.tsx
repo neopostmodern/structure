@@ -4,6 +4,7 @@ import {
   Warning as WarningIcon,
 } from '@mui/icons-material';
 import { Button, IconButton, Skeleton, Tooltip } from '@mui/material';
+import { INTERNAL_TAG_PREFIX } from '@structure/common';
 import Mousetrap from 'mousetrap';
 import { useEffect, useState } from 'react';
 import { TAGS_QUERY } from '../containers/TagsPage';
@@ -155,7 +156,10 @@ const AddTagForm = ({
         onAbort={hideNewTagForm}
       />
     );
-  } else if (currentTags.length === 0) {
+  } else if (
+    currentTags.filter((tag) => !tag.name.startsWith(INTERNAL_TAG_PREFIX))
+      .length === 0
+  ) {
     return (
       <Button variant="outlined" size="small" onClick={showNewTagForm}>
         Add tag

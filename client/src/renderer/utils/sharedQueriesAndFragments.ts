@@ -28,6 +28,28 @@ export const BASE_TAG_FRAGMENT = gql`
 
     name
     color
+
+    user {
+      _id
+      name
+    }
+
+    permissions {
+      user {
+        _id
+        name
+      }
+      tag {
+        read
+        write
+        use
+        share
+      }
+      notes {
+        read
+        write
+      }
+    }
   }
 `;
 
@@ -46,12 +68,16 @@ export const BASE_NOTE_FRAGMENT = gql`
       tags {
         _id
       }
+      user {
+        ...BaseUser
+      }
     }
     ... on Link {
       url
       domain
     }
   }
+  ${BASE_USER_FRAGMENT}
 `;
 export const ADD_LINK_MUTATION = gql`
   ${BASE_NOTE_FRAGMENT}

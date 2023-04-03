@@ -21,24 +21,50 @@ import useDataState, { DataState } from '../utils/useDataState';
 import useIsOnline from './useIsOnline';
 
 export const ENTITIES_UPDATED_SINCE_QUERY = gql`
-  query EntitiesUpdatedSince($updatedSince: Date!) {
-    entitiesUpdatedSince(updatedSince: $updatedSince) {
-      notes {
+  query EntitiesUpdatedSince($cacheId: ID) {
+    entitiesUpdatedSince(cacheId: $cacheId) {
+      addedNotes {
         ...BaseNote
       }
-      tags {
+      updatedNotes {
+        ...BaseNote
+      }
+      removedNoteIds
+
+      addedTags {
         ...BaseTag
       }
-      timestamp
+      updatedTags {
+        ...BaseTag
+      }
+      removedTagIds
+
+      cacheId
     }
   }
   ${BASE_NOTE_FRAGMENT}
   ${BASE_TAG_FRAGMENT}
 `;
-export const ENTITIES_UPDATED_SINCE_STORAGE_KEY = 'updatedSince';
-const getUpdatedSince = () =>
-  parseInt(localStorage.getItem(ENTITIES_UPDATED_SINCE_STORAGE_KEY) as any) ||
-  0;
+
+const UPDATED_NOTES_CACHE_QUERY = gql`
+  query UpdatedNotesCacheQuery {
+    notes {
+      ...BaseNote
+
+      ... on INote {
+        tags {
+          _id
+        }
+      }
+    }
+  }
+  ${BASE_NOTE_FRAGMENT}
+`;
+
+export const ENTITIES_UPDATED_SINCE_CACHE_ID_STORAGE_KEY =
+  'updatedSince-cacheId';
+const getUpdatedSinceCacheId = () =>
+  localStorage.getItem(ENTITIES_UPDATED_SINCE_CACHE_ID_STORAGE_KEY);
 const ENTITIES_UPDATED_SINCE_INTERVAL_MS = 60 * 1000;
 
 const mergeNewlyCreatedIntoCache = <EntityType extends StoreObject>(
@@ -64,11 +90,17 @@ const useEntitiesUpdatedSince = () => {
     useLazyQuery<EntitiesUpdatedSinceQuery, EntitiesUpdatedSinceQueryVariables>(
       ENTITIES_UPDATED_SINCE_QUERY,
       {
+        fetchPolicy: 'network-only',
+        variables: {
+          get cacheId() {
+            return getUpdatedSinceCacheId();
+          },
+        },
         onCompleted({ entitiesUpdatedSince }) {
           const { cache } = apolloClient;
-          const lastUpdate = getUpdatedSince();
+          const storedCacheId = getUpdatedSinceCacheId();
 
-          if (!lastUpdate) {
+          if (!storedCacheId) {
             cache.writeQuery({
               query: NOTES_QUERY,
               data: { notes: [] },
@@ -79,14 +111,17 @@ const useEntitiesUpdatedSince = () => {
             });
           }
 
-          if (entitiesUpdatedSince.notes.length) {
+          if (
+            entitiesUpdatedSince.addedNotes.length ||
+            entitiesUpdatedSince.removedNoteIds.length
+          ) {
             const notesCacheValue = cache.readQuery<NotesForListQuery>({
-              query: NOTES_QUERY,
+              query: UPDATED_NOTES_CACHE_QUERY,
             });
 
             let cachedNotes: NotesForListQuery['notes'];
 
-            if (lastUpdate) {
+            if (storedCacheId) {
               if (!notesCacheValue) {
                 throw Error(
                   '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for notes.'
@@ -95,29 +130,36 @@ const useEntitiesUpdatedSince = () => {
 
               cachedNotes = notesCacheValue.notes.slice();
 
-              entitiesUpdatedSince.notes.forEach((note) => {
-                if (note.createdAt > lastUpdate) {
-                  mergeNewlyCreatedIntoCache(cachedNotes, note);
-                }
+              entitiesUpdatedSince.addedNotes.forEach((note) => {
+                mergeNewlyCreatedIntoCache(cachedNotes, note);
               });
+              if (entitiesUpdatedSince.removedNoteIds.length) {
+                cachedNotes = cachedNotes.filter(
+                  ({ _id }) =>
+                    !entitiesUpdatedSince.removedNoteIds.includes(_id)
+                );
+              }
             } else {
-              cachedNotes = entitiesUpdatedSince.notes;
+              cachedNotes = entitiesUpdatedSince.addedNotes;
             }
 
             cache.writeQuery({
-              query: NOTES_QUERY,
+              query: UPDATED_NOTES_CACHE_QUERY,
               data: { notes: cachedNotes },
             });
           }
 
-          if (entitiesUpdatedSince.tags.length) {
+          if (
+            entitiesUpdatedSince.addedTags.length ||
+            entitiesUpdatedSince.removedTagIds.length
+          ) {
             const tagsCacheValue = cache.readQuery<TagsQuery>({
               query: TAGS_QUERY,
             });
 
             let cachedTags: TagsQuery['tags'];
 
-            if (lastUpdate) {
+            if (storedCacheId) {
               if (!tagsCacheValue) {
                 throw Error(
                   '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for tags.'
@@ -126,13 +168,17 @@ const useEntitiesUpdatedSince = () => {
 
               cachedTags = tagsCacheValue.tags.slice();
 
-              entitiesUpdatedSince.tags.forEach((tag) => {
-                if (tag.createdAt > lastUpdate) {
-                  mergeNewlyCreatedIntoCache(cachedTags, tag);
-                }
+              entitiesUpdatedSince.addedTags.forEach((tag) => {
+                mergeNewlyCreatedIntoCache(cachedTags, tag);
               });
+
+              if (entitiesUpdatedSince.removedTagIds.length) {
+                cachedTags = cachedTags.filter(
+                  ({ _id }) => !entitiesUpdatedSince.removedTagIds.includes(_id)
+                );
+              }
             } else {
-              cachedTags = entitiesUpdatedSince.tags;
+              cachedTags = entitiesUpdatedSince.addedTags;
             }
 
             cache.writeQuery({
@@ -142,8 +188,8 @@ const useEntitiesUpdatedSince = () => {
           }
 
           localStorage.setItem(
-            ENTITIES_UPDATED_SINCE_STORAGE_KEY,
-            entitiesUpdatedSince.timestamp
+            ENTITIES_UPDATED_SINCE_CACHE_ID_STORAGE_KEY,
+            entitiesUpdatedSince.cacheId
           );
         },
       }
@@ -155,11 +201,16 @@ const useEntitiesUpdatedSince = () => {
       return;
     }
 
-    fetchEntitiesUpdatedSince({
-      variables: {
-        updatedSince: getUpdatedSince(),
-      },
-    });
+    (async () => {
+      try {
+        await fetchEntitiesUpdatedSince();
+      } catch (error) {
+        console.error(
+          '[useEntitiesUpdatedSince.useEffect.fetchEntitiesUpdatedSince]',
+          error
+        );
+      }
+    })();
   }, [fetchEntitiesUpdatedSince, isOnline]);
 
   useEffect(() => {
@@ -168,9 +219,7 @@ const useEntitiesUpdatedSince = () => {
     }
 
     const notesRefetchInterval = setInterval(() => {
-      entitiesUpdatedSince.refetch({
-        updatedSince: getUpdatedSince(),
-      });
+      entitiesUpdatedSince.refetch();
     }, ENTITIES_UPDATED_SINCE_INTERVAL_MS);
 
     return () => {

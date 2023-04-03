@@ -23,6 +23,7 @@ import {
 } from '../generated/graphql';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import {
+  BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
   BASE_USER_FRAGMENT,
 } from '../utils/sharedQueriesAndFragments';
@@ -30,6 +31,7 @@ import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
 import { TAGS_QUERY } from './TagsPage';
 
+// todo: the query is very heavy, it should leverage caching, at least on the inner tag query
 const TAG_QUERY = gql`
   query TagWithNotes($tagId: ID!) {
     tag(tagId: $tagId) {
@@ -40,28 +42,18 @@ const TAG_QUERY = gql`
       }
 
       notes {
+        ...BaseNote
         ... on INote {
-          type
-          _id
-          name
-          createdAt
-          archivedAt
-          description
           tags {
-            _id
-            name
-            color
+            ...BaseTag
           }
-        }
-        ... on Link {
-          url
-          domain
         }
       }
     }
   }
 
   ${BASE_TAG_FRAGMENT}
+  ${BASE_NOTE_FRAGMENT}
   ${BASE_USER_FRAGMENT}
 `;
 const UPDATE_TAG_MUTATION = gql`
@@ -99,6 +91,7 @@ const DELETE_TAG_MUTATION = gql`
       _id
       notes {
         ... on INote {
+          _id
           tags {
             _id
           }

@@ -37,6 +37,9 @@ const userSchema = withBaseSchema(
       },
       default: {},
     },
+    internal: {
+      ownershipTagId: String,
+    },
   },
   {
     minimize: false,
@@ -81,8 +84,28 @@ linkSchema.pre('save', function (next) {
 export const Link = Note.discriminator('Link', linkSchema)
 
 const tagSchema = withBaseSchema({
-  user: { type: String, ref: 'User' },
+  user: { type: String, ref: 'User', index: true },
   name: String,
   color: String,
+  permissions: {
+    type: Map,
+    of: new Schema({
+      tag: {
+        read: Boolean,
+        write: Boolean,
+        use: Boolean,
+        share: Boolean,
+      },
+      notes: {
+        read: Boolean,
+        write: Boolean,
+      },
+    }),
+  },
 })
 export const Tag = mongoose.model('Tag', tagSchema)
+
+const cacheSchema = withBaseSchema({
+  value: {},
+})
+export const Cache = mongoose.model('Cache', cacheSchema)

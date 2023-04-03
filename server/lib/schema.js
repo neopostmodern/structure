@@ -30,6 +30,22 @@ export default gql`
     credentials: Credentials
   }
 
+  type TagPermissions {
+    read: Boolean!
+    write: Boolean!
+    use: Boolean!
+    share: Boolean!
+  }
+  type NotesPermissions {
+    read: Boolean!
+    write: Boolean!
+  }
+  type UserPermissions {
+    user: User!
+    tag: TagPermissions!
+    notes: NotesPermissions!
+  }
+
   type Tag implements BaseObject {
     _id: ID!
     createdAt: Date!
@@ -40,6 +56,8 @@ export default gql`
     color: String!
 
     notes: [Note]
+
+    permissions(onlyMine: Boolean): [UserPermissions!]!
   }
   input InputTag {
     _id: ID!
@@ -127,9 +145,13 @@ export default gql`
 
   union Note = Link | Text
   type EntitiesUpdatedSince {
-    notes: [Note!]!
-    tags: [Tag!]!
-    timestamp: Date!
+    addedNotes: [Note!]!
+    updatedNotes: [Note!]!
+    removedNoteIds: [ID!]!
+    addedTags: [Tag!]!
+    updatedTags: [Tag!]!
+    removedTagIds: [ID!]!
+    cacheId: ID!
   }
 
   type Query {
@@ -147,7 +169,7 @@ export default gql`
     ): [Link!]!
 
     notes(offset: Int, limit: Int): [Note!]!
-    entitiesUpdatedSince(updatedSince: Date!): EntitiesUpdatedSince!
+    entitiesUpdatedSince(cacheId: ID): EntitiesUpdatedSince!
 
     link(linkId: ID): Link!
     text(textId: ID): Text!
