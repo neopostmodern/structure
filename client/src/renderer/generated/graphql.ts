@@ -103,6 +103,7 @@ export type Mutation = {
   removeTagByIdFromNote: Note;
   requestNewCredential: User;
   revokeCredential: User;
+  shareTag: Tag;
   submitLink: Link;
   toggleArchivedNote: Note;
   toggleDeletedNote: Note;
@@ -149,6 +150,12 @@ export type MutationRequestNewCredentialArgs = {
 
 export type MutationRevokeCredentialArgs = {
   purpose: Scalars['String'];
+};
+
+
+export type MutationShareTagArgs = {
+  tagId: Scalars['ID'];
+  username: Scalars['String'];
 };
 
 
@@ -342,6 +349,14 @@ export type VisitedNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type VisitedNotesQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string } | { __typename: 'Text', _id: string, name: string }> };
 
+export type ShareTagMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+  username: Scalars['String'];
+}>;
+
+
+export type ShareTagMutation = { __typename: 'Mutation', shareTag: { __typename: 'Tag', _id: string, updatedAt: any, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
+
 export type UpdatePermissionOnTagMutationVariables = Exact<{
   tagId: Scalars['ID'];
   userId: Scalars['ID'];
@@ -351,7 +366,7 @@ export type UpdatePermissionOnTagMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePermissionOnTagMutation = { __typename: 'Mutation', updatePermissionOnTag: { __typename: 'Tag', _id: string, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
+export type UpdatePermissionOnTagMutation = { __typename: 'Mutation', updatePermissionOnTag: { __typename: 'Tag', _id: string, updatedAt: any, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
 
 export type RemoveTagByIdFromNoteMutationVariables = Exact<{
   noteId: Scalars['ID'];
@@ -680,6 +695,56 @@ export function useVisitedNotesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type VisitedNotesQueryHookResult = ReturnType<typeof useVisitedNotesQuery>;
 export type VisitedNotesLazyQueryHookResult = ReturnType<typeof useVisitedNotesLazyQuery>;
 export type VisitedNotesQueryResult = Apollo.QueryResult<VisitedNotesQuery, VisitedNotesQueryVariables>;
+export const ShareTagDocument = gql`
+    mutation ShareTag($tagId: ID!, $username: String!) {
+  shareTag(tagId: $tagId, username: $username) {
+    _id
+    updatedAt
+    permissions {
+      user {
+        _id
+      }
+      tag {
+        read
+        write
+        use
+        share
+      }
+      notes {
+        read
+        write
+      }
+    }
+  }
+}
+    `;
+export type ShareTagMutationFn = Apollo.MutationFunction<ShareTagMutation, ShareTagMutationVariables>;
+
+/**
+ * __useShareTagMutation__
+ *
+ * To run a mutation, you first call `useShareTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useShareTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [shareTagMutation, { data, loading, error }] = useShareTagMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useShareTagMutation(baseOptions?: Apollo.MutationHookOptions<ShareTagMutation, ShareTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ShareTagMutation, ShareTagMutationVariables>(ShareTagDocument, options);
+      }
+export type ShareTagMutationHookResult = ReturnType<typeof useShareTagMutation>;
+export type ShareTagMutationResult = Apollo.MutationResult<ShareTagMutation>;
+export type ShareTagMutationOptions = Apollo.BaseMutationOptions<ShareTagMutation, ShareTagMutationVariables>;
 export const UpdatePermissionOnTagDocument = gql`
     mutation UpdatePermissionOnTag($tagId: ID!, $userId: ID!, $resource: String!, $mode: String!, $granted: Boolean!) {
   updatePermissionOnTag(
@@ -690,6 +755,7 @@ export const UpdatePermissionOnTagDocument = gql`
     granted: $granted
   ) {
     _id
+    updatedAt
     permissions {
       user {
         _id

@@ -185,6 +185,7 @@ export default gql`
     createTag(name: String!, color: String): Tag!
     updateTag(tag: InputTag!): Tag!
     permanentlyDeleteTag(tagId: ID!): Tag!
+    shareTag(tagId: ID!, username: String!): Tag!
     updatePermissionOnTag(
       tagId: ID!
       userId: ID!

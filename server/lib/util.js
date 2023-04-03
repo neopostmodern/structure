@@ -76,6 +76,18 @@ export const baseNotesQuery = async (user, mode = 'read') => {
   }
 }
 
+export const MINIMAL_PERMISSIONS = {
+  tag: {
+    read: true,
+    write: false,
+    use: false,
+    share: false,
+  },
+  notes: {
+    read: true,
+    write: false,
+  },
+}
 export const ALL_PERMISSIONS = {
   tag: {
     read: true,

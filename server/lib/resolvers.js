@@ -12,7 +12,7 @@ import {
   revokeCredential,
   submitLink,
 } from './methods.js'
-import { Link, Note, Tag, Text } from './mongo.js'
+import { Link, Note, Tag, Text, User } from './mongo.js'
 import schemaDefinition from './schema.js'
 import {
   baseNotesQuery,
@@ -20,6 +20,7 @@ import {
   createTagObject,
   getCachedUser,
   leanTypeEnumFixer,
+  MINIMAL_PERMISSIONS,
 } from './util.js'
 
 const INoteResolvers = {
@@ -326,6 +327,28 @@ const rootResolvers = {
       tag.notes = updatedNotes
 
       return tag
+    },
+    async shareTag(root, { tagId, username }, { user }) {
+      if (!user) {
+        throw new Error('Need to be logged in to share a tag.')
+      }
+
+      const tag = await Tag.findOne({
+        _id: tagId,
+        ...baseTagsQuery(user, 'share'),
+      })
+      if (!tag) {
+        throw new Error('No such tag or no sufficient privileges.')
+      }
+
+      const targetUser = await User.findOne({ name: username }).lean()
+      if (!targetUser) {
+        throw new Error(`No such user: ${username}`)
+      }
+
+      tag.permissions.set(targetUser._id.toString(), MINIMAL_PERMISSIONS)
+
+      return tag.save()
     },
     async updatePermissionOnTag(
       root,

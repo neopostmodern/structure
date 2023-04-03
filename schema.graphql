@@ -83,6 +83,7 @@ type Mutation {
   removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
   requestNewCredential(purpose: String!): User!
   revokeCredential(purpose: String!): User!
+  shareTag(tagId: ID!, username: String!): Tag!
   submitLink(description: String, title: String, url: String!): Link!
   toggleArchivedNote(noteId: ID!): Note!
   toggleDeletedNote(noteId: ID!): Note!
