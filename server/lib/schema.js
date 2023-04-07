@@ -193,6 +193,7 @@ export default gql`
       mode: String!
       granted: Boolean!
     ): Tag!
+    unshareTag(tagId: ID!, userId: ID!): Tag!
 
     submitLink(url: String!, title: String, description: String): Link!
     updateLink(link: InputLink!): Link!

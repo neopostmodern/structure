@@ -383,6 +383,31 @@ const rootResolvers = {
 
       return tag.save()
     },
+    async unshareTag(root, { tagId, userId }, { user }) {
+      if (!user) {
+        throw new Error('Need to be logged in to update permissions.')
+      }
+
+      const tag = await Tag.findOne({
+        _id: tagId,
+        ...baseTagsQuery(user, 'share'),
+      })
+      if (!tag) {
+        throw new Error('No such tag or no sufficient privileges.')
+      }
+
+      if (tag.user === userId) {
+        throw new Error("Can't unshare tag from owner")
+      }
+
+      if (!tag.permissions.has(userId)) {
+        throw new Error('Tag not shared with user.')
+      }
+
+      tag.permissions.delete(userId)
+
+      return tag.save()
+    },
     submitLink(root, { url, title, description }, context) {
       if (!context.user) {
         throw new Error('Need to be logged in to submit links.')

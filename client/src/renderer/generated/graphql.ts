@@ -107,6 +107,7 @@ export type Mutation = {
   submitLink: Link;
   toggleArchivedNote: Note;
   toggleDeletedNote: Note;
+  unshareTag: Tag;
   updateLink: Link;
   updatePermissionOnTag: Tag;
   updateTag: Tag;
@@ -173,6 +174,12 @@ export type MutationToggleArchivedNoteArgs = {
 
 export type MutationToggleDeletedNoteArgs = {
   noteId: Scalars['ID'];
+};
+
+
+export type MutationUnshareTagArgs = {
+  tagId: Scalars['ID'];
+  userId: Scalars['ID'];
 };
 
 
@@ -356,6 +363,14 @@ export type ShareTagMutationVariables = Exact<{
 
 
 export type ShareTagMutation = { __typename: 'Mutation', shareTag: { __typename: 'Tag', _id: string, updatedAt: any, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
+
+export type UnshareTagMutationVariables = Exact<{
+  tagId: Scalars['ID'];
+  userId: Scalars['ID'];
+}>;
+
+
+export type UnshareTagMutation = { __typename: 'Mutation', unshareTag: { __typename: 'Tag', _id: string, updatedAt: any, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
 
 export type UpdatePermissionOnTagMutationVariables = Exact<{
   tagId: Scalars['ID'];
@@ -745,6 +760,56 @@ export function useShareTagMutation(baseOptions?: Apollo.MutationHookOptions<Sha
 export type ShareTagMutationHookResult = ReturnType<typeof useShareTagMutation>;
 export type ShareTagMutationResult = Apollo.MutationResult<ShareTagMutation>;
 export type ShareTagMutationOptions = Apollo.BaseMutationOptions<ShareTagMutation, ShareTagMutationVariables>;
+export const UnshareTagDocument = gql`
+    mutation UnshareTag($tagId: ID!, $userId: ID!) {
+  unshareTag(tagId: $tagId, userId: $userId) {
+    _id
+    updatedAt
+    permissions {
+      user {
+        _id
+      }
+      tag {
+        read
+        write
+        use
+        share
+      }
+      notes {
+        read
+        write
+      }
+    }
+  }
+}
+    `;
+export type UnshareTagMutationFn = Apollo.MutationFunction<UnshareTagMutation, UnshareTagMutationVariables>;
+
+/**
+ * __useUnshareTagMutation__
+ *
+ * To run a mutation, you first call `useUnshareTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnshareTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unshareTagMutation, { data, loading, error }] = useUnshareTagMutation({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useUnshareTagMutation(baseOptions?: Apollo.MutationHookOptions<UnshareTagMutation, UnshareTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnshareTagMutation, UnshareTagMutationVariables>(UnshareTagDocument, options);
+      }
+export type UnshareTagMutationHookResult = ReturnType<typeof useUnshareTagMutation>;
+export type UnshareTagMutationResult = Apollo.MutationResult<UnshareTagMutation>;
+export type UnshareTagMutationOptions = Apollo.BaseMutationOptions<UnshareTagMutation, UnshareTagMutationVariables>;
 export const UpdatePermissionOnTagDocument = gql`
     mutation UpdatePermissionOnTag($tagId: ID!, $userId: ID!, $resource: String!, $mode: String!, $granted: Boolean!) {
   updatePermissionOnTag(

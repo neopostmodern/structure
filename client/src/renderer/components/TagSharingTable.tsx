@@ -21,6 +21,7 @@ import {
 } from '../generated/graphql';
 import ErrorSnackbar from './ErrorSnackbar';
 import { FORM_SUBHEADER_STYLES } from './formComponents';
+import TagSharingDelete from './TagSharingDelete';
 
 const PermissionsTable = styled.table`
   thead {
@@ -206,8 +207,16 @@ const TagSharingTable = ({
                 </ToggleButtonGroup>
               </td>
               <td>
-                {mutationActiveOnUserId === permission.user._id && (
+                {mutationActiveOnUserId === permission.user._id ? (
                   <CircularProgress size="1.2em" disableShrink />
+                ) : (
+                  !readOnly &&
+                  tag.user._id !== permission.user._id && (
+                    <TagSharingDelete
+                      tagId={tag._id}
+                      userId={permission.user._id}
+                    />
+                  )
                 )}
               </td>
             </tr>

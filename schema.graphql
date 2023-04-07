@@ -87,6 +87,7 @@ type Mutation {
   submitLink(description: String, title: String, url: String!): Link!
   toggleArchivedNote(noteId: ID!): Note!
   toggleDeletedNote(noteId: ID!): Note!
+  unshareTag(tagId: ID!, userId: ID!): Tag!
   updateLink(link: InputLink!): Link!
   updatePermissionOnTag(granted: Boolean!, mode: String!, resource: String!, tagId: ID!, userId: ID!): Tag!
   updateTag(tag: InputTag!): Tag!
