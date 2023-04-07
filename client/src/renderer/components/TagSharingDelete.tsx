@@ -70,7 +70,7 @@ const TagSharingDelete = ({
         <CircularProgress disableShrink size="1.2em" />
       ) : (
         <Tooltip title="Remove share">
-          <IconButton onClick={handleClick}>
+          <IconButton onClick={handleClick} size="small">
             <Delete />
           </IconButton>
         </Tooltip>

@@ -27,8 +27,11 @@ const PermissionsTable = styled.table`
   thead {
     ${FORM_SUBHEADER_STYLES}
   }
-  td:not(:last-of-type) {
-    border-right: transparent 1em solid;
+  tbody td:not(:last-of-type) {
+    border-right: transparent 0.75em solid;
+  }
+  tbody tr:not(:last-of-type) td {
+    border-bottom: transparent 1em solid;
   }
 `;
 
@@ -142,7 +145,6 @@ const TagSharingTable = ({
         <thead>
           <tr>
             <td></td>
-            <td></td>
             <td>Tag</td>
             <td>Tagged notes</td>
           </tr>
@@ -150,11 +152,11 @@ const TagSharingTable = ({
         <tbody>
           {tag.permissions.map((permission) => (
             <tr key={permission.user._id}>
-              <td>{permission.user.name}</td>
               <td>
+                {permission.user.name}{' '}
                 {tag.user._id === permission.user._id && (
                   <Tooltip title="Creator">
-                    <Person />
+                    <Person style={{ verticalAlign: 'bottom' }} />
                   </Tooltip>
                 )}
               </td>
@@ -164,6 +166,7 @@ const TagSharingTable = ({
                   onChange={handlePermissionsChange}
                   data-resource="tag"
                   data-user-id={permission.user._id}
+                  size="small"
                 >
                   <ToggleButton value="read" disabled>
                     <Tooltip title="See tag">
@@ -193,6 +196,7 @@ const TagSharingTable = ({
                   onChange={handlePermissionsChange}
                   data-resource="notes"
                   data-user-id={permission.user._id}
+                  size="small"
                 >
                   <ToggleButton value="read" disabled>
                     <Tooltip title="See tagged notes">

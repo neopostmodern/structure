@@ -207,11 +207,11 @@ const TagPage: FC = () => {
       />
       <TagForm tag={tagQuery.data.tag} onSubmit={handleSubmit} />
 
-      <Gap vertical={2} />
+      <Gap vertical={4} />
       <Typography variant="h2">Sharing</Typography>
       <TagSharing tag={tagQuery.data.tag} />
 
-      <Gap vertical={2} />
+      <Gap vertical={4} />
       <Typography variant="h2">Tagged notes</Typography>
       <NotesList notes={tagQuery.data.tag.notes} />
     </ComplexLayout>
