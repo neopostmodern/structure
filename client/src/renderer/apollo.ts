@@ -1,5 +1,6 @@
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
-import { CachePersistor, LocalStorageWrapper } from 'apollo3-cache-persist';
+import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
+import localforage from 'localforage';
 
 let backendUrl;
 if (process.env.TARGET === 'web') {
@@ -54,7 +55,7 @@ const cache = new InMemoryCache({
 
 export const cachePersistor = new CachePersistor({
   cache,
-  storage: new LocalStorageWrapper(window.localStorage),
+  storage: new LocalForageWrapper(localforage),
   maxSize: false,
 });
 // todo: await before instantiating ApolloClient, else queries might run before the cache is persisted
