@@ -17,6 +17,7 @@ export function submitLink(user, { url, title, description }) {
     name: title,
     description,
     user,
+    tags: [user.internal.ownershipTagId],
   }).save()
 }
 
