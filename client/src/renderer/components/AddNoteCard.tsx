@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { FC } from 'react';
 import styled from 'styled-components';
+import useShortcut from '../hooks/useShortcut';
 
 const CardButton = styled(Button)`
   text-transform: uppercase;
@@ -27,6 +28,7 @@ const AddNoteCard: FC<{
   subtitle?: string;
   icon: JSX.Element;
   action?: () => void;
+  actionShortcut?: Array<string> | string;
   actions?: { [label: string]: () => void };
   additionalActions?: JSX.Element;
 }> = ({
@@ -35,9 +37,12 @@ const AddNoteCard: FC<{
   subtitle,
   icon,
   action,
+  actionShortcut,
   actions,
   additionalActions,
 }) => {
+  useShortcut(actionShortcut, action || (() => {}), true);
+
   return (
     <Card
       variant="outlined"

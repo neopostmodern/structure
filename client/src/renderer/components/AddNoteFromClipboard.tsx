@@ -94,11 +94,13 @@ const AddNoteFromClipboard: FC<{
   const isShort = clipboard.length < 100;
 
   let action;
+  let actionShortcut;
   let actions;
   if (isUrl) {
     action = () => {
       onSubmitUrl(clipboard);
     };
+    actionShortcut = ['ctrl+enter', 'command+enter'];
   } else if (isShort) {
     actions = {
       'Add as title': () => onSubmitText({ title: clipboard }),
@@ -116,6 +118,7 @@ const AddNoteFromClipboard: FC<{
       title={`Add ${isUrl ? 'URL' : 'text note'} from clipboard`}
       suggestion={clipboard}
       action={action}
+      actionShortcut={actionShortcut}
       actions={actions}
       additionalActions={
         <>
