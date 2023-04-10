@@ -1,5 +1,6 @@
 import {
   Archive,
+  ContentCopy,
   Launch,
   MoreVert,
   Share,
@@ -74,6 +75,14 @@ const NotesListActionMenu = ({
                   <Launch />
                 </ListItemIcon>
                 Open in browser
+              </MenuItem>
+            )}
+            {'url' in note && note.url && (
+              <MenuItem onClick={() => navigator.clipboard.writeText(note.url)}>
+                <ListItemIcon>
+                  <ContentCopy />
+                </ListItemIcon>
+                Copy URL
               </MenuItem>
             )}
             {'url' in note && note.url && navigator.share && (

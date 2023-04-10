@@ -1,4 +1,4 @@
-import { Launch, Share } from '@mui/icons-material';
+import { ContentCopy, Launch, Share } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -17,14 +17,14 @@ const UrlField: React.FC<UrlFieldProps> = ({ name, readOnly = false }) => {
     <>
       <div style={{ display: 'flex' }}>
         <TextField type="text" disabled={readOnly} {...register(name)} />
-        <Tooltip title="Open in default browser">
+        <Tooltip title="Copy URL">
           <IconButton
             style={{ marginLeft: '1rem' }}
-            onClick={(): void => {
-              openInDefaultBrowser(watch(name));
+            onClick={() => {
+              navigator.clipboard.writeText(getValues(name));
             }}
           >
-            <Launch />
+            <ContentCopy />
           </IconButton>
         </Tooltip>
         {navigator.share && (
@@ -38,6 +38,15 @@ const UrlField: React.FC<UrlFieldProps> = ({ name, readOnly = false }) => {
             </IconButton>
           </Tooltip>
         )}
+        <Tooltip title="Open in default browser">
+          <IconButton
+            onClick={(): void => {
+              openInDefaultBrowser(watch(name));
+            }}
+          >
+            <Launch />
+          </IconButton>
+        </Tooltip>
       </div>
       {formState.errors[name] && (
         <div style={{ color: 'red', fontSize: '80%' }}>
