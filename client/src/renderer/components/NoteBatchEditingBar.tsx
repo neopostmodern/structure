@@ -49,9 +49,13 @@ const NoteBatchEditingBar = ({
   );
 
   const selectUnselectAll = useCallback(
-    (selected: boolean | React.ChangeEvent<HTMLInputElement> = false): void => {
+    (
+      selected: boolean | React.ChangeEvent<HTMLInputElement> | undefined
+    ): void => {
       let nextSelectedState =
-        typeof selected === 'boolean' ? selected : selected.target.checked;
+        typeof selected === 'boolean' || typeof selected === 'undefined'
+          ? selected
+          : selected.target.checked;
       const selection: BatchSelectionType = {};
       if (typeof selected === 'undefined') {
         // if no selected target is passed in and all notes are selected, unselect them instead
