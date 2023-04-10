@@ -33,6 +33,7 @@ import {
   DEFAULT_SORT_BY,
   UserInterfaceStateType,
 } from '../reducers/userInterface';
+import { SHORTCUTS } from '../utils/keyboard';
 import {
   archiveStateToName,
   layoutToName,
@@ -40,6 +41,7 @@ import {
 } from '../utils/textHelpers';
 import { Menu, MenuSearchFieldContainer } from './Menu';
 import NotesMenuButton from './NotesMenuButton';
+import TooltipWithShortcut from './TooltipWithShortcut';
 
 interface NotesMenuProps {
   notes: NotesForListQuery['notes'];
@@ -123,39 +125,45 @@ const NotesMenu = ({
         defaultValue={DEFAULT_SORT_BY}
       />
       <MenuSearchFieldContainer>
-        <FormControl variant="standard" sx={{ width: '100%' }}>
-          <InputLabel>Search</InputLabel>
-          <Input
-            onChange={({ target: { value } }): void => {
-              onChangeSearchQuery(value);
-            }}
-            value={searchQuery}
-            inputRef={searchInput}
-            endAdornment={
-              <InputAdornment position="end">
-                {searchQuery.length > 0 ? (
-                  <IconButton
-                    aria-label="clear text search filter"
-                    onClick={handleClearSearchText}
-                    edge="end"
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                ) : (
-                  <SearchIcon />
-                )}
-              </InputAdornment>
-            }
-          />
-          <FormHelperText sx={{ textAlign: 'right' }}>
-            <NoteCount
-              notes={notes}
-              matchedNotes={matchedNotes}
-              archiveState={archiveState}
-              archivedMatchedNotesCount={archivedMatchedNotesCount}
+        <TooltipWithShortcut
+          title=""
+          shortcut={SHORTCUTS.SEARCH}
+          adjustVerticalDistance={-30}
+        >
+          <FormControl variant="standard" sx={{ width: '100%' }}>
+            <InputLabel>Search</InputLabel>
+            <Input
+              onChange={({ target: { value } }): void => {
+                onChangeSearchQuery(value);
+              }}
+              value={searchQuery}
+              inputRef={searchInput}
+              endAdornment={
+                <InputAdornment position="end">
+                  {searchQuery.length > 0 ? (
+                    <IconButton
+                      aria-label="clear text search filter"
+                      onClick={handleClearSearchText}
+                      edge="end"
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  ) : (
+                    <SearchIcon />
+                  )}
+                </InputAdornment>
+              }
             />
-          </FormHelperText>
-        </FormControl>
+            <FormHelperText sx={{ textAlign: 'right' }}>
+              <NoteCount
+                notes={notes}
+                matchedNotes={matchedNotes}
+                archiveState={archiveState}
+                archivedMatchedNotesCount={archivedMatchedNotesCount}
+              />
+            </FormHelperText>
+          </FormControl>
+        </TooltipWithShortcut>
       </MenuSearchFieldContainer>
     </Menu>
   );

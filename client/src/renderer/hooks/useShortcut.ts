@@ -1,8 +1,5 @@
-import Mousetrap from 'mousetrap';
 import { useEffect } from 'react';
-import makeMousetrapGlobal from '../utils/mousetrapGlobal';
-
-makeMousetrapGlobal(Mousetrap);
+import { bindShortcut } from '../utils/keyboard';
 
 /**
  * Register a shortcut while the component is mounted
@@ -11,7 +8,7 @@ makeMousetrapGlobal(Mousetrap);
  * @param global whether the shortcut should work from within textfields
  */
 const useShortcut = (
-  shortcut: Array<string> | string | null | undefined,
+  shortcut: Array<string> | null | undefined,
   callback: () => void,
   global = false
 ) => {
@@ -20,10 +17,7 @@ const useShortcut = (
       return;
     }
 
-    (global ? Mousetrap.bindGlobal : Mousetrap.bind)(shortcut, callback);
-    return (): void => {
-      Mousetrap.unbind(shortcut);
-    };
+    return bindShortcut(shortcut, callback, global);
   }, [shortcut, callback]);
 };
 

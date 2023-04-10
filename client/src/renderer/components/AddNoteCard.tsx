@@ -10,6 +10,7 @@ import {
 import { FC } from 'react';
 import styled from 'styled-components';
 import useShortcut from '../hooks/useShortcut';
+import TooltipWithShortcut from './TooltipWithShortcut';
 
 const CardButton = styled(Button)`
   text-transform: uppercase;
@@ -28,7 +29,7 @@ const AddNoteCard: FC<{
   subtitle?: string;
   icon: JSX.Element;
   action?: () => void;
-  actionShortcut?: Array<string> | string;
+  actionShortcut?: Array<string>;
   actions?: { [label: string]: () => void };
   additionalActions?: JSX.Element;
 }> = ({
@@ -61,9 +62,11 @@ const AddNoteCard: FC<{
           <>
             {additionalActions}
             {action && (
-              <IconButton>
-                <ArrowForward />
-              </IconButton>
+              <TooltipWithShortcut title="" shortcut={actionShortcut}>
+                <IconButton>
+                  <ArrowForward />
+                </IconButton>
+              </TooltipWithShortcut>
             )}
           </>
         }

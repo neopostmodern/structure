@@ -1,41 +1,24 @@
-import Mousetrap from 'mousetrap';
 import { createRoot } from 'react-dom/client';
 import apolloClient from './apollo';
 import ErrorBoundary from './components/ErrorBoundary';
 import { history, store } from './configureStore';
 import Root from './containers/Root';
 import './styles/fonts.global.css';
-import makeMousetrapGlobal from './utils/mousetrapGlobal';
+import { bindShortcut, SHORTCUTS } from './utils/keyboard';
 
 if (process.env.TARGET === 'web') {
   import('./serviceworker/register'); // registers service worker
 }
 
-makeMousetrapGlobal(Mousetrap);
-Mousetrap.bindGlobal(['ctrl+.', 'command+.'], () => {
+bindShortcut(SHORTCUTS.HOME_PAGE, () => {
   history.push('/');
   return false;
 });
-Mousetrap.bind(['esc'], () => {
-  history.push('/');
-});
-Mousetrap.bindGlobal(['ctrl+n', 'command+n'], () => {
-  history.push('/notes/add');
-});
-Mousetrap.bindGlobal(['n'], (event: KeyboardEvent) => {
-  if (
-    // @ts-ignore
-    event.target?.nodeName === 'INPUT' ||
-    // @ts-ignore
-    event.target?.nodeName === 'TEXTAREA'
-  ) {
-    return;
-  }
-  event.preventDefault();
+bindShortcut(SHORTCUTS.NEW_NOTE_PAGE, () => {
   history.push('/notes/add');
 });
 if (process.env.TARGET !== 'web') {
-  Mousetrap.bindGlobal(['f12', 'ctrl+shift+i'], () => {
+  bindShortcut(SHORTCUTS.DEV_TOOLS, () => {
     window.electron.ipcRenderer.toggleDevTools();
   });
 }

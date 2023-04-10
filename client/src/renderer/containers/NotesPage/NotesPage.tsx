@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
 import { CircularProgress, Stack, Typography } from '@mui/material';
-import Mousetrap from 'mousetrap';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -21,8 +20,10 @@ import NotesPageEmpty from '../../components/NotesPageEmpty';
 import { NotesForListQuery } from '../../generated/graphql';
 import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince';
 import useFilteredNotes from '../../hooks/useFilteredNotes';
+import useShortcut from '../../hooks/useShortcut';
 import { RootState } from '../../reducers';
 import { UserInterfaceStateType } from '../../reducers/userInterface';
+import { SHORTCUTS } from '../../utils/keyboard';
 import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
@@ -49,11 +50,6 @@ export const NOTES_QUERY = gql`
   ${BASE_TAG_FRAGMENT}
 `;
 
-const searchFieldShortcutKeys =
-  process.env.TARGET === 'web'
-    ? ['ctrl+k', 'command+k']
-    : ['ctrl+f', 'command+f'];
-
 const ShowMore = styled.div`
   color: black;
   background-color: #eee;
@@ -78,6 +74,18 @@ const NotesPage: React.FC = () => {
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince();
 
+  useShortcut(SHORTCUTS.SEARCH, () => {
+    searchInput.current?.focus();
+    setTimeout(
+      () =>
+        searchInput.current?.setSelectionRange(
+          0,
+          searchInput.current?.value.length
+        ),
+      10
+    );
+  });
+
   useEffect(() => {
     const handleScrollEvent = () => {
       if (!moreElement.current) {
@@ -91,35 +99,16 @@ const NotesPage: React.FC = () => {
       }
     };
 
-    Mousetrap.bind(searchFieldShortcutKeys, (event: KeyboardEvent): void => {
-      event.preventDefault();
-      searchInput.current?.focus();
-      setTimeout(
-        () =>
-          searchInput.current?.setSelectionRange(
-            0,
-            searchInput.current?.value.length
-          ),
-        10
-      );
-    });
     window.addEventListener('scroll', handleScrollEvent);
 
     return (): void => {
-      Mousetrap.unbind(searchFieldShortcutKeys);
       window.removeEventListener('scroll', handleScrollEvent);
     };
   }, []);
 
-  useEffect(() => {
-    Mousetrap.bind('r', () => {
-      entitiesUpdatedSince.refetch();
-    });
-
-    return () => {
-      Mousetrap.unbind('r');
-    };
-  }, [entitiesUpdatedSince]);
+  useShortcut(SHORTCUTS.REFRESH, () => {
+    entitiesUpdatedSince.refetch();
+  });
 
   const content = [];
   let primaryActions = null;

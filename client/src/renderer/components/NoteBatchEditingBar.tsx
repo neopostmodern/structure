@@ -1,7 +1,6 @@
 import { Close, Launch } from '@mui/icons-material';
 import { Checkbox, Drawer, IconButton } from '@mui/material';
-import Mousetrap from 'mousetrap';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import {
@@ -9,12 +8,14 @@ import {
   toggleBatchEditing,
 } from '../actions/userInterface';
 import { NotesForListQuery } from '../generated/graphql';
+import useShortcut from '../hooks/useShortcut';
 import { RootState } from '../reducers';
 import {
   BatchSelectionType,
   UserInterfaceStateType,
 } from '../reducers/userInterface';
 import { containerWidth } from '../styles/constants';
+import { SHORTCUTS } from '../utils/keyboard';
 import Gap from './Gap';
 
 const BatchEditingMenuContainer = styled.div`
@@ -25,9 +26,6 @@ const BatchEditingMenuContainer = styled.div`
   display: flex;
   align-items: center;
 `;
-
-const toggleBatchEditingShortcutKeys = ['ctrl+b', 'command+b'];
-const selectAllShortcutKeys = ['ctrl+a', 'command+a'];
 
 const NoteBatchEditingBar = ({
   notes,
@@ -64,7 +62,7 @@ const NoteBatchEditingBar = ({
       });
       dispatch(setBatchSelection(selection));
     },
-    [notes]
+    [notes, selectedNoteCount]
   );
 
   const handleBatchOpenNotes = (): void => {
@@ -79,26 +77,17 @@ const NoteBatchEditingBar = ({
     });
   };
 
-  useEffect(() => {
-    Mousetrap.bind(toggleBatchEditingShortcutKeys, (): void => {
+  useShortcut(SHORTCUTS.BATCH_EDITING, (): void => {
+    dispatch(toggleBatchEditing());
+  });
+  useShortcut(SHORTCUTS.SELECT_ALL, () => {
+    // if we're not already batch editing switch to batch editing mode
+    if (!batchEditing) {
       dispatch(toggleBatchEditing());
-    });
-    Mousetrap.bind(selectAllShortcutKeys, (): false => {
-      // if we're not already batch editing switch to batch editing mode
-      if (!batchEditing) {
-        dispatch(toggleBatchEditing());
-      }
+    }
 
-      selectUnselectAll();
-
-      return false;
-    });
-
-    return () => {
-      Mousetrap.unbind(toggleBatchEditingShortcutKeys);
-      Mousetrap.unbind(selectAllShortcutKeys);
-    };
-  }, []);
+    selectUnselectAll();
+  });
 
   return (
     <Drawer variant="persistent" anchor="top" open={batchEditing}>

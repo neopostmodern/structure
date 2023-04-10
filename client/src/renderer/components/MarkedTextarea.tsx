@@ -1,20 +1,16 @@
 import { Tab, Tabs, TextField } from '@mui/material';
-import Mousetrap from 'mousetrap';
 import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
-import makeMousetrapGlobal from '../utils/mousetrapGlobal';
+import useShortcut from '../hooks/useShortcut';
+import { SHORTCUTS } from '../utils/keyboard';
 import RenderedMarkdown from './RenderedMarkdown';
-
-makeMousetrapGlobal(Mousetrap);
 
 const TextareaContainer = styled.div`
   position: relative;
   margin-top: 2px;
   min-height: 3rem;
 `;
-
-const focusDescriptionShortcutKeys = ['ctrl+e', 'command+e'];
 
 type MarkedTextareaProps = {
   name: string;
@@ -29,12 +25,12 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
   );
   const textareaElement = useRef<HTMLTextAreaElement>();
 
-  // mousetrap needs a self-updating reference
-  const mousetrapRefs = useRef<{
+  // shortcuts need self-updating references
+  const shortcutRefs = useRef<{
     editDescription: boolean;
     lastSelection: [number, number] | null;
   }>();
-  mousetrapRefs.current = { editDescription, lastSelection };
+  shortcutRefs.current = { editDescription, lastSelection };
 
   const focusTextarea = (): void => {
     if (!textareaElement.current) {
@@ -42,9 +38,9 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
     }
     if (document.activeElement !== textareaElement.current) {
       textareaElement.current.focus();
-      if (mousetrapRefs.current?.lastSelection) {
+      if (shortcutRefs.current?.lastSelection) {
         textareaElement.current.setSelectionRange(
-          ...mousetrapRefs.current.lastSelection
+          ...shortcutRefs.current.lastSelection
         );
       } else {
         textareaElement.current.setSelectionRange(
@@ -56,7 +52,7 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
   };
 
   const toggleEditDescription = (fromShortcut = false): void => {
-    if (mousetrapRefs.current?.editDescription) {
+    if (shortcutRefs.current?.editDescription) {
       if (fromShortcut && document.activeElement !== textareaElement.current) {
         focusTextarea();
       } else {
@@ -81,14 +77,9 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
     }
   };
 
-  useEffect(() => {
-    Mousetrap.bindGlobal(focusDescriptionShortcutKeys, () => {
-      toggleEditDescription(true);
-    });
-    return (): void => {
-      Mousetrap.unbind(focusDescriptionShortcutKeys);
-    };
-  }, []);
+  useShortcut(SHORTCUTS.EDIT, () => {
+    toggleEditDescription(true);
+  });
 
   useEffect(() => {
     if (getValues(name).length === 0 && !editDescription) {

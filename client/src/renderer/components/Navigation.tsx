@@ -23,7 +23,9 @@ import { AdditionalNavigationItem } from '../containers/ComplexLayout';
 import { RootState } from '../reducers';
 import { HistoryStateType } from '../reducers/history';
 import { breakpointDesktop, breakPointMobile } from '../styles/constants';
+import { SHORTCUTS } from '../utils/keyboard';
 import LastVisitedNotes from './LastVisitedNotes';
+import TooltipWithShortcut from './TooltipWithShortcut';
 
 const CustomDesktopAppBar = styled(Box)`
   @media (min-width: 40rem) and (max-width: ${breakpointDesktop - 0.001}rem) {
@@ -112,7 +114,10 @@ const Navigation = ({
   );
 
   const addNoteFab = (
-    <Tooltip title="Add new note">
+    <TooltipWithShortcut
+      title="Add new note"
+      shortcut={SHORTCUTS.NEW_NOTE_PAGE}
+    >
       <ResponsiveFab
         centered={isMobileLayout || undefined}
         color="primary"
@@ -122,7 +127,7 @@ const Navigation = ({
       >
         <Add fontSize="large" />
       </ResponsiveFab>
-    </Tooltip>
+    </TooltipWithShortcut>
   );
   const menuButton = (
     <IconButton onClick={handleDrawerOpen}>
@@ -154,9 +159,13 @@ const Navigation = ({
       {!isMobileLayout && (
         <CustomDesktopAppBar display="flex" alignItems="center">
           <TitleLine>
-            <Tooltip title="Back to homepage">
+            <TooltipWithShortcut
+              title="Back to homepage"
+              shortcut={SHORTCUTS.HOME_PAGE}
+              adjustVerticalDistance={-20}
+            >
               <TitleLink to="/">Structure</TitleLink>
-            </Tooltip>{' '}
+            </TooltipWithShortcut>{' '}
             {historyTools}
             {addNoteFab}
           </TitleLine>

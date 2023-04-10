@@ -15,6 +15,7 @@ import {
   CLIPBOARD_NOT_GRANTED,
 } from '../middleware/electron';
 import { RootState } from '../reducers';
+import { SHORTCUTS } from '../utils/keyboard';
 import { isUrlValid } from '../utils/textHelpers';
 import AddNoteCard from './AddNoteCard';
 
@@ -100,7 +101,7 @@ const AddNoteFromClipboard: FC<{
     action = () => {
       onSubmitUrl(clipboard);
     };
-    actionShortcut = ['ctrl+enter', 'command+enter'];
+    actionShortcut = SHORTCUTS.QUICK_SUBMIT;
   } else if (isShort) {
     actions = {
       'Add as title': () => onSubmitText({ title: clipboard }),

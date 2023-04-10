@@ -5,8 +5,7 @@ import {
 } from '@mui/icons-material';
 import { Button, IconButton, Skeleton, Tooltip } from '@mui/material';
 import { INTERNAL_TAG_PREFIX } from '@structure/common';
-import Mousetrap from 'mousetrap';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { TAGS_QUERY } from '../containers/TagsPage';
 import {
   AddTagByNameToNoteMutation,
@@ -15,7 +14,8 @@ import {
   TagsWithCountsQuery,
 } from '../generated/graphql';
 import useIsOnline from '../hooks/useIsOnline';
-import makeMousetrapGlobal from '../utils/mousetrapGlobal';
+import useShortcut from '../hooks/useShortcut';
+import { SHORTCUTS } from '../utils/keyboard';
 import {
   ADD_TAG_BY_NAME_TO_NOTE_MUTATION,
   BASE_TAG_FRAGMENT,
@@ -24,6 +24,7 @@ import { DisplayOnlyTag } from '../utils/types';
 import useDataState, { DataState } from '../utils/useDataState';
 import ErrorSnackbar from './ErrorSnackbar';
 import InlineTagForm from './InlineTagForm';
+import TooltipWithShortcut from './TooltipWithShortcut';
 
 export const TAGS_WITH_COUNTS_QUERY = gql`
   query TagsWithCounts {
@@ -34,10 +35,6 @@ export const TAGS_WITH_COUNTS_QUERY = gql`
   }
   ${BASE_TAG_FRAGMENT}
 `;
-
-makeMousetrapGlobal(Mousetrap);
-
-const tagShortcutKeys = ['ctrl+t', 'command+t'];
 
 const AddTagForm = ({
   noteId,
@@ -93,17 +90,7 @@ const AddTagForm = ({
     setAddingNew(false);
   };
 
-  useEffect(() => {
-    if (withShortcuts) {
-      Mousetrap.bindGlobal(tagShortcutKeys, showNewTagForm);
-    }
-
-    return (): void => {
-      if (withShortcuts) {
-        Mousetrap.unbind(tagShortcutKeys);
-      }
-    };
-  });
+  useShortcut(withShortcuts ? SHORTCUTS.ADD_TAG : null, showNewTagForm, true);
 
   const handleAddTag = (tagName: string): void => {
     const tagValue = tagName.trim();
@@ -161,18 +148,26 @@ const AddTagForm = ({
       .length === 0
   ) {
     return (
-      <Button variant="outlined" size="small" onClick={showNewTagForm}>
-        Add tag
-      </Button>
+      <TooltipWithShortcut
+        title=""
+        shortcut={withShortcuts ? SHORTCUTS.ADD_TAG : undefined}
+      >
+        <Button variant="outlined" size="small" onClick={showNewTagForm}>
+          Add tag
+        </Button>
+      </TooltipWithShortcut>
     );
   }
 
   return (
-    <Tooltip title="Add tag">
+    <TooltipWithShortcut
+      title="Add tag"
+      shortcut={withShortcuts ? SHORTCUTS.ADD_TAG : undefined}
+    >
       <IconButton size="small" onClick={showNewTagForm}>
         <PlusIcon />
       </IconButton>
-    </Tooltip>
+    </TooltipWithShortcut>
   );
 };
 
