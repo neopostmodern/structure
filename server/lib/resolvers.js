@@ -390,7 +390,8 @@ const rootResolvers = {
 
       const tag = await Tag.findOne({
         _id: tagId,
-        ...baseTagsQuery(user, 'share'),
+        // always allow unsharing from yourself
+        ...(user._id === userId ? {} : baseTagsQuery(user, 'share')),
       })
       if (!tag) {
         throw new Error('No such tag or no sufficient privileges.')

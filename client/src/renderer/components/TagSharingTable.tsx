@@ -19,6 +19,7 @@ import {
   UpdatePermissionOnTagMutation,
   UpdatePermissionOnTagMutationVariables,
 } from '../generated/graphql';
+import useUserId from '../hooks/useUserId';
 import ErrorSnackbar from './ErrorSnackbar';
 import { FORM_SUBHEADER_STYLES } from './formComponents';
 import TagSharingDelete from './TagSharingDelete';
@@ -93,6 +94,8 @@ const TagSharingTable = ({
   tag: TagType;
   readOnly?: boolean;
 }) => {
+  const userId = useUserId();
+
   const [updatePermissionOnTag, updatePermissionOnTagMutation] = useMutation<
     UpdatePermissionOnTagMutation,
     UpdatePermissionOnTagMutationVariables
@@ -214,8 +217,8 @@ const TagSharingTable = ({
                 {mutationActiveOnUserId === permission.user._id ? (
                   <CircularProgress size="1.2em" disableShrink />
                 ) : (
-                  !readOnly &&
-                  tag.user._id !== permission.user._id && (
+                  tag.user._id !== permission.user._id &&
+                  (!readOnly || userId === permission.user._id) && (
                     <TagSharingDelete
                       tagId={tag._id}
                       userId={permission.user._id}

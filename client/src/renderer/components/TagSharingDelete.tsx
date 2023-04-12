@@ -2,10 +2,13 @@ import { gql, useMutation } from '@apollo/client';
 import { Delete } from '@mui/icons-material';
 import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { goBack } from 'redux-first-history';
 import {
   UnshareTagMutation,
   UnshareTagMutationVariables,
 } from '../generated/graphql';
+import useUserId from '../hooks/useUserId';
 import ErrorSnackbar from './ErrorSnackbar';
 
 const UNSHARE_TAG_MUTATION = gql`
@@ -39,6 +42,8 @@ const TagSharingDelete = ({
   tagId: string;
   userId: string;
 }) => {
+  const loggedInUserId = useUserId();
+  const dispatch = useDispatch();
   const [unshareTag, unshareTagMutation] = useMutation<
     UnshareTagMutation,
     UnshareTagMutationVariables
@@ -46,6 +51,16 @@ const TagSharingDelete = ({
     variables: {
       tagId,
       userId,
+    },
+    onCompleted({ unshareTag: updatedTag }) {
+      if (!updatedTag) {
+        return;
+      }
+      if (
+        !updatedTag.permissions.some(({ user }) => user._id === loggedInUserId)
+      ) {
+        dispatch(goBack());
+      }
     },
   });
 

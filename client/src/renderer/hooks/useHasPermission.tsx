@@ -23,16 +23,18 @@ export const hasPermission = (
     );
 
     if (!userPermissions) {
-      throw Error(
+      console.error(
         `[useHasPermissions] User '${userId}' has no permissions on entity.`
       );
+      return false;
     }
 
     if (!(mode in userPermissions[resource])) {
-      console.error(userPermissions[resource]);
-      throw Error(
-        `[useHasPermissions] No such mode '${mode}' on resource '${resource}'`
+      console.error(
+        `[useHasPermissions] No such mode '${mode}' on resource '${resource}'`,
+        userPermissions[resource]
       );
+      return false;
     }
 
     return userPermissions[resource][mode] as boolean;
