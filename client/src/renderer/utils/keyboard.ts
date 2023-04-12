@@ -59,7 +59,7 @@ export const adaptShortcutsForPlatform = (
 
 export const SHORTCUTS: { [shortcutName: string]: Array<string> } = {
   HOME_PAGE: [`${GLOBAL}${MODIFIER}+.`, 'esc'],
-  QUICK_SUBMIT: [`${MODIFIER}+enter`],
+  QUICK_SUBMIT: [`${GLOBAL}${MODIFIER}+enter`],
   DEV_TOOLS: [`${GLOBAL}f12`, `${GLOBAL}ctrl+shift+i`],
 
   SELECT_ALL: [`${MODIFIER}+a`],
