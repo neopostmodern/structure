@@ -129,6 +129,7 @@ const NotesMenu = ({
           title=""
           shortcut={SHORTCUTS.SEARCH}
           adjustVerticalDistance={-30}
+          disableFocusListener
         >
           <FormControl variant="standard" sx={{ width: '100%' }}>
             <InputLabel>Search</InputLabel>
