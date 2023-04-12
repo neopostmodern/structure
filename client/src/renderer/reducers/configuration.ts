@@ -8,20 +8,12 @@ export interface ConfigurationStateType {
 
 type Action = { type: string; payload?: any };
 
-let backendUrl;
-let networkMode;
-if (process.env.TARGET === 'web') {
-  // no backend customization for web, other backends should host their own frontends
-  backendUrl = BACKEND_URL;
-  networkMode =
-    (localStorage.getItem('network-mode') as NetworkMode) || NetworkMode.AUTO;
-} else {
-  backendUrl = window.electron.electronStore.get('backend-url', BACKEND_URL);
-  networkMode = window.electron.electronStore.get(
-    'network-mode',
-    NetworkMode.AUTO
-  );
-}
+const backendUrl =
+  process.env.TARGET === 'web'
+    ? BACKEND_URL
+    : localStorage.getItem('backend-url') || BACKEND_URL;
+const networkMode =
+  (localStorage.getItem('network-mode') as NetworkMode) || NetworkMode.AUTO;
 
 const initialState: ConfigurationStateType = {
   backendUrl,

@@ -1,13 +1,4 @@
 const { contextBridge, ipcRenderer, clipboard } = require('electron');
-const { name } = require('../../../package.json');
-const { version } = require('../../package.json');
-const { CHANNEL } = require('@structure/config');
-
-const ElectronStore = require('electron-store');
-const electronStore = new ElectronStore({
-  projectName: CHANNEL ? `${name}-${CHANNEL}` : name,
-  projectVersion: version,
-});
 
 const validIpcChannels = ['login-closed', 'can-login', 'navigate'];
 
@@ -41,14 +32,6 @@ contextBridge.exposeInMainWorld('electron', {
           `Channel '${channel}' is not whitelisted – event dropped.`
         );
       }
-    },
-  },
-  electronStore: {
-    get(key, defaultValue) {
-      return electronStore.get(key, defaultValue);
-    },
-    set(key, value) {
-      return electronStore.set(key, value);
     },
   },
   clipboard: {

@@ -7,10 +7,10 @@ if (process.env.TARGET === 'web') {
   // no backend customization for web, other backends should host their own frontends
   backendUrl = BACKEND_URL;
 } else {
-  backendUrl = window.electron.electronStore.get('backend-url', BACKEND_URL);
+  backendUrl = localStorage.getItem('backend-url') || BACKEND_URL;
 
   if (backendUrl.endsWith('structure.neopostmodern.com')) {
-    window.electron.electronStore.set('backend-url', BACKEND_URL);
+    localStorage.setItem('backend-url', BACKEND_URL);
     backendUrl = BACKEND_URL;
   }
 }

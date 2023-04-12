@@ -13,10 +13,6 @@ declare interface Window {
       on: (channel: string, callback: (...args: any) => void) => void;
       once: (channel: string, callback: (...args: any) => void) => void;
     };
-    electronStore: {
-      get: <T>(key: string, defaultValue: T) => T;
-      set: (key: string, value: any) => void;
-    };
     clipboard: {
       readText: () => string;
     };
