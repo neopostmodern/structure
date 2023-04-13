@@ -57,6 +57,7 @@ export const adaptShortcutsForPlatform = (
       )
     );
 
+export const QUICK_ACCESS_SHORTCUT_PREFIX = 'QUICK_';
 export const SHORTCUTS: { [shortcutName: string]: Array<string> } = {
   HOME_PAGE: [`${GLOBAL}${MODIFIER}+.`, 'esc'],
   QUICK_SUBMIT: [`${GLOBAL}${MODIFIER}+enter`],
@@ -69,6 +70,16 @@ export const SHORTCUTS: { [shortcutName: string]: Array<string> } = {
   NEW_NOTE_PAGE: [`${GLOBAL}${DESKTOP_ONLY_MODIFIER}+n`],
   REFRESH: [`${GLOBAL}${DESKTOP_ONLY_MODIFIER}+r`],
   ADD_TAG: [`${GLOBAL}${DESKTOP_ONLY_MODIFIER}+t`],
+
+  [`${QUICK_ACCESS_SHORTCUT_PREFIX}1`]: [`${GLOBAL}${MODIFIER}+1`],
+  [`${QUICK_ACCESS_SHORTCUT_PREFIX}2`]: [`${GLOBAL}${MODIFIER}+2`],
+  [`${QUICK_ACCESS_SHORTCUT_PREFIX}3`]: [`${GLOBAL}${MODIFIER}+3`],
+  [`${QUICK_ACCESS_SHORTCUT_PREFIX}4`]: [`${GLOBAL}${MODIFIER}+4`],
+  [`${QUICK_ACCESS_SHORTCUT_PREFIX}5`]: [`${GLOBAL}${MODIFIER}+5`],
+  [`${QUICK_ACCESS_SHORTCUT_PREFIX}6`]: [`${GLOBAL}${MODIFIER}+6`],
+  [`${QUICK_ACCESS_SHORTCUT_PREFIX}7`]: [`${GLOBAL}${MODIFIER}+7`],
+  [`${QUICK_ACCESS_SHORTCUT_PREFIX}8`]: [`${GLOBAL}${MODIFIER}+8`],
+  [`${QUICK_ACCESS_SHORTCUT_PREFIX}9`]: [`${GLOBAL}${MODIFIER}+9`],
 };
 for (const shortcutName in SHORTCUTS) {
   SHORTCUTS[shortcutName] = adaptShortcutsForPlatform(SHORTCUTS[shortcutName]);

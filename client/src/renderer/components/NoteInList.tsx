@@ -2,27 +2,30 @@ import React from 'react';
 import TimeAgo from 'react-timeago';
 import { NotesForListQuery } from '../generated/graphql';
 import useUserId from '../hooks/useUserId';
+import { noteUrl } from '../utils/routes';
 import * as Styled from './NoteInList.style';
 import NoteInListBatchEditing from './NoteInListBatchEditing';
 import NotesListActionMenu from './NotesListActionMenu';
 import RenderedMarkdown from './RenderedMarkdown';
 import Tags from './Tags';
+import TooltipWithShortcut from './TooltipWithShortcut';
 
 export const NoteInList: React.FC<{
   note: NotesForListQuery['notes'][number];
   expanded: boolean;
-}> = ({ note, expanded }) => {
+  shortcut?: Array<string>;
+}> = ({ note, expanded, shortcut }) => {
   const userId = useUserId();
   return (
     <Styled.Note archived={Boolean(note.archivedAt)}>
       <NoteInListBatchEditing noteId={note._id} />
       <Styled.NoteContainer>
         <Styled.NoteTitleLine>
-          <Styled.NoteTitleLink
-            to={`/${note.__typename.toLowerCase()}s/${note._id}`}
-          >
-            {note.name}
-          </Styled.NoteTitleLink>
+          <TooltipWithShortcut title="" shortcut={shortcut} placement="left">
+            <Styled.NoteTitleLink to={noteUrl(note)}>
+              {note.name}
+            </Styled.NoteTitleLink>
+          </TooltipWithShortcut>
           {note.__typename !== 'Link' && (
             <Styled.NoteTypeBadge>
               &lt;

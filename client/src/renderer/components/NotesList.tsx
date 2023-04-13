@@ -1,6 +1,11 @@
 import { AddCircle, Create } from '@mui/icons-material';
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { push } from 'redux-first-history';
 import { NotesForListQuery } from '../generated/graphql';
+import useQuickNumberShortcuts from '../hooks/useQuickNumberShortcuts';
+import { QUICK_ACCESS_SHORTCUT_PREFIX, SHORTCUTS } from '../utils/keyboard';
+import { noteUrl } from '../utils/routes';
 import EmptyPageInfo from './EmptyPageInfo';
 import Gap from './Gap';
 import NoteInList from './NoteInList';
@@ -10,6 +15,11 @@ const NotesList: React.FC<{
   notes: NotesForListQuery['notes'];
   expanded: boolean;
 }> = ({ notes, expanded }) => {
+  const dispatch = useDispatch();
+  useQuickNumberShortcuts(notes, (note) => {
+    dispatch(push(noteUrl(note)));
+  });
+
   if (notes.length === 0) {
     return (
       <EmptyPageInfo
@@ -36,8 +46,15 @@ const NotesList: React.FC<{
   return (
     <>
       <Gap vertical={1} />
-      {notes.map((note) => (
-        <NoteInList key={note._id} note={note} expanded={expanded} />
+      {notes.map((note, noteIndex) => (
+        <NoteInList
+          key={note._id}
+          note={note}
+          expanded={expanded}
+          shortcut={
+            SHORTCUTS[`${QUICK_ACCESS_SHORTCUT_PREFIX}${noteIndex + 1}`]
+          }
+        />
       ))}
     </>
   );
