@@ -8,6 +8,7 @@ import {
 } from '../actions/userInterface';
 import { RootState } from '../reducers';
 import { UserInterfaceStateType } from '../reducers/userInterface';
+import { SHORTCUTS } from '../utils/keyboard';
 import EmptyPageInfo from './EmptyPageInfo';
 import Shortcut from './Shortcut';
 
@@ -29,10 +30,8 @@ const NotesPageEmpty = ({
       subtitle={
         <>
           Did you know you can use{' '}
-          <Shortcut ctrlOrCommand>
-            {process.env.TARGET === 'web' ? 'K' : 'F'}
-          </Shortcut>{' '}
-          to focus the search field?
+          <Shortcut shortcuts={SHORTCUTS.SEARCH} inline /> to focus the search
+          field?
         </>
       }
       actions={

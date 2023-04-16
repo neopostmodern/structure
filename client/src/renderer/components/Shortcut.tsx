@@ -1,32 +1,42 @@
 import { Paper } from '@mui/material';
-import { FC, PropsWithChildren } from 'react';
-import styled from 'styled-components';
+import { FC, Fragment } from 'react';
+import styled, { css } from 'styled-components';
+import { getKeyForDisplay, GLOBAL } from '../utils/keyboard';
 
-const ShortcutContainer = styled(Paper).attrs({ variant: 'outlined' })`
+type KeyProps = { inline?: boolean };
+const Key = styled(Paper).attrs<KeyProps>(({ inline }) => ({
+  variant: inline ? 'outlined' : undefined,
+}))<KeyProps>`
   display: inline-block;
-  padding: 0 0.3em;
-  font-weight: bold;
-  font-size: 95%;
+  padding: 0.1em 0.4em;
+  border-radius: 2px;
+  background-color: #222;
+
+  ${({ inline }) =>
+    inline &&
+    css`
+      padding: 0 0.3em;
+      font-weight: bold;
+      font-size: 95%;
+    `}
 `;
 
-const Shortcut: FC<
-  PropsWithChildren<{ ctrlOrCommand?: boolean; canHotkey?: boolean }>
-> = ({ children, canHotkey, ctrlOrCommand }) => {
-  let prefix;
-  if (!canHotkey || process.env.TARGET !== 'web') {
-    if (ctrlOrCommand) {
-      if (navigator.platform?.startsWith('Mac')) {
-        prefix = '⌘+';
-      } else {
-        prefix = 'Ctrl+';
-      }
-    }
-  }
+const Shortcut: FC<{ shortcuts: Array<string>; inline?: boolean }> = ({
+  shortcuts,
+  inline,
+}) => {
   return (
-    <ShortcutContainer>
-      {prefix}
-      {children}
-    </ShortcutContainer>
+    <>
+      {shortcuts[0]
+        .replace(GLOBAL, '')
+        .split('+')
+        .map((part, partIndex, allParts) => (
+          <Fragment key={part}>
+            <Key inline={inline}>{getKeyForDisplay(part)}</Key>
+            {partIndex < allParts.length - 1 && ' + '}
+          </Fragment>
+        ))}
+    </>
   );
 };
 

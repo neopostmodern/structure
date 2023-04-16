@@ -34,9 +34,7 @@ const NotesList: React.FC<{
               style={{ position: 'relative', top: '0.2em' }}
             />{' '}
             or using the shortcut{' '}
-            <Shortcut ctrlOrCommand canHotkey>
-              N
-            </Shortcut>
+            <Shortcut shortcuts={SHORTCUTS.NEW_NOTE_PAGE}></Shortcut>
           </>
         }
       />

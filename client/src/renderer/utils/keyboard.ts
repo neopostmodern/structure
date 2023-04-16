@@ -84,7 +84,6 @@ export const SHORTCUTS: { [shortcutName: string]: Array<string> } = {
 for (const shortcutName in SHORTCUTS) {
   SHORTCUTS[shortcutName] = adaptShortcutsForPlatform(SHORTCUTS[shortcutName]);
 }
-console.log(SHORTCUTS);
 
 export const getKeyForDisplay = (keyDescription: string): string => {
   if (keyDescription === Modifier.COMMAND) {

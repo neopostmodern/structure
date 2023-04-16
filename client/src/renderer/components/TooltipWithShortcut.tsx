@@ -1,14 +1,5 @@
 import { Tooltip, TooltipProps } from '@mui/material';
-import { Fragment } from 'react';
-import styled from 'styled-components';
-import { getKeyForDisplay, GLOBAL } from '../utils/keyboard';
-
-const Key = styled.div`
-  display: inline-block;
-  padding: 0.1em 0.4em;
-  border-radius: 2px;
-  background-color: #222;
-`;
+import Shortcut from './Shortcut';
 
 const TooltipWithShortcut = ({
   title,
@@ -26,15 +17,7 @@ const TooltipWithShortcut = ({
       <div style={{ textAlign: 'center' }}>
         {title}
         {title && <br />}
-        {shortcut[0]
-          .replace(GLOBAL, '')
-          .split('+')
-          .map((part, partIndex, allParts) => (
-            <Fragment key={part}>
-              <Key>{getKeyForDisplay(part)}</Key>
-              {partIndex < allParts.length - 1 && ' + '}
-            </Fragment>
-          ))}
+        <Shortcut shortcuts={shortcut} />
       </div>
     );
   }
