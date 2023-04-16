@@ -1,5 +1,4 @@
 import { Autocomplete, TextField, Typography } from '@mui/material';
-import { INTERNAL_TAG_PREFIX } from '@structure/common';
 import { matchSorter } from 'match-sorter';
 import React from 'react';
 import { TagsWithCountsQuery } from '../generated/graphql';
@@ -114,9 +113,7 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
               style={{ width: '200px' }}
             />
           )}
-          options={tags.filter(
-            ({ name }) => !name.startsWith(INTERNAL_TAG_PREFIX)
-          )}
+          options={tags}
           renderOption={(props, tag) => {
             let tagElement;
             if ('newTagName' in tag) {

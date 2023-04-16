@@ -15,6 +15,7 @@ import {
 } from '../generated/graphql';
 import useIsOnline from '../hooks/useIsOnline';
 import useShortcut from '../hooks/useShortcut';
+import useUserId from '../hooks/useUserId';
 import { SHORTCUTS } from '../utils/keyboard';
 import {
   ADD_TAG_BY_NAME_TO_NOTE_MUTATION,
@@ -45,6 +46,8 @@ const AddTagForm = ({
   withShortcuts?: boolean;
   currentTags: Array<DisplayOnlyTag>;
 }) => {
+  const userId = useUserId();
+
   const [addingNew, setAddingNew] = useState<boolean>(false);
   const [submittedTag, setSubmittedTag] = useState<string | null>(null);
 
@@ -136,7 +139,13 @@ const AddTagForm = ({
           tagsQuery.state === DataState.LOADING
             ? 'loading'
             : tagsQuery.data.tags.filter(
-                (tag) => !currentTags.some(({ _id }) => _id === tag._id)
+                (tag) =>
+                  !currentTags.some(({ _id }) => _id === tag._id) &&
+                  !tag.name.startsWith(INTERNAL_TAG_PREFIX) &&
+                  tag.permissions.some(
+                    (permission) =>
+                      permission.user._id === userId && permission.tag.use
+                  )
               )
         }
         onAddTag={handleAddTag}
