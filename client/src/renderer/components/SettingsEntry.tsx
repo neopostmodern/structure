@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 export const SettingsTable = styled.div`
   display: flex;
+  align-items: center;
   margin-bottom: 0.2em;
 `;
 

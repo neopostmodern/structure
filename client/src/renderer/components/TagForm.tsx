@@ -6,17 +6,30 @@ import { TagsQuery } from '../generated/graphql';
 import useSyncForm from '../hooks/useSyncForm';
 import colorTools from '../utils/colorTools';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
-import { TextField } from './CommonStyles';
-import { NameInput } from './formComponents';
+import { NameInput, StructureTextField } from './formComponents';
 
 type TagType = TagsQuery['tags'][number];
 
-const ColorBlockInput = styled(TextField)`
-  width: 10rem;
-  height: 10rem;
+const ColorBlockInput = styled(StructureTextField).attrs({ fullWidth: false })`
   margin-bottom: 2rem;
 
-  text-align: center;
+  .MuiInputBase-root {
+    color: inherit;
+
+    &::before,
+    &::after {
+      border-bottom-color: currentColor !important;
+    }
+  }
+
+  .MuiInputBase-input {
+    width: 10rem;
+    height: 10rem;
+    padding: 0;
+
+    text-align: center;
+    color: inherit;
+  }
 `;
 
 const tagFormFields: Array<keyof TagType> = [

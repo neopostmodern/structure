@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { baseFont } from '../styles/constants';
 
 const baseInteractiveElement = css`
   opacity: 0.75;
@@ -28,34 +27,4 @@ export const InternalLink = styled(Link)`
 export const ExternalLink = styled.a`
   ${baseInteractiveElement}
   ${baseLink}
-`;
-
-const baseTextFieldDecorations = css`
-  color: inherit;
-  background-color: transparent;
-
-  &:hover:not(:read-only) {
-    border-color: lightgray;
-  }
-  &:focus {
-    border-color: ${({ theme }) => theme.palette.text.primary};
-    outline: none;
-  }
-`;
-
-export const TextField = styled.input`
-  font-family: ${baseFont};
-
-  width: 100%;
-
-  outline: none;
-  padding: 0.3em 0;
-  border: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0);
-
-  &:placeholder-shown {
-    border-bottom-color: lightgray;
-  }
-
-  ${baseTextFieldDecorations}
 `;

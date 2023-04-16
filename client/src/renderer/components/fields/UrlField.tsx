@@ -1,9 +1,9 @@
 import { ContentCopy, Launch, Share } from '@mui/icons-material';
-import { IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { openInDefaultBrowser, shareUrl } from '../../utils/openWith';
-import { TextField } from '../CommonStyles';
+import { StructureTextField } from '../formComponents';
 
 interface UrlFieldProps {
   name: string;
@@ -15,8 +15,13 @@ const UrlField: React.FC<UrlFieldProps> = ({ name, readOnly = false }) => {
 
   return (
     <>
-      <div style={{ display: 'flex' }}>
-        <TextField type="text" disabled={readOnly} {...register(name)} />
+      <Box display="flex" alignItems="end">
+        <StructureTextField
+          type="text"
+          label="URL"
+          disabled={readOnly}
+          {...register(name)}
+        />
         <Tooltip title="Copy URL">
           <IconButton
             style={{ marginLeft: '1rem' }}
@@ -47,7 +52,7 @@ const UrlField: React.FC<UrlFieldProps> = ({ name, readOnly = false }) => {
             <Launch />
           </IconButton>
         </Tooltip>
-      </div>
+      </Box>
       {formState.errors[name] && (
         <div style={{ color: 'red', fontSize: '80%' }}>
           {formState.errors[name]}

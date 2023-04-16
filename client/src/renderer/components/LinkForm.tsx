@@ -69,6 +69,7 @@ const LinkForm: React.FC<LinkFormProps> = ({
           linkId={link._id}
           readOnly={onlyReadPermission}
         />
+        <Gap vertical={0.5} />
         <UrlField name="url" readOnly={onlyReadPermission} />
 
         {tagsComponent && (

@@ -4,9 +4,9 @@ import { bookmarkletCode, rssFeedUrl } from '@structure/common';
 import gql from 'graphql-tag';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
-import { TextField } from '../components/CommonStyles';
 import Credentials, { CredentialsOrLoading } from '../components/Credentials';
 import FatalApolloError from '../components/FatalApolloError';
+import { StructureTextField } from '../components/formComponents';
 import SettingsEntry from '../components/SettingsEntry';
 import {
   RequestNewCredentialMutation,
@@ -117,9 +117,9 @@ const UserSettingsSection: FC = () => {
         title="Bookmarklet (desktop app)"
         comment="This bookmarklet will save links via the desktop app. To use it, the desktop app must be running (or it will be opened) and you must be logged in. The bookmarklet contains no authentication token."
       >
-        <TextField
+        <StructureTextField
           type="text"
-          readOnly
+          inputProps={{ readOnly: true }}
           value={`javascript:void(open('${backendUrl}/desktop/add?url='+encodeURIComponent(location.href)))`}
         />
       </SettingsEntry>
@@ -133,9 +133,9 @@ const UserSettingsSection: FC = () => {
         }
         comment="This bookmarklet will save links via the web app. The web app will open in a new tab and you must be logged in. The bookmarklet contains no authentication token."
       >
-        <TextField
+        <StructureTextField
           type="text"
-          readOnly
+          inputProps={{ readOnly: true }}
           value={`javascript:void(open('${WEB_FRONTEND_HOST}/notes/add?url='+encodeURIComponent(location.href)+'&autoSubmit'))`}
         />
       </SettingsEntry>

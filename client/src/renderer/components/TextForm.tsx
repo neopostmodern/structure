@@ -54,8 +54,9 @@ const TextForm: React.FC<TextFormProps> = ({
       <form onSubmit={handleSubmit(onSubmit)}>
         <NameInput
           type="text"
+          label="Title"
           {...register('name', { required: true })}
-          readOnly={onlyReadPermission}
+          inputProps={{ readOnly: onlyReadPermission }}
         />
 
         {tagsComponent && (

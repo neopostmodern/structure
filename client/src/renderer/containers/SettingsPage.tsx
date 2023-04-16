@@ -5,7 +5,7 @@ import { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBackendUrl } from '../actions/configuration';
 import AdvancedSettings from '../components/AdvancedSettings';
-import { TextField } from '../components/CommonStyles';
+import { StructureTextField } from '../components/formComponents';
 import Gap from '../components/Gap';
 import SettingsEntry from '../components/SettingsEntry';
 import { TinyUserQuery } from '../generated/graphql';
@@ -86,7 +86,7 @@ const SettingsPage: FC = () => {
           </>
         }
       >
-        <TextField
+        <StructureTextField
           id="configuration__backend-url"
           type="text"
           defaultValue={backendUrl}

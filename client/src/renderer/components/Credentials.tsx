@@ -1,5 +1,4 @@
-import React from 'react';
-import { TextField } from './CommonStyles';
+import { StructureTextField } from './formComponents';
 import SettingsEntry from './SettingsEntry';
 
 export type CredentialsOrLoading =
@@ -37,7 +36,11 @@ const Credentials = ({
           key={name}
         >
           {value ? (
-            <TextField type="text" readOnly value={value} />
+            <StructureTextField
+              type="text"
+              inputProps={{ readOnly: true }}
+              value={value}
+            />
           ) : (
             <i>No token yet.</i>
           )}
