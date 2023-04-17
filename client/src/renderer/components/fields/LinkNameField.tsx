@@ -1,16 +1,31 @@
 import { gql, useLazyQuery } from '@apollo/client';
-import { Autocomplete } from '@mui/material';
+import { Autocomplete, ListItem, ListItemText } from '@mui/material';
 import { urlAnalyzer } from '@structure/common';
 import React, { FocusEvent } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+import styled from 'styled-components';
 import {
   TitleSuggestionsQuery,
   TitleSuggestionsQueryVariables,
 } from '../../generated/graphql';
 import useIsOnline from '../../hooks/useIsOnline';
+import useQuickNumberShortcuts from '../../hooks/useQuickNumberShortcuts';
+import { breakPointMobile } from '../../styles/constants';
+import { QUICK_ACCESS_SHORTCUT_PREFIX, SHORTCUTS } from '../../utils/keyboard';
 import { isUrlValid } from '../../utils/textHelpers';
 import useDataState, { DataState } from '../../utils/useDataState';
 import { NameInput } from '../formComponents';
+import Shortcut from '../Shortcut';
+
+const ListItemShortcut = styled.div`
+  flex-shrink: 0;
+  font-size: 70%;
+  padding-left: 1em;
+
+  @media (max-width: ${breakPointMobile}) {
+    display: none;
+  }
+`;
 
 const TITLE_SUGGESTIONS_QUERY = gql`
   query TitleSuggestions($linkId: ID!) {
@@ -40,7 +55,20 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
     )
   );
 
+  useQuickNumberShortcuts(
+    titleSuggestionsQuery.state === DataState.DATA
+      ? titleSuggestionsQuery.data.titleSuggestions
+      : [],
+    (suggestion) => {
+      setValue(name, suggestion);
+    }
+  );
+
   const isOnline = useIsOnline();
+  const suggestions =
+    titleSuggestionsQuery.state === DataState.DATA
+      ? titleSuggestionsQuery.data.titleSuggestions
+      : [];
 
   return (
     <Controller
@@ -57,11 +85,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
           }}
           loading={titleSuggestionsQuery.state === DataState.LOADING}
           loadingText="Loading title suggestions..."
-          options={
-            titleSuggestionsQuery.state === DataState.DATA
-              ? titleSuggestionsQuery.data.titleSuggestions
-              : []
-          }
+          options={suggestions}
           filterOptions={(options) => options}
           disableClearable
           freeSolo
@@ -81,6 +105,23 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
               disabled={!isOnline || readOnly}
             />
           )}
+          renderOption={(props, suggestion) => {
+            const index = suggestions.indexOf(suggestion);
+            return (
+              <ListItem {...props}>
+                <ListItemText>{suggestion}</ListItemText>
+                {SHORTCUTS[QUICK_ACCESS_SHORTCUT_PREFIX + (index + 1)] ? (
+                  <ListItemShortcut>
+                    <Shortcut
+                      shortcuts={
+                        SHORTCUTS[QUICK_ACCESS_SHORTCUT_PREFIX + (index + 1)]
+                      }
+                    />
+                  </ListItemShortcut>
+                ) : undefined}
+              </ListItem>
+            );
+          }}
         />
       )}
     />
