@@ -11,6 +11,7 @@ const Key = styled(Paper).attrs<KeyProps>(({ inline }) => ({
   padding: 0.1em 0.4em;
   border-radius: 2px;
   background-color: #222;
+  color: white;
 
   ${({ inline }) =>
     inline &&
