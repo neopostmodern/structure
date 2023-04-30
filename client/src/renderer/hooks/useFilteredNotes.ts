@@ -81,6 +81,20 @@ const sortByToFieldName: {
   [SortBy.UPDATED_AT]: 'updatedAt',
 };
 
+const extendedCache: {
+  notesData: NotesForListQuery['notes'] | null;
+  sortedNotes: NotesForListQuery['notes'] | null;
+  filteredNotes: FilteredNotes | null;
+  searchQuery: string | null;
+  archiveState: ArchiveState | null;
+} = {
+  notesData: null,
+  sortedNotes: null,
+  filteredNotes: null,
+  searchQuery: null,
+  archiveState: null,
+};
+
 const useFilteredNotes = (
   notesQuery: UseDataStateResult<NotesForListQuery, undefined>
 ): PolicedFilteredNotes => {
@@ -98,6 +112,11 @@ const useFilteredNotes = (
       return null;
     }
 
+    if (notesQuery.data.notes === extendedCache.notesData) {
+      return extendedCache.sortedNotes;
+    }
+    extendedCache.notesData = notesQuery.data.notes;
+
     const notes = [...notesQuery.data.notes]; // unfreeze
     notes.sort(
       (noteA, noteB) =>
@@ -111,6 +130,19 @@ const useFilteredNotes = (
       return;
     }
 
+    if (
+      allNotes === extendedCache.sortedNotes &&
+      searchQuery === extendedCache.searchQuery &&
+      archiveState === extendedCache.archiveState &&
+      extendedCache.filteredNotes !== null
+    ) {
+      setFilteredNotes({ allNotes, ...extendedCache.filteredNotes });
+      return;
+    }
+    extendedCache.sortedNotes = allNotes;
+    extendedCache.searchQuery = searchQuery;
+    extendedCache.archiveState = archiveState;
+
     setIsFilteringNotes(true);
 
     if (timeoutRef.current) {
@@ -119,9 +151,11 @@ const useFilteredNotes = (
 
     timeoutRef.current = setTimeout(
       () => {
+        const filteredNotes = filterNotes(allNotes, searchQuery, archiveState);
+        extendedCache.filteredNotes = filteredNotes;
         setFilteredNotes({
           allNotes,
-          ...filterNotes(allNotes, searchQuery, archiveState),
+          ...filteredNotes,
         });
         setIsFilteringNotes(false);
       },
