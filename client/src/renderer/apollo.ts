@@ -1,4 +1,9 @@
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  HttpLink,
+  InMemoryCache,
+  setLogVerbosity,
+} from '@apollo/client';
 import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localforage from 'localforage';
 
@@ -72,6 +77,13 @@ const apolloOptions = {
 export const apolloClient = new ApolloClient({
   ...apolloOptions,
 });
+
+if (
+  process.env.NODE_ENV === 'development' ||
+  process.env.DEBUG_PROD === 'true'
+) {
+  setLogVerbosity('debug');
+}
 
 export const getApolloClient = async () => {
   await cachePersistor.restore();
