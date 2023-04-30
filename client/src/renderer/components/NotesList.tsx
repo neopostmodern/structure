@@ -44,16 +44,18 @@ const NotesList: React.FC<{
   return (
     <>
       <Gap vertical={1} />
-      {notes.map((note, noteIndex) => (
-        <NoteInList
-          key={note._id}
-          note={note}
-          expanded={expanded}
-          shortcut={
-            SHORTCUTS[`${QUICK_ACCESS_SHORTCUT_PREFIX}${noteIndex + 1}`]
-          }
-        />
-      ))}
+      <div>
+        {notes.map((note, noteIndex) => (
+          <NoteInList
+            key={note._id}
+            note={note}
+            expanded={expanded}
+            shortcut={
+              SHORTCUTS[`${QUICK_ACCESS_SHORTCUT_PREFIX}${noteIndex + 1}`]
+            }
+          />
+        ))}
+      </div>
     </>
   );
 };

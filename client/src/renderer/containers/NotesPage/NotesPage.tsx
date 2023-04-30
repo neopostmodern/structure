@@ -17,7 +17,7 @@ import NoteBatchEditingBar from '../../components/NoteBatchEditingBar';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
 import NotesPageEmpty from '../../components/NotesPageEmpty';
-import { SkeletonNote } from '../../components/Skeletons';
+import { SkeletonNoteList } from '../../components/Skeletons';
 import { NotesForListQuery } from '../../generated/graphql';
 import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince';
 import useFilteredNotes from '../../hooks/useFilteredNotes';
@@ -184,23 +184,23 @@ const NotesPage: React.FC = () => {
 
     if (matchedNotes.length > infiniteScrollLimit) {
       content.push(
-        <Stack gap={4} key="more" ref={showMoreElement}>
-          <SkeletonNote />
-          <SkeletonNote />
-          <SkeletonNote />
-          <SkeletonNote />
-          <SkeletonNote />
-          <SkeletonNote />
-          <SkeletonNote />
-          <Typography
-            variant="caption"
-            color="gray"
-            textAlign="center"
-            component="div"
-          >
-            {matchedNotes.length - infiniteScrollLimit} more notes loading...
-          </Typography>
-        </Stack>
+        <div key="more" ref={showMoreElement}>
+          {noteRenderLimit === null && (
+            <>
+              <SkeletonNoteList />
+              <Gap vertical={2} />
+              <Typography
+                variant="caption"
+                color="gray"
+                textAlign="center"
+                component="div"
+              >
+                {matchedNotes.length - infiniteScrollLimit} more notes
+                loading...
+              </Typography>
+            </>
+          )}
+        </div>
       );
     }
 
@@ -218,6 +218,7 @@ const NotesPage: React.FC = () => {
     <ComplexLayout
       primaryActions={primaryActions}
       loading={filteredNotesQueryWrapper.state === DataState.LOADING}
+      loadingComponent={SkeletonNoteList}
     >
       {[...content]}
     </ComplexLayout>

@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { AccountCircle, LocalOffer, Settings } from '@mui/icons-material';
 import { CircularProgress, Stack } from '@mui/material';
-import React, { useEffect, useMemo } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import UserIdContext from 'renderer/utils/UserIdContext';
 import packageJson from '../../../package.json';
@@ -27,11 +27,46 @@ export interface AdditionalNavigationItem {
   icon: JSX.Element;
 }
 
+const Loading = ({
+  loadingComponent: LoadingComponent,
+  loading,
+}: {
+  loading?: boolean | string;
+  loadingComponent?: () => ReactElement;
+}) => {
+  const [showLoading, setShowLoading] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoading(true);
+    }, 100);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [setShowLoading]);
+
+  if (!showLoading) {
+    return null;
+  }
+
+  return LoadingComponent ? (
+    <LoadingComponent />
+  ) : (
+    <Centered>
+      <Stack alignItems="center">
+        <CircularProgress color="inherit" disableShrink />
+        <Gap vertical={1} />
+        {typeof loading === 'string' && loading}
+      </Stack>
+    </Centered>
+  );
+};
+
 const ComplexLayout: React.FC<
   React.PropsWithChildren<{
     primaryActions?: JSX.Element | null | false;
     secondaryActions?: JSX.Element | null;
     loading?: boolean | string;
+    loadingComponent?: () => ReactElement;
     wide?: boolean;
   }>
 > = ({
@@ -40,6 +75,7 @@ const ComplexLayout: React.FC<
   secondaryActions,
   wide = false,
   loading = false,
+  loadingComponent,
 }) => {
   const profileQuery = useDataState(
     useQuery<ProfileQuery, ProfileQueryVariables>(PROFILE_QUERY, {
@@ -119,13 +155,10 @@ const ComplexLayout: React.FC<
                 currentPackageVersion={packageJson.version}
               />
               {profileQuery.state === DataState.LOADING || loading ? (
-                <Centered>
-                  <Stack alignItems="center">
-                    <CircularProgress color="inherit" disableShrink />
-                    <Gap vertical={1} />
-                    {typeof loading === 'string' && loading}
-                  </Stack>
-                </Centered>
+                <Loading
+                  loading={loading}
+                  loadingComponent={loadingComponent}
+                />
               ) : (
                 children
               )}

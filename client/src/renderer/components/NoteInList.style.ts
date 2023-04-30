@@ -1,13 +1,35 @@
-import { Button } from '@mui/material';
+import { Button, keyframes } from '@mui/material';
 import styled from 'styled-components';
 import { ExternalLink, InternalLink } from './CommonStyles';
 import UserAvatar from './UserAvatar';
+
+const appearAnimation = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: var(--opacity);
+  }
+`;
 
 export const Note = styled.div<{ archived: boolean }>`
   margin-bottom: 2rem;
   display: flex;
   align-items: center;
-  opacity: ${({ archived }): number => (archived ? 0.5 : 1)};
+  --opacity: ${({ archived }): number => (archived ? 0.5 : 1)};
+
+  animation: ${appearAnimation} 0.1s ease-in-out;
+  animation-fill-mode: both;
+  ${() =>
+    [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+      .map(
+        (index) => `
+          &:nth-child(${index}) {
+            animation-delay: ${(index > 5 ? index - 6 : index) * 0.015}s;
+          }
+        `
+      )
+      .join('\n')}
 `;
 
 export const NoteContainer = styled.div`

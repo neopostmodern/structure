@@ -17,3 +17,15 @@ export const SkeletonNote = () => (
     </Stack>
   </div>
 );
+
+export const SkeletonNoteList = () => (
+  <Stack gap={4}>
+    <SkeletonNote />
+    <SkeletonNote />
+    <SkeletonNote />
+    <SkeletonNote />
+    <SkeletonNote />
+    <SkeletonNote />
+    <SkeletonNote />
+  </Stack>
+);
