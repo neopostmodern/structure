@@ -28,13 +28,32 @@ const cache = new InMemoryCache({
     Tag: {
       fields: {
         noteCount: {
-          read(_, args) {
+          read(_, { readField }) {
             const notesWithTag: readonly unknown[] | undefined =
-              args.readField('notes');
+              readField('notes');
             if (notesWithTag && 'length' in notesWithTag) {
               return notesWithTag.length;
             }
             return 0;
+          },
+        },
+        notes: {
+          read(currentValue, { variables: { tagId }, toReference }) {
+            if (currentValue) {
+              return currentValue;
+            }
+            return Object.values<{
+              __typename: string;
+              _id: string;
+              tags?: Array<{ __ref: string }>;
+            }>(cache.data.data)
+              .filter(
+                (cacheEntry) =>
+                  (cacheEntry.__typename === 'Link' ||
+                    cacheEntry.__typename === 'Text') &&
+                  cacheEntry.tags!.some((tag) => tag.__ref === `Tag:${tagId}`)
+              )
+              .map(({ __typename, _id }) => toReference({ __typename, _id }));
           },
         },
       },
@@ -51,6 +70,12 @@ const cache = new InMemoryCache({
           return toReference({
             __typename: 'Text',
             id: textId,
+          });
+        },
+        tag(_, { args: { tagId }, toReference }) {
+          return toReference({
+            __typename: 'Tag',
+            id: tagId,
           });
         },
       },
