@@ -1,8 +1,8 @@
 import { gql, useQuery } from '@apollo/client';
 import { CircularProgress, Stack, Typography } from '@mui/material';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
 import {
   increaseInfiniteScroll,
   LinkLayout,
@@ -17,6 +17,7 @@ import NoteBatchEditingBar from '../../components/NoteBatchEditingBar';
 import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
 import NotesPageEmpty from '../../components/NotesPageEmpty';
+import { SkeletonNote } from '../../components/Skeletons';
 import { NotesForListQuery } from '../../generated/graphql';
 import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince';
 import useFilteredNotes from '../../hooks/useFilteredNotes';
@@ -50,21 +51,14 @@ export const NOTES_QUERY = gql`
   ${BASE_TAG_FRAGMENT}
 `;
 
-const ShowMore = styled.div`
-  color: black;
-  background-color: #eee;
-  text-align: center;
-  padding: 1em;
-`;
-
 const NotesPage: React.FC = () => {
   const { linkLayout: layout, infiniteScrollLimit } = useSelector<
     RootState,
     UserInterfaceStateType
   >((state) => state.userInterface);
+  const [noteRenderLimit, setNoteRenderLimit] = useState<null | number>(5);
   const dispatch = useDispatch();
   const searchInput = useRef<HTMLInputElement | null>(null);
-  const moreElement = useRef<HTMLDivElement | null>(null);
   const notesQuery = useDataState(
     useQuery<NotesForListQuery>(NOTES_QUERY, {
       fetchPolicy: 'cache-only',
@@ -86,25 +80,31 @@ const NotesPage: React.FC = () => {
     );
   });
 
+  const { ref: showMoreElement, inView } = useInView({
+    rootMargin: '0% 0% 20% 0%', // triggers 20vh below viewport
+  });
+
+  // 'rerun' is a dummy variable with no meaning to trigger a re-run of below
+  // hook to check if the element is still in view
+  const [rerun, setRerun] = useState(false);
   useEffect(() => {
-    const handleScrollEvent = () => {
-      if (!moreElement.current) {
-        return;
-      }
+    if (!inView) {
+      return;
+    }
+    if (noteRenderLimit && noteRenderLimit < infiniteScrollLimit) {
+      setNoteRenderLimit(null);
+    } else {
+      dispatch(increaseInfiniteScroll(10));
+    }
 
-      if (
-        moreElement.current.getBoundingClientRect().top < window.innerHeight
-      ) {
-        dispatch(increaseInfiniteScroll(20));
-      }
-    };
-
-    window.addEventListener('scroll', handleScrollEvent);
+    const rerunTimeout = setTimeout(() => {
+      setRerun(!rerun);
+    }, 100);
 
     return (): void => {
-      window.removeEventListener('scroll', handleScrollEvent);
+      clearTimeout(rerunTimeout);
     };
-  }, []);
+  }, [inView, rerun, setRerun]);
 
   useShortcut(SHORTCUTS.REFRESH, () => {
     entitiesUpdatedSince.refetch();
@@ -176,7 +176,7 @@ const NotesPage: React.FC = () => {
       content.push(
         <NotesList
           key="notes-list"
-          notes={matchedNotes.slice(0, infiniteScrollLimit)}
+          notes={matchedNotes.slice(0, noteRenderLimit || infiniteScrollLimit)}
           expanded={layout === LinkLayout.EXPANDED_LIST_LAYOUT}
         />
       );
@@ -184,9 +184,23 @@ const NotesPage: React.FC = () => {
 
     if (matchedNotes.length > infiniteScrollLimit) {
       content.push(
-        <ShowMore key="more" ref={moreElement}>
-          ({matchedNotes.length - infiniteScrollLimit} remaining)
-        </ShowMore>
+        <Stack gap={4} key="more" ref={showMoreElement}>
+          <SkeletonNote />
+          <SkeletonNote />
+          <SkeletonNote />
+          <SkeletonNote />
+          <SkeletonNote />
+          <SkeletonNote />
+          <SkeletonNote />
+          <Typography
+            variant="caption"
+            color="gray"
+            textAlign="center"
+            component="div"
+          >
+            {matchedNotes.length - infiniteScrollLimit} more notes loading...
+          </Typography>
+        </Stack>
       );
     }
 
