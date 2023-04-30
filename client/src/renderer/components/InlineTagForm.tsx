@@ -119,7 +119,11 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
             if ('newTagName' in tag) {
               if (tag.newTagName === TAG_OVERFLOW) {
                 return (
-                  <li className={props.className} style={{ cursor: 'initial' }}>
+                  <li
+                    key={props.key}
+                    className={props.className}
+                    style={{ cursor: 'initial' }}
+                  >
                     <Typography variant="caption" key={TAG_OVERFLOW}>
                       {tag.title}
                     </Typography>

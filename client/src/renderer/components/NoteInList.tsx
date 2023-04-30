@@ -43,11 +43,12 @@ export const NoteInList: React.FC<{
           </Styled.NoteAddedDate>
         </Styled.NoteTitleLine>
         <Styled.NoteInfo>
-          {note.url && (
+          {'url' in note && (
             <Styled.LinkDomain
               href={note.url}
               target="_blank"
               rel="noopener noreferrer"
+              title={note.url}
             >
               {note.domain}
             </Styled.LinkDomain>
