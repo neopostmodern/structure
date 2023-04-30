@@ -65,8 +65,8 @@ export const capitalize = (text: string) =>
 
 export const isUrlValid = (url: string): boolean => {
   try {
-    new URL(url);
-    return true;
+    const urlObject = new URL(url);
+    return urlObject.protocol.startsWith('http');
   } catch (error) {
     return false;
   }
