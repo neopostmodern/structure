@@ -182,6 +182,7 @@
     "@graphql-codegen/typescript-operations": "2.5.10",
     "@graphql-codegen/typescript-react-apollo": "3.3.7",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.10",
+    "@simbathesailor/use-what-changed": "^2.0.0",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
