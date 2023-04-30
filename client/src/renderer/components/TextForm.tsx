@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import { isEqual, pick } from 'lodash';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { NotesForListQuery } from '../generated/graphql';
@@ -36,7 +36,9 @@ const TextForm: React.FC<TextFormProps> = ({
     defaultValues,
     mode: 'onBlur',
     resolver: (formValues) => {
-      onSubmit(formValues);
+      if (!isEqual(formValues, defaultValues)) {
+        onSubmit(formValues);
+      }
       return { values: formValues, errors: {} };
     },
   });
