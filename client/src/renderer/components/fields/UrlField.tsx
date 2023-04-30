@@ -2,6 +2,7 @@ import { ContentCopy, Launch, Share } from '@mui/icons-material';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
+import useIsOnline from '../../hooks/useIsOnline';
 import { openInDefaultBrowser, shareUrl } from '../../utils/openWith';
 import { StructureTextField } from '../formComponents';
 
@@ -10,8 +11,14 @@ interface UrlFieldProps {
   readOnly?: boolean;
 }
 
-const UrlField: React.FC<UrlFieldProps> = ({ name, readOnly = false }) => {
+const UrlField: React.FC<UrlFieldProps> = ({
+  name,
+  readOnly: forceReadOnly = false,
+}) => {
   const { watch, register, getValues, formState } = useFormContext();
+
+  const isOnline = useIsOnline();
+  const readOnly = !isOnline || forceReadOnly;
 
   return (
     <>
@@ -19,7 +26,7 @@ const UrlField: React.FC<UrlFieldProps> = ({ name, readOnly = false }) => {
         <StructureTextField
           type="text"
           label="URL"
-          disabled={readOnly}
+          InputProps={{ readOnly }}
           {...register(name)}
         />
         <Tooltip title="Copy URL">

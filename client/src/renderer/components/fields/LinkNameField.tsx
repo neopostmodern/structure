@@ -44,7 +44,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
   url,
   name,
   linkId,
-  readOnly = false,
+  readOnly: forceReadOnly = false,
 }) => {
   const { setValue, getValues } = useFormContext();
 
@@ -65,6 +65,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
   );
 
   const isOnline = useIsOnline();
+  const readOnly = !isOnline || forceReadOnly;
   const suggestions =
     titleSuggestionsQuery.state === DataState.DATA
       ? titleSuggestionsQuery.data.titleSuggestions
@@ -90,6 +91,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
           disableClearable
           freeSolo
           openOnFocus
+          readOnly={readOnly}
           renderInput={({ ...params }) => (
             <NameInput
               type="text"
@@ -102,7 +104,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
                 fetchTitleSuggestions();
               }}
               label="Title"
-              disabled={!isOnline || readOnly}
+              InputProps={{ readOnly }}
             />
           )}
           renderOption={(props, suggestion) => {

@@ -19,6 +19,10 @@ export const StructureTextField = styled(TextField).attrs({
     ${FORM_SUBHEADER_STYLES}
     font-size: 1.07rem; // 0.8rem / 0.75 scale
   }
+  .MuiInputBase-readOnly:after,
+  .MuiInputBase-readOnly:before {
+    border-bottom-color: transparent !important;
+  }
 `;
 
 export const NameInput = styled(StructureTextField)`
