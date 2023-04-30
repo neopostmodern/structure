@@ -3,9 +3,10 @@ import { INTERNAL_TAG_PREFIX } from '@structure/common';
 import React from 'react';
 import styled from 'styled-components';
 import useHasPermission from '../hooks/useHasPermission';
+import useIsOnline from '../hooks/useIsOnline';
 import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
 import { DisplayOnlyTag } from '../utils/types';
-import AddTagForm from './AddTagForm';
+import AddTagButtonOrForm from './AddTagButtonOrForm';
 import TagWithContextMenu from './TagWithContextMenu';
 
 export const REMOVE_TAG_MUTATION = gql`
@@ -54,6 +55,7 @@ const Tags: React.FC<TagsProps> = ({
   withShortcuts = false,
 }) => {
   const readOnly = !useHasPermission({ tags }, 'notes', 'write');
+  const isOnline = useIsOnline();
 
   return (
     <TagContainer>
@@ -68,8 +70,8 @@ const Tags: React.FC<TagsProps> = ({
             noteReadOnly={readOnly}
           />
         ))}
-      {!readOnly && (
-        <AddTagForm
+      {!readOnly && isOnline && (
+        <AddTagButtonOrForm
           withShortcuts={withShortcuts}
           noteId={noteId}
           currentTags={tags}
