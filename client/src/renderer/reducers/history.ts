@@ -5,6 +5,8 @@ import {
   registerHistoryForward,
 } from '../actions/history';
 
+export const LAST_VISITED_NOTES_STORAGE_KEY = 'last-visited-notes';
+
 export type NoteSummary = { type: 'link' | 'text'; id: string };
 export interface HistoryStateType {
   lastVisitedNotes: Array<NoteSummary>;
@@ -13,7 +15,9 @@ export interface HistoryStateType {
 }
 
 const initialState: HistoryStateType = {
-  lastVisitedNotes: [],
+  lastVisitedNotes: JSON.parse(
+    localStorage.getItem(LAST_VISITED_NOTES_STORAGE_KEY) || '[]'
+  ),
   lengthOfPast: 0,
   lengthOfFuture: 0,
 };
