@@ -1,5 +1,5 @@
 import { ApolloCache } from '@apollo/client';
-import apolloClient, { cachePersistor } from '../apollo';
+import { apolloClient, cachePersistor } from '../apollo';
 
 export const clearApolloCache = () => {
   apolloClient.clearStore();

@@ -58,8 +58,6 @@ export const cachePersistor = new CachePersistor({
   storage: new LocalForageWrapper(localforage),
   maxSize: false,
 });
-// todo: await before instantiating ApolloClient, else queries might run before the cache is persisted
-cachePersistor.restore();
 
 const apolloOptions = {
   link: new HttpLink({
@@ -71,8 +69,11 @@ const apolloOptions = {
   ssrMode: false,
   connectToDevTools: true,
 };
-const client = new ApolloClient({
+export const apolloClient = new ApolloClient({
   ...apolloOptions,
 });
 
-export default client;
+export const getApolloClient = async () => {
+  await cachePersistor.restore();
+  return apolloClient;
+};

@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import apolloClient from './apollo';
+import { getApolloClient } from './apollo';
 import ErrorBoundary from './components/ErrorBoundary';
 import { history, store } from './configureStore';
 import Root from './containers/Root';
@@ -25,8 +25,10 @@ if (process.env.TARGET !== 'web') {
 
 const root = createRoot(document.getElementById('root')!);
 
-root.render(
-  <ErrorBoundary>
-    <Root store={store} history={history} client={apolloClient} />
-  </ErrorBoundary>
-);
+getApolloClient().then((apolloClient) => {
+  root.render(
+    <ErrorBoundary>
+      <Root store={store} history={history} client={apolloClient} />
+    </ErrorBoundary>
+  );
+});
