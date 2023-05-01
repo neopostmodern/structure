@@ -5,19 +5,17 @@ import { bindShortcut } from '../utils/keyboard';
  * Register a shortcut while the component is mounted
  * @param shortcut keycode, see Mousetrap docs for options
  * @param callback function to execute when shortcut is activated
- * @param global whether the shortcut should work from within textfields
  */
 const useShortcut = (
   shortcut: Array<string> | null | undefined,
-  callback: () => void,
-  global = false
+  callback: (event: KeyboardEvent) => void
 ) => {
   useEffect(() => {
     if (!shortcut) {
       return;
     }
 
-    return bindShortcut(shortcut, callback, global);
+    return bindShortcut(shortcut, callback);
   }, [shortcut, callback]);
 };
 

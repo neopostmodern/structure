@@ -110,11 +110,11 @@ export const getKeyForDisplay = (keyDescription: string): string => {
 
 export const bindShortcut = (
   shortcuts: Array<string>,
-  callback: () => void
+  callback: (event: KeyboardEvent) => void
 ): (() => void) => {
   let wrappedCallback = (event: KeyboardEvent) => {
     event.preventDefault();
-    callback();
+    callback(event);
   };
   shortcuts.forEach((shortcut) => {
     if (shortcut.includes(GLOBAL)) {
@@ -125,6 +125,8 @@ export const bindShortcut = (
   });
 
   return (): void => {
-    Mousetrap.unbind(shortcuts.map((shortcut) => shortcut.replace(GLOBAL, '')));
+    shortcuts.forEach((shortcut) => {
+      Mousetrap.unbind(shortcut.replace(GLOBAL, ''));
+    });
   };
 };
