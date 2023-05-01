@@ -52,9 +52,15 @@ const LastVisitedNotes = () => {
     },
     [setMenuAnchorElement]
   );
-  const handleClose = useCallback(() => {
-    setMenuAnchorElement(null);
-  }, [setMenuAnchorElement]);
+  const handleClose = useCallback(
+    (event: KeyboardEvent | Event | undefined) => {
+      if (event && 'key' in event && event.key === 'Tab') {
+        return;
+      }
+      setMenuAnchorElement(null);
+    },
+    [setMenuAnchorElement]
+  );
 
   const lastVisitedNotes = useSelector<RootState, Array<NoteSummary>>(
     (state) => state.history.lastVisitedNotes
@@ -72,12 +78,12 @@ const LastVisitedNotes = () => {
     (event: KeyboardEvent) => {
       if (event.key === 'Control') {
         let notedIndex = getActiveMenuItemIndex();
-        if (notedIndex !== null) {
-          navigateToNote(lastVisitedNotes[notedIndex]);
-        }
         setMenuAnchorElement(null);
         window.removeEventListener('keyup', handleKeyUp);
         firstShortCutActivation.current = true;
+        if (notedIndex !== null) {
+          navigateToNote(lastVisitedNotes[notedIndex]);
+        }
       }
     },
     [setMenuAnchorElement, lastVisitedNotes]
@@ -126,8 +132,8 @@ const LastVisitedNotes = () => {
       }
       focusTimer = setTimeout(() => {
         menuItem.focus();
-      }, 10);
-    }, 10);
+      }, 0);
+    }, 0);
 
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
