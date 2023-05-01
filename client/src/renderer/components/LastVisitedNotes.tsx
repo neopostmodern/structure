@@ -3,7 +3,7 @@ import {
   History as HistoryIcon,
   HistoryToggleOff as HistoryLoadingIcon,
 } from '@mui/icons-material';
-import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
+import { IconButton, Menu, MenuItem } from '@mui/material';
 import { MouseEvent, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { push } from 'redux-first-history';
@@ -13,6 +13,7 @@ import { RootState } from '../reducers';
 import { NoteSummary } from '../reducers/history';
 import { SHORTCUTS } from '../utils/keyboard';
 import { noteUrl } from '../utils/routes';
+import TooltipWithShortcut from './TooltipWithShortcut';
 
 const VISITED_NOTES_QUERY = gql`
   query VisitedNotes {
@@ -137,7 +138,10 @@ const LastVisitedNotes = () => {
 
   return (
     <div>
-      <Tooltip title="Recently viewed notes">
+      <TooltipWithShortcut
+        title="Recently viewed notes"
+        shortcut={SHORTCUTS.QUICK_NAVIGATION}
+      >
         <span>
           <IconButton
             aria-controls={menuOpen ? MENU_ID : undefined}
@@ -150,7 +154,7 @@ const LastVisitedNotes = () => {
             {notesQuery.loading ? <HistoryLoadingIcon /> : <HistoryIcon />}
           </IconButton>
         </span>
-      </Tooltip>
+      </TooltipWithShortcut>
       <Menu
         id={MENU_ID}
         anchorEl={menuAnchorElement}

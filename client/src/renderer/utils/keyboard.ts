@@ -29,9 +29,10 @@ const config = {
 export const getModifier = () => config.modifier;
 
 export const adaptShortcutsForPlatform = (
-  shortcuts: Array<string>
+  shortcuts: Array<string | false>
 ): Array<string> =>
   shortcuts
+    .filter((shortcut): shortcut is string => Boolean(shortcut))
     .map((shortcut) => {
       if (shortcut.includes(DESKTOP_ONLY_MODIFIER)) {
         const desktopShortcut = shortcut.replace(
@@ -58,10 +59,13 @@ export const adaptShortcutsForPlatform = (
     );
 
 export const QUICK_ACCESS_SHORTCUT_PREFIX = 'QUICK_';
-export const SHORTCUTS: { [shortcutName: string]: Array<string> } = {
+const shortcutTemplates: { [shortcutName: string]: Array<string | false> } = {
   HOME_PAGE: [`${GLOBAL}${MODIFIER}+.`, 'esc'],
   QUICK_SUBMIT: [`${GLOBAL}${MODIFIER}+enter`],
-  QUICK_NAVIGATION: [`${GLOBAL}ctrl+tab`],
+  QUICK_NAVIGATION: [
+    process.env.TARGET === 'electron' && `${GLOBAL}ctrl+tab`,
+    'k',
+  ],
   DEV_TOOLS: [`${GLOBAL}f12`, `${GLOBAL}ctrl+shift+i`],
 
   SELECT_ALL: [`${MODIFIER}+a`],
@@ -82,8 +86,13 @@ export const SHORTCUTS: { [shortcutName: string]: Array<string> } = {
   [`${QUICK_ACCESS_SHORTCUT_PREFIX}8`]: [`${GLOBAL}${MODIFIER}+8`],
   [`${QUICK_ACCESS_SHORTCUT_PREFIX}9`]: [`${GLOBAL}${MODIFIER}+9`],
 };
-for (const shortcutName in SHORTCUTS) {
-  SHORTCUTS[shortcutName] = adaptShortcutsForPlatform(SHORTCUTS[shortcutName]);
+export const SHORTCUTS: {
+  [shortcutName: string]: Array<string>;
+} = {};
+for (const shortcutName in shortcutTemplates) {
+  SHORTCUTS[shortcutName] = adaptShortcutsForPlatform(
+    shortcutTemplates[shortcutName]
+  );
 }
 
 export const getKeyForDisplay = (keyDescription: string): string => {
