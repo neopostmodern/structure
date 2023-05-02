@@ -107,8 +107,9 @@ export function setUpGitHubLogin(app) {
     },
   )
 
-  app.get('/logout', (req, res) => {
-    req.logout()
-    res.redirect(config.WEB_FRONTEND_HOST)
+  app.get('/logout', (request, result) => {
+    request.logout(() => {
+      result.redirect(config.WEB_FRONTEND_HOST)
+    })
   })
 }
