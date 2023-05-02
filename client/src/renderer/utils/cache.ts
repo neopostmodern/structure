@@ -2,6 +2,7 @@ import { ApolloCache } from '@apollo/client';
 import { apolloClient, cachePersistor } from '../apollo';
 
 export const clearApolloCache = () => {
+  localStorage.clear();
   apolloClient.clearStore();
   cachePersistor.purge();
 };
