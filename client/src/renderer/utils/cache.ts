@@ -7,11 +7,11 @@ export const clearApolloCache = () => {
   cachePersistor.purge();
 };
 
-export const removeNoteFromCache = (
+export const removeEntityFromCache = (
   cache: ApolloCache<any>,
-  note: { _id: string; __typename: string }
+  entity: { _id: string; __typename: string }
 ): void => {
-  const normalizedId = cache.identify(note);
+  const normalizedId = cache.identify(entity);
   cache.evict({ id: normalizedId });
   cache.gc(); // https://stackoverflow.com/questions/63192774/apollo-client-delete-item-from-cache#comment121727251_66713628
   return;

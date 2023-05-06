@@ -6,7 +6,7 @@ import {
   ToggleDeletedNoteMutation,
   ToggleDeletedNoteMutationVariables,
 } from '../generated/graphql';
-import { removeNoteFromCache } from '../utils/cache';
+import { removeEntityFromCache } from '../utils/cache';
 
 const TOGGLE_DELETED_NOTE_MUTATION = gql`
   mutation ToggleDeletedNote($noteId: ID!) {
@@ -36,7 +36,7 @@ const useDeleteNote = (note: { _id: string }) => {
         throw Error("[useDeletedLink.update] Can't handle un-delete yet.");
       }
 
-      removeNoteFromCache(cache, data.toggleDeletedNote);
+      removeEntityFromCache(cache, data.toggleDeletedNote);
     },
   });
 

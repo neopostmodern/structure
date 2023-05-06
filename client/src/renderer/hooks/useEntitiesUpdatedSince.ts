@@ -12,7 +12,10 @@ import {
   EntitiesUpdatedSinceQueryVariables,
   NotesForListQuery,
   TagsQuery,
+  TagWithNoteIdsQuery,
+  TagWithNoteIdsQueryVariables,
 } from '../generated/graphql';
+import { removeEntityFromCache } from '../utils/cache';
 import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
@@ -173,6 +176,43 @@ const useEntitiesUpdatedSince = () => {
               });
 
               if (entitiesUpdatedSince.removedTagIds.length) {
+                entitiesUpdatedSince.removedTagIds.forEach((tagId) => {
+                  const tagQuery = cache.readQuery<
+                    TagWithNoteIdsQuery,
+                    TagWithNoteIdsQueryVariables
+                  >({
+                    query: gql`
+                      query TagWithNoteIds($tagId: ID!) {
+                        tag(tagId: $tagId) {
+                          _id
+                          notes {
+                            ... on INote {
+                              _id
+                            }
+                          }
+                        }
+                      }
+                    `,
+                    variables: { tagId },
+                  });
+                  if (!tagQuery?.tag) {
+                    return;
+                  }
+                  const { tag } = tagQuery;
+                  tag.notes?.forEach((note) => {
+                    cache.modify({
+                      id: cache.identify(note!),
+                      fields: {
+                        tags(currentTagsOnNote: Array<{ __ref: string }> = []) {
+                          return currentTagsOnNote.filter(
+                            ({ __ref }) => __ref.split(':')[1] !== tagId
+                          );
+                        },
+                      },
+                    });
+                  });
+                  removeEntityFromCache(cache, tag);
+                });
                 cachedTags = cachedTags.filter(
                   ({ _id }) => !entitiesUpdatedSince.removedTagIds.includes(_id)
                 );

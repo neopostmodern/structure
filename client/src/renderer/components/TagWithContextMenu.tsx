@@ -10,7 +10,7 @@ import {
 } from '../generated/graphql';
 import { hasPermission } from '../hooks/useHasPermission';
 import useUserId from '../hooks/useUserId';
-import { removeNoteFromCache } from '../utils/cache';
+import { removeEntityFromCache } from '../utils/cache';
 import { DisplayOnlyTag } from '../utils/types';
 import ErrorSnackbar from './ErrorSnackbar';
 import Tag from './Tag';
@@ -47,7 +47,7 @@ const TagWithContextMenu = ({
       }
 
       if (!hasPermission(userId, data.removeTagByIdFromNote, 'notes', 'read')) {
-        removeNoteFromCache(cache, data.removeTagByIdFromNote);
+        removeEntityFromCache(cache, data.removeTagByIdFromNote);
         if (location.href.includes(data.removeTagByIdFromNote._id)) {
           dispatch(goBack());
         }

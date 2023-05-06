@@ -522,6 +522,13 @@ export type UpdatedNotesCacheQueryQueryVariables = Exact<{ [key: string]: never;
 
 export type UpdatedNotesCacheQueryQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }> };
 
+export type TagWithNoteIdsQueryVariables = Exact<{
+  tagId: Scalars['ID'];
+}>;
+
+
+export type TagWithNoteIdsQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null } };
+
 export type ToggleArchivedNoteMutationVariables = Exact<{
   noteId: Scalars['ID'];
 }>;
@@ -1711,6 +1718,46 @@ export function useUpdatedNotesCacheQueryLazyQuery(baseOptions?: Apollo.LazyQuer
 export type UpdatedNotesCacheQueryQueryHookResult = ReturnType<typeof useUpdatedNotesCacheQueryQuery>;
 export type UpdatedNotesCacheQueryLazyQueryHookResult = ReturnType<typeof useUpdatedNotesCacheQueryLazyQuery>;
 export type UpdatedNotesCacheQueryQueryResult = Apollo.QueryResult<UpdatedNotesCacheQueryQuery, UpdatedNotesCacheQueryQueryVariables>;
+export const TagWithNoteIdsDocument = gql`
+    query TagWithNoteIds($tagId: ID!) {
+  tag(tagId: $tagId) {
+    _id
+    notes {
+      ... on INote {
+        _id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTagWithNoteIdsQuery__
+ *
+ * To run a query within a React component, call `useTagWithNoteIdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTagWithNoteIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTagWithNoteIdsQuery({
+ *   variables: {
+ *      tagId: // value for 'tagId'
+ *   },
+ * });
+ */
+export function useTagWithNoteIdsQuery(baseOptions: Apollo.QueryHookOptions<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>(TagWithNoteIdsDocument, options);
+      }
+export function useTagWithNoteIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>(TagWithNoteIdsDocument, options);
+        }
+export type TagWithNoteIdsQueryHookResult = ReturnType<typeof useTagWithNoteIdsQuery>;
+export type TagWithNoteIdsLazyQueryHookResult = ReturnType<typeof useTagWithNoteIdsLazyQuery>;
+export type TagWithNoteIdsQueryResult = Apollo.QueryResult<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>;
 export const ToggleArchivedNoteDocument = gql`
     mutation ToggleArchivedNote($noteId: ID!) {
   toggleArchivedNote(noteId: $noteId) {
