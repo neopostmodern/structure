@@ -88,7 +88,12 @@ const NotesPage: React.FC = () => {
   // hook to check if the element is still in view
   const [rerun, setRerun] = useState(false);
   useEffect(() => {
-    if (!inView) {
+    if (
+      !inView ||
+      (noteRenderLimit === null &&
+        filteredNotesQueryWrapper.state === DataState.DATA &&
+        filteredNotesQueryWrapper.data.notes.length < infiniteScrollLimit)
+    ) {
       return;
     }
     if (noteRenderLimit && noteRenderLimit < infiniteScrollLimit) {
@@ -178,28 +183,24 @@ const NotesPage: React.FC = () => {
           key="notes-list"
           notes={matchedNotes.slice(0, noteRenderLimit || infiniteScrollLimit)}
           expanded={layout === LinkLayout.EXPANDED_LIST_LAYOUT}
-        />
-      );
-    }
-
-    if (matchedNotes.length > infiniteScrollLimit) {
-      content.push(
+        />,
         <div key="more" ref={showMoreElement}>
-          {noteRenderLimit === null && (
-            <>
-              <SkeletonNoteList />
-              <Gap vertical={2} />
-              <Typography
-                variant="caption"
-                color="gray"
-                textAlign="center"
-                component="div"
-              >
-                {matchedNotes.length - infiniteScrollLimit} more notes
-                loading...
-              </Typography>
-            </>
-          )}
+          {matchedNotes.length > infiniteScrollLimit &&
+            noteRenderLimit === null && (
+              <>
+                <SkeletonNoteList />
+                <Gap vertical={2} />
+                <Typography
+                  variant="caption"
+                  color="gray"
+                  textAlign="center"
+                  component="div"
+                >
+                  {matchedNotes.length - infiniteScrollLimit} more notes
+                  loading...
+                </Typography>
+              </>
+            )}
         </div>
       );
     }
