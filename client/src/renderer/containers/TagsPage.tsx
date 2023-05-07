@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { LocalOffer } from '@mui/icons-material';
 import { Button } from '@mui/material';
+import { INTERNAL_TAG_PREFIX } from '@structure/common';
 import gql from 'graphql-tag';
 import { FC, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -270,7 +271,11 @@ const TagsPage: FC = () => {
       wide={layout === TagsLayout.COLOR_COLUMN_LAYOUT}
     >
       <NetworkOperationsIndicator query={entitiesUpdatedSince} />
-      {renderTags(tagsQuery.data.tags)}
+      {renderTags(
+        tagsQuery.data.tags.filter(
+          (tag) => !tag.name.startsWith(INTERNAL_TAG_PREFIX)
+        )
+      )}
     </ComplexLayout>
   );
 };
