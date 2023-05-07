@@ -11,6 +11,22 @@ const listIndent = '2em';
 const MarkdownContainer = styled(ReactMarkdown)`
   font-size: 1rem;
 
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: initial;
+    margin-bottom: 0;
+  }
+
+  h1 + h2,
+  h1 + h3,
+  h2 + h3,
+  h2 + h4,
+  h3 + h4 {
+    margin-top: 0.5em;
+  }
+
   p:last-child {
     margin-bottom: 0;
   }
@@ -36,6 +52,13 @@ const MarkdownContainer = styled(ReactMarkdown)`
         margin: 0;
       }
     }
+  }
+
+  p + ul,
+  p + ol,
+  ul + p,
+  ol + p {
+    margin-top: -0.5em;
   }
 
   @media (prefers-color-scheme: dark) {
