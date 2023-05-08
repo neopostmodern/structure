@@ -125,14 +125,14 @@ const restApi = (app) => {
       return
     }
 
-    const processEntities = async (mongooseQuery) =>
-      (await mongooseQuery.exec()).map((mongooseObject) => {
-        const plainObject = mongooseObject.toObject()
-        delete plainObject.__v
-        return plainObject
-      })
-    const tags = await processEntities(Tag.find({ user: user._id }))
-    const notes = await processEntities(Note.find({ user: user._id }))
+    const tags = await Tag.find({ user: user._id }).lean()
+    const notes = await Note.find({ user: user._id }).lean()
+    for (const tag of tags) {
+      delete tag.__v
+    }
+    for (const note of notes) {
+      delete note.__v
+    }
     const allData = {
       user: _.pick(user, [
         '_id',
