@@ -104,13 +104,13 @@ export async function fetchTitleSuggestions(url) {
     })
 }
 
-const updateCacheFromDiff = async (cacheId, cacheFieldName, diff) => {
+const updateCacheFromDiff = async (user, cacheId, cacheFieldName, diff) => {
   const cacheValueFieldName = `value.${cacheFieldName}`
 
   for (const patch of diff.patch) {
     if (patch.type === 'add') {
       await Cache.updateOne(
-        { _id: cacheId },
+        { _id: cacheId, user },
         {
           $push: {
             [cacheValueFieldName]: {
@@ -123,7 +123,7 @@ const updateCacheFromDiff = async (cacheId, cacheFieldName, diff) => {
     } else {
       // todo: could join all removes!
       await Cache.updateOne(
-        { _id: cacheId },
+        { _id: cacheId, user },
         {
           $pull: {
             [cacheValueFieldName]: { $in: patch.items.map(({ _id }) => _id) },
@@ -139,7 +139,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     throw new Error('Need to be logged in to fetch links.')
   }
 
-  let cache = (await Cache.findById(cacheId).lean()) || {
+  let cache = (await Cache.findOne({ _id: cacheId, user }).lean()) || {
     value: {
       noteIds: [],
       tagIds: [],
@@ -236,11 +236,11 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
 
   let cacheIdWritten
   if (cache._id) {
-    await updateCacheFromDiff(cache._id, 'noteIds', notesDiff)
-    await updateCacheFromDiff(cache._id, 'tagIds', tagsDiff)
+    await updateCacheFromDiff(user, cache._id, 'noteIds', notesDiff)
+    await updateCacheFromDiff(user, cache._id, 'tagIds', tagsDiff)
 
     await Cache.collection.updateOne(
-      { _id: cache._id },
+      { _id: cache._id, user },
       {
         $set: {
           updatedAt: new Date(),
@@ -252,7 +252,8 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     const cacheWriteValue = {}
     cacheWriteValue.noteIds = notesDiff.added.map(({ _id }) => _id)
     cacheWriteValue.tagIds = tagsDiff.added.map(({ _id }) => _id)
-    cacheIdWritten = (await new Cache({ value: cacheWriteValue }).save())._id
+    cacheIdWritten = (await new Cache({ value: cacheWriteValue, user }).save())
+      ._id
   }
 
   return {

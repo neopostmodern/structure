@@ -106,6 +106,7 @@ const tagSchema = withBaseSchema({
 export const Tag = mongoose.model('Tag', tagSchema)
 
 const cacheSchema = withBaseSchema({
+  user: { type: String, ref: 'User', index: true },
   value: {},
 })
 export const Cache = mongoose.model('Cache', cacheSchema)
