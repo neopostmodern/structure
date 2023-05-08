@@ -109,3 +109,17 @@ const cacheSchema = withBaseSchema({
   value: {},
 })
 export const Cache = mongoose.model('Cache', cacheSchema)
+
+const clearOldCaches = async () => {
+  console.log('Clearing old caches...')
+  await Cache.deleteMany({
+    updatedAt: {
+      $lt: Date.now() - 30 * 24 * 60 * 60 * 1000,
+    },
+  })
+}
+
+// once a day delete cache entries that have not been updated for 30 days
+setInterval(clearOldCaches, 24 * 60 * 60 * 1000)
+// run once at startup
+setImmediate(clearOldCaches)
