@@ -23,9 +23,13 @@ if (process.env.TARGET !== 'web') {
   });
 }
 
-const root = createRoot(document.getElementById('root')!);
+const rootElement = document.getElementById('root')!;
+const root = createRoot(rootElement);
 
 getApolloClient().then((apolloClient) => {
+  rootElement.innerHTML = '';
+  rootElement.classList.remove('loading');
+
   root.render(
     <ErrorBoundary>
       <Root store={store} history={history} client={apolloClient} />

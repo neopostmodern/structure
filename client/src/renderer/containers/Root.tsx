@@ -1,7 +1,7 @@
 import { ApolloClient, ApolloProvider } from '@apollo/client';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { type History } from 'history';
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router';
 import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
@@ -12,16 +12,38 @@ import migrationSystem, {
 } from '../migrations/migrationSystem';
 import { RootState } from '../reducers';
 import useTheme from '../styles/useTheme';
-import AddNotePage from './AddNotePage';
+import suspenseWrap from '../utils/suspenseWrap';
 import AuthWrapper from './AuthWrapper';
-import LinkPage from './LinkPage';
-import MissingPage from './MissingPage';
+import ComplexLayout from './ComplexLayout';
 import NotesPage from './NotesPage';
-import SettingsPage from './SettingsPage';
-import TagPage from './TagPage';
-import TagsPage from './TagsPage';
-import TextPage from './TextPage';
-import UserPage from './UserPage';
+
+const wrap = (LazyComponent: React.LazyExoticComponent<React.FC<{}>>) =>
+  suspenseWrap(LazyComponent, () => <ComplexLayout loading />);
+
+const AddNotePage = wrap(
+  lazy(() => import(/* webpackPrefetch: true */ './AddNotePage'))
+);
+const LinkPage = wrap(
+  lazy(() => import(/* webpackPrefetch: true */ './LinkPage'))
+);
+const MissingPage = wrap(
+  lazy(() => import(/* webpackPrefetch: true */ './MissingPage'))
+);
+const SettingsPage = wrap(
+  lazy(() => import(/* webpackPrefetch: true */ './SettingsPage'))
+);
+const TagPage = wrap(
+  lazy(() => import(/* webpackPrefetch: true */ './TagPage'))
+);
+const TagsPage = wrap(
+  lazy(() => import(/* webpackPrefetch: true */ './TagsPage'))
+);
+const TextPage = wrap(
+  lazy(() => import(/* webpackPrefetch: true */ './TextPage'))
+);
+const UserPage = wrap(
+  lazy(() => import(/* webpackPrefetch: true */ './UserPage'))
+);
 
 type RootType = {
   store: Store<RootState>;
@@ -48,6 +70,15 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
   if (!isMigrationsFinished) {
     return null;
   }
+
+  useEffect(() => {
+    // this effect runs after the first full render
+    const loadingElement = document.getElementById('loading');
+    if (loadingElement) {
+      loadingElement.style.opacity = '0';
+      setTimeout(() => loadingElement.remove(), 300);
+    }
+  }, []);
 
   return (
     <ApolloProvider client={client}>
