@@ -5,6 +5,7 @@
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import path from 'path';
 import webpack from 'webpack';
+import FontPreloadPlugin from 'webpack-font-preload-plugin';
 import { GenerateSW } from 'workbox-webpack-plugin';
 import { version as projectVersion } from '../../package.json';
 import { dependencies as externals } from '../../release/app/package.json';
@@ -54,6 +55,7 @@ export const createPluginsForPWA = ({
         navigateFallback: '/index.html',
       })
     );
+    plugins.push(new FontPreloadPlugin());
   }
   plugins.push(
     new CopyWebpackPlugin({
