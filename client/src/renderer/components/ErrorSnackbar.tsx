@@ -1,6 +1,23 @@
 import { ApolloError } from '@apollo/client';
+import { Portal } from '@mui/base';
 import { Alert, Button, Snackbar } from '@mui/material';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { breakPointMobile } from '../styles/constants';
+import mediaQueryObjectToCss from '../utils/mediaQueryObjectToCss';
+
+const StyledSnackbar = styled(Snackbar)`
+  @media (max-width: ${breakPointMobile}) {
+    ${({ theme }) =>
+      mediaQueryObjectToCss(
+        theme.mixins.toolbar,
+        (toolbarRule) =>
+          `bottom: calc(${toolbarRule.minHeight}px + ${theme.spacing(
+            2
+          )} + env(safe-area-inset-bottom));`
+      )}
+  }
+`;
 
 const ErrorSnackbar = ({
   error,
@@ -28,28 +45,30 @@ const ErrorSnackbar = ({
   };
 
   return (
-    <Snackbar open={open} onClose={handleClose}>
-      <Alert
-        onClose={handleClose}
-        severity="error"
-        sx={{ width: '100%' }}
-        action={
-          retry ? (
-            <Button
-              onClick={() => {
-                retry();
-              }}
-            >
-              Retry
-            </Button>
-          ) : undefined
-        }
-      >
-        Failed to {actionDescription}
-        <br />
-        <small>{error?.message}</small>
-      </Alert>
-    </Snackbar>
+    <Portal>
+      <StyledSnackbar open={open} onClose={handleClose}>
+        <Alert
+          onClose={handleClose}
+          severity="error"
+          sx={{ width: '100%' }}
+          action={
+            retry ? (
+              <Button
+                onClick={() => {
+                  retry();
+                }}
+              >
+                Retry
+              </Button>
+            ) : undefined
+          }
+        >
+          Failed to {actionDescription}
+          <br />
+          <small>{error?.message}</small>
+        </Alert>
+      </StyledSnackbar>
+    </Portal>
   );
 };
 
