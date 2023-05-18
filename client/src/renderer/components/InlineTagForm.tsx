@@ -1,4 +1,9 @@
-import { Autocomplete, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  CircularProgress,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { matchSorter } from 'match-sorter';
 import React from 'react';
 import { TagsWithCountsQuery } from '../generated/graphql';
@@ -11,7 +16,7 @@ type TagOrNewTagType = TagType | { newTagName: string; title: string };
 type InlineTagFormProps = {
   tags: 'loading' | Array<TagType>;
   onAddTag: (tagName: string) => void;
-  onAbort: () => void;
+  onAbort: (explicit?: boolean) => void;
 };
 
 const MAX_TAG_SUGGESTIONS = 20;
@@ -27,7 +32,7 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
   return (
     <>
       {tags === 'loading' ? (
-        '...'
+        <CircularProgress size={20} disableShrink />
       ) : (
         <Autocomplete<TagOrNewTagType, false, false, true>
           open
@@ -46,7 +51,7 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
           }}
           onKeyDown={(event) => {
             if (event.key === 'Escape') {
-              onAbort();
+              onAbort(true);
             }
           }}
           onBlur={(event: React.FocusEvent<HTMLInputElement>) => {

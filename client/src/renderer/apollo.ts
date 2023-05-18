@@ -6,6 +6,7 @@ import {
 } from '@apollo/client';
 import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localforage from 'localforage';
+import LocalStoreInMemoryWrapper from './utils/localStoreInMemoryWrapper';
 
 let backendUrl;
 if (process.env.TARGET === 'web') {
@@ -20,6 +21,8 @@ if (process.env.TARGET === 'web') {
   }
 }
 
+const noteCountsStorage = new LocalStoreInMemoryWrapper<number>('noteCounts');
+
 const cache = new InMemoryCache({
   possibleTypes: {
     INote: ['Link', 'Text'],
@@ -29,9 +32,15 @@ const cache = new InMemoryCache({
       fields: {
         noteCount: {
           read(_, { readField }) {
+            const tagId = readField('_id') as string;
+            const storedCount = noteCountsStorage.getItem(tagId);
+            if (storedCount !== undefined) {
+              return storedCount;
+            }
             const notesWithTag: readonly unknown[] | undefined =
               readField('notes');
             if (notesWithTag && 'length' in notesWithTag) {
+              noteCountsStorage.setItem(tagId, notesWithTag.length);
               return notesWithTag.length;
             }
             return 0;

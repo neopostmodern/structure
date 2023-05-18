@@ -62,6 +62,9 @@ const rootResolvers = {
   Text: INoteResolvers,
   Tag: {
     async notes(tag, args, context) {
+      if (tag._id.equals(context.user.internal.ownershipTagId)) {
+        return []
+      }
       if (tag.notes && context.__skip_notes_population) {
         return tag.notes
       }

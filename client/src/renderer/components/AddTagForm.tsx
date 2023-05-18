@@ -1,13 +1,11 @@
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useLazyQuery, useMutation } from '@apollo/client';
 import { Warning as WarningIcon } from '@mui/icons-material';
 import { Skeleton, Tooltip } from '@mui/material';
 import { INTERNAL_TAG_PREFIX } from '@structure/common';
-import { useState } from 'react';
-import { TAGS_QUERY } from '../containers/TagsPage';
+import { useCallback, useEffect, useState } from 'react';
 import {
   AddTagByNameToNoteMutation,
   AddTagByNameToNoteMutationVariables,
-  TagsQuery,
   TagsWithCountsQuery,
 } from '../generated/graphql';
 import useUserId from '../hooks/useUserId';
@@ -42,11 +40,14 @@ const AddTagForm = ({
   const userId = useUserId();
   const [submittedTag, setSubmittedTag] = useState<string | null>(null);
 
-  const tagsQuery = useDataState(
-    useQuery<TagsWithCountsQuery>(TAGS_WITH_COUNTS_QUERY, {
+  const [fetchTagsQuery, tagsQuery] = useDataState(
+    useLazyQuery<TagsWithCountsQuery>(TAGS_WITH_COUNTS_QUERY, {
       fetchPolicy: 'cache-only',
     })
   );
+  useEffect(() => {
+    setTimeout(fetchTagsQuery, 0);
+  }, [fetchTagsQuery]);
 
   const [addTagToNote, addTagToNoteMutation] = useMutation<
     AddTagByNameToNoteMutation,
@@ -58,20 +59,19 @@ const AddTagForm = ({
       }
       const { addTagByNameToNote } = data;
 
-      const cacheValue = cache.readQuery<TagsQuery>({ query: TAGS_QUERY });
-
-      if (!cacheValue) {
-        return;
-      }
-      const { tags: tagsInCache } = cacheValue;
-
-      const newTags = addTagByNameToNote.tags.filter(
-        (tag) => !tagsInCache.some(({ _id }) => _id === tag._id)
+      const newTags = addTagByNameToNote.tags.filter((tag) =>
+        cache.readFragment({
+          id: cache.identify(tag),
+          fragment: BASE_TAG_FRAGMENT,
+        })
       );
 
-      cache.writeQuery({
-        query: TAGS_QUERY,
-        data: { tags: [...tagsInCache, ...newTags] },
+      newTags.forEach((tag) => {
+        cache.writeFragment({
+          id: cache.identify(tag),
+          fragment: BASE_TAG_FRAGMENT,
+          data: tag,
+        });
       });
     },
   });
@@ -79,14 +79,30 @@ const AddTagForm = ({
   const handleAddTag = (tagName: string): void => {
     const tagValue = tagName.trim();
     if (tagValue.length > 0) {
-      addTagToNote({ variables: { noteId, tagName: tagValue } });
-      setSubmittedTag(tagValue);
-      onHideTagForm();
+      (async () => {
+        try {
+          setSubmittedTag(tagValue);
+          await addTagToNote({ variables: { noteId, tagName: tagValue } });
+          onHideTagForm();
+        } catch (error) {
+          console.error('[AddTagForm.handleAddTag]', error);
+        }
+      })();
     } else {
       // eslint-disable-next-line no-undef
       alert("Can't add empty tag."); // todo: error handling in UI
     }
   };
+
+  const handleAbort = useCallback(
+    (explicit?: boolean) => {
+      if (!explicit && addTagToNoteMutation.error) {
+        return;
+      }
+      onHideTagForm();
+    },
+    [onHideTagForm, addTagToNoteMutation.error]
+  );
 
   if (addTagToNoteMutation.loading) {
     return (
@@ -107,23 +123,30 @@ const AddTagForm = ({
   }
 
   return (
-    <InlineTagForm
-      tags={
-        tagsQuery.state === DataState.LOADING
-          ? 'loading'
-          : tagsQuery.data.tags.filter(
-              (tag) =>
-                !currentTags.some(({ _id }) => _id === tag._id) &&
-                !tag.name.startsWith(INTERNAL_TAG_PREFIX) &&
-                tag.permissions.some(
-                  (permission) =>
-                    permission.user._id === userId && permission.tag.use
-                )
-            )
-      }
-      onAddTag={handleAddTag}
-      onAbort={onHideTagForm}
-    />
+    <>
+      <ErrorSnackbar
+        error={addTagToNoteMutation.error}
+        actionDescription={'add tag'}
+      />
+      <InlineTagForm
+        tags={
+          tagsQuery.state === DataState.LOADING ||
+          tagsQuery.state === DataState.UNCALLED
+            ? 'loading'
+            : tagsQuery.data.tags.filter(
+                (tag) =>
+                  !currentTags.some(({ _id }) => _id === tag._id) &&
+                  !tag.name.startsWith(INTERNAL_TAG_PREFIX) &&
+                  tag.permissions.some(
+                    (permission) =>
+                      permission.user._id === userId && permission.tag.use
+                  )
+              )
+        }
+        onAddTag={handleAddTag}
+        onAbort={handleAbort}
+      />
+    </>
   );
 };
 
