@@ -81,3 +81,9 @@ npm run server:start
 ```
 
 Comprehensive PRs are very welcome, as are bug reports, feature requests and other suggestions.
+
+### Release
+To release a new version, run
+```
+npm run util:create-release
+```
