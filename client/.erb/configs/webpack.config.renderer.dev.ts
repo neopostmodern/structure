@@ -1,6 +1,5 @@
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import config from '@structure/config';
-import chalk from 'chalk';
 import { execSync, spawn } from 'child_process';
 import fs from 'fs';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -36,9 +35,7 @@ if (
   !(fs.existsSync(webpackPaths.dllPath) && fs.existsSync(manifest))
 ) {
   console.log(
-    chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
-    )
+    'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
   );
   execSync('npm run postinstall');
 }

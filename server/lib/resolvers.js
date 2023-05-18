@@ -324,7 +324,7 @@ const rootResolvers = {
         updatedNotes.push(await removeTagByIdFromNote(user, note._id, tag._id))
       }
 
-      await tag.remove()
+      await tag.deleteOne()
 
       context.__skip_notes_population = true
       tag.notes = updatedNotes
