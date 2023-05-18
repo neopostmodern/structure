@@ -2,7 +2,23 @@
   "presets": [
     "@babel/env",
     "@babel/preset-typescript",
-    ["@babel/preset-react", {"runtime": "automatic"}]
+    [
+      "@babel/preset-react",
+      {
+        "runtime": "automatic"
+      }
+    ]
   ],
-  "plugins": ["@babel/plugin-transform-runtime"]
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    [
+      "babel-plugin-direct-import",
+      {
+        "modules": [
+          "@mui/material",
+          "@mui/icons-material"
+        ]
+      }
+    ]
+  ]
 }

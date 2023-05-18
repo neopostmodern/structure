@@ -114,10 +114,17 @@ const configuration: webpack.Configuration = {
           splitChunks: {
             chunks: 'all',
             cacheGroups: {
-              vendor: {
-                test: /[\\/]node_modules[\\/]/,
-                name: 'vendors',
+              markdown: {
+                test: /[\\/]node_modules[\\/].*(markdown|gfm|remark|rehype|parse5|micromark|hast|property-information).*[\\/]/,
+                name: 'vendors-markdown',
                 chunks: 'all',
+                priority: 2,
+              },
+              react: {
+                test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+                name: 'vendors-react',
+                chunks: 'all',
+                priority: 1,
               },
             },
           },

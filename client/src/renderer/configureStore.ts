@@ -23,7 +23,7 @@ const enhancers = [];
 // Thunk Middleware
 middleware.push(thunk);
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'production') {
   const { createLogger } = require('redux-logger');
   // Logging Middleware
   const logger = createLogger({

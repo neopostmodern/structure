@@ -4,7 +4,7 @@ import {
   QueryResult,
   QueryTuple,
 } from '@apollo/client';
-import { pick } from 'lodash';
+import pick from 'lodash/pick';
 import { useMemo } from 'react';
 
 export enum DataState {

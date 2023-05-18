@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import React, { useEffect } from 'react';
+import React, { lazy, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import packageJson from '../../../package.json';
 import { requestLogin } from '../actions/userInterface';
@@ -10,9 +10,13 @@ import { ProfileQuery, ProfileQueryVariables } from '../generated/graphql';
 import { RootState } from '../reducers';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import { PROFILE_QUERY } from '../utils/sharedQueriesAndFragments';
+import suspenseWrap from '../utils/suspenseWrap';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';
-import SettingsPage from './SettingsPage';
+
+const SettingsPage = suspenseWrap(
+  lazy(() => import(/* webpackPrefetch: true */ './SettingsPage'))
+);
 
 const AuthWrapper: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const dispatch = useDispatch();

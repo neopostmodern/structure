@@ -1,11 +1,16 @@
 import { AddCircleOutline as PlusIcon } from '@mui/icons-material';
 import { Button, IconButton } from '@mui/material';
 import { INTERNAL_TAG_PREFIX } from '@structure/common';
-import { useCallback, useState } from 'react';
+import { lazy, useCallback, useState } from 'react';
 import useShortcut from '../hooks/useShortcut';
 import { SHORTCUTS } from '../utils/keyboard';
-import AddTagForm, { AddTagFormProps } from './AddTagForm';
+import suspenseWrap from '../utils/suspenseWrap';
+import type { AddTagFormProps } from './AddTagForm';
 import TooltipWithShortcut from './TooltipWithShortcut';
+
+const AddTagForm = suspenseWrap(
+  lazy(() => import(/* webpackPrefetch: true */ './AddTagForm'))
+);
 
 const AddTagButtonOrForm = ({
   currentTags,

@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import TimeAgo from 'react-timeago';
 import { NotesForListQuery } from '../generated/graphql';
 import useUserId from '../hooks/useUserId';
 import { noteUrl } from '../utils/routes';
+import suspenseWrap from '../utils/suspenseWrap';
 import * as Styled from './NoteInList.style';
 import NoteInListBatchEditing from './NoteInListBatchEditing';
 import NotesListActionMenu from './NotesListActionMenu';
-import RenderedMarkdown from './RenderedMarkdown';
 import Tags from './Tags';
 import TooltipWithShortcut from './TooltipWithShortcut';
+
+const RenderedMarkdown = suspenseWrap(
+  lazy(() => import(/* webpackPrefetch: true */ './RenderedMarkdown'))
+);
 
 export const NoteInList: React.FC<{
   note: NotesForListQuery['notes'][number];
