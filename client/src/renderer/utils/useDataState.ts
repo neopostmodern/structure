@@ -40,13 +40,34 @@ const isQueryTuple = <QueryData, QueryVariables>(
 ): queryReturnValue is QueryTuple<QueryData, QueryVariables> =>
   Array.isArray(queryReturnValue);
 
-export type UseDataStateResult<QueryData, QueryVariables> =
-  PolicedData<QueryData> &
-    SelectedApolloQueryResultFields<QueryData, QueryVariables>;
-export type UseDataStateLazyResult<QueryData, QueryVariables> = [
+export type UseDataStateResult<
+  QueryData,
+  QueryVariables,
+  ApolloQueryDataOverride = void
+> = PolicedData<QueryData> &
+  SelectedApolloQueryResultFields<
+    ApolloQueryDataOverride extends void ? QueryData : ApolloQueryDataOverride,
+    QueryVariables
+  >;
+export type UseDataStateLazyQuery<
+  QueryData,
+  QueryVariables,
+  ApolloQueryDataOverride = void
+> = LazyPolicedData<QueryData> &
+  SelectedApolloQueryResultFields<
+    ApolloQueryDataOverride extends void ? QueryData : ApolloQueryDataOverride,
+    QueryVariables
+  >;
+export type UseDataStateLazyResult<
+  QueryData,
+  QueryVariables,
+  ApolloQueryDataOverride = void
+> = [
   QueryTuple<QueryData, QueryVariables>[0],
-  LazyPolicedData<QueryData> &
-    SelectedApolloQueryResultFields<QueryData, QueryVariables>
+  UseDataStateLazyQuery<
+    ApolloQueryDataOverride extends void ? QueryData : ApolloQueryDataOverride,
+    QueryVariables
+  >
 ];
 
 function useDataState<QueryData, QueryVariables>(

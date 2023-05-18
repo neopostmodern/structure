@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery } from '@apollo/client';
 import {
   History as HistoryIcon,
   HistoryToggleOff as HistoryLoadingIcon,
@@ -13,6 +13,7 @@ import { RootState } from '../reducers';
 import { NoteSummary } from '../reducers/history';
 import { SHORTCUTS } from '../utils/keyboard';
 import { noteUrl } from '../utils/routes';
+import useDataState, { DataState } from '../utils/useDataState';
 import TooltipWithShortcut from './TooltipWithShortcut';
 
 const VISITED_NOTES_QUERY = gql`
@@ -42,12 +43,19 @@ let firstShortCutActivation = {
 };
 
 const LastVisitedNotes = () => {
+  const [fetchNotesQuery, notesQuery] = useDataState(
+    useLazyQuery<VisitedNotesQuery>(VISITED_NOTES_QUERY, {
+      fetchPolicy: 'cache-only',
+    })
+  );
+
   const menuAnchorRef = useRef();
   const [menuAnchorElement, setMenuAnchorElement] =
     useState<null | HTMLElement>(null);
   const menuOpen = Boolean(menuAnchorElement);
   const handleClick = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
+      fetchNotesQuery();
       setMenuAnchorElement(event.currentTarget);
     },
     [setMenuAnchorElement]
@@ -65,10 +73,6 @@ const LastVisitedNotes = () => {
   const lastVisitedNotes = useSelector<RootState, Array<NoteSummary>>(
     (state) => state.history.lastVisitedNotes
   );
-
-  const notesQuery = useQuery<VisitedNotesQuery>(VISITED_NOTES_QUERY, {
-    fetchPolicy: 'cache-only',
-  });
 
   const dispatch = useDispatch();
   const navigateToNote = ({ type: __typename, id: _id }: NoteSummary) =>
@@ -96,7 +100,7 @@ const LastVisitedNotes = () => {
 
     if (firstShortCutActivation) {
       window.addEventListener('keyup', handleKeyUp);
-      setMenuAnchorElement(menuAnchorRef.current);
+      handleClick({ currentTarget: menuAnchorRef.current } as any);
     }
 
     let focusTimer: ReturnType<typeof setTimeout> | undefined;
@@ -155,9 +159,13 @@ const LastVisitedNotes = () => {
             aria-expanded={menuOpen ? 'true' : undefined}
             onClick={handleClick}
             ref={menuAnchorRef}
-            disabled={lastVisitedNotes.length === 0 || notesQuery.loading}
+            disabled={lastVisitedNotes.length === 0}
           >
-            {notesQuery.loading ? <HistoryLoadingIcon /> : <HistoryIcon />}
+            {lastVisitedNotes.length === 0 ? (
+              <HistoryLoadingIcon />
+            ) : (
+              <HistoryIcon />
+            )}
           </IconButton>
         </span>
       </TooltipWithShortcut>
@@ -187,9 +195,10 @@ const LastVisitedNotes = () => {
             }}
             id={menuItemId(index)}
           >
-            {notesQuery.data?.notes?.find(
-              (note) => note?._id === visitedNote.id
-            )?.name || visitedNote.id}
+            {(notesQuery.state === DataState.DATA &&
+              notesQuery.data.notes.find((note) => note?._id === visitedNote.id)
+                ?.name) ||
+              visitedNote.id}
           </MenuItem>
         ))}
       </Menu>

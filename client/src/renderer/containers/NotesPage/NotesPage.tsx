@@ -1,4 +1,5 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery } from '@apollo/client';
+import { CloudOff } from '@mui/icons-material';
 import { CircularProgress, Stack, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -18,9 +19,16 @@ import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
 import NotesPageEmpty from '../../components/NotesPageEmpty';
 import { SkeletonNoteList } from '../../components/Skeletons';
-import { NotesForListQuery } from '../../generated/graphql';
+import {
+  NotesForListQuery,
+  NotesForListQueryVariables,
+} from '../../generated/graphql';
 import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince';
-import useFilteredNotes from '../../hooks/useFilteredNotes';
+import useFilteredNotes, {
+  FilteredNotesAndAllNotes,
+} from '../../hooks/useFilteredNotes';
+import useIsOnline from '../../hooks/useIsOnline';
+import useOptimisticCache from '../../hooks/useOptimisticCache';
 import useShortcut from '../../hooks/useShortcut';
 import { RootState } from '../../reducers';
 import { UserInterfaceStateType } from '../../reducers/userInterface';
@@ -51,20 +59,36 @@ export const NOTES_QUERY = gql`
   ${BASE_TAG_FRAGMENT}
 `;
 
+export const OPTIMISTIC_NOTE_COUNT = 10;
+
 const NotesPage: React.FC = () => {
   const { linkLayout: layout, infiniteScrollLimit } = useSelector<
     RootState,
     UserInterfaceStateType
   >((state) => state.userInterface);
-  const [noteRenderLimit, setNoteRenderLimit] = useState<null | number>(5);
+  const [noteRenderLimit, setNoteRenderLimit] = useState<null | number>(
+    OPTIMISTIC_NOTE_COUNT
+  );
   const dispatch = useDispatch();
   const searchInput = useRef<HTMLInputElement | null>(null);
-  const notesQuery = useDataState(
-    useQuery<NotesForListQuery>(NOTES_QUERY, {
+  const [fetchNotesQuery, notesQuery] = useDataState(
+    useLazyQuery<NotesForListQuery>(NOTES_QUERY, {
       fetchPolicy: 'cache-only',
     })
   );
+  useEffect(() => {
+    setTimeout(fetchNotesQuery, 100);
+  }, []);
   const filteredNotesQueryWrapper = useFilteredNotes(notesQuery);
+  const cachedFilteredNotesQueryWrapper = useOptimisticCache<
+    FilteredNotesAndAllNotes,
+    NotesForListQueryVariables,
+    NotesForListQuery
+  >(filteredNotesQueryWrapper, 'notes', ({ notes, archivedCount }) => ({
+    allNotes: null as any, // hack, will not render notes stats from optimistic cache
+    notes: notes.slice(0, OPTIMISTIC_NOTE_COUNT),
+    archivedCount,
+  }));
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince();
 
@@ -91,8 +115,8 @@ const NotesPage: React.FC = () => {
     if (
       !inView ||
       (noteRenderLimit === null &&
-        filteredNotesQueryWrapper.state === DataState.DATA &&
-        filteredNotesQueryWrapper.data.notes.length < infiniteScrollLimit)
+        cachedFilteredNotesQueryWrapper.state === DataState.DATA &&
+        cachedFilteredNotesQueryWrapper.data.notes.length < infiniteScrollLimit)
     ) {
       return;
     }
@@ -115,33 +139,49 @@ const NotesPage: React.FC = () => {
     entitiesUpdatedSince.refetch();
   });
 
+  const isOnline = useIsOnline();
+
   const content = [];
   let primaryActions = null;
 
-  if (filteredNotesQueryWrapper.state === DataState.ERROR) {
+  if (cachedFilteredNotesQueryWrapper.state === DataState.ERROR) {
     if (
-      filteredNotesQueryWrapper.error.extraInfo === OFFLINE_CACHE_MISS &&
+      cachedFilteredNotesQueryWrapper.error.extraInfo === OFFLINE_CACHE_MISS &&
       (entitiesUpdatedSince.state === DataState.UNCALLED ||
         entitiesUpdatedSince.state === DataState.LOADING)
     ) {
       content.push(
         <Centered key="first-load">
           <Stack alignItems="center">
-            <CircularProgress color="inherit" disableShrink />
-            <Gap vertical={1} />
-            <Typography variant="caption">
-              Loading notes for the first time, this might take a while...
-            </Typography>
+            {isOnline ? (
+              <>
+                <CircularProgress color="inherit" disableShrink />
+                <Gap vertical={1} />
+                <Typography variant="caption">
+                  Loading notes for the first time, this might take a while...
+                </Typography>
+              </>
+            ) : (
+              <>
+                <CloudOff sx={{ fontSize: '4rem', color: 'gray' }} />
+                <Gap vertical={1} />
+                <Typography variant="caption" textAlign="center">
+                  Your notes are not cached yet and can't be loaded at the
+                  moment because you're offline.
+                  <br /> Please try again later.
+                </Typography>
+              </>
+            )}
           </Stack>
         </Centered>
       );
     } else {
       content.push(
-        <FatalApolloError key="error" query={filteredNotesQueryWrapper} />
+        <FatalApolloError key="error" query={cachedFilteredNotesQueryWrapper} />
       );
     }
-  } else if (filteredNotesQueryWrapper.state === DataState.DATA) {
-    if (filteredNotesQueryWrapper.loadingBackground) {
+  } else if (cachedFilteredNotesQueryWrapper.state === DataState.DATA) {
+    if (cachedFilteredNotesQueryWrapper.loadingBackground) {
       content.push(
         <NetworkIndicatorContainer key="searching" align="left">
           Filtering...
@@ -153,7 +193,7 @@ const NotesPage: React.FC = () => {
       allNotes,
       notes: matchedNotes,
       archivedCount: archivedMatchedNotesCount,
-    } = filteredNotesQueryWrapper.data;
+    } = cachedFilteredNotesQueryWrapper.data;
 
     content.push(
       <NoteBatchEditingBar key="batch-operations-menu" notes={matchedNotes} />
@@ -218,7 +258,7 @@ const NotesPage: React.FC = () => {
   return (
     <ComplexLayout
       primaryActions={primaryActions}
-      loading={filteredNotesQueryWrapper.state === DataState.LOADING}
+      loading={cachedFilteredNotesQueryWrapper.state === DataState.LOADING}
       loadingComponent={SkeletonNoteList}
     >
       {[...content]}

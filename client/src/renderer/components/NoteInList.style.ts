@@ -1,5 +1,6 @@
 import { Button, keyframes } from '@mui/material';
 import styled from 'styled-components';
+import { OPTIMISTIC_NOTE_COUNT } from '../containers/NotesPage/NotesPage';
 import { ExternalLink, InternalLink } from './CommonStyles';
 import UserAvatar from './UserAvatar';
 
@@ -25,7 +26,11 @@ export const Note = styled.div<{ archived: boolean }>`
       .map(
         (index) => `
           &:nth-child(${index}) {
-            animation-delay: ${(index > 5 ? index - 6 : index) * 0.015}s;
+            animation-delay: ${
+              (index > OPTIMISTIC_NOTE_COUNT
+                ? index - (OPTIMISTIC_NOTE_COUNT + 1)
+                : index) * 0.015
+            }s;
           }
         `
       )

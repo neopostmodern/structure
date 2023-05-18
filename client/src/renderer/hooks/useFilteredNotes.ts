@@ -1,4 +1,3 @@
-import { ApolloError } from '@apollo/client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ArchiveState, SortBy } from '../actions/userInterface';
@@ -7,7 +6,7 @@ import { RootState } from '../reducers';
 import { UserInterfaceStateType } from '../reducers/userInterface';
 import {
   DataState,
-  SelectedApolloQueryResultFields,
+  UseDataStateLazyQuery,
   UseDataStateResult,
 } from '../utils/useDataState';
 
@@ -55,24 +54,9 @@ const filterNotes = (
   };
 };
 
-type FilteredNotesAndAllNotes = FilteredNotes & {
+export type FilteredNotesAndAllNotes = FilteredNotes & {
   allNotes: NotesForListQuery['notes'];
 };
-
-type PolicedFilteredNotes =
-  | ({ state: DataState.LOADING } & SelectedApolloQueryResultFields<
-      NotesForListQuery,
-      undefined
-    >)
-  | ({
-      state: DataState.ERROR;
-      error: ApolloError;
-    } & SelectedApolloQueryResultFields<NotesForListQuery, undefined>)
-  | {
-      state: DataState.DATA;
-      data: FilteredNotesAndAllNotes;
-      loadingBackground: boolean;
-    };
 
 const sortByToFieldName: {
   [sortBy in SortBy]: keyof NotesForListQuery['notes'][number];
@@ -96,8 +80,12 @@ const extendedCache: {
 };
 
 const useFilteredNotes = (
-  notesQuery: UseDataStateResult<NotesForListQuery, undefined>
-): PolicedFilteredNotes => {
+  notesQuery: UseDataStateLazyQuery<NotesForListQuery, undefined>
+): UseDataStateResult<
+  FilteredNotesAndAllNotes,
+  undefined,
+  NotesForListQuery
+> => {
   const { archiveState, sortBy, searchQuery } = useSelector<
     RootState,
     UserInterfaceStateType
@@ -169,6 +157,9 @@ const useFilteredNotes = (
     setFilteredNotes,
   ]);
 
+  if (notesQuery.state === DataState.UNCALLED) {
+    return { ...notesQuery, state: DataState.LOADING };
+  }
   if (notesQuery.state !== DataState.DATA) {
     return notesQuery;
   }
