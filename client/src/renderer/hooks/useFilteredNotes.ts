@@ -71,12 +71,14 @@ const extendedCache: {
   filteredNotes: FilteredNotes | null;
   searchQuery: string | null;
   archiveState: ArchiveState | null;
+  sortBy: SortBy | null;
 } = {
   notesData: null,
   sortedNotes: null,
   filteredNotes: null,
   searchQuery: null,
   archiveState: null,
+  sortBy: null,
 };
 
 const useFilteredNotes = (
@@ -100,9 +102,13 @@ const useFilteredNotes = (
       return null;
     }
 
-    if (notesQuery.data.notes === extendedCache.notesData) {
+    if (
+      notesQuery.data.notes === extendedCache.notesData &&
+      sortBy === extendedCache.sortBy
+    ) {
       return extendedCache.sortedNotes;
     }
+    extendedCache.sortBy = sortBy;
     extendedCache.notesData = notesQuery.data.notes;
 
     const notes = [...notesQuery.data.notes]; // unfreeze
