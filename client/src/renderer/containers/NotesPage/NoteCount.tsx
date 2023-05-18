@@ -53,7 +53,7 @@ const NoteCount: React.FC<NoteCountProps> = ({
       </>
     );
   }
-  return null;
+  return <>&nbsp;</>;
 };
 
 export default NoteCount;

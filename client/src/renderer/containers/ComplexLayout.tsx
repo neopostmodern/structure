@@ -55,7 +55,7 @@ const Loading = ({
       <Stack alignItems="center">
         <CircularProgress color="inherit" disableShrink />
         <Gap vertical={1} />
-        {typeof loading === 'string' && loading}
+        {typeof loading === 'string' ? loading : <>&nbsp;</>}
       </Stack>
     </Centered>
   );
