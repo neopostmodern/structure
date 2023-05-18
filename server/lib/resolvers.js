@@ -121,8 +121,7 @@ const rootResolvers = {
     versions(root, { currentVersion }) {
       if (currentVersion) {
         return {
-          // todo: set minimum version!
-          // minimum: '0.20.0',
+          minimum: '0.23.0',
           current: packageJson.version,
         }
       }
