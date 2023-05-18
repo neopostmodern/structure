@@ -1,37 +1,14 @@
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import React from 'react';
-import { useForm } from 'react-hook-form';
-import styled from 'styled-components';
+import { FormProvider, useForm } from 'react-hook-form';
 import { TagsQuery } from '../generated/graphql';
 import useSyncForm from '../hooks/useSyncForm';
-import colorTools from '../utils/colorTools';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
-import { NameInput, StructureTextField } from './formComponents';
+import ColorInput from './ColorInput';
+import { NameInput } from './formComponents';
 
 type TagType = TagsQuery['tags'][number];
-
-const ColorBlockInput = styled(StructureTextField).attrs({ fullWidth: false })`
-  margin-bottom: 2rem;
-
-  .MuiInputBase-root {
-    color: inherit;
-
-    &::before,
-    &::after {
-      border-bottom-color: currentColor !important;
-    }
-  }
-
-  .MuiInputBase-input {
-    width: 10rem;
-    height: 10rem;
-    padding: 0;
-
-    text-align: center;
-    color: inherit;
-  }
-`;
 
 const tagFormFields: Array<keyof TagType> = [
   '_id',
@@ -49,7 +26,7 @@ interface TagFormProps {
 const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
   const defaultValues = pick(tag, tagFormFields);
 
-  const { register, getValues, handleSubmit, reset } = useForm<TagInForm>({
+  const formProps = useForm<TagInForm>({
     defaultValues,
     mode: 'onBlur',
     resolver: (formValues) => {
@@ -60,26 +37,19 @@ const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
       return { values: formValues, errors: {} };
     },
   });
+  const { register, getValues, handleSubmit, reset } = formProps;
 
   useSyncForm(reset, defaultValues, tag);
   useSaveOnUnmount({ onSubmit, defaultValues }, { getValues });
 
-  const { ref: registerRef, ...registerProps } = register('color');
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <ColorBlockInput
-        ref={(ref) => {
-          registerRef(ref);
-          colorTools(ref);
-        }}
-        {...registerProps}
-        type="text"
-        style={{ backgroundColor: tag.color }}
-      />
+    <FormProvider {...formProps}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <ColorInput color={tag.color} name="color" />
 
-      <NameInput type="text" {...register('name', { required: true })} />
-    </form>
+        <NameInput type="text" {...register('name', { required: true })} />
+      </form>
+    </FormProvider>
   );
 };
 

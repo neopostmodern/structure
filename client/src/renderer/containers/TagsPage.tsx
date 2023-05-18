@@ -3,7 +3,7 @@ import { LocalOffer } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { INTERNAL_TAG_PREFIX } from '@structure/common';
 import gql from 'graphql-tag';
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled, { css } from 'styled-components';
 import { changeTagsLayout, TagsLayout } from '../actions/userInterface';
@@ -17,6 +17,7 @@ import {
   UpdateTag2Mutation,
   UpdateTag2MutationVariables,
 } from '../generated/graphql';
+import useColorTagGroups from '../hooks/useColorTagGroups';
 import useEntitiesUpdatedSince from '../hooks/useEntitiesUpdatedSince';
 import { RootState } from '../reducers';
 import { breakpointDesktop } from '../styles/constants';
@@ -112,10 +113,6 @@ const UPDATE_TAG_MUTATION = gql`
   ${BASE_TAG_FRAGMENT}
 `;
 
-type ColorTagGroups = {
-  [color: string]: TagsQuery['tags'];
-};
-
 const TagsPage: FC = () => {
   const dispatch = useDispatch();
   const layout = useSelector<RootState, TagsLayout>(
@@ -138,20 +135,7 @@ const TagsPage: FC = () => {
 
   const [draggedTag, setDraggedTag] = useState<TagsQuery['tags'][number]>();
   const [droppableColor, setDroppableColor] = useState<string | null>();
-  const colorTagGroups = useMemo<ColorTagGroups>(() => {
-    const groups: ColorTagGroups = {};
-
-    if (tagsQuery.state === DataState.DATA) {
-      tagsQuery.data?.tags.forEach((tag) => {
-        if (!groups[tag.color]) {
-          groups[tag.color] = [];
-        }
-        groups[tag.color].push(tag);
-      });
-    }
-
-    return groups;
-  }, [tagsQuery]);
+  const colorTagGroups = useColorTagGroups(tagsQuery);
 
   const selectNextLayout = (): void => {
     const layouts = Object.keys(TagsLayout);
