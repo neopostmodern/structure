@@ -32,7 +32,6 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
         <Autocomplete<TagOrNewTagType, false, false, true>
           open
           autoHighlight
-          disablePortal
           onChange={(_event, newValue) => {
             if (typeof newValue === 'string') {
               throw Error(
