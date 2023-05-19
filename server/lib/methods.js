@@ -148,7 +148,9 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
   }
   const cacheUpdatedAt = cache.updatedAt
 
-  const entityQueryProjection = cache._id ? { _id: 1, updatedAt: 1 } : {}
+  const entityQueryProjection = cache._id
+    ? { _id: 1, updatedAt: 1, createdAt: 1 }
+    : {}
 
   const fetchNotes = async (transformFilters = (filter) => filter) => {
     let notesLookup = Note.find(
@@ -157,7 +159,9 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
         deletedAt: null,
       }),
       entityQueryProjection,
-    ).lean()
+    )
+      .sort({ createdAt: -1 })
+      .lean()
 
     if (!cache._id) {
       notesLookup = notesLookup.populate('tags')

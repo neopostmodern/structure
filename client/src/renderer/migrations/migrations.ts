@@ -9,5 +9,13 @@ migrations.set(1, {
   },
   async down() {},
 });
+migrations.set(2, {
+  name: 'reset-cache-and-localstorage-after-cache-bug-fixed',
+  async up() {
+    clearApolloCache();
+    localStorage.clear();
+  },
+  async down() {},
+});
 
-export const CURRENT_MIGRATION_VERSION = 1;
+export const CURRENT_MIGRATION_VERSION = 2;
