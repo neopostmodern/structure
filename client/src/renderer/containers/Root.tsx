@@ -54,7 +54,7 @@ type RootType = {
 const Root: React.FC<RootType> = ({ store, history, client }) => {
   const theme = useTheme();
   const [isMigrationsFinished, setIsMigrationFinished] = useState(
-    getMigrationStorageVersionSync() !== CURRENT_MIGRATION_VERSION
+    getMigrationStorageVersionSync() === CURRENT_MIGRATION_VERSION
   );
   useEffect(() => {
     if (isMigrationsFinished) {
@@ -67,10 +67,6 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
     })();
   }, [isMigrationsFinished]);
 
-  if (!isMigrationsFinished) {
-    return null;
-  }
-
   useEffect(() => {
     // this effect runs after the first full render
     const loadingElement = document.getElementById('loading');
@@ -79,6 +75,10 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
       setTimeout(() => loadingElement.remove(), 300);
     }
   }, []);
+
+  if (!isMigrationsFinished) {
+    return null;
+  }
 
   return (
     <ApolloProvider client={client}>
