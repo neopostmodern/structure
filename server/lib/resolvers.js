@@ -121,7 +121,7 @@ const rootResolvers = {
     versions(root, { currentVersion }) {
       if (currentVersion) {
         return {
-          minimum: '0.23.0',
+          minimum: currentVersion.split('.')[1] !== '23' ? '0.23.0' : null,
           current: packageJson.version,
         }
       }
