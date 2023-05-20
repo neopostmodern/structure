@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.23.1](https://github.com/neopostmodern/structure/compare/v0.23.0...v0.23.1) (2023-05-20)
+
+
+### Bug Fixes
+
+* **client:** actually calculate notes count for tag sorting ([71a35b6](https://github.com/neopostmodern/structure/commit/71a35b67a5bd43fa7ef7a26282a180c0d7734577))
+* **client:** actually run client-side migrations, fixes [#215](https://github.com/neopostmodern/structure/issues/215) ([3f15603](https://github.com/neopostmodern/structure/commit/3f156036d4d8b51fad4f88cd4f9aeef6a95fe5f3))
+* **client:** add new tag reference directly to query cache, fixes [#221](https://github.com/neopostmodern/structure/issues/221) ([d6a8538](https://github.com/neopostmodern/structure/commit/d6a85389e3703b87926b9ca3dbcfa50c0f0d872f))
+* **client:** pass autocomplete InputProps to input on LinkNameField, fixes [#216](https://github.com/neopostmodern/structure/issues/216) ([a98751a](https://github.com/neopostmodern/structure/commit/a98751ad3f424c2fd6d73ae27a3c3c66edfac298))
+* **client:** reduce pollution of cache by ephemeral queries ([3c08433](https://github.com/neopostmodern/structure/commit/3c084332ffd100435458713c5cc181803e79f7e4))
+* **client:** show actual tag name in color picker, fixes [#217](https://github.com/neopostmodern/structure/issues/217) ([c21b71e](https://github.com/neopostmodern/structure/commit/c21b71e535fa3f3cfef7d4de008c8ac60754c5bb))
+* **client:** show add tag form input while tags load, fixes [#220](https://github.com/neopostmodern/structure/issues/220) ([8990198](https://github.com/neopostmodern/structure/commit/8990198033702e72e8f01ac4ec43e5591df6b4d5))
+* **client:** text ellipsis for note menu buttons, fixes [#218](https://github.com/neopostmodern/structure/issues/218) ([5fe5e18](https://github.com/neopostmodern/structure/commit/5fe5e1823b8bc79a9c028ccfbf2f3a2a866b2983))
+* **server:** only send back minimum version when not fulfilled ([45fe6e7](https://github.com/neopostmodern/structure/commit/45fe6e74c9af9b319c0f3d3c9e9df80507ca1caa))
+* sort notes by createdAt for server cache stability ([30460cf](https://github.com/neopostmodern/structure/commit/30460cf96252be57a728e96e8ee48063cdfdea31))
+
+
+
+
+
 # [0.23.0](https://github.com/neopostmodern/structure/compare/v0.22.1...v0.23.0) (2023-05-18)
 
 

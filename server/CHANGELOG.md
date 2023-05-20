@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.23.1](https://github.com/neopostmodern/structure/compare/v0.23.0...v0.23.1) (2023-05-20)
+
+
+### Bug Fixes
+
+* **server:** only send back minimum version when not fulfilled ([45fe6e7](https://github.com/neopostmodern/structure/commit/45fe6e74c9af9b319c0f3d3c9e9df80507ca1caa))
+* sort notes by createdAt for server cache stability ([30460cf](https://github.com/neopostmodern/structure/commit/30460cf96252be57a728e96e8ee48063cdfdea31))
+
+
+
+
+
 # [0.23.0](https://github.com/neopostmodern/structure/compare/v0.22.1...v0.23.0) (2023-05-18)
 
 
