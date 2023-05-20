@@ -57,7 +57,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
   const [fetchTitleSuggestions, titleSuggestionsQuery] = useDataState(
     useLazyQuery<TitleSuggestionsQuery, TitleSuggestionsQueryVariables>(
       TITLE_SUGGESTIONS_QUERY,
-      { variables: { linkId } }
+      { fetchPolicy: 'no-cache', variables: { linkId } }
     )
   );
 

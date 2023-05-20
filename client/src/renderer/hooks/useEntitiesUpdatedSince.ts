@@ -93,7 +93,7 @@ const useEntitiesUpdatedSince = () => {
     useLazyQuery<EntitiesUpdatedSinceQuery, EntitiesUpdatedSinceQueryVariables>(
       ENTITIES_UPDATED_SINCE_QUERY,
       {
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
         variables: {
           get cacheId() {
             return getUpdatedSinceCacheId();
