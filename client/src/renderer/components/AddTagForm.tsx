@@ -59,19 +59,24 @@ const AddTagForm = ({
       }
       const { addTagByNameToNote } = data;
 
-      const newTags = addTagByNameToNote.tags.filter((tag) =>
-        cache.readFragment({
-          id: cache.identify(tag),
-          fragment: BASE_TAG_FRAGMENT,
-        })
-      );
+      cache.modify({
+        id: 'ROOT_QUERY',
+        fields: {
+          tags(
+            existingTagsRefs: Array<{ __ref: string }> = []
+          ): Array<{ __ref: string }> {
+            const newTags = addTagByNameToNote.tags
+              .filter((tag) => {
+                const tagCacheId = cache.identify(tag);
 
-      newTags.forEach((tag) => {
-        cache.writeFragment({
-          id: cache.identify(tag),
-          fragment: BASE_TAG_FRAGMENT,
-          data: tag,
-        });
+                return !existingTagsRefs.some(
+                  ({ __ref }) => __ref === tagCacheId
+                );
+              })
+              .map((tag) => ({ __ref: cache.identify(tag)! }));
+            return [...existingTagsRefs, ...newTags];
+          },
+        },
       });
     },
   });
