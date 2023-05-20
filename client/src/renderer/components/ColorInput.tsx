@@ -72,7 +72,15 @@ const ColorBlockInput = styled(StructureTextField).attrs({ fullWidth: false })`
   }
 `;
 
-const ColorInput = ({ color, name }: { color: string; name: string }) => {
+const ColorInput = ({
+  color,
+  name,
+  tagName,
+}: {
+  color: string;
+  name: string;
+  tagName: string;
+}) => {
   const [fetchTagsQuery, tagsQuery] = useDataState(
     useLazyQuery<TagsQuery>(TAGS_QUERY, { fetchPolicy: 'cache-only' })
   );
@@ -127,7 +135,8 @@ const ColorInput = ({ color, name }: { color: string; name: string }) => {
           padding={2}
         >
           <Typography variant="h6">
-            Pick an existing color for <Chip variant="outlined" label={'Hey'} />
+            Pick an existing color for{' '}
+            <Chip variant="outlined" label={tagName} />
           </Typography>
           <Gap horizontal={2} />
           <IconButton

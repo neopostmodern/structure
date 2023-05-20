@@ -45,7 +45,7 @@ const TagForm: React.FC<TagFormProps> = ({ tag, onSubmit }) => {
   return (
     <FormProvider {...formProps}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <ColorInput color={tag.color} name="color" />
+        <ColorInput color={tag.color} name="color" tagName={tag.name} />
 
         <NameInput type="text" {...register('name', { required: true })} />
       </form>
