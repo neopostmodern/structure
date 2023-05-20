@@ -23,10 +23,12 @@ const ErrorSnackbar = ({
   error,
   actionDescription,
   retry = undefined,
+  autoHideDuration = null,
 }: {
   error: ApolloError | undefined;
   actionDescription: string;
   retry?: () => void;
+  autoHideDuration?: number | null;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -46,7 +48,11 @@ const ErrorSnackbar = ({
 
   return (
     <Portal>
-      <StyledSnackbar open={open} onClose={handleClose}>
+      <StyledSnackbar
+        open={open}
+        onClose={handleClose}
+        autoHideDuration={autoHideDuration}
+      >
         <Alert
           onClose={handleClose}
           severity="error"

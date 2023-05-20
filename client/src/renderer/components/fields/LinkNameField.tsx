@@ -1,5 +1,10 @@
 import { gql, useLazyQuery } from '@apollo/client';
-import { Autocomplete, ListItem, ListItemText } from '@mui/material';
+import {
+  Autocomplete,
+  CircularProgress,
+  ListItem,
+  ListItemText,
+} from '@mui/material';
 import { urlAnalyzer } from '@structure/common';
 import React, { FocusEvent } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -14,6 +19,7 @@ import { breakPointMobile } from '../../styles/constants';
 import { QUICK_ACCESS_SHORTCUT_PREFIX, SHORTCUTS } from '../../utils/keyboard';
 import { isUrlValid } from '../../utils/textHelpers';
 import useDataState, { DataState } from '../../utils/useDataState';
+import ErrorSnackbar from '../ErrorSnackbar';
 import { NameInput } from '../formComponents';
 import Shortcut from '../Shortcut';
 
@@ -72,61 +78,81 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
       : [];
 
   return (
-    <Controller
-      name={name}
-      render={({ field: { onChange, onBlur, ...fieldProps } }) => (
-        <Autocomplete
-          {...fieldProps}
-          onChange={(_, selectedTitleSuggestion) => {
-            onChange(selectedTitleSuggestion);
-          }}
-          onBlur={(event: FocusEvent<HTMLInputElement>) => {
-            setValue(name, event.target.value);
-            onBlur();
-          }}
-          loading={titleSuggestionsQuery.state === DataState.LOADING}
-          loadingText="Loading title suggestions..."
-          options={suggestions}
-          filterOptions={(options) => options}
-          disableClearable
-          freeSolo
-          openOnFocus
-          readOnly={readOnly}
-          renderInput={({ ...params }) => (
-            <NameInput
-              type="text"
-              {...params}
-              autoFocus={
-                isUrlValid(url) &&
-                getValues(name) === urlAnalyzer(url).suggestedName
-              }
-              onFocus={(): void => {
-                fetchTitleSuggestions();
-              }}
-              label="Title"
-              InputProps={{ readOnly }}
-            />
-          )}
-          renderOption={(props, suggestion) => {
-            const index = suggestions.indexOf(suggestion);
-            return (
-              <ListItem {...props}>
-                <ListItemText>{suggestion}</ListItemText>
-                {SHORTCUTS[QUICK_ACCESS_SHORTCUT_PREFIX + (index + 1)] ? (
-                  <ListItemShortcut>
-                    <Shortcut
-                      shortcuts={
-                        SHORTCUTS[QUICK_ACCESS_SHORTCUT_PREFIX + (index + 1)]
-                      }
-                    />
-                  </ListItemShortcut>
-                ) : undefined}
-              </ListItem>
-            );
-          }}
-        />
-      )}
-    />
+    <>
+      <ErrorSnackbar
+        error={
+          'error' in titleSuggestionsQuery
+            ? titleSuggestionsQuery.error
+            : undefined
+        }
+        actionDescription={'load title suggestions'}
+        autoHideDuration={1000}
+      />
+      <Controller
+        name={name}
+        render={({ field: { onChange, onBlur, ...fieldProps } }) => (
+          <Autocomplete
+            {...fieldProps}
+            onChange={(_, selectedTitleSuggestion) => {
+              onChange(selectedTitleSuggestion);
+            }}
+            onBlur={(event: FocusEvent<HTMLInputElement>) => {
+              setValue(name, event.target.value);
+              onBlur();
+            }}
+            loading={titleSuggestionsQuery.state === DataState.LOADING}
+            loadingText="Loading title suggestions..."
+            options={suggestions}
+            filterOptions={(options) => options}
+            disableClearable
+            freeSolo
+            openOnFocus
+            readOnly={readOnly}
+            renderInput={({ ...params }) => (
+              <NameInput
+                type="text"
+                {...params}
+                autoFocus={
+                  isUrlValid(url) &&
+                  getValues(name) === urlAnalyzer(url).suggestedName
+                }
+                onFocus={(): void => {
+                  fetchTitleSuggestions();
+                }}
+                label="Title"
+                InputProps={{
+                  ...params.InputProps,
+                  readOnly,
+                  endAdornment:
+                    titleSuggestionsQuery.state === DataState.LOADING ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : (
+                      params.InputProps.endAdornment
+                    ),
+                }}
+              />
+            )}
+            renderOption={(props, suggestion) => {
+              const index = suggestions.indexOf(suggestion);
+              return (
+                <ListItem {...props}>
+                  <ListItemText>{suggestion}</ListItemText>
+                  {SHORTCUTS[QUICK_ACCESS_SHORTCUT_PREFIX + (index + 1)] ? (
+                    <ListItemShortcut>
+                      <Shortcut
+                        shortcuts={
+                          SHORTCUTS[QUICK_ACCESS_SHORTCUT_PREFIX + (index + 1)]
+                        }
+                      />
+                    </ListItemShortcut>
+                  ) : undefined}
+                </ListItem>
+              );
+            }}
+          />
+        )}
+      />
+    </>
   );
 };
 
