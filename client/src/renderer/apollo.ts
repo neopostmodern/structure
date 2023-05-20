@@ -22,6 +22,21 @@ if (process.env.TARGET === 'web') {
 }
 
 const noteCountsStorage = new LocalStoreInMemoryWrapper<number>('noteCounts');
+const notesWithTagHelper = (
+  cacheData: {
+    [key: string]: {
+      __typename: string;
+      _id: string;
+      tags?: Array<{ __ref: string }>;
+    };
+  },
+  tagId: string
+) =>
+  Object.values(cacheData).filter(
+    (cacheEntry) =>
+      (cacheEntry.__typename === 'Link' || cacheEntry.__typename === 'Text') &&
+      cacheEntry.tags!.some((tag) => tag.__ref === `Tag:${tagId}`)
+  );
 
 const cache = new InMemoryCache({
   possibleTypes: {
@@ -37,13 +52,13 @@ const cache = new InMemoryCache({
             if (storedCount !== undefined) {
               return storedCount;
             }
-            const notesWithTag: readonly unknown[] | undefined =
-              readField('notes');
-            if (notesWithTag && 'length' in notesWithTag) {
-              noteCountsStorage.setItem(tagId, notesWithTag.length);
-              return notesWithTag.length;
-            }
-            return 0;
+
+            const notesWithTagCount: number = notesWithTagHelper(
+              cache.data.data,
+              tagId
+            ).length;
+            noteCountsStorage.setItem(tagId, notesWithTagCount);
+            return notesWithTagCount;
           },
         },
         notes: {
@@ -51,18 +66,9 @@ const cache = new InMemoryCache({
             if (currentValue) {
               return currentValue;
             }
-            return Object.values<{
-              __typename: string;
-              _id: string;
-              tags?: Array<{ __ref: string }>;
-            }>(cache.data.data)
-              .filter(
-                (cacheEntry) =>
-                  (cacheEntry.__typename === 'Link' ||
-                    cacheEntry.__typename === 'Text') &&
-                  cacheEntry.tags!.some((tag) => tag.__ref === `Tag:${tagId}`)
-              )
-              .map(({ __typename, _id }) => toReference({ __typename, _id }));
+            return notesWithTagHelper(cache.data.data, tagId).map(
+              ({ __typename, _id }) => toReference({ __typename, _id })
+            );
           },
         },
       },
