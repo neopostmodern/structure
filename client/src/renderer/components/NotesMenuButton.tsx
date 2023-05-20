@@ -9,7 +9,17 @@ import {
   MenuItem,
 } from '@mui/material';
 import { MouseEvent, useCallback, useState } from 'react';
+import styled from 'styled-components';
 import { useIsMobileLayout } from '../utils/mediaQueryHooks';
+
+const DesktopButton = styled(Button)`
+  max-width: 100%;
+`;
+const ButtonLabel = styled.div`
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 type NotesMenuButtonProps<T> = {
   options: Array<T>;
@@ -62,13 +72,13 @@ const NotesMenuButton = <T,>({
           </IconButton>
         </Badge>
       ) : (
-        <Button
+        <DesktopButton
           startIcon={buttonIcon}
           onClick={(event) => setAnchorEl(event.currentTarget)}
           size="huge"
         >
-          {optionToName(value)}
-        </Button>
+          <ButtonLabel>{optionToName(value)}</ButtonLabel>
+        </DesktopButton>
       )}
       <Menu
         anchorEl={anchorEl}
