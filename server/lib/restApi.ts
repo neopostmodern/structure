@@ -2,8 +2,11 @@ import { rssFeedUrl } from '@structure/common'
 import config from '@structure/config'
 import { Feed } from 'feed'
 import _ from 'lodash'
-import { addTagByNameToNote, submitLink } from './methods.js'
-import { Link, Note, Tag, User } from './mongo.js'
+import { submitLink } from './notes/notesMethods.js'
+import { Link, Note } from './notes/notesModels.js'
+import { Tag } from './tags/tagModel.js'
+import { addTagByNameToNote } from './tags/tagsMethods.js'
+import { User } from './users/userModel.js'
 
 const restApi = (app) => {
   app.get('/bookmarklet', (request, response) => {
@@ -128,10 +131,10 @@ const restApi = (app) => {
     const tags = await Tag.find({ user: user._id }).lean()
     const notes = await Note.find({ user: user._id }).lean()
     for (const tag of tags) {
-      delete tag.__v
+      delete (tag as any).__v
     }
     for (const note of notes) {
-      delete note.__v
+      delete (note as any).__v
     }
     const allData = {
       user: _.pick(user, [

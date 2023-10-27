@@ -1,9 +1,9 @@
 import { MigrationSystem } from '@structure/common'
-import migrations from './migrations.js'
-import { Meta } from './mongo.js'
+import { Meta } from '../meta/metaModel'
+import migrations from './migrations'
 
 const migrationStorage = {
-  async initializeStorage() {
+  async initialize() {
     await migrations.get(0).up()
     return (await Meta.findOne({ _id: 'database-version' })).value
   },

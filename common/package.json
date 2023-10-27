@@ -6,6 +6,8 @@
   "homepage": "",
   "license": "ISC",
   "exports": {
+    "node": "./dist/index.js",
+    "import": "./index.ts",
     "default": "./dist/index.js"
   },
   "type": "module",
@@ -14,7 +16,7 @@
     "test": "__tests__"
   },
   "files": [
-    "dist"
+    "dist/"
   ],
   "publishConfig": {
     "access": "public"

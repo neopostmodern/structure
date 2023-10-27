@@ -3,8 +3,8 @@ import ConnectMongoDbSession from 'connect-mongodb-session'
 import session from 'express-session'
 import passport from 'passport'
 import PassportGithub from 'passport-github'
-import { User } from './mongo.js'
-import { createOwnershipTagOnUser } from './util.js'
+import { createOwnershipTagOnUser } from './methods/createOwnershipTagOnUser'
+import { User } from './userModel'
 
 // named import isn't working at the moment
 const GitHubStrategy = PassportGithub.Strategy

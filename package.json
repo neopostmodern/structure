@@ -29,6 +29,7 @@
     "client:start:web": "(cd client && npm run start:web)",
     "common:build": "(cd common && npm run build)",
     "server:start": "(cd server && npm run start)",
+    "server:dev": "(cd server && npm run dev)",
     "util:generate-types": "(cd server && npm run generate-schema) && (cd client && npm run generate-graphql-types)",
     "util:create-release": "npx lerna version --conventional-commits --force-publish",
     "version": "npx lerna exec npm i -- --package-lock-only --ignore-scripts && git add **/package-lock.json"

@@ -2,10 +2,13 @@ import { INTERNAL_TAG_PREFIX_OWNERSHIP } from '@structure/common'
 import { ObjectId } from 'bson'
 import * as fs from 'fs'
 import * as readline from 'readline'
-import { Cache, Note, Tag, User } from '../../lib/mongo.js'
+import { Cache } from '../../lib/cache/cacheModel.js'
+import { Note } from '../../lib/notes/notesModels.js'
+import { Tag } from '../../lib/tags/tagModel.js'
+import { User } from '../../lib/users/userModel.js'
 
 // print with red font
-const red = (text) => `\x1b[31m${text}\x1b[0m`
+const red = (text: string) => `\x1b[31m${text}\x1b[0m`
 
 const convertData = ({ _id, createdAt, updatedAt, ...rest }) => {
   let permissions
@@ -101,7 +104,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 })
 
-const confirmation = await new Promise((resolve) =>
+const confirmation = await new Promise<string>((resolve) =>
   rl.question('Do you want to continue? [y/N] ', resolve),
 )
 if (confirmation.toLowerCase() !== 'y') {
