@@ -257,6 +257,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.14",
     "@exponent/electron-cookies": "^2.0.0",
+    "@marktext/muya": "^0.2.5",
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.130",
     "@mui/material": "^5.13.1",
