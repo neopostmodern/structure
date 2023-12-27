@@ -4,13 +4,11 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const listIndent = '2em';
 
-const MarkdownContainer = styled(ReactMarkdown)`
-  font-size: 1rem;
-
+export const markdownStyles = css`
   h1,
   h2,
   h3,
@@ -27,6 +25,13 @@ const MarkdownContainer = styled(ReactMarkdown)`
     margin-top: 0.5em;
   }
 
+  p,
+  pre,
+  table,
+  ul,
+  ol {
+    margin-bottom: 1em;
+  }
   p:last-child {
     margin-bottom: 0;
   }
@@ -61,8 +66,11 @@ const MarkdownContainer = styled(ReactMarkdown)`
     margin-top: -0.5em;
   }
 
-  @media (prefers-color-scheme: dark) {
-    a {
+  a:not([data-type='mention']) {
+    color: blue;
+    text-decoration: underline;
+
+    @media (prefers-color-scheme: dark) {
       color: #3485ff;
     }
   }
@@ -85,6 +93,7 @@ const MarkdownContainer = styled(ReactMarkdown)`
 
     padding: 0.5em;
     border-radius: 2px;
+    border: none;
     background-color: rgba(128, 128, 128, 0.4);
 
     > code {
@@ -92,6 +101,16 @@ const MarkdownContainer = styled(ReactMarkdown)`
       background-color: initial;
     }
   }
+
+  table {
+    min-width: 100%;
+  }
+`;
+
+const MarkdownContainer = styled(ReactMarkdown)`
+  font-size: 1rem;
+
+  ${markdownStyles}
 `;
 
 const EmptyTextarea = styled.div`
