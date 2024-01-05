@@ -66,25 +66,15 @@ migrations.set(2, {
 migrations.set(3, {
   name: 'note-types',
   async up() {
-    return new Promise(async (resolve, reject) => {
-      mongoose.connection.db
-        .listCollections({ name: 'links' })
-        .toArray((error, collectionNames) => {
-          if (error) {
-            reject(error)
-          }
+    const collectionNames = await mongoose.connection.db
+      .listCollections({ name: 'links' })
+      .toArray()
 
-          if (collectionNames.length) {
-            const linkCollection = mongoose.connection.db.collection('links')
-            linkCollection
-              .updateMany({}, { $set: { type: 'Link' } })
-              .then(() => linkCollection.rename('notes'))
-              .then(() => resolve())
-          } else {
-            resolve()
-          }
-        })
-    })
+    if (collectionNames.length) {
+      const linkCollection = mongoose.connection.db.collection('links')
+      await linkCollection.updateMany({}, { $set: { type: 'Link' } })
+      await linkCollection.rename('notes')
+    }
   },
   async down() {
     return Text.find()
