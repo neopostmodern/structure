@@ -1,4 +1,3 @@
-import ExtensionHardBreak from '@tiptap/extension-hard-break';
 import ExtensionLink from '@tiptap/extension-link';
 import ExtensionTableCell from '@tiptap/extension-table-cell';
 import ExtensionTableHeader from '@tiptap/extension-table-header';
@@ -8,15 +7,22 @@ import ExtensionTaskList from '@tiptap/extension-task-list';
 import ExtensionUnderline from '@tiptap/extension-underline';
 import StarterKit from '@tiptap/starter-kit';
 import {
+  isTouchDevice,
+  MenuButtonAddTable,
   MenuButtonBold,
   MenuButtonBulletedList,
   MenuButtonCode,
   MenuButtonCodeBlock,
+  MenuButtonIndent,
   MenuButtonItalic,
   MenuButtonOrderedList,
+  MenuButtonRedo,
+  MenuButtonRemoveFormatting,
   MenuButtonStrikethrough,
   MenuButtonTaskList,
   MenuButtonUnderline,
+  MenuButtonUndo,
+  MenuButtonUnindent,
   MenuControlsContainer,
   MenuDivider,
   MenuSelectHeading,
@@ -34,6 +40,10 @@ const RichTextEditorStyled = styled(RichTextEditor)`
   }
 `;
 
+const markdownMigration = (text) => {
+  return text;
+};
+
 const RichMarkdownEditor = ({
   markdown,
   onBlur,
@@ -41,9 +51,11 @@ const RichMarkdownEditor = ({
   markdown: string;
   onBlur: (value: string) => void;
 }) => {
+  const migratedMarkdown = markdownMigration(markdown);
+
   return (
     <RichTextEditorStyled
-      content={markdown}
+      content={migratedMarkdown}
       renderControls={() => (
         <MenuControlsContainer>
           <MenuSelectHeading />
@@ -56,9 +68,22 @@ const RichMarkdownEditor = ({
           <MenuButtonBulletedList />
           <MenuButtonOrderedList />
           <MenuButtonTaskList />
+          {isTouchDevice() && (
+            <>
+              <MenuButtonIndent />
+
+              <MenuButtonUnindent />
+            </>
+          )}
           <MenuDivider />
           <MenuButtonCode />
           <MenuButtonCodeBlock />
+          <MenuDivider />
+          <MenuButtonAddTable />
+          <MenuDivider />
+          <MenuButtonUndo />
+          <MenuButtonRedo />
+          <MenuButtonRemoveFormatting />
 
           {/* Add more controls of your choosing here */}
         </MenuControlsContainer>
@@ -66,24 +91,6 @@ const RichMarkdownEditor = ({
       children={() => <TableBubbleMenu />}
       extensions={[
         StarterKit,
-        ExtensionHardBreak.extend({
-          addKeyboardShortcuts() {
-            return {
-              Enter: () => {
-                console.log(
-                  this,
-                  this.editor,
-                  this.editor.commands,
-                  this.editor.state
-                );
-                // console.log(this.editor.commands.selectNodeBackward());
-                // console.log(this.editor.commands.selectParentNode());
-                // console.log(this);
-                return this.editor.commands.setHardBreak();
-              },
-            };
-          },
-        }),
         ExtensionUnderline,
         ExtensionTaskItem.configure({
           nested: true,
@@ -95,6 +102,7 @@ const RichMarkdownEditor = ({
         ExtensionTableRow,
         ExtensionLink,
         Markdown.configure({
+          html: true,
           linkify: true, // Create links from "https://..." text
           breaks: true, // New lines (\n) in markdown input are converted to <br>
           transformPastedText: true, // Allow to paste markdown text in the editor

@@ -148,7 +148,10 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
           render={({ field }) => (
             <RichMarkdownEditor
               markdown={field.value}
-              onBlur={(value) => field.onChange(value)}
+              onBlur={(value) => {
+                field.onChange(value);
+                field.onBlur();
+              }}
             />
           )}
         />

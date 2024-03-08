@@ -6,7 +6,7 @@ import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import styled, { css } from 'styled-components';
 
-const listIndent = '2em';
+const listIndent = '1.8em';
 
 export const markdownStyles = css`
   h1,
@@ -43,8 +43,16 @@ export const markdownStyles = css`
     ul,
     ol {
       padding-left: 0.9em;
+      margin-bottom: 0.2em;
       &.contains-task-list {
         padding-left: 1.1em;
+      }
+    }
+
+    &[data-type='taskList'] {
+      p:first-child + ul,
+      p:first-child + ol {
+        margin-top: -0.8em;
       }
     }
 
@@ -53,17 +61,31 @@ export const markdownStyles = css`
         list-style: none;
       }
 
+      ul:not([data-type='taskList']) li {
+        // workaround for sub-lists of checklists
+        display: list-item;
+      }
+
+      ul[data-type='taskList'] {
+        margin-left: -1.5em;
+      }
+
       > p {
         margin: 0;
       }
     }
   }
 
+  ol:has(> li:nth-child(10)) {
+    padding-left: 2em;
+  }
+
+  p + p,
   p + ul,
   p + ol,
   ul + p,
   ol + p {
-    margin-top: -0.5em;
+    //margin-top: -0.5em;
   }
 
   a:not([data-type='mention']) {
@@ -85,6 +107,8 @@ export const markdownStyles = css`
     padding: 0.1em 0.2em;
     border-radius: 2px;
     background-color: rgba(128, 128, 128, 0.4);
+    border: none;
+    color: inherit;
   }
 
   pre {
