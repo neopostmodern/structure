@@ -1,4 +1,4 @@
-import { ApolloServer } from '@apollo/server'
+import { ApolloServer, ApolloServerPlugin } from '@apollo/server'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
@@ -8,10 +8,12 @@ import cors from 'cors'
 import express from 'express'
 import mongoSanitize from 'express-mongo-sanitize'
 import { createServer } from 'http'
-import { setUpGitHubLogin } from './githubLogin.js'
-import migrationSystem from './migrationSystem.js'
-import { resolvers, typeDefs } from './resolvers.js'
+import migrationSystem from './migrations/migrationSystem'
+import { initializeMongo } from './mongo'
 import restApi from './restApi.js'
+import { resolvers, typeDefs } from './schema'
+import { setUpGitHubLogin } from './users/githubLogin.js'
+import { SessionContext } from './util/types'
 
 const graphQlPath = '/graphql'
 
@@ -45,7 +47,9 @@ app.use(cors(corsOptions))
 setUpGitHubLogin(app)
 
 const runExpressServer = async () => {
-  const apolloPlugins = [ApolloServerPluginLandingPageDisabled()]
+  const apolloPlugins: Array<ApolloServerPlugin<SessionContext>> = [
+    ApolloServerPluginLandingPageDisabled(),
+  ]
   if (config.CHANNEL) {
     apolloPlugins.unshift(
       ApolloServerPluginLandingPageGraphQLPlayground({
@@ -55,12 +59,12 @@ const runExpressServer = async () => {
       }),
     )
     apolloPlugins.push({
-      requestDidStart(requestContext) {
-        const start = new Date()
+      async requestDidStart(requestContext) {
+        const start = new Date().getTime()
 
         return {
-          willSendResponse(responseContext) {
-            const responseTime = new Date() - start
+          async willSendResponse(responseContext) {
+            const responseTime = new Date().getTime() - start
             const responseSize = (
               (JSON.stringify(responseContext.response).length * 2) /
               1024
@@ -81,18 +85,15 @@ const runExpressServer = async () => {
   }
 
   // todo: basic protection against malicious queries (e.g. body length)
-  const apolloServer = new ApolloServer({
+  const apolloServer = new ApolloServer<SessionContext>({
     typeDefs,
     resolvers,
-    context: ({ req: { user } }) => {
-      return { user }
-    },
     formatError: (formattedError) => {
       console.error(
         `[Apollo Error] ${formattedError.message} @ ${
           formattedError.path?.join('.') || 'NO PATH'
         }\n `,
-        formattedError.extensions.stacktrace.join('\n'),
+        (formattedError.extensions.stacktrace as string[]).join('\n'),
       )
       return formattedError
     },
@@ -106,8 +107,8 @@ const runExpressServer = async () => {
     cors(corsOptions),
     bodyParser.json(),
     expressMiddleware(apolloServer, {
-      context: async ({ req: { user } }) => {
-        return { user }
+      context: async ({ req }) => {
+        return { user: (req as any).user }
       },
     }),
   )
@@ -116,22 +117,22 @@ const runExpressServer = async () => {
 
   restApi(app)
 
-  await new Promise((resolve) => server.listen(config.PORT, resolve))
+  await new Promise<void>((resolve) => server.listen(config.PORT, resolve))
   console.log(`REST Server running at http://localhost:${config.PORT}...`)
   console.log(
     `GraphQL Server running at http://localhost:${config.PORT}${graphQlPath}...`,
   )
 }
 
-console.log('Running migrations...')
-migrationSystem
-  .migrateTo(7)
-  .then(() => {
-    console.log('Migrations complete.')
-    runExpressServer()
-  })
-  .catch((error) => {
-    console.error('Migration failed.')
-    console.error(error)
-    process.exit(1)
-  })
+await initializeMongo()
+
+try {
+  console.log('Running migrations...')
+  await migrationSystem.migrateTo(7)
+  console.log('Migrations complete.')
+  await runExpressServer()
+} catch (error) {
+  console.error('Migration failed.')
+  console.error(error)
+  process.exit(1)
+}

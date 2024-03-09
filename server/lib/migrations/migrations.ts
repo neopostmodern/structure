@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
-import { Link, Meta, Note, Tag, User } from './mongo.js'
-import { ALL_PERMISSIONS, createOwnershipTagOnUser } from './util.js'
+import { Meta } from '../meta/metaModel'
+import { Link, Note, Text } from '../notes/notesModels'
+import { Tag } from '../tags/tagModel'
+import { ALL_PERMISSIONS } from '../tags/tagsMethods'
+import { User } from '../users/userModel'
+
+import { createOwnershipTagOnUser } from '../users/methods/createOwnershipTagOnUser'
 
 const migrations = new Map()
 migrations.set(0, {
@@ -77,8 +82,7 @@ migrations.set(3, {
     }
   },
   async down() {
-    return Text.find()
-      .remove()
+    return Text.deleteMany({})
       .then(() => mongoose.connection.db.collection('notes').rename('links'))
       .then(() => Link.updateMany({}, { $unset: { type: true } }))
   },
@@ -274,7 +278,7 @@ migrations.set(7, {
         { tags: user.internal.ownershipTagId },
         { $pull: { tags: user.internal.ownershipTagId } },
       )
-      await Tag.findByIdAndRemove(user.internal.ownershipTagId)
+      await Tag.findByIdAndDelete(user.internal.ownershipTagId)
     }
     await User.updateMany({}, { $unset: { internal: true } })
   },
