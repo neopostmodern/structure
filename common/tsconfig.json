@@ -1,5 +1,7 @@
 {
-  "include": ["lib/*"],
+  "include": [
+    "index.ts"
+  ],
   "compilerOptions": {
     "declaration": true,
     "module": "commonjs",

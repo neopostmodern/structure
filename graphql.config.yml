@@ -1,0 +1,9 @@
+schema: schema.graphql
+include: schema.graphql
+extensions:
+  endpoints:
+    Default GraphQL Endpoint:
+      url: http://localhost:3001/graphql
+      headers:
+        user-agent: JS GraphQL
+      introspect: false
