@@ -8,11 +8,14 @@ import ExtensionUnderline from '@tiptap/extension-underline';
 import StarterKit from '@tiptap/starter-kit';
 import {
   isTouchDevice,
+  LinkBubbleMenu,
+  LinkBubbleMenuHandler,
   MenuButtonAddTable,
   MenuButtonBold,
   MenuButtonBulletedList,
   MenuButtonCode,
   MenuButtonCodeBlock,
+  MenuButtonEditLink,
   MenuButtonIndent,
   MenuButtonItalic,
   MenuButtonOrderedList,
@@ -64,6 +67,7 @@ const RichMarkdownEditor = ({
           <MenuButtonItalic />
           <MenuButtonUnderline />
           <MenuButtonStrikethrough />
+          <MenuButtonEditLink />
           <MenuDivider />
           <MenuButtonBulletedList />
           <MenuButtonOrderedList />
@@ -88,7 +92,12 @@ const RichMarkdownEditor = ({
           {/* Add more controls of your choosing here */}
         </MenuControlsContainer>
       )}
-      children={() => <TableBubbleMenu />}
+      children={() => (
+        <>
+          <TableBubbleMenu />
+          <LinkBubbleMenu />
+        </>
+      )}
       extensions={[
         StarterKit,
         ExtensionUnderline,
@@ -100,7 +109,14 @@ const RichMarkdownEditor = ({
         ExtensionTableCell,
         ExtensionTableHeader,
         ExtensionTableRow,
-        ExtensionLink,
+        ExtensionLink.extend({
+          inclusive: false,
+        }).configure({
+          autolink: true,
+          linkOnPaste: true,
+          openOnClick: false,
+        }),
+        LinkBubbleMenuHandler,
         Markdown.configure({
           html: true,
           linkify: true, // Create links from "https://..." text
