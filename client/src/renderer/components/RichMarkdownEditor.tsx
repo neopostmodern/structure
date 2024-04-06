@@ -43,10 +43,6 @@ const RichTextEditorStyled = styled(RichTextEditor)`
   }
 `;
 
-const markdownMigration = (text) => {
-  return text;
-};
-
 const RichMarkdownEditor = ({
   markdown,
   onBlur,
@@ -54,11 +50,9 @@ const RichMarkdownEditor = ({
   markdown: string;
   onBlur: (value: string) => void;
 }) => {
-  const migratedMarkdown = markdownMigration(markdown);
-
   return (
     <RichTextEditorStyled
-      content={migratedMarkdown}
+      content={markdown}
       renderControls={() => (
         <MenuControlsContainer>
           <MenuSelectHeading />
