@@ -9,6 +9,17 @@ import styled, { css } from 'styled-components';
 const listIndent = '1.8em';
 
 export const markdownStyles = css`
+  &:not(.ProseMirror) {
+    padding: 1em 0;
+  }
+
+  > :first-child {
+    margin-block-start: 0;
+  }
+  > :last-child {
+    margin-block-end: 0;
+  }
+
   h1,
   h2,
   h3,
@@ -23,6 +34,13 @@ export const markdownStyles = css`
   h2 + h4,
   h3 + h4 {
     margin-top: 0.5em;
+  }
+
+  h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-block-start: 1em;
+    margin-block-end: 0.66em;
   }
 
   p,
@@ -101,6 +119,9 @@ export const markdownStyles = css`
     margin: 0;
     border-left: 2px gray solid;
     padding: 0 1em;
+  }
+  blockquote::before {
+    display: none;
   }
 
   code {
