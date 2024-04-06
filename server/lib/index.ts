@@ -128,7 +128,7 @@ await initializeMongo()
 
 try {
   console.log('Running migrations...')
-  await migrationSystem.migrateTo(7)
+  await migrationSystem.migrateTo(8)
   console.log('Migrations complete.')
   await runExpressServer()
 } catch (error) {

@@ -6,6 +6,7 @@ import { ALL_PERMISSIONS } from '../tags/tagsMethods'
 import { User } from '../users/userModel'
 
 import { createOwnershipTagOnUser } from '../users/methods/createOwnershipTagOnUser'
+import { createTiptapMigrator, destroyTiptapMigrator } from './tiptapMigration'
 
 const migrations = new Map()
 migrations.set(0, {
@@ -281,6 +282,26 @@ migrations.set(7, {
       await Tag.findByIdAndDelete(user.internal.ownershipTagId)
     }
     await User.updateMany({}, { $unset: { internal: true } })
+  },
+})
+
+migrations.set(8, {
+  name: 'markdown-explicit-hardbreaks-tiptap',
+  async up() {
+    const tiptapMigrator = await createTiptapMigrator()
+    for (const note of await Note.find({
+      description: { $exists: true, $ne: '' },
+    })) {
+      note.description = tiptapMigrator(note.description)
+      await note.save()
+    }
+    destroyTiptapMigrator()
+  },
+  async down() {
+    for (const note of await Note.find({ description: /\\\n/ })) {
+      note.description = note.description.replace(/\\\n/, '\n')
+      await note.save()
+    }
   },
 })
 
