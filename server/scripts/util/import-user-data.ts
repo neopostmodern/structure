@@ -1,11 +1,15 @@
 import { INTERNAL_TAG_PREFIX_OWNERSHIP } from '@structure/common'
-import { ObjectId } from 'bson'
 import * as fs from 'fs'
+import { Types } from 'mongoose'
 import * as readline from 'readline'
 import { Cache } from '../../lib/cache/cacheModel.js'
+import { initializeMongo } from '../../lib/mongo'
 import { Note } from '../../lib/notes/notesModels.js'
 import { Tag } from '../../lib/tags/tagModel.js'
 import { User } from '../../lib/users/userModel.js'
+
+// see https://stackoverflow.com/a/77738926
+const { ObjectId } = Types
 
 // print with red font
 const red = (text: string) => `\x1b[31m${text}\x1b[0m`
@@ -38,7 +42,7 @@ const convertData = ({ _id, createdAt, updatedAt, ...rest }) => {
 }
 
 // wait for mongo startup
-await new Promise((resolve) => setTimeout(resolve, 1000))
+await initializeMongo()
 
 // take the first argument as the file name
 const backupFileName = process.argv[2]

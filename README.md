@@ -80,6 +80,15 @@ and
 npm run server:start
 ```
 
+### Importing data from another server
+
+You can export your / one user's data from a server via the GUI. 
+To bypass the (currently extremely slow) GUI importer, run:
+```shell
+cd server
+node --loader ts-node/esm/transpile-only --experimental-specifier-resolution=node scripts/util/import-user-data.ts PATH_TO_YOUR_EXPORT_FILE.json
+```
+
 Comprehensive PRs are very welcome, as are bug reports, feature requests and other suggestions.
 
 ### Release
