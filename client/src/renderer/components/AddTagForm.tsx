@@ -22,7 +22,7 @@ export const TAGS_WITH_COUNTS_QUERY = gql`
   query TagsWithCounts {
     tags {
       ...BaseTag
-      noteCount @client
+      noteCount
     }
   }
   ${BASE_TAG_FRAGMENT}
@@ -42,7 +42,7 @@ const AddTagForm = ({
 
   const [fetchTagsQuery, tagsQuery] = useDataState(
     useLazyQuery<TagsWithCountsQuery>(TAGS_WITH_COUNTS_QUERY, {
-      fetchPolicy: 'cache-only',
+      fetchPolicy: 'network-only',
     })
   );
   useEffect(() => {

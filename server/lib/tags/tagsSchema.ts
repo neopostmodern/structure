@@ -11,6 +11,7 @@ export const tagsSchema = gql`
     color: String!
 
     notes: [Note]
+    noteCount: Int!
 
     permissions(onlyMine: Boolean): [UserPermissions!]!
   }

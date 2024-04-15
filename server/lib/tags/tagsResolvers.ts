@@ -1,5 +1,6 @@
 import { GraphQLErrorCodes, INTERNAL_TAG_PREFIX } from '@structure/common'
 import { GraphQLError } from 'graphql/index'
+import { parseResolveInfo } from 'graphql-parse-resolve-info'
 import { TagPermissionsArgs } from '../graphQLTypes'
 import { leanTypeEnumFixer } from '../notes/notesMethods'
 import { Note } from '../notes/notesModels'
@@ -86,18 +87,31 @@ export const tagsResolvers = {
       }
       return tag
     },
-    async tags(root, { offset, limit }, context) {
+    async tags(root, { offset, limit }, context, info) {
       if (!context.user) {
         throw new Error('Need to be logged in to fetch links.')
       }
       const protectedLimit = limit < 1 || limit > 10 ? 10 : limit
-      return (
-        Tag.find({ ...baseTagsQuery(context.user, 'read') })
-          // .sort({ createdAt: -1 })
-          .limit(protectedLimit)
-          // .populate("tags")
-          .exec()
+
+      let tags = (
+        Tag.aggregate().match({ ...baseTagsQuery(context.user, 'read') })
       )
+
+      if (parseResolveInfo(info).fieldsByTypeName.Tag.noteCount) {
+        tags
+          .lookup({ 
+              from: "notes", 
+              localField: "_id", 
+              foreignField: "tags", 
+              let: { tagId: "$_id" }, 
+              pipeline: [ { $count: "count" } ], 
+              as: "noteCount" 
+           })
+           .unwind("noteCount")
+           .addFields({ noteCount: "$noteCount.count" })        
+      }
+
+      return tags.exec()
     },
   },
   Mutation: {
