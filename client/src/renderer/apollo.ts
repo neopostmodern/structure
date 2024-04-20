@@ -45,22 +45,6 @@ const cache = new InMemoryCache({
   typePolicies: {
     Tag: {
       fields: {
-        noteCount: {
-          read(_, { readField }) {
-            const tagId = readField('_id') as string;
-            const storedCount = noteCountsStorage.getItem(tagId);
-            if (storedCount !== undefined) {
-              return storedCount;
-            }
-
-            const notesWithTagCount: number = notesWithTagHelper(
-              cache.data.data,
-              tagId
-            ).length;
-            noteCountsStorage.setItem(tagId, notesWithTagCount);
-            return notesWithTagCount;
-          },
-        },
         notes: {
           read(currentValue, { variables: { tagId }, toReference }) {
             if (currentValue) {
