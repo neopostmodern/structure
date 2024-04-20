@@ -7,6 +7,7 @@ import { initializeMongo } from '../../lib/mongo'
 import { Note } from '../../lib/notes/notesModels.js'
 import { Tag } from '../../lib/tags/tagModel.js'
 import { User } from '../../lib/users/userModel.js'
+import { createOwnershipTagOnUser } from '../../lib/users/methods/createOwnershipTagOnUser.js'
 
 // see https://stackoverflow.com/a/77738926
 const { ObjectId } = Types
@@ -139,6 +140,35 @@ await User.updateOne(
   },
   { timestamps: false },
 )
+
+console.log('Creating related users as dummies...')
+const userCache = [];
+for (const tag of (await Tag.find({ user: backupData.user._id }))) {
+  const userIds = tag.permissions.keys();
+  for (const userId of userIds) {
+    if (userCache.includes(userId)) {
+      continue;
+    }
+
+    const existingUser = await User.findOne({ _id: userId });
+    if (existingUser) {
+      userCache.push(userId);
+      continue;
+    }
+
+    const githubUser = await fetch(`https://api.github.com/user/${userId}`).then(response => response.json())
+
+    const newUser = new User({
+      _id: userId,
+      authenticationProvider: 'github',
+      name: githubUser.login,
+    })
+
+    createOwnershipTagOnUser(newUser)
+    userCache.push(userId)
+    console.log(`Created user '${newUser.name}'.`)
+  }
+}
 
 console.log("Dumping user's caches...")
 await Cache.deleteMany({ user: backupData.user._id })
