@@ -28,8 +28,13 @@ export const tagsResolvers = {
       const notes = await Note.find({ tags: tag, deletedAt: null }).lean()
       return leanTypeEnumFixer(notes)
     },
-    async user(note, args, context) {
-      return getCachedUser(note.user, context.user)
+    async user(tag, args, context) {
+      // console.log('tag.user', tag.user)
+      if (tag.user && tag.user._id) {
+        // console.log('shortcut!')
+        return tag.user
+      }
+      return getCachedUser(tag.user, context.user)
     },
     permissions(tag, { onlyMine }: TagPermissionsArgs, { user }, info) {
       // todo: investigate

@@ -6,6 +6,15 @@ export const cacheDiff = <T extends BaseType>(
   cachedIds: Array<string>,
   { cacheUpdatedAt }: { cacheUpdatedAt: Date },
 ) => {
+  if (cacheUpdatedAt.getTime() === 0) {
+    return {
+      added: entities,
+      removedIds: [],
+      updated: [],
+      patch: { type: 'add', newPos: 0, oldPos: 0, items: entities }
+    }
+  }
+
   const entitiesPatch = cacheGetPatch(entities, cachedIds)
   const cachePatch = {
     added: [],
