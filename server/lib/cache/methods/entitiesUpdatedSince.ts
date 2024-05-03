@@ -46,6 +46,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
         .then(leanTypeEnumFixer)
     }
 
+    // we're fetching notes with full population because we don't have any data cached and can save lookups down the road
     let notesLookup = Note.find(
       transformFilters({
         ...(await baseNotesQuery(user, 'read')),
@@ -54,12 +55,8 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     )
       .sort({ createdAt: -1 })
       .populate('tags')
+      .populate('user')
       .lean()
-    // .lean()
-
-    // if (!cache._id) {
-    //   notesLookup = notesLookup.populate('tags')
-    // }
 
     return notesLookup.exec().then(leanTypeEnumFixer)
   }
@@ -74,6 +71,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     },
     entityQueryProjection,
   )
+    // maybe only populate user on pristine reads?
     .populate('user')
     .lean()
     .exec()

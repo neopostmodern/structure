@@ -26,6 +26,10 @@ const INoteResolvers = {
     }).lean()
   },
   async user(note, args, context) {
+    if (note.user && note.user._id) {
+      return note.user
+    }
+    
     return getCachedUser(note.user, context.user)
   },
 }
