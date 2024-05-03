@@ -2,15 +2,17 @@ import { baseNotesQuery, leanTypeEnumFixer } from '../../notes/notesMethods'
 import { Note } from '../../notes/notesModels'
 import { Tag } from '../../tags/tagModel'
 import { baseTagsQuery } from '../../tags/tagsMethods'
+import { timerEnd, timerStart } from '../../util/logging'
 import { Cache } from '../cacheModel'
 import { cacheDiff } from './cacheDiff'
 import { updateCacheFromDiff } from './updateCacheFromDiff'
 
 export const entitiesUpdatedSince = async (cacheId, user) => {
-  console.time('entities update since (total)')
   if (!user) {
     throw new Error('Need to be logged in to fetch links.')
   }
+
+  timerStart('entitiesUpdatedSince')
 
   console.time('cache read')
   let cache = (await Cache.findOne({ _id: cacheId, user }).lean()) || {
@@ -171,7 +173,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     console.log('cache (pristine)')
   }
 
-  console.timeEnd('entities update since (total)')
+  timerEnd('entitiesUpdatedSince', "Complete Method 'Entities Updated Since'")
 
   return {
     addedNotes: notesDiff.added,

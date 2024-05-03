@@ -7,6 +7,7 @@ import { Link, Note } from './notes/notesModels.js'
 import { Tag } from './tags/tagModel.js'
 import { addTagByNameToNote } from './tags/tagsMethods.js'
 import { User } from './users/userModel.js'
+import { logger } from './util/logging.js'
 
 const restApi = (app) => {
   app.get('/bookmarklet', (request, response) => {
@@ -33,7 +34,7 @@ const restApi = (app) => {
         ),
       )
       .catch((error) => {
-        console.error('Bookmarklet URL insert failed!', error)
+        logger.error('Bookmarklet URL insert failed!', error)
         response
           .status(500)
           .send(
@@ -110,7 +111,7 @@ const restApi = (app) => {
           })
       })
       .catch((error) => {
-        console.error('Generating RSS feed failed!', error)
+        logger.error('Generating RSS feed failed!', error)
         response
           .status(500)
           .send(

@@ -5,6 +5,7 @@ import passport from 'passport'
 import PassportGithub from 'passport-github'
 import { createOwnershipTagOnUser } from './methods/createOwnershipTagOnUser'
 import { User } from './userModel'
+import { logger } from '../util/logging'
 
 // named import isn't working at the moment
 const GitHubStrategy = PassportGithub.Strategy
@@ -18,7 +19,7 @@ const store = new MongoDBSession({
 
 export function setUpGitHubLogin(app) {
   if (!config.GITHUB_CLIENT_ID) {
-    console.warn("GitHub client ID not passed; login won't work.") // eslint-disable-line no-console
+    logger.error("GitHub client ID not passed; login won't work.")
     return
   }
 
