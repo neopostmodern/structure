@@ -1,4 +1,5 @@
 import { BaseType } from '../../util/baseObject'
+import { timerEnd, timerStart } from '../../util/logging'
 import { cacheGetPatch } from './cacheGetPatch'
 
 export const cacheDiff = <T extends BaseType>(
@@ -6,7 +7,18 @@ export const cacheDiff = <T extends BaseType>(
   cachedIds: Array<string>,
   { cacheUpdatedAt }: { cacheUpdatedAt: Date },
 ) => {
+  if (cacheUpdatedAt.getTime() === 0) {
+    return {
+      added: entities,
+      removedIds: [],
+      updated: [],
+      patch: { type: 'add', newPos: 0, oldPos: 0, items: entities }
+    }
+  }
+
+  timerStart('cacheDiff: cacheGetPatch')
   const entitiesPatch = cacheGetPatch(entities, cachedIds)
+  timerEnd('cacheDiff: cacheGetPatch')
   const cachePatch = {
     added: [],
     removedIds: [],
