@@ -14,6 +14,9 @@ import restApi from './restApi.js'
 import { resolvers, typeDefs } from './schema'
 import { setUpGitHubLogin } from './users/githubLogin.js'
 import { SessionContext } from './util/types'
+import { logger, timerEnd, timerStart } from './util/logging'
+
+timerStart('startup')
 
 const graphQlPath = '/graphql'
 
@@ -69,8 +72,8 @@ const runExpressServer = async () => {
               (JSON.stringify(responseContext.response).length * 2) /
               1024
             ).toFixed(1)
-            console.log(
-              `\x1b[33mApollo:\x1b[0m ${
+            logger.debug_raw(
+              `\x1b[33m[Apollo]\x1b[0m ${
                 requestContext.operation?.operation || 'UNKNOWN'
               } ${requestContext.operationName || 'UNNAMED'} (${
                 requestContext.contextValue.user?.name || 'ANONYMOUS'
@@ -89,7 +92,7 @@ const runExpressServer = async () => {
     typeDefs,
     resolvers,
     formatError: (formattedError) => {
-      console.error(
+      logger.error(
         `[Apollo Error] ${formattedError.message} @ ${
           formattedError.path?.join('.') || 'NO PATH'
         }\n `,
@@ -118,21 +121,22 @@ const runExpressServer = async () => {
   restApi(app)
 
   await new Promise<void>((resolve) => server.listen(config.PORT, resolve))
-  console.log(`REST Server running at http://localhost:${config.PORT}...`)
-  console.log(
+  logger.info(`REST Server running at http://localhost:${config.PORT}...`)
+  logger.info(
     `GraphQL Server running at http://localhost:${config.PORT}${graphQlPath}...`,
   )
+  timerEnd('startup', "Server startup")
 }
 
 await initializeMongo()
 
 try {
-  console.log('Running migrations...')
+  logger.info('Running migrations...')
   await migrationSystem.migrateTo(7)
-  console.log('Migrations complete.')
+  logger.info('Migrations complete.')
   await runExpressServer()
 } catch (error) {
-  console.error('Migration failed.')
-  console.error(error)
+  logger.info('Migration failed.')
+  logger.error(error)
   process.exit(1)
 }

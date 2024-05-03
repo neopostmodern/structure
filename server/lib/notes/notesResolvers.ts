@@ -12,6 +12,7 @@ import {
   submitLink,
 } from './notesMethods'
 import { Link, Note, Text } from './notesModels'
+import { logger } from '../util/logging'
 
 const INoteResolvers = {
   async tags(note, args, context) {
@@ -121,7 +122,7 @@ export const notesResolvers: NoteResolvers = {
       try {
         return fetchTitleSuggestions(link.url)
       } catch (error) {
-        console.warn(`Failed to fetch title suggestions for ${linkId}`, error)
+        logger.warn(`Failed to fetch title suggestions for ${linkId}`, error)
         return []
       }
     },
