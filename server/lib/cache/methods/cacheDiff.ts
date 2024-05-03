@@ -1,4 +1,5 @@
 import { BaseType } from '../../util/baseObject'
+import { timerEnd, timerStart } from '../../util/logging'
 import { cacheGetPatch } from './cacheGetPatch'
 
 export const cacheDiff = <T extends BaseType>(
@@ -15,9 +16,9 @@ export const cacheDiff = <T extends BaseType>(
     }
   }
 
-  console.time('patch')
+  timerStart('cacheDiff: cacheGetPatch')
   const entitiesPatch = cacheGetPatch(entities, cachedIds)
-  console.timeEnd('patch')
+  timerEnd('cacheDiff: cacheGetPatch')
   const cachePatch = {
     added: [],
     removedIds: [],

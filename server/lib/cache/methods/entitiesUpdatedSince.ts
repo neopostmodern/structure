@@ -2,7 +2,7 @@ import { baseNotesQuery, leanTypeEnumFixer } from '../../notes/notesMethods'
 import { Note } from '../../notes/notesModels'
 import { Tag } from '../../tags/tagModel'
 import { baseTagsQuery } from '../../tags/tagsMethods'
-import { timerEnd, timerStart } from '../../util/logging'
+import { logger, timerEnd, timerStart } from '../../util/logging'
 import { Cache } from '../cacheModel'
 import { cacheDiff } from './cacheDiff'
 import { updateCacheFromDiff } from './updateCacheFromDiff'
@@ -14,7 +14,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
 
   timerStart('entitiesUpdatedSince')
 
-  console.time('cache read')
+  timerStart('entitesUpdatedSince: cache read')
   let cache = (await Cache.findOne({ _id: cacheId, user }).lean()) || {
     _id: undefined,
     value: {
@@ -24,7 +24,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     updatedAt: new Date(0),
   }
   const cacheUpdatedAt = cache.updatedAt
-  console.timeEnd('cache read')
+  timerEnd('entitesUpdatedSince: cache read')
 
   const entityQueryProjection = cache._id
     ? { _id: 1, updatedAt: 1, createdAt: 1, type: 1 }
@@ -32,7 +32,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
 
   const fetchNotes = async (transformFilters = (filter) => filter) => {
     if (cache._id) {
-      console.log('direct notes read')
+      logger.trace('Cache exists, read notes directly from collection')
       return Note.collection
         .find(
           transformFilters({
@@ -63,11 +63,11 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
 
     return notesLookup.exec().then(leanTypeEnumFixer)
   }
-  console.time('notes db call')
+  timerStart('entitesUpdatedSince: load notes from DB')
   const notes = await fetchNotes()
-  console.timeEnd('notes db call')
+  timerEnd('entitesUpdatedSince: load notes from DB')
 
-  console.time('tag find')
+  timerStart('entitesUpdatedSince: load tags from DB')
   const tags = await Tag.find(
     {
       ...baseTagsQuery(user, 'read'),
@@ -77,23 +77,23 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     .populate('user')
     .lean()
     .exec()
-  console.timeEnd('tag find')
+  timerEnd('entitesUpdatedSince: load tags from DB')
 
   // gets lost somewhere around here?
 
-  console.time('notes diff')
+  timerStart('entitesUpdatedSince: notes diff')
   const notesDiff = cacheDiff(notes, cache.value.noteIds, {
     cacheUpdatedAt,
   })
-  console.timeEnd('notes diff')
-  console.time('tag diff')
+  timerEnd('entitesUpdatedSince: notes diff')
+  timerStart('entitesUpdatedSince: tags diff')
   const tagsDiff = cacheDiff(tags, cache.value.tagIds, {
     cacheUpdatedAt,
   })
-  console.timeEnd('tag diff')
+  timerEnd('entitesUpdatedSince: tags diff')
 
   if (cache._id) {
-    console.time('cache pre-processing (update)')
+    timerStart('entitesUpdatedSince: cache pre-processing (update)')
     if (tagsDiff.added.length) {
       tagsDiff.added = await Tag.find({
         _id: tagsDiff.added.map(({ _id }) => _id),
@@ -142,12 +142,12 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
         .populate('tags')
         .lean()
     }
-    console.timeEnd('cache pre-processing (update)')
+    timerEnd('entitesUpdatedSince: cache pre-processing (update)')
   }
 
   let cacheIdWritten
   if (cache._id) {
-    console.time('cache (update)')
+    timerStart('entitesUpdatedSince: cache (update)')
     await updateCacheFromDiff(user, cache._id, 'noteIds', notesDiff)
     await updateCacheFromDiff(user, cache._id, 'tagIds', tagsDiff)
 
@@ -160,9 +160,9 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
       },
     )
     cacheIdWritten = cache._id
-    console.timeEnd('cache (update)')
+    timerEnd('entitesUpdatedSince: cache (update)')
   } else {
-    console.time('cache (pristine)')
+    timerStart('entitesUpdatedSince: cache (pristine)')
     const cacheWriteValue = {
       noteIds: notesDiff.added.map(({ _id }) => _id),
       tagIds: tagsDiff.added.map(({ _id }) => _id),
@@ -170,7 +170,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     const t_cache = new Date().getTime()
     cacheIdWritten = (await new Cache({ value: cacheWriteValue, user }).save())
       ._id
-    console.log('cache (pristine)')
+    timerEnd('entitesUpdatedSince: cache (pristine)')
   }
 
   timerEnd('entitiesUpdatedSince', "Complete Method 'Entities Updated Since'")
