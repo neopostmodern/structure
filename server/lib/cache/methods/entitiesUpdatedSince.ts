@@ -7,11 +7,12 @@ import { cacheDiff } from './cacheDiff'
 import { updateCacheFromDiff } from './updateCacheFromDiff'
 
 export const entitiesUpdatedSince = async (cacheId, user) => {
-  const t_all = new Date().getTime()
+  console.time('entities update since (total)')
   if (!user) {
     throw new Error('Need to be logged in to fetch links.')
   }
 
+  console.time('cache read')
   let cache = (await Cache.findOne({ _id: cacheId, user }).lean()) || {
     _id: undefined,
     value: {
@@ -21,6 +22,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     updatedAt: new Date(0),
   }
   const cacheUpdatedAt = cache.updatedAt
+  console.timeEnd('cache read')
 
   const entityQueryProjection = cache._id
     ? { _id: 1, updatedAt: 1, createdAt: 1, type: 1 }
@@ -48,6 +50,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
         deletedAt: null,
       }),
     )
+      .sort({ createdAt: -1 })
       .populate('tags')
       .lean()
     // .lean()
@@ -58,11 +61,11 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
 
     return notesLookup.exec().then(leanTypeEnumFixer)
   }
-  const t = new Date().getTime()
+  console.time('notes db call')
   const notes = await fetchNotes()
-  console.log('notes db call:', new Date().getTime() - t)
-  console.log('notes', notes)
+  console.timeEnd('notes db call')
 
+  console.time('tag find')
   const tags = await Tag.find(
     {
       ...baseTagsQuery(user, 'read'),
@@ -72,19 +75,23 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     .populate('user')
     .lean()
     .exec()
+  console.timeEnd('tag find')
 
   // gets lost somewhere around here?
 
-  const t_diff = new Date().getTime()
+  console.time('notes diff')
   const notesDiff = cacheDiff(notes, cache.value.noteIds, {
     cacheUpdatedAt,
   })
+  console.timeEnd('notes diff')
+  console.time('tag diff')
   const tagsDiff = cacheDiff(tags, cache.value.tagIds, {
     cacheUpdatedAt,
   })
-  console.log('diff:', new Date().getTime() - t_diff)
+  console.timeEnd('tag diff')
 
   if (cache._id) {
+    console.time('cache pre-processing (update)')
     if (tagsDiff.added.length) {
       tagsDiff.added = await Tag.find({
         _id: tagsDiff.added.map(({ _id }) => _id),
@@ -133,11 +140,12 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
         .populate('tags')
         .lean()
     }
+    console.timeEnd('cache pre-processing (update)')
   }
 
   let cacheIdWritten
   if (cache._id) {
-    const t_cache = new Date().getTime()
+    console.time('cache (update)')
     await updateCacheFromDiff(user, cache._id, 'noteIds', notesDiff)
     await updateCacheFromDiff(user, cache._id, 'tagIds', tagsDiff)
 
@@ -150,8 +158,9 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
       },
     )
     cacheIdWritten = cache._id
-    console.log('cache (update):', new Date().getTime() - t_cache)
+    console.timeEnd('cache (update)')
   } else {
+    console.time('cache (pristine)')
     const cacheWriteValue = {
       noteIds: notesDiff.added.map(({ _id }) => _id),
       tagIds: tagsDiff.added.map(({ _id }) => _id),
@@ -159,10 +168,10 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     const t_cache = new Date().getTime()
     cacheIdWritten = (await new Cache({ value: cacheWriteValue, user }).save())
       ._id
-    console.log('cache (pristine):', new Date().getTime() - t_cache)
+    console.log('cache (pristine)')
   }
 
-  console.log('entities update since total', new Date().getTime() - t_all)
+  console.timeEnd('entities update since (total)')
 
   return {
     addedNotes: notesDiff.added,

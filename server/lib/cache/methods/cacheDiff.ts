@@ -15,7 +15,9 @@ export const cacheDiff = <T extends BaseType>(
     }
   }
 
+  console.time('patch')
   const entitiesPatch = cacheGetPatch(entities, cachedIds)
+  console.timeEnd('patch')
   const cachePatch = {
     added: [],
     removedIds: [],
