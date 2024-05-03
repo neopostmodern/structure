@@ -29,9 +29,7 @@ export const tagsResolvers = {
       return leanTypeEnumFixer(notes)
     },
     async user(tag, args, context) {
-      // console.log('tag.user', tag.user)
       if (tag.user && tag.user._id) {
-        // console.log('shortcut!')
         return tag.user
       }
       return getCachedUser(tag.user, context.user)

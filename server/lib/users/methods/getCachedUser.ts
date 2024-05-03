@@ -8,6 +8,7 @@ export const getCachedUser = async (userId, contextUser) => {
     return { _id, name }
   }
 
+  // this shouldn't get called, but it gets called!
   console.log(`Request ${userIdUnpacked}`, userId)
 
   return User.findById(userId, { name: 1 }).lean()

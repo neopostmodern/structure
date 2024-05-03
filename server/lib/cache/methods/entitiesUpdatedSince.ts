@@ -53,9 +53,9 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
       }),
     )
       .sort({ createdAt: -1 })
+      // why am I populating tags here?
       .populate('tags')
       .lean()
-    // .lean()
 
     // if (!cache._id) {
     //   notesLookup = notesLookup.populate('tags')
@@ -74,6 +74,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
     },
     entityQueryProjection,
   )
+    // maybe only populate user on pristine reads?
     .populate('user')
     .lean()
     .exec()
