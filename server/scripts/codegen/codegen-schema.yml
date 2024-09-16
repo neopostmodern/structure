@@ -1,6 +1,7 @@
-schema: './src/**/*Schema.ts'
-config:
-  sort: false
+schema:
+  - './lib/schema.ts'
+  - './lib/util/*.ts'
+  - './lib/**/*Schema.ts'
 generates:
   ../schema.graphql:
     plugins:
