@@ -8,6 +8,7 @@ type MongooseTagType = Omit<TagType, 'permissions'> & {
 }
 
 const tagSchema = withBaseSchema<MongooseTagType>({
+  changedAt: { type: Date, default: Date.now },
   user: { type: String, ref: 'User', index: true },
   name: String,
   color: String,

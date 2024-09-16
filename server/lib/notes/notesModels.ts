@@ -12,6 +12,7 @@ const noteSchema = withBaseSchema<NoteType>(
     user: { type: String, ref: 'User' },
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag', index: true }],
     archivedAt: { type: Date, default: null },
+    changedAt: { type: Date, default: Date.now },
     deletedAt: { type: Date, default: null },
   },
   noteOptions,
