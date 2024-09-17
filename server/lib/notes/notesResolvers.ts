@@ -16,12 +16,20 @@ import { logger } from '../util/logging'
 
 const INoteResolvers = {
   async tags(note, args, context) {
+    if (note.tags) {
+      return note.tags.filter(tag => tag.permissions[context.user._id].tag.read)
+    }
+
     return Tag.find({
       ...baseTagsQuery(context.user, 'read'),
       _id: { $in: note.tags },
     }).lean()
   },
   async user(note, args, context) {
+    if (note.user && note.user._id) {
+      return note.user
+    }
+    
     return getCachedUser(note.user, context.user)
   },
 }

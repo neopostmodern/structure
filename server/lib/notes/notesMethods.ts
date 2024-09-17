@@ -1,9 +1,12 @@
 import { decode } from 'html-entities'
 import { JSDOM } from 'jsdom'
+import { Types } from 'mongoose'
 import fetch from 'node-fetch'
 import { Tag } from '../tags/tagModel'
 import { basePermissionsQueryOnTags } from '../tags/tagsMethods'
 import { Link } from './notesModels'
+
+const { ObjectId } = Types
 
 export function submitLink(user, { url, title, description }) {
   return new Link({
@@ -66,8 +69,8 @@ export const baseNotesQuery = async (user, mode = 'read') => {
   return {
     tags: {
       $in: [
-        user.internal.ownershipTagId,
-        ...tagIdsWithNoteReadPermissionAndSharing,
+        new ObjectId(user.internal.ownershipTagId),
+        ...tagIdsWithNoteReadPermissionAndSharing.map(({ _id }) => _id),
       ],
     },
   }
