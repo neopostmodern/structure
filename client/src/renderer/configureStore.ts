@@ -1,7 +1,7 @@
 /* eslint-disable global-require */
 import { applyMiddleware, compose, createStore } from 'redux';
 import { createReduxHistoryContext } from 'redux-first-history';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import middlewares from './middleware';
 import createRootReducer from './reducers';
 
