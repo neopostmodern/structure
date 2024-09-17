@@ -4,7 +4,6 @@ import tracer from 'tracer'
 export { default as colors } from 'colors'
 
 export const logger = tracer.colorConsole({
-  level: 'debug',
   methods: [
     'trace',
     'trace_raw',
