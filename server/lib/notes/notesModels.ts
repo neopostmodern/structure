@@ -17,6 +17,16 @@ const noteSchema = withBaseSchema<NoteType>(
   },
   noteOptions,
 )
+noteSchema.pre('save', function (next) {
+  if (
+    this.modifiedPaths().some((path) =>
+      ['name', 'description', 'url'].includes(path),
+    )
+  ) {
+    this.changedAt = new Date()
+  }
+  next()
+})
 export const Note = mongoose.model<NoteType>('Note', noteSchema)
 const textSchema = new Schema<TextType>({}, noteOptions)
 export const Text = Note.discriminator<TextType>('Text', textSchema)

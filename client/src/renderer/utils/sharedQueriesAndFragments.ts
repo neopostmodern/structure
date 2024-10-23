@@ -25,6 +25,7 @@ export const BASE_TAG_FRAGMENT = gql`
     _id
     createdAt
     updatedAt
+    changedAt
 
     name
     color
@@ -61,6 +62,7 @@ export const BASE_NOTE_FRAGMENT = gql`
       name
       createdAt
       updatedAt
+      changedAt
       archivedAt
       deletedAt
 

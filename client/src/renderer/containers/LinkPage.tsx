@@ -28,6 +28,7 @@ const LINK_QUERY = gql`
       _id
       createdAt
       updatedAt
+      changedAt
       archivedAt
       user {
         ...BaseUser
@@ -51,6 +52,7 @@ const UPDATE_LINK_MUTATION = gql`
       _id
       createdAt
       updatedAt
+      changedAt
       url
       domain
       name
