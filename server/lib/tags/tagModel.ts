@@ -28,4 +28,12 @@ const tagSchema = withBaseSchema<MongooseTagType>({
     }),
   },
 })
+
+tagSchema.pre('save', function (next) {
+  if (this.modifiedPaths().some((path) => ['name', 'color'].includes(path))) {
+    this.changedAt = new Date()
+  }
+  next()
+})
+
 export const Tag = mongoose.model<MongooseTagType>('Tag', tagSchema)
