@@ -71,6 +71,7 @@ const UPDATE_TAG_MUTATION = gql`
           name
           createdAt
           archivedAt
+          changedAt
           description
           tags {
             _id

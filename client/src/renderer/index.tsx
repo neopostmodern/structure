@@ -14,6 +14,10 @@ bindShortcut(SHORTCUTS.HOME_PAGE, () => {
   history.push('/');
   return false;
 });
+bindShortcut(SHORTCUTS.SETTINGS_PAGE, () => {
+  history.push('/settings');
+  return false;
+});
 bindShortcut(SHORTCUTS.NEW_NOTE_PAGE, () => {
   history.push('/notes/add');
 });

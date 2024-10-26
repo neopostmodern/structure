@@ -43,7 +43,7 @@ type Action = { type: string; payload?: any };
 
 export const DEFAULT_NOTE_LAYOUT = LinkLayout.LIST_LAYOUT;
 export const DEFAULT_ARCHIVE_STATE = ArchiveState.NO_ARCHIVE;
-export const DEFAULT_SORT_BY = SortBy.UPDATED_AT;
+export const DEFAULT_SORT_BY = SortBy.CHANGED_AT;
 
 const initialState: UserInterfaceStateType = {
   loggingIn: false,

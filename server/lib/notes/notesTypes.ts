@@ -7,6 +7,7 @@ export type NoteType = BaseType & {
   description: string
   user: UserType
   tags: Array<TagType>
+  changedAt: Date
   archivedAt?: Date
   deletedAt?: Date
 }

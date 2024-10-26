@@ -61,6 +61,7 @@ export const adaptShortcutsForPlatform = (
 export const QUICK_ACCESS_SHORTCUT_PREFIX = 'QUICK_';
 const shortcutTemplates: { [shortcutName: string]: Array<string | false> } = {
   HOME_PAGE: [`${GLOBAL}${MODIFIER}+.`, 'esc'],
+  SETTINGS_PAGE: [`${GLOBAL}${MODIFIER}+,`],
   QUICK_SUBMIT: [`${GLOBAL}${MODIFIER}+enter`],
   QUICK_NAVIGATION: [
     process.env.TARGET === 'electron' && `${GLOBAL}ctrl+tab`,

@@ -5,6 +5,7 @@ export const tagsSchema = gql`
     _id: ID!
     createdAt: Date!
     updatedAt: Date!
+    changedAt: Date!
     user: User!
 
     name: String!
