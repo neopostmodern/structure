@@ -284,4 +284,22 @@ migrations.set(7, {
   },
 })
 
+migrations.set(8, {
+  name: 'changed-at',
+  async up() {
+    for (const note of await Note.find()) {
+      note.changedAt = note.updatedAt
+      await note.save()
+    }
+    for (const tag of await Tag.find()) {
+      tag.changedAt = tag.updatedAt
+      await tag.save()
+    }
+  },
+  async down() {
+    await Note.updateMany({}, { $unset: { changedAt: 1 } })
+    await Tag.updateMany({}, { $unset: { changedAt: 1 } })
+  },
+})
+
 export default migrations

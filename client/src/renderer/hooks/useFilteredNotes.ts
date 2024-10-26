@@ -63,6 +63,7 @@ const sortByToFieldName: {
 } = {
   [SortBy.CREATED_AT]: 'createdAt',
   [SortBy.UPDATED_AT]: 'updatedAt',
+  [SortBy.CHANGED_AT]: 'changedAt',
 };
 
 const extendedCache: {

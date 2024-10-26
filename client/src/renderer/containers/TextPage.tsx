@@ -27,6 +27,7 @@ const TEXT_QUERY = gql`
       _id
       createdAt
       updatedAt
+      changedAt
       archivedAt
       user {
         ...BaseUser
@@ -48,6 +49,7 @@ const UPDATE_TEXT_MUTATION = gql`
       _id
       createdAt
       updatedAt
+      changedAt
       archivedAt
       name
       description

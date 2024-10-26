@@ -19,4 +19,5 @@ export type TagType = BaseType & {
       }
     }
   }
+  changedAt: Date
 }

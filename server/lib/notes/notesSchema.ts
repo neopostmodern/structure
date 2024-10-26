@@ -16,6 +16,7 @@ export default gql`
 
     createdAt: Date!
     updatedAt: Date!
+    changedAt: Date!
     archivedAt: Date
     deletedAt: Date
 
@@ -33,6 +34,7 @@ export default gql`
 
     createdAt: Date!
     updatedAt: Date!
+    changedAt: Date!
     archivedAt: Date
     deletedAt: Date
 
@@ -60,6 +62,7 @@ export default gql`
 
     createdAt: Date!
     updatedAt: Date!
+    changedAt: Date!
     archivedAt: Date
     deletedAt: Date
 
