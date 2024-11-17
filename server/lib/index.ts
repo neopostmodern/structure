@@ -1,20 +1,20 @@
-import { ApolloServer, ApolloServerPlugin } from '@apollo/server'
+import { ApolloServer, type ApolloServerPlugin } from '@apollo/server'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
-import config from '@structure/config'
+import config from '@structure/config' with { type: 'json' }
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
 import mongoSanitize from 'express-mongo-sanitize'
 import { createServer } from 'http'
-import migrationSystem from './migrations/migrationSystem'
-import { initializeMongo } from './mongo'
-import restApi from './restApi.js'
-import { resolvers, typeDefs } from './schema'
-import { setUpGitHubLogin } from './users/githubLogin.js'
-import { SessionContext } from './util/types'
-import { logger, timerEnd, timerStart } from './util/logging'
+import migrationSystem from './migrations/migrationSystem.mts'
+import { initializeMongo } from './mongo.mts'
+import restApi from './restApi.mts'
+import { resolvers, typeDefs } from './schema.mts'
+import { setUpGitHubLogin } from './users/githubLogin.mts'
+import { logger, timerEnd, timerStart } from './util/logging.mts'
+import type { SessionContext } from './util/types.mts'
 
 timerStart('startup')
 
@@ -125,7 +125,7 @@ const runExpressServer = async () => {
   logger.info(
     `GraphQL Server running at http://localhost:${config.PORT}${graphQlPath}...`,
   )
-  timerEnd('startup', "Server startup")
+  timerEnd('startup', 'Server startup')
 }
 
 await initializeMongo()
