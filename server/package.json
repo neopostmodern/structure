@@ -52,7 +52,7 @@
     "dev": "node --loader ts-node/esm/transpile-only --experimental-specifier-resolution=node lib/index.ts"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^3.3.1",
+    "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/schema-ast": "^3.0.1",
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-resolvers": "^3.2.1",
