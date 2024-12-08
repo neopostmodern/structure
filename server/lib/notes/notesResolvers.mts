@@ -18,7 +18,7 @@ const INoteResolvers = {
   async tags(note, args, context) {
     if (note.tags && note.tags.every((tag) => 'permissions' in tag)) {
       return note.tags.filter(
-        (tag) => tag.permissions[context.user._id].tag.read,
+        (tag) => tag.permissions[context.user._id]?.tag.read,
       )
     }
 
