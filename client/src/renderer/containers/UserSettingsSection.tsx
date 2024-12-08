@@ -136,7 +136,7 @@ const UserSettingsSection: FC = () => {
         <StructureTextField
           type="text"
           inputProps={{ readOnly: true }}
-          value={`javascript:void(open('${WEB_FRONTEND_HOST}/notes/add?url='+encodeURIComponent(location.href)+'&autoSubmit'))`}
+          value={`javascript:void(open('${__WEB_FRONTEND_HOST__}/notes/add?url='+encodeURIComponent(location.href)+'&autoSubmit'))`}
         />
       </SettingsEntry>
       <Credentials

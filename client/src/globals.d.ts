@@ -1,5 +1,6 @@
 declare const __VERSION__: string;
 declare const __BACKEND_URL__: string;
+declare const __WEB_FRONTEND_HOST__: string;
 declare const __DEBUG_PROD__: string;
 declare const __BUILD_TARGET__: 'web' | 'electron_renderer';
 

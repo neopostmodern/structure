@@ -16,6 +16,7 @@ export default defineConfig({
     __BUILD_TARGET__: '"electron_renderer"',
     // config
     __BACKEND_URL__: JSON.stringify(config.BACKEND_URL),
+    __WEB_FRONTEND_HOST__: JSON.stringify(config.WEB_FRONTEND_HOST),
     // package.json
     __VERSION__: JSON.stringify(packageJson.version),
   },
