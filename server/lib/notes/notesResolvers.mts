@@ -16,7 +16,7 @@ import { Link, Note, Text } from './notesModels.mts'
 
 const INoteResolvers = {
   async tags(note, args, context) {
-    if (note.tags) {
+    if (note.tags && note.tags.every((tag) => 'permissions' in tag)) {
       return note.tags.filter(
         (tag) => tag.permissions[context.user._id].tag.read,
       )
