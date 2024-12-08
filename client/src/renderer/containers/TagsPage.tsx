@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { LocalOffer } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { INTERNAL_TAG_PREFIX } from '@structure/common';
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { FC, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled, { css } from 'styled-components';

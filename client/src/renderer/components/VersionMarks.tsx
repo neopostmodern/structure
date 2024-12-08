@@ -45,7 +45,7 @@ const VersionMarks: React.FC<VersionMarksProps> = ({
   }
 
   const updateButtonProps =
-    process.env.TARGET === 'electron'
+    __BUILD_TARGET__ === 'electron'
       ? {
           href: config.releaseUrl,
           target: '_blank',
@@ -74,7 +74,7 @@ const VersionMarks: React.FC<VersionMarksProps> = ({
               {...updateButtonProps}
               sx={{ textDecoration: 'none !important' }}
             >
-              {process.env.TARGET === 'electron' ? 'Update' : 'Reload'} now
+              {__BUILD_TARGET__ === 'electron' ? 'Update' : 'Reload'} now
             </Button>
           </Box>
         </small>
@@ -97,7 +97,7 @@ const VersionMarks: React.FC<VersionMarksProps> = ({
               {...updateButtonProps}
               sx={{ textDecoration: 'none !important' }}
             >
-              {process.env.TARGET === 'electron' ? 'Update' : 'Reload'} now
+              {__BUILD_TARGET__ === 'electron' ? 'Update' : 'Reload'} now
             </Button>
           </Box>
         </small>

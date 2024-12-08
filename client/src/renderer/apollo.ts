@@ -9,15 +9,15 @@ import localforage from 'localforage';
 import LocalStoreInMemoryWrapper from './utils/localStoreInMemoryWrapper';
 
 let backendUrl;
-if (process.env.TARGET === 'web') {
+if (__BUILD_TARGET__ === 'web') {
   // no backend customization for web, other backends should host their own frontends
-  backendUrl = BACKEND_URL;
+  backendUrl = __BACKEND_URL__;
 } else {
-  backendUrl = localStorage.getItem('backend-url') || BACKEND_URL;
+  backendUrl = localStorage.getItem('backend-url') || __BACKEND_URL__;
 
   if (backendUrl.endsWith('structure.neopostmodern.com')) {
-    localStorage.setItem('backend-url', BACKEND_URL);
-    backendUrl = BACKEND_URL;
+    localStorage.setItem('backend-url', __BACKEND_URL__);
+    backendUrl = __BACKEND_URL__;
   }
 }
 
@@ -118,10 +118,7 @@ export const apolloClient = new ApolloClient({
   ...apolloOptions,
 });
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
+if (import.meta.env.DEV || __DEBUG_PROD__ === 'true') {
   setLogVerbosity('debug');
 }
 

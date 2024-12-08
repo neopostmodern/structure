@@ -1,0 +1,3 @@
+# this folder contains build artifacts (both intermediary and final)
+*
+!.gitignore

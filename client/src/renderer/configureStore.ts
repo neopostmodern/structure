@@ -1,65 +1,59 @@
-/* eslint-disable global-require */
+import { createBrowserHistory, createHashHistory } from 'history';
 import { applyMiddleware, compose, createStore } from 'redux';
 import { createReduxHistoryContext } from 'redux-first-history';
 import thunk from 'redux-thunk';
 import middlewares from './middleware';
 import createRootReducer from './reducers';
 
-let createHistory;
-if (process.env.TARGET === 'web') {
-  createHistory = require('history').createBrowserHistory;
-} else {
-  createHistory = require('history').createHashHistory;
-}
-const { routerMiddleware, routerReducer, createReduxHistory } =
-  createReduxHistoryContext({
-    history: createHistory(),
-  });
+const configureStore = async () => {
+  let createHistory =
+    __BUILD_TARGET__ === 'web' ? createBrowserHistory : createHashHistory;
 
-// Redux Configuration
-const middleware = [...middlewares];
-const enhancers = [];
+  const { routerMiddleware, routerReducer, createReduxHistory } =
+    createReduxHistoryContext({
+      history: createHistory(),
+    });
 
-// Thunk Middleware
-middleware.push(thunk);
+  // Redux Configuration
+  const middleware = [...middlewares];
+  const enhancers = [];
 
-if (process.env.NODE_ENV !== 'production') {
-  const { createLogger } = require('redux-logger');
-  // Logging Middleware
-  const logger = createLogger({
-    level: 'info',
-    collapsed: true,
-  });
-  middleware.push(logger);
-}
+  // Thunk Middleware
+  middleware.push(thunk);
 
-// Router Middleware
-middleware.push(routerMiddleware);
+  if (!import.meta.env.PROD) {
+    const { createLogger } = await import('redux-logger');
+    // Logging Middleware
+    const logger = createLogger({
+      level: 'info',
+      collapsed: true,
+    });
+    middleware.push(logger);
+  }
 
-// If Redux DevTools Extension is installed use it, otherwise use Redux compose
-/* eslint-disable no-underscore-dangle */
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-  ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
-  : compose;
-/* eslint-enable no-underscore-dangle */
+  // Router Middleware
+  middleware.push(routerMiddleware);
 
-// Apply Middleware & Compose Enhancers
-enhancers.push(applyMiddleware(...middleware));
-const enhancer = composeEnhancers(...enhancers);
+  // If Redux DevTools Extension is installed use it, otherwise use Redux compose
+  /* eslint-disable no-underscore-dangle */
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
+    : compose;
+  /* eslint-enable no-underscore-dangle */
 
-// Create Store
-export const store = createStore(
-  createRootReducer(routerReducer),
-  undefined,
-  enhancer
-);
+  // Apply Middleware & Compose Enhancers
+  enhancers.push(applyMiddleware(...middleware));
+  const enhancer = composeEnhancers(...enhancers);
 
-if (module.hot) {
-  module.hot.accept(
-    './reducers',
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    () => store.replaceReducer(require('./reducers'))
+  // Create Store
+  const store = createStore(
+    createRootReducer(routerReducer),
+    undefined,
+    enhancer
   );
-}
 
-export const history = createReduxHistory(store);
+  const history = createReduxHistory(store);
+  return { store, history };
+};
+
+export default configureStore;

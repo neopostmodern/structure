@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { FC, useCallback } from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';

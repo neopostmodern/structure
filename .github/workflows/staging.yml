@@ -73,7 +73,7 @@ jobs:
       - name: Deploy via FTP
         uses: sebastianpopp/ftp-action@releases/v2
         with:
-          localDir: ./client/release/app/dist/web/
+          localDir: ./client/out/web/
           remoteDir: ./
           host: amsr102.websitehostserver.net:21
           user: github@staging-app.structure.love
@@ -99,7 +99,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Installer ${{ runner.os }}
-          path: client/release/build/structure-*
+          path: client/out/make/**/*
           if-no-files-found: error
 
   deploy-backend:

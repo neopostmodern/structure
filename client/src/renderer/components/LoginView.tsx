@@ -26,7 +26,7 @@ const LoginView: React.FC<LoginViewProps> = ({ openLoginModal }) => (
       bericht.neopostmodern.com
     </a>
     .
-    {process.env.TARGET === 'web' ? (
+    {__BUILD_TARGET__ === 'web' ? (
       <>
         {' '}
         Get it on{' '}

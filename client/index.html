@@ -2,13 +2,24 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1e1e1e" media="(prefers-color-scheme: dark)" />
-    <link rel="icon" href="/favicon.ico" sizes='any'>
-    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icons/favicon_256x256.png">
-    <link rel="manifest" href="/manifest.webmanifest">
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#1e1e1e"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/favicon_256x256.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <title>Structure</title>
     <style>
       #loading {
@@ -46,7 +57,8 @@
         border-style: solid;
         border-radius: 50%;
         border-color: currentColor transparent transparent transparent;
-        animation: initial-loading-spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        animation: initial-loading-spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1)
+          infinite;
       }
       #initial-loading-spinner div:nth-child(1) {
         animation-delay: -0.45s;
@@ -74,7 +86,9 @@
         }
       }
       @media screen and (prefers-color-scheme: dark) {
-        body, #loading {
+        html,
+        body,
+        #loading {
           background-color: #1e1e1e;
           color: white;
         }
@@ -83,8 +97,14 @@
   </head>
   <body>
     <div id="loading">
-      <div id="initial-loading-spinner"><div></div><div></div><div></div><div></div></div>
+      <div id="initial-loading-spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
     <div id="root"></div>
+    <script type="module" src="/src/renderer/index.tsx"></script>
   </body>
 </html>

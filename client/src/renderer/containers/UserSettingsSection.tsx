@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import Credentials, { CredentialsOrLoading } from '../components/Credentials';
