@@ -5,7 +5,12 @@
   "author": "neopostmodern <clemens@neopostmodern.com>",
   "homepage": "",
   "license": "ISC",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": {
+      "node": "./dist/index.js",
+      "default": "./index.ts"
+    }
+  },
   "type": "module",
   "directories": {
     "lib": "lib",
