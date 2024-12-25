@@ -62,10 +62,11 @@ There is no documentation yet but the following files should get you started:
 ```
 config/config-example.json
 server/scripts/deploy/deploy.sh
+server/scripts/deploy/structure-backend.service
 .github/workflows/staging.yml
 ```
 
-It depends on node.js (server version specified in `server/package.json`&rarr;`volta`) and mongoDB 4.2+.
+It depends on node.js (server version specified in `server/package.json`&rarr;`volta`) and mongoDB 4.2+ and runs as a systemD service.
 
 A docker version is planned.
 

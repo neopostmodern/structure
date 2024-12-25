@@ -1,0 +1,12 @@
+[Unit]
+Description=Structure Backend
+
+[Service]
+WorkingDirectory=/home/structure/backend/
+ExecStart=/home/structure/.volta/bin/npm run server:start
+Restart=on-failure
+RestartSec=10s
+StartLimitBurst=5
+
+[Install]
+WantedBy=default.target
