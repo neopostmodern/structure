@@ -24,7 +24,9 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({}),
+    new MakerSquirrel({
+      name: 'Structure',
+    }),
     new MakerZIP({}, ['darwin']),
     new MakerAppImage({
       options: {
