@@ -11,6 +11,38 @@ import { logger } from './util/logging.mts'
 import { Meta } from './meta/metaModel.mts';
 
 const restApi = (app) => {
+  app.get('/', (request, response) => {
+    response.send(`
+<!doctype html>
+<html lang='en'>
+<head>
+<title>Structure backend</title>
+<style>
+body {
+  width: 20em;
+  margin: 5em auto;
+  font-family: "Lunchtype22", "Nimbus Sans", "Helvetica", "Arial", sans-serif;
+}
+</style>
+</head>
+<body>
+<pre>
+ ▗▄▄▖▗▄▄▄▖▗▄▄▖ ▗▖ ▗▖ ▗▄▄▖▗▄▄▄▖▗▖ ▗▖▗▄▄▖ ▗▄▄▄▖
+▐▌     █  ▐▌ ▐▌▐▌ ▐▌▐▌     █  ▐▌ ▐▌▐▌ ▐▌▐▌   
+ ▝▀▚▖  █  ▐▛▀▚▖▐▌ ▐▌▐▌     █  ▐▌ ▐▌▐▛▀▚▖▐▛▀▀▘
+▗▄▄▞▘  █  ▐▌ ▐▌▝▚▄▞▘▝▚▄▄▖  █  ▝▚▄▞▘▐▌ ▐▌▐▙▄▄▖
+
+
+</pre>
+<p>
+  This is the backend server. Learn more about Structure on <a href='https://structure.love'>its website</a>.
+</p>
+<p>
+  Are you looking for <a href="${config.WEB_FRONTEND_HOST}">the webapp</a>?
+</p>
+</body>
+</html>`)
+  })
   app.get('/bookmarklet', (request, response) => {
     const { token, url } = request.query
     User.findOne({ 'credentials.bookmarklet': token })
