@@ -8,6 +8,7 @@ import { Tag } from './tags/tagModel.mts'
 import { addTagByNameToNote } from './tags/tagsMethods.mts'
 import { User } from './users/userModel.mts'
 import { logger } from './util/logging.mts'
+import { Meta } from './meta/metaModel.mts';
 
 const restApi = (app) => {
   app.get('/bookmarklet', (request, response) => {
@@ -152,8 +153,21 @@ const restApi = (app) => {
     response.send(allData)
   })
 
-  app.use('/hello', (request, response) => {
-    response.status(200).send('OK')
+  app.use('/hello', async (request, response) => {
+    try {
+      await Meta.updateOne(
+        { _id: 'heartbeat' },
+        { $set: { timestamp: new Date().toISOString() } },
+        { upsert: true }
+      )
+
+      response.status(200).send('OK')
+    } catch (error) {
+      console.error(`/hello - Failed to write heartbeat to database!`)
+      console.error(error);
+
+      response.status(500).send('Database error.')
+    }
   })
 }
 
