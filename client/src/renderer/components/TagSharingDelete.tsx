@@ -4,7 +4,7 @@ import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { goBack } from 'redux-first-history';
-import {
+import type {
   UnshareTagMutation,
   UnshareTagMutationVariables,
 } from '../generated/graphql';

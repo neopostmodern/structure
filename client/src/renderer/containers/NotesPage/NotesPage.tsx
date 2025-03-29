@@ -19,7 +19,7 @@ import NotesList from '../../components/NotesList';
 import NotesMenu from '../../components/NotesMenu';
 import NotesPageEmpty from '../../components/NotesPageEmpty';
 import { SkeletonNoteList } from '../../components/Skeletons';
-import {
+import type {
   NotesForListQuery,
   NotesForListQueryVariables,
 } from '../../generated/graphql';

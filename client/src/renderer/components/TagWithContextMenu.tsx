@@ -4,7 +4,7 @@ import { CircularProgress, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { goBack, push } from 'redux-first-history';
-import {
+import type {
   RemoveTagByIdFromNoteMutation,
   RemoveTagByIdFromNoteMutationVariables,
 } from '../generated/graphql';

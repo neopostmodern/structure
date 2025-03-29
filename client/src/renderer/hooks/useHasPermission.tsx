@@ -1,4 +1,4 @@
-import { BaseTagFragment } from '../generated/graphql';
+import type { BaseTagFragment } from '../generated/graphql';
 import useUserId from './useUserId';
 
 export const hasPermission = (

@@ -17,7 +17,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import { TAGS_QUERY } from '../containers/TagsPage';
-import { TagsQuery } from '../generated/graphql';
+import type { TagsQuery } from '../generated/graphql';
 import useColorTagGroups from '../hooks/useColorTagGroups';
 import colorTools from '../utils/colorTools';
 import { useIsMobileLayout } from '../utils/mediaQueryHooks';

@@ -1,6 +1,6 @@
 import { ApolloError, gql, useMutation } from '@apollo/client';
 import { useCallback, useState } from 'react';
-import {
+import type {
   AddLinkMutation,
   AddLinkMutationVariables,
   AddTagByNameToNoteMutation,

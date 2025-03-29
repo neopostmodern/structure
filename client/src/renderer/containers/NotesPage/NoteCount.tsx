@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArchiveState } from '../../actions/userInterface';
-import { NotesForListQuery } from '../../generated/graphql';
+import type { NotesForListQuery } from '../../generated/graphql';
 
 interface NoteCountProps {
   notes: NotesForListQuery['notes'];

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ArchiveState, SortBy } from '../actions/userInterface';
-import { NotesForListQuery } from '../generated/graphql';
+import type { NotesForListQuery } from '../generated/graphql';
 import { RootState } from '../reducers';
 import { UserInterfaceStateType } from '../reducers/userInterface';
 import {

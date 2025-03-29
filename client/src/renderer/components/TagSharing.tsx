@@ -1,4 +1,4 @@
-import { TagsQuery } from '../generated/graphql';
+import type { TagsQuery } from '../generated/graphql';
 import useHasPermission from '../hooks/useHasPermission';
 import Gap from './Gap';
 import TagSharingAdd from './TagSharingAdd';

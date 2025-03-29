@@ -7,7 +7,7 @@ import {
   setBatchSelection,
   toggleBatchEditing,
 } from '../actions/userInterface';
-import { NotesForListQuery } from '../generated/graphql';
+import type { NotesForListQuery } from '../generated/graphql';
 import useShortcut from '../hooks/useShortcut';
 import { RootState } from '../reducers';
 import {

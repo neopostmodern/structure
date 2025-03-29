@@ -2,7 +2,7 @@ import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { LinkQuery } from '../generated/graphql';
+import type { LinkQuery } from '../generated/graphql';
 import useHasPermission from '../hooks/useHasPermission';
 import useSyncForm from '../hooks/useSyncForm';
 import { isUrlValid } from '../utils/textHelpers';

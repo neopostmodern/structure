@@ -8,7 +8,7 @@ import AdvancedSettings from '../components/AdvancedSettings';
 import { StructureTextField } from '../components/formComponents';
 import Gap from '../components/Gap';
 import SettingsEntry from '../components/SettingsEntry';
-import { TinyUserQuery } from '../generated/graphql';
+import type { TinyUserQuery } from '../generated/graphql';
 import { RootState } from '../reducers';
 import { ConfigurationStateType } from '../reducers/configuration';
 import ComplexLayout from './ComplexLayout';

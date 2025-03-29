@@ -12,7 +12,7 @@ import FatalApolloError from '../components/FatalApolloError';
 import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import Tag from '../components/Tag';
-import {
+import type {
   TagsQuery,
   UpdateTag2Mutation,
   UpdateTag2MutationVariables,

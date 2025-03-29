@@ -3,7 +3,7 @@ import { Warning as WarningIcon } from '@mui/icons-material';
 import { Skeleton, Tooltip } from '@mui/material';
 import { INTERNAL_TAG_PREFIX } from '@structure/common';
 import { useCallback, useEffect, useState } from 'react';
-import {
+import type {
   AddTagByNameToNoteMutation,
   AddTagByNameToNoteMutationVariables,
   TagsWithCountsQuery,

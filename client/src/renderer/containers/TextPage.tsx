@@ -7,7 +7,7 @@ import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator
 import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
 import TextForm, { TextInForm } from '../components/TextForm';
-import {
+import type {
   TextQuery,
   UpdateTextMutation,
   UpdateTextMutationVariables,

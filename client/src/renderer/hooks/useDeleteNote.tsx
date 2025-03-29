@@ -2,7 +2,7 @@ import { gql, useMutation } from '@apollo/client';
 import { useDispatch } from 'react-redux';
 import { push } from 'redux-first-history';
 import ErrorSnackbar from '../components/ErrorSnackbar';
-import {
+import type {
   ToggleDeletedNoteMutation,
   ToggleDeletedNoteMutationVariables,
 } from '../generated/graphql';

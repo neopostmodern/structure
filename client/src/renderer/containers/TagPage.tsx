@@ -15,7 +15,7 @@ import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator
 import NotesList from '../components/NotesList';
 import TagForm, { TagInForm } from '../components/TagForm';
 import TagSharing from '../components/TagSharing';
-import {
+import type {
   DeleteTagMutation,
   DeleteTagMutationVariables,
   TagsQuery,

@@ -9,7 +9,7 @@ import { IconButton } from '@mui/material';
 import { FC, MouseEventHandler, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearClipboard, requestClipboard } from '../actions/userInterface';
-import { AddTextMutationVariables } from '../generated/graphql';
+import type { AddTextMutationVariables } from '../generated/graphql';
 import {
   CLIPBOARD_NOT_AVAILABLE,
   CLIPBOARD_NOT_GRANTED,

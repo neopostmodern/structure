@@ -1,6 +1,6 @@
 import { INTERNAL_TAG_PREFIX } from '@structure/common';
 import { useMemo } from 'react';
-import { TagsQuery, TagsQueryVariables } from '../generated/graphql';
+import type { TagsQuery, TagsQueryVariables } from '../generated/graphql';
 import { DataState, UseDataStateLazyQuery } from '../utils/useDataState';
 
 type ColorTagGroups = {

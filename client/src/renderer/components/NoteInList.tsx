@@ -1,6 +1,6 @@
 import React, { lazy } from 'react';
 import TimeAgo from 'react-timeago';
-import { NotesForListQuery } from '../generated/graphql';
+import type { NotesForListQuery } from '../generated/graphql';
 import useUserId from '../hooks/useUserId';
 import { noteUrl } from '../utils/routes';
 import suspenseWrap from '../utils/suspenseWrap';

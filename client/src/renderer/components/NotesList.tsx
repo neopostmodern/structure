@@ -2,7 +2,7 @@ import { AddCircle, Create } from '@mui/icons-material';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { push } from 'redux-first-history';
-import { NotesForListQuery } from '../generated/graphql';
+import type { NotesForListQuery } from '../generated/graphql';
 import useQuickNumberShortcuts from '../hooks/useQuickNumberShortcuts';
 import { QUICK_ACCESS_SHORTCUT_PREFIX, SHORTCUTS } from '../utils/keyboard';
 import { noteUrl } from '../utils/routes';

@@ -7,7 +7,7 @@ import LinkForm, { LinkInForm } from '../components/LinkForm';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import NotePageMenu from '../components/NotePageMenu';
 import Tags from '../components/Tags';
-import {
+import type {
   LinkQuery,
   LinkQueryVariables,
   UpdateLinkMutation,

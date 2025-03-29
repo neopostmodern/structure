@@ -9,7 +9,7 @@ import {
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import styled from 'styled-components';
-import { AddTextMutationVariables } from '../generated/graphql';
+import type { AddTextMutationVariables } from '../generated/graphql';
 import { isUrlValid } from '../utils/textHelpers';
 
 const AddLinkInput = styled(Input)`

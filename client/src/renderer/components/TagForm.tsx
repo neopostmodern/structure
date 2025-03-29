@@ -2,7 +2,7 @@ import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { TagsQuery } from '../generated/graphql';
+import type { TagsQuery } from '../generated/graphql';
 import useSyncForm from '../hooks/useSyncForm';
 import useSaveOnUnmount from '../utils/useSaveOnUnmount';
 import ColorInput from './ColorInput';
