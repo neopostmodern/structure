@@ -12,7 +12,7 @@ import ImportDataWithButton from '../components/ImportDataWithButton';
 import { Menu } from '../components/Menu';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 import UserInfo from '../components/UserInfo';
-import { UserQuery } from '../generated/graphql';
+import type { UserQuery } from '../generated/graphql';
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
 import useDataState, { DataState } from '../utils/useDataState';
 import ComplexLayout from './ComplexLayout';

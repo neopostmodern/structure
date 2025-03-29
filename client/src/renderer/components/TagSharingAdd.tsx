@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import {
+import type {
   ShareTagMutation,
   ShareTagMutationVariables,
   TagsQuery,

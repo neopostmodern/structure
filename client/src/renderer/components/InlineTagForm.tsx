@@ -1,7 +1,7 @@
 import { Autocomplete, Stack, TextField, Typography } from '@mui/material';
 import { matchSorter } from 'match-sorter';
 import React from 'react';
-import { TagsWithCountsQuery } from '../generated/graphql';
+import type { TagsWithCountsQuery } from '../generated/graphql';
 import useUserId from '../hooks/useUserId';
 import { SkeletonTag } from './Skeletons';
 import Tag from './Tag';

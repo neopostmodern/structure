@@ -7,7 +7,7 @@ import useDataState, {
   LazyPolicedData,
   OFFLINE_CACHE_MISS,
 } from '../utils/useDataState';
-import { TagsWithCountsQuery } from '../generated/graphql';
+import type { TagsWithCountsQuery } from '../generated/graphql';
 
 const LAST_TAG_COUNTS_FETCH_KEY = 'lastTagCountsFetch';
 

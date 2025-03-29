@@ -8,7 +8,7 @@ import Credentials, { CredentialsOrLoading } from '../components/Credentials';
 import FatalApolloError from '../components/FatalApolloError';
 import { StructureTextField } from '../components/formComponents';
 import SettingsEntry from '../components/SettingsEntry';
-import {
+import type {
   RequestNewCredentialMutation,
   RequestNewCredentialMutationVariables,
   RevokeCredentialMutation,

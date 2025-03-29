@@ -1,6 +1,6 @@
 import { gql, useMutation } from '@apollo/client';
 import ErrorSnackbar from '../components/ErrorSnackbar';
-import {
+import type {
   ToggleArchivedNoteMutation,
   ToggleArchivedNoteMutationVariables,
 } from '../generated/graphql';

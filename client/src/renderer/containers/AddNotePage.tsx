@@ -10,7 +10,7 @@ import AddNoteForm from '../components/AddNoteForm';
 import AddNoteFromClipboard from '../components/AddNoteFromClipboard';
 import ErrorSnackbar from '../components/ErrorSnackbar';
 import Gap from '../components/Gap';
-import {
+import type {
   AddLinkMutation,
   AddLinkMutationVariables,
   AddTextMutation,

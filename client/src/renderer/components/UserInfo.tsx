@@ -1,6 +1,6 @@
 import { Link as MaterialLink, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { UserQuery } from '../generated/graphql';
+import type { UserQuery } from '../generated/graphql';
 import { dateToShortISO8601 } from '../utils/textHelpers';
 
 const UserInfo = ({

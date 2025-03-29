@@ -26,7 +26,7 @@ import {
   SortBy,
 } from '../actions/userInterface';
 import NoteCount from '../containers/NotesPage/NoteCount';
-import { NotesForListQuery } from '../generated/graphql';
+import type { NotesForListQuery } from '../generated/graphql';
 import { RootState } from '../reducers';
 import {
   DEFAULT_ARCHIVE_STATE,

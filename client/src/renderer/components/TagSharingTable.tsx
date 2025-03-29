@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { MouseEvent, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import {
+import type {
   TagsQuery,
   UpdatePermissionOnTagMutation,
   UpdatePermissionOnTagMutationVariables,

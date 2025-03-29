@@ -7,7 +7,7 @@ import { IconButton, Menu, MenuItem } from '@mui/material';
 import { MouseEvent, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { push } from 'redux-first-history';
-import { VisitedNotesQuery } from '../generated/graphql';
+import type { VisitedNotesQuery } from '../generated/graphql';
 import useShortcut from '../hooks/useShortcut';
 import { RootState } from '../reducers';
 import { NoteSummary } from '../reducers/history';

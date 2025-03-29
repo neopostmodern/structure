@@ -14,7 +14,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useState } from 'react';
-import { NotesForListQuery } from '../generated/graphql';
+import type { NotesForListQuery } from '../generated/graphql';
 import useDeleteNote from '../hooks/useDeleteNote';
 import useHasPermission from '../hooks/useHasPermission';
 import useToggleArchivedNote from '../hooks/useToggleArchivedNote';

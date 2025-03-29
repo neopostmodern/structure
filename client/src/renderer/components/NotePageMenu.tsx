@@ -1,7 +1,7 @@
 import { Archive, Replay } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import { Tooltip } from '@mui/material';
-import { LinkQuery, TextQuery } from '../generated/graphql';
+import type { LinkQuery, TextQuery } from '../generated/graphql';
 import useDeleteNote from '../hooks/useDeleteNote';
 import useHasPermission from '../hooks/useHasPermission';
 import useToggleArchivedNote from '../hooks/useToggleArchivedNote';

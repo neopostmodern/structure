@@ -7,7 +7,7 @@ import {
 import { useEffect } from 'react';
 import { NOTES_QUERY } from '../containers/NotesPage/NotesPage';
 import { TAGS_QUERY } from '../containers/TagsPage';
-import {
+import type {
   EntitiesUpdatedSinceQuery,
   EntitiesUpdatedSinceQueryVariables,
   NotesForListQuery,
