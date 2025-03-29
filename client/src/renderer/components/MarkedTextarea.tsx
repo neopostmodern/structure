@@ -1,10 +1,32 @@
-import { Tab, Tabs, TextField } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
+import {
+  Card,
+  CardContent,
+  Skeleton,
+  Tab,
+  Tabs,
+  TextField,
+} from '@mui/material';
+import React, { lazy, useEffect, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import useShortcut from '../hooks/useShortcut';
 import { SHORTCUTS } from '../utils/keyboard';
+import suspenseWrap from '../utils/suspenseWrap';
 import RenderedMarkdown from './RenderedMarkdown';
+
+const RichMarkdownEditor = suspenseWrap(
+  lazy(() => import(/* webpackPrefetch: true */ './RichMarkdownEditor')),
+  ({ markdown }) => (
+    <Card variant="outlined" sx={{ backgroundColor: 'unset' }}>
+      <Skeleton variant="rectangular" height={45} />
+      <CardContent
+        sx={{ paddingTop: 0, paddingBottom: 0, paddingLeft: '12px' }}
+      >
+        <RenderedMarkdown markdown={markdown || ''} />
+      </CardContent>
+    </Card>
+  )
+);
 
 const TextareaContainer = styled.div`
   position: relative;
@@ -17,9 +39,15 @@ type MarkedTextareaProps = {
   readOnly?: boolean;
 };
 
+enum EditorTab {
+  VIEW,
+  RICH,
+  SOURCE,
+}
+
 const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
   const { control, getValues } = useFormContext();
-  const [editDescription, setEditDescription] = useState(false);
+  const [editorTab, setEditorTab] = useState<EditorTab>(EditorTab.VIEW);
   const [lastSelection, setLastSelection] = useState<[number, number] | null>(
     null
   );
@@ -27,10 +55,10 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
 
   // shortcuts need self-updating references
   const shortcutRefs = useRef<{
-    editDescription: boolean;
+    editorTab: EditorTab;
     lastSelection: [number, number] | null;
   }>();
-  shortcutRefs.current = { editDescription, lastSelection };
+  shortcutRefs.current = { editorTab, lastSelection };
 
   const focusTextarea = (): void => {
     if (!textareaElement.current) {
@@ -52,7 +80,7 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
   };
 
   const toggleEditDescription = (fromShortcut = false): void => {
-    if (shortcutRefs.current?.editDescription) {
+    if (shortcutRefs.current?.editorTab === EditorTab.RICH) {
       if (fromShortcut && document.activeElement !== textareaElement.current) {
         focusTextarea();
       } else {
@@ -67,10 +95,10 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
             setLastSelection(null);
           }
         }
-        setEditDescription(false);
+        setEditorTab(EditorTab.VIEW);
       }
     } else {
-      setEditDescription(true);
+      setEditorTab(EditorTab.RICH);
       setTimeout(() => {
         focusTextarea();
       }, 0);
@@ -82,8 +110,8 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
   });
 
   useEffect(() => {
-    if (getValues(name).length === 0 && !editDescription) {
-      setEditDescription(true);
+    if (getValues(name).length === 0 && !editorTab) {
+      setEditorTab(EditorTab.RICH);
     }
   }, []);
 
@@ -96,15 +124,17 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
   return (
     <TextareaContainer>
       <Tabs
-        value={editDescription ? 1 : 0}
-        onChange={() => {
-          toggleEditDescription();
+        value={editorTab}
+        onChange={(_event, newTab) => {
+          setEditorTab(newTab);
         }}
       >
         <Tab label="View" />
         <Tab label="Edit" disabled={readOnly} />
+        <Tab label="Source" disabled={readOnly} />
       </Tabs>
-      <div hidden={!editDescription}>
+
+      <div hidden={editorTab !== EditorTab.SOURCE}>
         <Controller
           name={name}
           control={control}
@@ -114,19 +144,35 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
               name={field.name}
               onBlur={field.onBlur}
               onChange={field.onChange}
-              hidden={!editDescription}
+              hidden={!editorTab}
               value={field.value}
               variant="outlined"
               inputRef={(ref) => {
                 field.ref(ref);
                 textareaElement.current = ref;
               }}
+              inputProps={{ style: { fontFamily: 'monospace' } }}
               fullWidth
             />
           )}
         />
       </div>
-      {!editDescription && renderMarkdown()}
+      {editorTab === EditorTab.VIEW && renderMarkdown()}
+      {editorTab === EditorTab.RICH && (
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <RichMarkdownEditor
+              markdown={field.value}
+              onBlur={(value) => {
+                field.onChange(value);
+                field.onBlur();
+              }}
+            />
+          )}
+        />
+      )}
     </TextareaContainer>
   );
 };

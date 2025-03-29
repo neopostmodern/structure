@@ -302,4 +302,27 @@ migrations.set(8, {
   },
 })
 
+migrations.set(9, {
+  name: 'markdown-explicit-hardbreaks-tiptap',
+  async up() {
+    const { createTiptapMigrator, destroyTiptapMigrator } = await import(
+      './tiptapMigration.mts'
+    )
+    const tiptapMigrator = await createTiptapMigrator()
+    for (const note of await Note.find({
+      description: { $exists: true, $ne: '' },
+    })) {
+      note.description = tiptapMigrator(note.description)
+      await note.save()
+    }
+    destroyTiptapMigrator()
+  },
+  async down() {
+    for (const note of await Note.find({ description: /\\\n/ })) {
+      note.description = note.description.replace(/\\\n/, '\n')
+      await note.save()
+    }
+  },
+})
+
 export default migrations
