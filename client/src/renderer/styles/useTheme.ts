@@ -85,7 +85,7 @@ const useTheme = () => {
       palette: {
         neutral: {
           main: theme.palette.text.primary,
-          contrastText: 'white',
+          contrastText: '#fff',
         },
       },
     });

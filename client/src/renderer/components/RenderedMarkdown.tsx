@@ -152,7 +152,7 @@ export const markdownStyles = css`
   }
 `;
 
-const MarkdownContainer = styled(ReactMarkdown)`
+const MarkdownContainer = styled.div`
   font-size: 1rem;
 
   ${markdownStyles}
@@ -190,32 +190,34 @@ const RenderedMarkdown = ({
 }) => {
   if (markdown.length) {
     return (
-      <MarkdownContainer
-        rehypePlugins={[
-          rehypeRaw,
-          [
-            rehypeSanitize,
-            { ...defaultSchema, tagNames: [...defaultSchema.tagNames!, 'u'] },
-          ],
-        ]}
-        remarkPlugins={[remarkBreaks, [remarkGfm, { singleTilde: false }]]}
-        components={{
-          a({ href, title, children }) {
-            return (
-              <a
-                href={href}
-                title={title || href}
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                {children}
-              </a>
-            );
-          },
-          input: ReadonlyCheckbox,
-        }}
-      >
-        {markdown}
+      <MarkdownContainer>
+        <ReactMarkdown
+          rehypePlugins={[
+            rehypeRaw,
+            [
+              rehypeSanitize,
+              { ...defaultSchema, tagNames: [...defaultSchema.tagNames!, 'u'] },
+            ],
+          ]}
+          remarkPlugins={[remarkBreaks, [remarkGfm, { singleTilde: false }]]}
+          components={{
+            a({ href, title, children }) {
+              return (
+                <a
+                  href={href}
+                  title={title || href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  {children}
+                </a>
+              );
+            },
+            input: ReadonlyCheckbox,
+          }}
+        >
+          {markdown}
+        </ReactMarkdown>
       </MarkdownContainer>
     );
   }

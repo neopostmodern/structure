@@ -1,6 +1,5 @@
 import { ApolloError } from '@apollo/client';
-import { Portal } from '@mui/base';
-import { Alert, Button, Snackbar } from '@mui/material';
+import { Alert, Button, Snackbar, Portal } from '@mui/material';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { breakPointMobile } from '../styles/constants';

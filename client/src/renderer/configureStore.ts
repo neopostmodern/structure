@@ -1,7 +1,6 @@
 import { createBrowserHistory, createHashHistory } from 'history';
 import { applyMiddleware, compose, createStore } from 'redux';
 import { createReduxHistoryContext } from 'redux-first-history';
-import thunk from 'redux-thunk';
 import middlewares from './middleware';
 import createRootReducer from './reducers';
 
@@ -17,9 +16,6 @@ const configureStore = async () => {
   // Redux Configuration
   const middleware = [...middlewares];
   const enhancers = [];
-
-  // Thunk Middleware
-  middleware.push(thunk);
 
   if (!import.meta.env.PROD) {
     const { createLogger } = await import('redux-logger');
