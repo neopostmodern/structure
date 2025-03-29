@@ -33,6 +33,7 @@
     "fast-array-diff": "^1.1.0",
     "feed": "github:neopostmodern/feed",
     "graphql": "^16.6.0",
+    "graphql-parse-resolve-info": "^4.13.0",
     "graphql-tag": "^2.12.6",
     "html-entities": "^2.3.3",
     "jsdom": "^22.1.0",

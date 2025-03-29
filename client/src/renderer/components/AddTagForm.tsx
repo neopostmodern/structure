@@ -1,32 +1,19 @@
-import { gql, useLazyQuery, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Warning as WarningIcon } from '@mui/icons-material';
 import { Skeleton, Tooltip } from '@mui/material';
 import { INTERNAL_TAG_PREFIX } from '@structure/common';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import type {
   AddTagByNameToNoteMutation,
   AddTagByNameToNoteMutationVariables,
-  TagsWithCountsQuery,
 } from '../generated/graphql';
+import useTagsWithCountsQuery from '../hooks/useTagsWithCountsQuery';
 import useUserId from '../hooks/useUserId';
-import {
-  ADD_TAG_BY_NAME_TO_NOTE_MUTATION,
-  BASE_TAG_FRAGMENT,
-} from '../utils/sharedQueriesAndFragments';
+import { ADD_TAG_BY_NAME_TO_NOTE_MUTATION } from '../utils/sharedQueriesAndFragments';
 import { DisplayOnlyTag } from '../utils/types';
-import useDataState, { DataState } from '../utils/useDataState';
+import { DataState } from '../utils/useDataState';
 import ErrorSnackbar from './ErrorSnackbar';
 import InlineTagForm from './InlineTagForm';
-
-export const TAGS_WITH_COUNTS_QUERY = gql`
-  query TagsWithCounts {
-    tags {
-      ...BaseTag
-      noteCount @client
-    }
-  }
-  ${BASE_TAG_FRAGMENT}
-`;
 
 export type AddTagFormProps = {
   noteId: string;
@@ -40,14 +27,7 @@ const AddTagForm = ({
   const userId = useUserId();
   const [submittedTag, setSubmittedTag] = useState<string | null>(null);
 
-  const [fetchTagsQuery, tagsQuery] = useDataState(
-    useLazyQuery<TagsWithCountsQuery>(TAGS_WITH_COUNTS_QUERY, {
-      fetchPolicy: 'cache-only',
-    })
-  );
-  useEffect(() => {
-    setTimeout(fetchTagsQuery, 0);
-  }, [fetchTagsQuery]);
+  const tagsQuery = useTagsWithCountsQuery();
 
   const [addTagToNote, addTagToNoteMutation] = useMutation<
     AddTagByNameToNoteMutation,
