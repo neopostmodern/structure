@@ -132,7 +132,7 @@ await initializeMongo()
 
 try {
   logger.info('Running migrations...')
-  await migrationSystem.migrateTo(8)
+  await migrationSystem.migrateTo(9)
   logger.info('Migrations complete.')
   await runExpressServer()
 } catch (error) {
