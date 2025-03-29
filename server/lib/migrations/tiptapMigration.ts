@@ -56,12 +56,9 @@ export class DragEventMock extends Event {
 }
 
 export const createTiptapMigrator = async () => {
-  // const { Markdown } = await dynamicImport('tiptap-markdown');
-
   const { window } = new JSDOM()
   ;(global as any).window = window
   ;(global as any).document = window.document
-  ;(global as any).navigator = window.navigator
   ;(global as any).Node = window.Node
   ;(global as any).ClipboardEvent = ClipboardEventMock
   ;(global as any).DragEvent = DragEventMock

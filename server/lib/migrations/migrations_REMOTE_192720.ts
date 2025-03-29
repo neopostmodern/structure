@@ -1,11 +1,12 @@
 import mongoose from 'mongoose'
-import { Meta } from '../meta/metaModel'
-import { Link, Note, Text } from '../notes/notesModels'
-import { Tag } from '../tags/tagModel'
-import { ALL_PERMISSIONS } from '../tags/tagsMethods'
-import { User } from '../users/userModel'
+import { Meta } from '../meta/metaModel.mts'
+import { Link, Note, Text } from '../notes/notesModels.mts'
+import { Tag } from '../tags/tagModel.mts'
+import { ALL_PERMISSIONS } from '../tags/tagsMethods.mts'
+import { User } from '../users/userModel.mts'
 
-import { createOwnershipTagOnUser } from '../users/methods/createOwnershipTagOnUser'
+import { createOwnershipTagOnUser } from '../users/methods/createOwnershipTagOnUser.mts'
+import { logger } from '../util/logging.mts'
 
 const migrations = new Map()
 migrations.set(0, {
@@ -14,8 +15,7 @@ migrations.set(0, {
     const highestMigration = await mongoose.connection.db
       .collection('migrations')
       .findOne({ state: 'up' }, { sort: { createdAt: -1 } })
-    console.log('Detected highest previously run migration:')
-    console.log(highestMigration)
+    logger.info('Detected highest previously run migration:', highestMigration)
     let highestVersion = 0
     if (highestMigration !== null) {
       migrations.forEach((migration, version) => {
@@ -29,14 +29,14 @@ migrations.set(0, {
       _id: 'database-version',
       value: highestVersion,
     })
-    console.log(`Database version set to ${highestVersion}`)
-    console.log(
+    logger.info(`Database version set to ${highestVersion}`)
+    logger.info(
       "Obsolete 'migrations' collection not deleted, you can do so manually.",
     )
     return migrationMetaEntry.save()
   },
   async down() {
-    console.log('This migration is irreversible. Performing no action.')
+    logger.warn('This migration is irreversible. Performing no action.')
   },
 })
 migrations.set(1, {
@@ -120,7 +120,7 @@ const collectionsToAddUpdatedAtField = [Meta, User, Note, Tag]
 migrations.set(6, {
   name: 'create-field-updated-at',
   async up() {
-    console.log(
+    logger.info(
       "[Migration 6.1] Ensure the (previously missing) 'createdAt' field exists on all users...",
     )
     await User.find().then((users) =>
@@ -129,7 +129,7 @@ migrations.set(6, {
           if (user.createdAt) {
             return
           }
-          console.log(`Setting best-guess 'createdAt' for user ${user._id}...`)
+          logger.info(`Setting best-guess 'createdAt' for user ${user._id}...`)
           let oldestNoteCreatedAt = (
             await Note.findOne(
               { user: user._id },
@@ -140,7 +140,7 @@ migrations.set(6, {
             )
           )?.createdAt
           if (!oldestNoteCreatedAt) {
-            console.log('! User has no notes, using current time.')
+            logger.warn('User has no notes, using current time.')
             oldestNoteCreatedAt = new Date()
           }
           user.createdAt = oldestNoteCreatedAt
@@ -148,9 +148,9 @@ migrations.set(6, {
         }),
       ),
     )
-    console.log('[Migration 6.1] OK\n')
+    logger.info('[Migration 6.1] OK\n')
 
-    console.log(
+    logger.info(
       "[Migration 6.2] Ensure the (previously missing) 'createdAt' field exists on all tags...",
     )
     await Tag.updateMany(
@@ -166,9 +166,9 @@ migrations.set(6, {
       ],
       { timestamps: false },
     )
-    console.log('[Migration 6.2] OK\n')
+    logger.info('[Migration 6.2] OK\n')
 
-    console.log(
+    logger.info(
       "[Migration 6.3] Ensure the (previously missing) 'createdAt' field exists on meta collection...",
     )
     const oldestUserCreatedAt =
@@ -190,9 +190,9 @@ migrations.set(6, {
       },
       { timestamps: false },
     )
-    console.log('[Migration 6.3] OK\n')
+    logger.info('[Migration 6.3] OK\n')
 
-    console.log("[Migration 6.4] Create field 'updatedAt' throughout...")
+    logger.info("[Migration 6.4] Create field 'updatedAt' throughout...")
     for (const collection of collectionsToAddUpdatedAtField) {
       await collection.updateMany(
         {},
@@ -206,34 +206,34 @@ migrations.set(6, {
         { timestamps: false },
       )
     }
-    console.log('[Migration 6.4] OK\n')
+    logger.info('[Migration 6.4] OK\n')
   },
   async down() {
-    console.log("[Migration 6.1] Delete 'createdAt' on user...")
+    logger.info("[Migration 6.1] Delete 'createdAt' on user...")
     await User.updateMany(
       {},
       { $unset: { createdAt: true } },
       { timestamps: false },
     )
-    console.log('[Migration 6.1] OK\n')
+    logger.info('[Migration 6.1] OK\n')
 
-    console.log("[Migration 6.2] Delete 'createdAt' on tag...")
+    logger.info("[Migration 6.2] Delete 'createdAt' on tag...")
     await Tag.updateMany(
       {},
       { $unset: { createdAt: true } },
       { timestamps: false },
     )
-    console.log('[Migration 6.2] OK\n')
+    logger.info('[Migration 6.2] OK\n')
 
-    console.log("[Migration 6.3] Delete 'createdAt' on meta collection...")
+    logger.info("[Migration 6.3] Delete 'createdAt' on meta collection...")
     await Meta.updateMany(
       {},
       { $unset: { createdAt: true } },
       { timestamps: false },
     )
-    console.log('[Migration 6.3] OK\n')
+    logger.info('[Migration 6.3] OK\n')
 
-    console.log("[Migration 6.4] Delete field 'updatedAt' throughout...")
+    logger.info("[Migration 6.4] Delete field 'updatedAt' throughout...")
     for (const collection of collectionsToAddUpdatedAtField) {
       await collection.updateMany(
         {},
@@ -245,7 +245,7 @@ migrations.set(6, {
         { timestamps: false },
       )
     }
-    console.log('[Migration 6.4] OK\n')
+    logger.info('[Migration 6.4] OK\n')
   },
 })
 
@@ -285,6 +285,24 @@ migrations.set(7, {
 })
 
 migrations.set(8, {
+  name: 'changed-at',
+  async up() {
+    for (const note of await Note.find()) {
+      note.changedAt = note.updatedAt
+      await note.save()
+    }
+    for (const tag of await Tag.find()) {
+      tag.changedAt = tag.updatedAt
+      await tag.save()
+    }
+  },
+  async down() {
+    await Note.updateMany({}, { $unset: { changedAt: 1 } })
+    await Tag.updateMany({}, { $unset: { changedAt: 1 } })
+  },
+})
+
+migrations.set(9, {
   name: 'markdown-explicit-hardbreaks-tiptap',
   async up() {
     const { createTiptapMigrator, destroyTiptapMigrator } = await import(

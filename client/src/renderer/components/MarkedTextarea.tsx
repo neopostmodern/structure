@@ -1,4 +1,11 @@
-import { Tab, Tabs, TextField } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  Skeleton,
+  Tab,
+  Tabs,
+  TextField,
+} from '@mui/material';
 import React, { lazy, useEffect, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
@@ -8,7 +15,17 @@ import suspenseWrap from '../utils/suspenseWrap';
 import RenderedMarkdown from './RenderedMarkdown';
 
 const RichMarkdownEditor = suspenseWrap(
-  lazy(() => import(/* webpackPrefetch: true */ './RichMarkdownEditor'))
+  lazy(() => import(/* webpackPrefetch: true */ './RichMarkdownEditor')),
+  ({ markdown }) => (
+    <Card variant="outlined" sx={{ backgroundColor: 'unset' }}>
+      <Skeleton variant="rectangular" height={45} />
+      <CardContent
+        sx={{ paddingTop: 0, paddingBottom: 0, paddingLeft: '12px' }}
+      >
+        <RenderedMarkdown markdown={markdown || ''} />
+      </CardContent>
+    </Card>
+  )
 );
 
 const TextareaContainer = styled.div`
