@@ -1,9 +1,9 @@
 module.exports = {
-  extends: 'airbnb-typescript',
+  extends: './node_modules/gts',
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
-    project: './tsconfig.json',
+    project: true,
     tsconfigRootDir: __dirname,
     createDefaultProgram: true,
   },
