@@ -15,13 +15,7 @@ const config = {
   modifier: Modifier.CONTROL,
 };
 (async () => {
-  if (navigator.keyboard) {
-    const layoutMap = await navigator.keyboard.getLayoutMap();
-
-    if (layoutMap.has('MetaLeft') || layoutMap.has('MetaRight')) {
-      config.modifier = Modifier.COMMAND;
-    }
-  } else if (/(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
+  if (/(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
     config.modifier = Modifier.COMMAND;
   }
 })();
