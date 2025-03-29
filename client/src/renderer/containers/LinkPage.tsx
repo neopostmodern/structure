@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
@@ -28,6 +28,7 @@ const LINK_QUERY = gql`
       _id
       createdAt
       updatedAt
+      changedAt
       archivedAt
       user {
         ...BaseUser
@@ -51,6 +52,7 @@ const UPDATE_LINK_MUTATION = gql`
       _id
       createdAt
       updatedAt
+      changedAt
       url
       domain
       name

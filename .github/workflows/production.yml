@@ -21,11 +21,11 @@ jobs:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up node / npm with caching
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
           cache-dependency-path: |
             package-lock.json
@@ -51,7 +51,7 @@ jobs:
       - name: Pack setup
         run: tar cf setup.tar *
       - name: Store setup (as artifact)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: setup-${{ matrix.os }}
           retention-days: 1
@@ -63,7 +63,7 @@ jobs:
     needs: [setup]
     steps:
       - name: Download setup (from artifact)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: setup-ubuntu-latest
       - name: Unpack setup
@@ -73,7 +73,7 @@ jobs:
       - name: Deploy via FTP
         uses: sebastianpopp/ftp-action@releases/v2
         with:
-          localDir: ./client/release/app/dist/web/
+          localDir: ./client/out/web/
           remoteDir: ./
           host: amsr102.websitehostserver.net:21
           user: github@app.structure.love
@@ -88,7 +88,7 @@ jobs:
     needs: [setup]
     steps:
       - name: Download setup (from artifact)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: setup-${{ matrix.os }}
       - name: Unpack setup
@@ -111,7 +111,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: Download setup (from artifact)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: setup-ubuntu-latest
       - name: Unpack setup

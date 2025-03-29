@@ -1,28 +1,10 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `npm run build` or `npm run build:main`, this file is compiled to
- * `./src/main.js` using webpack. This gives us some performance wins.
- */
 import config from '@structure/config';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
-import log from 'electron-log';
-import { autoUpdater } from 'electron-updater';
+import { updateElectronApp } from 'update-electron-app';
 import path from 'path';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
-
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
 
 app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar');
 
@@ -36,8 +18,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDevelopment =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDevelopment = import.meta.env.DEV || __DEBUG_PROD__ === 'true';
 
 if (isDevelopment) {
   require('electron-debug')();
@@ -95,7 +76,14 @@ const createWindow = async () => {
     },
   });
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
+  // and load the index.html of the app.
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+  } else {
+    mainWindow.loadFile(
+      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
+    );
+  }
 
   mainWindow.on('ready-to-show', async () => {
     if (!mainWindow) {
@@ -160,9 +148,7 @@ const createWindow = async () => {
 
   handleParameters(process.argv);
 
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
+  updateElectronApp();
 };
 
 /**

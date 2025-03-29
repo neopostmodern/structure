@@ -29,18 +29,18 @@ const handleLogin = (backendUrl: string, popUpOptions: string, dispatch) => {
 
 let electronMiddleware;
 
-if (process.env.TARGET === 'web') {
+if (__BUILD_TARGET__ === 'web') {
   electronMiddleware = (store) => (next) => (action) => {
     if (action.type === REQUEST_LOGIN) {
       handleLogin(
-        BACKEND_URL,
+        __BACKEND_URL__,
         'height=600,width=400,modal=yes,alwaysRaised=yes',
         store.dispatch
       );
     }
     if (action.type === REQUEST_LOGOUT) {
       clearApolloCache();
-      store.dispatch(push(`${BACKEND_URL}/logout`));
+      store.dispatch(push(`${__BACKEND_URL__}/logout`));
     }
     if (action.type === REQUEST_CLIPBOARD) {
       navigator.permissions

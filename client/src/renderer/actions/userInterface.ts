@@ -18,6 +18,7 @@ export enum ArchiveState {
 export enum SortBy {
   CREATED_AT = 'CREATED_AT',
   UPDATED_AT = 'UPDATED_AT',
+  CHANGED_AT = 'CHANGED_AT',
 }
 
 export const REQUEST_LOGIN = 'REQUEST_LOGIN';

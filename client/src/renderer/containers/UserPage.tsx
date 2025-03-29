@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { Launch } from '@mui/icons-material';
 import { Button, Link, Typography } from '@mui/material';
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -47,7 +47,7 @@ const UserPage: FC = () => {
           <LinkButton
             size="huge"
             component={Link}
-            href={BACKEND_URL + '/export.json'}
+            href={__BACKEND_URL__ + '/export.json'}
             target="_blank"
             rel="noopener noreferrer"
             endIcon={<Launch />}
@@ -89,7 +89,7 @@ const UserPage: FC = () => {
         </>
       )}
       <Typography variant="h2">About</Typography>
-      You are using Structure {VERSION}
+      You are using Structure {__VERSION__}
       <br />
       Find the Structure source code{' '}
       <Link

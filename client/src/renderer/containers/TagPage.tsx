@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@mui/material';
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { FC, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
@@ -71,6 +71,7 @@ const UPDATE_TAG_MUTATION = gql`
           name
           createdAt
           archivedAt
+          changedAt
           description
           tags {
             _id

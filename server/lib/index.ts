@@ -1,19 +1,22 @@
-import { ApolloServer, ApolloServerPlugin } from '@apollo/server'
+import { ApolloServer, type ApolloServerPlugin } from '@apollo/server'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
-import config from '@structure/config'
+import config from '@structure/config' with { type: 'json' }
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
 import mongoSanitize from 'express-mongo-sanitize'
 import { createServer } from 'http'
-import migrationSystem from './migrations/migrationSystem'
-import { initializeMongo } from './mongo'
-import restApi from './restApi.js'
-import { resolvers, typeDefs } from './schema'
-import { setUpGitHubLogin } from './users/githubLogin.js'
-import { SessionContext } from './util/types'
+import migrationSystem from './migrations/migrationSystem.mts'
+import { initializeMongo } from './mongo.mts'
+import restApi from './restApi.mts'
+import { resolvers, typeDefs } from './schema.mts'
+import { setUpGitHubLogin } from './users/githubLogin.mts'
+import { logger, timerEnd, timerStart } from './util/logging.mts'
+import type { SessionContext } from './util/types.mts'
+
+timerStart('startup')
 
 const graphQlPath = '/graphql'
 
@@ -69,8 +72,8 @@ const runExpressServer = async () => {
               (JSON.stringify(responseContext.response).length * 2) /
               1024
             ).toFixed(1)
-            console.log(
-              `\x1b[33mApollo:\x1b[0m ${
+            logger.debug_raw(
+              `\x1b[33m[Apollo]\x1b[0m ${
                 requestContext.operation?.operation || 'UNKNOWN'
               } ${requestContext.operationName || 'UNNAMED'} (${
                 requestContext.contextValue.user?.name || 'ANONYMOUS'
@@ -89,7 +92,7 @@ const runExpressServer = async () => {
     typeDefs,
     resolvers,
     formatError: (formattedError) => {
-      console.error(
+      logger.error(
         `[Apollo Error] ${formattedError.message} @ ${
           formattedError.path?.join('.') || 'NO PATH'
         }\n `,
@@ -118,21 +121,22 @@ const runExpressServer = async () => {
   restApi(app)
 
   await new Promise<void>((resolve) => server.listen(config.PORT, resolve))
-  console.log(`REST Server running at http://localhost:${config.PORT}...`)
-  console.log(
+  logger.info(`REST Server running at http://localhost:${config.PORT}...`)
+  logger.info(
     `GraphQL Server running at http://localhost:${config.PORT}${graphQlPath}...`,
   )
+  timerEnd('startup', 'Server startup')
 }
 
 await initializeMongo()
 
 try {
-  console.log('Running migrations...')
-  await migrationSystem.migrateTo(7)
-  console.log('Migrations complete.')
+  logger.info('Running migrations...')
+  await migrationSystem.migrateTo(9)
+  logger.info('Migrations complete.')
   await runExpressServer()
 } catch (error) {
-  console.error('Migration failed.')
-  console.error(error)
+  logger.info('Migration failed.')
+  logger.error(error)
   process.exit(1)
 }

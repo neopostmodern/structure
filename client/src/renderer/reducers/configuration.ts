@@ -9,15 +9,15 @@ export interface ConfigurationStateType {
 type Action = { type: string; payload?: any };
 
 const backendUrl =
-  process.env.TARGET === 'web'
-    ? BACKEND_URL
-    : localStorage.getItem('backend-url') || BACKEND_URL;
+  __BUILD_TARGET__ === 'web'
+    ? __BACKEND_URL__
+    : localStorage.getItem('backend-url') || __BACKEND_URL__;
 const networkMode =
   (localStorage.getItem('network-mode') as NetworkMode) || NetworkMode.AUTO;
 
 const initialState: ConfigurationStateType = {
   backendUrl,
-  backendUrlDefault: BACKEND_URL,
+  backendUrlDefault: __BACKEND_URL__,
   networkMode,
 };
 
