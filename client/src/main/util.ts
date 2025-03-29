@@ -4,7 +4,7 @@ import { URL } from 'url';
 
 export let resolveHtmlPath: (htmlFileName: string) => string;
 
-if (process.env.NODE_ENV === 'development') {
+if (import.meta.env.DEV) {
   const port = process.env.PORT || 1212;
   resolveHtmlPath = (htmlFileName: string) => {
     const url = new URL(`http://localhost:${port}`);

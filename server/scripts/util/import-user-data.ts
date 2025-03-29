@@ -1,11 +1,16 @@
 import { INTERNAL_TAG_PREFIX_OWNERSHIP } from '@structure/common'
-import { ObjectId } from 'bson'
 import * as fs from 'fs'
+import { Types } from 'mongoose'
 import * as readline from 'readline'
-import { Cache } from '../../lib/cache/cacheModel.js'
-import { Note } from '../../lib/notes/notesModels.js'
-import { Tag } from '../../lib/tags/tagModel.js'
-import { User } from '../../lib/users/userModel.js'
+import { Cache } from '../../lib/cache/cacheModel.mts'
+import { initializeMongo } from '../../lib/mongo.mts'
+import { Note } from '../../lib/notes/notesModels.mts'
+import { Tag } from '../../lib/tags/tagModel.mts'
+import { createOwnershipTagOnUser } from '../../lib/users/methods/createOwnershipTagOnUser.mts'
+import { User } from '../../lib/users/userModel.mts'
+
+// see https://stackoverflow.com/a/77738926
+const { ObjectId } = Types
 
 // print with red font
 const red = (text: string) => `\x1b[31m${text}\x1b[0m`
@@ -38,7 +43,7 @@ const convertData = ({ _id, createdAt, updatedAt, ...rest }) => {
 }
 
 // wait for mongo startup
-await new Promise((resolve) => setTimeout(resolve, 1000))
+await initializeMongo()
 
 // take the first argument as the file name
 const backupFileName = process.argv[2]
@@ -135,6 +140,37 @@ await User.updateOne(
   },
   { timestamps: false },
 )
+
+console.log('Creating related users as dummies...')
+const userCache = []
+for (const tag of await Tag.find({ user: backupData.user._id })) {
+  const userIds = tag.permissions.keys()
+  for (const userId of userIds) {
+    if (userCache.includes(userId)) {
+      continue
+    }
+
+    const existingUser = await User.findOne({ _id: userId })
+    if (existingUser) {
+      userCache.push(userId)
+      continue
+    }
+
+    const githubUser = await fetch(
+      `https://api.github.com/user/${userId}`,
+    ).then((response) => response.json())
+
+    const newUser = new User({
+      _id: userId,
+      authenticationProvider: 'github',
+      name: githubUser.login,
+    })
+
+    createOwnershipTagOnUser(newUser)
+    userCache.push(userId)
+    console.log(`Created user '${newUser.name}'.`)
+  }
+}
 
 console.log("Dumping user's caches...")
 await Cache.deleteMany({ user: backupData.user._id })

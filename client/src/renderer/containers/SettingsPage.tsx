@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { Typography } from '@mui/material';
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBackendUrl } from '../actions/configuration';
@@ -59,7 +59,7 @@ const SettingsPage: FC = () => {
             )
           );
         }}
-        readOnly={process.env.TARGET === 'web'}
+        readOnly={__BUILD_TARGET__ === 'web'}
         comment={
           <>
             The backend server is in charge of storing your data (username,
@@ -68,7 +68,7 @@ const SettingsPage: FC = () => {
             transport to the server, not on the server. This means the operator
             of the server can (theoretically) read and/or modify all your data.
             <br />
-            {process.env.TARGET === 'electron' ? (
+            {__BUILD_TARGET__ === 'electron_renderer' ? (
               <>
                 Modifying the backend server URL causes a restart.{' '}
                 <b>
@@ -91,7 +91,7 @@ const SettingsPage: FC = () => {
           type="text"
           defaultValue={backendUrl}
           placeholder={backendUrlDefault}
-          disabled={process.env.TARGET === 'web'}
+          disabled={__BUILD_TARGET__ === 'web'}
         />
       </SettingsEntry>
       <AdvancedSettings />

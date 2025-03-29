@@ -27,6 +27,8 @@ export const sortByToName = (sortBy: SortBy): string => {
   switch (sortBy) {
     case SortBy.CREATED_AT:
       return 'Recently created first';
+    case SortBy.CHANGED_AT:
+      return 'Recently changed first';
     case SortBy.UPDATED_AT:
       return 'Recently updated first';
   }

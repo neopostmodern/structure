@@ -1,8 +1,9 @@
 {
   "name": "@structure/client",
+  "productName": "Structure",
   "description": "Frontend (desktop and web app) for the Structure bookmarking software",
   "version": "0.23.1",
-  "main": "src/main/main.ts",
+  "main": ".vite/build/main.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -11,23 +12,14 @@
     "lib"
   ],
   "scripts": {
-    "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
-    "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
-    "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true TARGET=electron webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
-    "build:web": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true TARGET=web webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
-    "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
-    "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
+    "build:web": "vite --config vite.web.config.ts build",
+    "lint": "eslint --ext .ts,.tsx .",
     "generate-graphql-types": "graphql-codegen --config codegen.yml",
-    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
-    "package-publish": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish always",
-    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
-    "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
-    "start:main": "cross-env NODE_ENV=development electron -r ts-node/register/transpile-only ./src/main/main.ts",
-    "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true TARGET=electron webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "start:web": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true TARGET=web PORT=3000 webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest",
-    "prepare": "cd .. && husky install client/.husky",
-    "version": "ts-node ./.erb/scripts/update-version.js"
+    "package": "electron-forge make",
+    "package-publish": "electron-forge publish",
+    "start": "electron-forge start",
+    "start:web": "vite --config vite.web.config.ts",
+    "prepare": "cd .. && husky install client/.husky"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -42,84 +34,6 @@
     "*.{html,md,yml}": [
       "prettier --ignore-path .eslintignore --single-quote --write"
     ]
-  },
-  "build": {
-    "productName": "Structure",
-    "appId": "com.neopostmodern.Structure",
-    "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
-    "asar": true,
-    "asarUnpack": "**\\*.{node,dll}",
-    "files": [
-      "dist",
-      "node_modules",
-      "package.json"
-    ],
-    "protocols": [
-      {
-        "name": "Structure",
-        "schemes": [
-          "structure"
-        ]
-      }
-    ],
-    "afterSign": ".erb/scripts/notarize.js",
-    "mac": {
-      "target": {
-        "target": "default",
-        "arch": [
-          "arm64",
-          "x64"
-        ]
-      },
-      "type": "distribution",
-      "hardenedRuntime": true,
-      "entitlements": "assets/entitlements.mac.plist",
-      "entitlementsInherit": "assets/entitlements.mac.plist",
-      "gatekeeperAssess": false,
-      "category": "public.app-category.productivity",
-      "icon": "assets/icons/icon-macOS.icns"
-    },
-    "dmg": {
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
-    },
-    "win": {
-      "target": [
-        "nsis"
-      ]
-    },
-    "linux": {
-      "target": [
-        "AppImage"
-      ],
-      "category": "Office",
-      "desktop": {
-        "StartupWMClass": "structure"
-      }
-    },
-    "directories": {
-      "app": "release/app",
-      "buildResources": "assets",
-      "output": "release/build"
-    },
-    "extraResources": [
-      "./assets/**"
-    ],
-    "publish": {
-      "provider": "github",
-      "owner": "neopostmodern",
-      "repo": "structure"
-    }
   },
   "repository": {
     "type": "git",
@@ -142,51 +56,24 @@
     "typescript"
   ],
   "homepage": "https://structure.love",
-  "jest": {
-    "testURL": "http://localhost/",
-    "testEnvironment": "jsdom",
-    "transform": {
-      "\\.(ts|tsx|js|jsx)$": "ts-jest"
-    },
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.erb/mocks/fileMock.js",
-      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-    },
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "release/app/node_modules"
-    ],
-    "testPathIgnorePatterns": [
-      "release/app/dist"
-    ],
-    "setupFiles": [
-      "./.erb/scripts/check-build-exists.ts"
-    ]
-  },
   "devDependencies": {
-    "@babel/core": "^7.21.8",
-    "@babel/plugin-transform-runtime": "^7.21.4",
-    "@babel/preset-env": "^7.21.5",
-    "@babel/preset-react": "^7.18.6",
-    "@babel/preset-typescript": "^7.21.5",
+    "@electron-forge/cli": "^7.5.0",
+    "@electron-forge/maker-deb": "^7.5.0",
+    "@electron-forge/maker-rpm": "^7.5.0",
+    "@electron-forge/maker-squirrel": "^7.5.0",
+    "@electron-forge/maker-zip": "^7.5.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
+    "@electron-forge/plugin-fuses": "^7.5.0",
+    "@electron-forge/plugin-vite": "^7.5.0",
+    "@electron/fuses": "^1.8.0",
     "@graphql-codegen/cli": "3.3.1",
     "@graphql-codegen/fragment-matcher": "4.0.1",
     "@graphql-codegen/typescript": "3.0.4",
     "@graphql-codegen/typescript-operations": "3.0.4",
     "@graphql-codegen/typescript-react-apollo": "3.3.7",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.10",
+    "@reforged/maker-appimage": "^4.0.2",
     "@simbathesailor/use-what-changed": "^2.0.0",
-    "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^14.0.0",
-    "@types/jest": "^29.5.1",
     "@types/lodash": "^4.14.194",
     "@types/mousetrap": "^1.6.11",
     "@types/node": "20.2.1",
@@ -195,12 +82,9 @@
     "@types/react-test-renderer": "^18.0.0",
     "@types/redux-logger": "^3.0.9",
     "@types/styled-components": "^5.1.26",
-    "@types/terser-webpack-plugin": "^5.0.4",
-    "@types/webpack-env": "^1.18.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.6",
-    "@typescript-eslint/parser": "^5.59.6",
-    "babel-loader": "^9.1.2",
-    "babel-plugin-direct-import": "^1.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitejs/plugin-react": "^4.3.3",
     "browserslist": "^4.21.5",
     "concurrently": "^8.0.1",
     "copy-webpack-plugin": "^11.0.0",
@@ -208,51 +92,26 @@
     "css-loader": "^6.7.3",
     "css-minimizer-webpack-plugin": "^5.0.0",
     "detect-port": "^1.5.1",
-    "electron": "^24.3.1",
+    "electron": "^33.0.2",
     "electron-builder": "^24.4.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-notarize": "^1.1.1",
     "electron-rebuild": "^3.2.5",
+    "esbuild": "^0.24.0",
+    "esbuild-register": "^3.6.0",
     "eslint": "^8.40.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-erb": "^4.0.6",
-    "eslint-import-resolver-typescript": "^3.5.5",
-    "eslint-import-resolver-webpack": "^0.13.2",
-    "eslint-plugin-compat": "^4.1.4",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-jest": "^27.2.1",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.5.1",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-plugin-import": "^2.31.0",
     "husky": "^8.0.3",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^29.5.0",
     "lint-staged": "^13.2.2",
-    "mini-css-extract-plugin": "^2.7.5",
     "prettier": "^2.8.8",
-    "react-refresh": "^0.14.0",
-    "react-refresh-typescript": "^2.0.9",
-    "react-test-renderer": "^18.2.0",
     "rimraf": "^5.0.1",
-    "sass": "^1.62.1",
-    "sass-loader": "^13.2.2",
-    "source-map-loader": "^4.0.1",
-    "style-loader": "^3.3.2",
-    "terser-webpack-plugin": "^5.3.9",
-    "ts-jest": "^29.1.0",
-    "ts-loader": "^9.4.2",
-    "ts-node": "^10.9.1",
-    "url-loader": "^4.1.1",
-    "webpack": "^5.83.1",
-    "webpack-bundle-analyzer": "^4.8.0",
-    "webpack-cli": "^5.1.1",
-    "webpack-dev-server": "^4.15.0",
-    "webpack-font-preload-plugin": "^1.5.0",
-    "webpack-merge": "^5.8.0",
-    "workbox-webpack-plugin": "^6.5.4"
+    "sass-embedded": "^1.80.3",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.9",
+    "vite-plugin-pwa": "^0.21.0"
   },
   "dependencies": {
     "@apollo/client": "^3.7.14",
@@ -281,7 +140,7 @@
     "apollo3-cache-persist": "^0.14.1",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
-    "electron-updater": "^5.3.0",
+    "electron-squirrel-startup": "^1.0.1",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
     "history": "^5.3.0",
@@ -290,8 +149,8 @@
     "match-sorter": "^6.3.1",
     "mousetrap": "^1.6.5",
     "mui-tiptap": "^1.8.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-hook-form": "^7.43.9",
     "react-intersection-observer": "^9.4.3",
     "react-markdown": "^8.0.7",
@@ -308,11 +167,8 @@
     "remark-breaks": "^3.0.3",
     "remark-gfm": "^3.0.1",
     "styled-components": "^5.3.10",
-    "tiptap-markdown": "^0.8.9"
-  },
-  "devEngines": {
-    "node": ">=14.x",
-    "npm": ">=7.x"
+    "tiptap-markdown": "^0.8.9",
+    "update-electron-app": "^3.0.0"
   },
   "prettier": {
     "overrides": [
@@ -330,5 +186,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "volta": {
+    "extends": "../package.json"
   }
 }

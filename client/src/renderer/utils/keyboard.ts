@@ -42,7 +42,7 @@ export const adaptShortcutsForPlatform = (
         const webShortcut = shortcut
           .replace(DESKTOP_ONLY_MODIFIER + '+', '')
           .replace(GLOBAL, '');
-        if (process.env.TARGET === 'web') {
+        if (__BUILD_TARGET__ === 'web') {
           return webShortcut;
         } else {
           return [desktopShortcut, webShortcut];
@@ -61,9 +61,10 @@ export const adaptShortcutsForPlatform = (
 export const QUICK_ACCESS_SHORTCUT_PREFIX = 'QUICK_';
 const shortcutTemplates: { [shortcutName: string]: Array<string | false> } = {
   HOME_PAGE: [`${GLOBAL}${MODIFIER}+.`, 'esc'],
+  SETTINGS_PAGE: [`${GLOBAL}${MODIFIER}+,`],
   QUICK_SUBMIT: [`${GLOBAL}${MODIFIER}+enter`],
   QUICK_NAVIGATION: [
-    process.env.TARGET === 'electron' && `${GLOBAL}ctrl+tab`,
+    __BUILD_TARGET__ === 'electron' && `${GLOBAL}ctrl+tab`,
     'k',
   ],
   DEV_TOOLS: [`${GLOBAL}f12`, `${GLOBAL}ctrl+shift+i`],

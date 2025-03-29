@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import Credentials, { CredentialsOrLoading } from '../components/Credentials';
@@ -136,7 +136,7 @@ const UserSettingsSection: FC = () => {
         <StructureTextField
           type="text"
           inputProps={{ readOnly: true }}
-          value={`javascript:void(open('${WEB_FRONTEND_HOST}/notes/add?url='+encodeURIComponent(location.href)+'&autoSubmit'))`}
+          value={`javascript:void(open('${__WEB_FRONTEND_HOST__}/notes/add?url='+encodeURIComponent(location.href)+'&autoSubmit'))`}
         />
       </SettingsEntry>
       <Credentials

@@ -3,7 +3,7 @@ import { AccountCircle, LocalOffer, Settings } from '@mui/icons-material';
 import { CircularProgress, Stack } from '@mui/material';
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import UserIdContext from 'renderer/utils/UserIdContext';
+import UserIdContext from '../utils/UserIdContext';
 import packageJson from '../../../package.json';
 import Centered from '../components/Centered';
 import FatalApolloError from '../components/FatalApolloError';

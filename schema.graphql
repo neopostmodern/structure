@@ -24,6 +24,7 @@ type EntitiesUpdatedSince {
 interface INote {
   _id: ID!
   archivedAt: Date
+  changedAt: Date!
   createdAt: Date!
   deletedAt: Date
   description: String!
@@ -62,6 +63,7 @@ input InputText {
 type Link implements BaseObject & INote {
   _id: ID!
   archivedAt: Date
+  changedAt: Date!
   createdAt: Date!
   deletedAt: Date
   description: String!
@@ -121,6 +123,7 @@ type Query {
 
 type Tag implements BaseObject {
   _id: ID!
+  changedAt: Date!
   color: String!
   createdAt: Date!
   name: String!
@@ -140,6 +143,7 @@ type TagPermissions {
 type Text implements BaseObject & INote {
   _id: ID!
   archivedAt: Date
+  changedAt: Date!
   createdAt: Date!
   deletedAt: Date
   description: String!

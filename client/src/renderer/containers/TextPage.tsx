@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { gql } from 'graphql-tag';
 import { FC, useCallback } from 'react';
 import { useParams } from 'react-router';
 import FatalApolloError from '../components/FatalApolloError';
@@ -27,6 +27,7 @@ const TEXT_QUERY = gql`
       _id
       createdAt
       updatedAt
+      changedAt
       archivedAt
       user {
         ...BaseUser
@@ -48,6 +49,7 @@ const UPDATE_TEXT_MUTATION = gql`
       _id
       createdAt
       updatedAt
+      changedAt
       archivedAt
       name
       description

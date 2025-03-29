@@ -12,6 +12,7 @@ const TOGGLE_ARCHIVED_MUTATION = gql`
       ... on INote {
         _id
         archivedAt
+        updatedAt
       }
     }
   }

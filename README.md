@@ -62,10 +62,11 @@ There is no documentation yet but the following files should get you started:
 ```
 config/config-example.json
 server/scripts/deploy/deploy.sh
+server/scripts/deploy/structure-backend.service
 .github/workflows/staging.yml
 ```
 
-It depends on node.js (server version specified in `server/package.json`&rarr;`volta`) and mongoDB 4.2+.
+It depends on node.js (server version specified in `server/package.json`&rarr;`volta`) and mongoDB 4.2+ and runs as a systemD service.
 
 A docker version is planned.
 
@@ -78,6 +79,15 @@ npm run client:web:start # or client:electron:start for the desktop app
 and
 ```
 npm run server:start
+```
+
+### Importing data from another server
+
+You can export your / one user's data from a server via the GUI. 
+To bypass the (currently extremely slow) GUI importer, run:
+```shell
+cd server
+node --loader ts-node/esm/transpile-only --experimental-specifier-resolution=node scripts/util/import-user-data.ts PATH_TO_YOUR_EXPORT_FILE.json
 ```
 
 Comprehensive PRs are very welcome, as are bug reports, feature requests and other suggestions.

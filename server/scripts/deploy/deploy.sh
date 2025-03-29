@@ -18,12 +18,8 @@ lftp -c "open sftp://$USER:SSH@$SERVER; put -O $SERVER_FOLDER_BACKEND server.tar
 ssh "$USER@$SERVER" "cd $SERVER_FOLDER_BACKEND && tar xf server.tar && rm server.tar"
 echo "OK"
 
-echo "Starting backend service (as pm2-process '$PROCESS_NAME')..."
-PM2_NODE_ARGS="--interpreter=\$(which node)"
-if [ -n "$NODE_ARGS" ]; then
-	 PM2_NODE_ARGS="$PM2_PM2_NODE_ARGS --node-args=\"$NODE_ARGS\""
-fi
-ssh "$USER@$SERVER" "bash -l -c 'cd \"$SERVER_FOLDER_BACKEND/server/\"; export NODE_ENV=\"production\"; pm2 restart \"$PROCESS_NAME\" $PM2_NODE_ARGS || pm2 start --cwd \"$SERVER_FOLDER_BACKEND/server/\" --name \"$PROCESS_NAME\" $PM2_NODE_ARGS \$(which npm) -- start'"
+echo "Starting backend service (as systemd service '$SYSTEMD_SERVICE_NAME')..."
+ssh "$USER@$SERVER" "systemd --user restart $SYSTEMD_SERVICE_NAME"
 echo "OK"
 
 echo -e "\nDeploy finished at $(date)"

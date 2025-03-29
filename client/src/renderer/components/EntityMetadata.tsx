@@ -12,6 +12,7 @@ const EntityMetadata = ({
   entity: {
     createdAt: DateOrTimestamp;
     updatedAt: DateOrTimestamp;
+    changedAt: DateOrTimestamp;
     user: {
       name: string;
     };
@@ -32,9 +33,13 @@ const EntityMetadata = ({
     </ButtonLike>
     <ButtonLike
       startIcon={<Edit />}
-      tooltip={`Updated at ${dateToCustomizedLongISO8061(entity.updatedAt)}`}
+      tooltip={`Changed at ${dateToCustomizedLongISO8061(
+        entity.changedAt
+      )} (last database update at ${dateToCustomizedLongISO8061(
+        entity.updatedAt
+      )})`}
     >
-      Updated {dateToShortISO8601(entity.updatedAt)}
+      Changed {dateToShortISO8601(entity.changedAt)}
     </ButtonLike>
   </>
 );

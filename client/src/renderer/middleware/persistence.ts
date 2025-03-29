@@ -7,7 +7,7 @@ import { ADD_NOTE_TO_HISTORY } from '../actions/history';
 import { LAST_VISITED_NOTES_STORAGE_KEY } from '../reducers/history';
 
 const persistenceMiddleware = (store) => (next) => (action) => {
-  if (process.env.TARGET !== 'web') {
+  if (__BUILD_TARGET__ !== 'web') {
     if (action.type === SET_BACKEND_URL) {
       localStorage.setItem('backend-url', action.payload);
       store.dispatch(requestRestart());
