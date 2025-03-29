@@ -26,5 +26,11 @@
     "build": "rm -fr dist/* && tsc -p tsconfig.json && bash scripts/fix-package-type.sh",
     "test": "echo \"Error: run tests from root\" && exit 1",
     "postinstall": "npm run build"
+  },
+  "volta": {
+    "node": "22.14.0"
+  },
+  "dependencies": {
+    "typescript": "^5.8.2"
   }
 }
