@@ -127,6 +127,7 @@ type Tag implements BaseObject {
   color: String!
   createdAt: Date!
   name: String!
+  noteCount: Int!
   notes: [Note]
   permissions(onlyMine: Boolean): [UserPermissions!]!
   updatedAt: Date!

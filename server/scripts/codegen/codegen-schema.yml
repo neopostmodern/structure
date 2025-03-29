@@ -1,7 +1,7 @@
 schema:
-  - './lib/schema.ts'
-  - './lib/util/*.ts'
-  - './lib/**/*Schema.ts'
+  - './lib/schema.mts'
+  - './lib/util/*.mts'
+  - './lib/**/*Schema.mts'
 generates:
   ../schema.graphql:
     plugins:
