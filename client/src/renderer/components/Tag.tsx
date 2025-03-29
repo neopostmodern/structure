@@ -41,7 +41,7 @@ const Tag: React.FC<TagProps & ChipProps> = ({
         })
       }
       ref={colorTools as any}
-      label={tag.name + " " + tag.noteCount}
+      label={tag.name}
       avatar={tag.user._id !== userId ? <UserAvatar user={tag.user} /> : null}
       icon={
         tag.user._id === userId && tag.permissions.length > 1 ? (
