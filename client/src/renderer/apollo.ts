@@ -6,7 +6,6 @@ import {
 } from '@apollo/client';
 import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localforage from 'localforage';
-import LocalStoreInMemoryWrapper from './utils/localStoreInMemoryWrapper';
 
 let backendUrl;
 if (__BUILD_TARGET__ === 'web') {
@@ -21,7 +20,6 @@ if (__BUILD_TARGET__ === 'web') {
   }
 }
 
-const noteCountsStorage = new LocalStoreInMemoryWrapper<number>('noteCounts');
 const notesWithTagHelper = (
   cacheData: {
     [key: string]: {
