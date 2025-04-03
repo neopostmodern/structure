@@ -147,7 +147,7 @@
     "lodash": "^4.17.21",
     "match-sorter": "^8.0.0",
     "mousetrap": "^1.6.5",
-    "mui-tiptap": "^1.18.0",
+    "mui-tiptap": "^1.18.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.55.0",
