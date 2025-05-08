@@ -1,7 +1,7 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
-import { MakerAppImage } from '@reforged/maker-appimage';
+// import { MakerAppImage } from '@reforged/maker-appimage';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
@@ -28,13 +28,16 @@ const config: ForgeConfig = {
       name: 'Structure',
     }),
     new MakerZIP({}, ['darwin']),
-    new MakerAppImage({
-      options: {
-        bin: 'Structure',
-        categories: ['Office'],
-        icon: './assets/icon.png',
+    {
+      name: '@reforged/maker-appimage',
+      config: {
+        options: {
+          bin: 'Structure',
+          categories: ['Office'],
+          icon: './assets/icon.png',
+        },
       },
-    }),
+    },
   ],
   publishers: [
     {
