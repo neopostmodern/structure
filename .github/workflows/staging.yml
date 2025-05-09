@@ -25,7 +25,7 @@ jobs:
       - name: Set up node / npm with caching
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: 'package.json'
           cache: 'npm'
           cache-dependency-path: |
             package-lock.json
@@ -68,6 +68,10 @@ jobs:
           name: setup-ubuntu-latest
       - name: Unpack setup
         run: tar xf setup.tar && rm setup.tar
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
       - name: Build frontend
         run: npm run client:build:web
       - name: Deploy via FTP
@@ -93,6 +97,10 @@ jobs:
           name: setup-${{ matrix.os }}
       - name: Unpack setup
         run: tar xf setup.tar && rm setup.tar
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
       - name: Build Electron app
         run: npm run client:build:electron
       - name: Store installers as artifacts
