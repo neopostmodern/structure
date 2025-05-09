@@ -79,7 +79,7 @@ jobs:
         with:
           localDir: ./client/out/web/
           remoteDir: ./
-          host: amsr102.websitehostserver.net:21
+          host: ftp.structure.love:21
           user: github@staging-app.structure.love
           password: ${{ secrets.FTP_STAGING_PASSWORD }}
 
