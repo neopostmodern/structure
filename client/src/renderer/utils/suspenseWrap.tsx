@@ -11,11 +11,11 @@ const suspenseWrap =
     LazyComponent: LazyExoticComponent<
       FunctionComponent<T> | NamedExoticComponent<T>
     >,
-    Fallback: FunctionComponent<Partial<T>> = () => <MoreHoriz />
+    Fallback = () => <MoreHoriz />
   ) =>
   (props: T) =>
     (
-      <Suspense fallback={<Fallback {...(props as any)} />}>
+      <Suspense fallback={<Fallback />}>
         <LazyComponent {...(props as any)} />
       </Suspense>
     );

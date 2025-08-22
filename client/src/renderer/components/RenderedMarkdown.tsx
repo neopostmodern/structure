@@ -4,21 +4,12 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-const listIndent = '1.8em';
+const listIndent = '2em';
 
-export const markdownStyles = css`
-  &:not(.ProseMirror) {
-    padding: 1em 0;
-  }
-
-  > :first-child {
-    margin-block-start: 0;
-  }
-  > :last-child {
-    margin-block-end: 0;
-  }
+const markdownStyles = styled(ReactMarkdown)`
+  font-size: 1rem;
 
   h1,
   h2,
@@ -36,20 +27,6 @@ export const markdownStyles = css`
     margin-top: 0.5em;
   }
 
-  h2 {
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-block-start: 1em;
-    margin-block-end: 0.66em;
-  }
-
-  p,
-  pre,
-  table,
-  ul,
-  ol {
-    margin-bottom: 1em;
-  }
   p:last-child {
     margin-bottom: 0;
   }
@@ -61,16 +38,8 @@ export const markdownStyles = css`
     ul,
     ol {
       padding-left: 0.9em;
-      margin-bottom: 0.2em;
       &.contains-task-list {
         padding-left: 1.1em;
-      }
-    }
-
-    &[data-type='taskList'] {
-      p:first-child + ul,
-      p:first-child + ol {
-        margin-top: -0.8em;
       }
     }
 
@@ -79,38 +48,21 @@ export const markdownStyles = css`
         list-style: none;
       }
 
-      ul:not([data-type='taskList']) li {
-        // workaround for sub-lists of checklists
-        display: list-item;
-      }
-
-      ul[data-type='taskList'] {
-        margin-left: -1.5em;
-      }
-
       > p {
         margin: 0;
       }
     }
   }
 
-  ol:has(> li:nth-child(10)) {
-    padding-left: 2em;
-  }
-
-  p + p,
   p + ul,
   p + ol,
   ul + p,
   ol + p {
-    //margin-top: -0.5em;
+    margin-top: -0.5em;
   }
 
-  a:not([data-type='mention']) {
-    color: blue;
-    text-decoration: underline;
-
-    @media (prefers-color-scheme: dark) {
+  @media (prefers-color-scheme: dark) {
+    a {
       color: #3485ff;
     }
   }
@@ -120,16 +72,11 @@ export const markdownStyles = css`
     border-left: 2px gray solid;
     padding: 0 1em;
   }
-  blockquote::before {
-    display: none;
-  }
 
   code {
     padding: 0.1em 0.2em;
     border-radius: 2px;
     background-color: rgba(128, 128, 128, 0.4);
-    border: none;
-    color: inherit;
   }
 
   pre {
@@ -138,7 +85,6 @@ export const markdownStyles = css`
 
     padding: 0.5em;
     border-radius: 2px;
-    border: none;
     background-color: rgba(128, 128, 128, 0.4);
 
     > code {
