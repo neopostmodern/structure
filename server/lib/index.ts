@@ -1,6 +1,5 @@
 import { ApolloServer, type ApolloServerPlugin } from '@apollo/server'
-import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground'
-import { expressMiddleware } from '@apollo/server/express4'
+import { expressMiddleware } from '@as-integrations/express5'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
 import config from '@structure/config' with { type: 'json' }
 import bodyParser from 'body-parser'
@@ -54,13 +53,14 @@ const runExpressServer = async () => {
     ApolloServerPluginLandingPageDisabled(),
   ]
   if (config.CHANNEL) {
-    apolloPlugins.unshift(
-      ApolloServerPluginLandingPageGraphQLPlayground({
-        settings: {
-          'request.credentials': 'same-origin',
-        },
-      }),
-    )
+    // todo: find replacement
+    // apolloPlugins.unshift(
+    //   ApolloServerPluginLandingPageGraphQLPlayground({
+    //     settings: {
+    //       'request.credentials': 'same-origin',
+    //     },
+    //   }),
+    // )
     apolloPlugins.push({
       async requestDidStart(requestContext) {
         const start = new Date().getTime()

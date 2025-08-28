@@ -8,34 +8,34 @@
   "main": "lib/server.js",
   "type": "module",
   "dependencies": {
-    "@apollo/server": "^4.11.3",
-    "@apollo/server-plugin-landing-page-graphql-playground": "^4.0.1",
-    "@graphql-tools/schema": "^10.0.23",
+    "@apollo/server": "^5.0.0",
+    "@as-integrations/express5": "^1.1.2",
+    "@graphql-tools/schema": "^10.0.25",
     "@structure/common": "file:../common",
     "@structure/config": "file:../config",
     "body-parser": "^2.2.0",
     "colors": "^1.4.0",
     "connect-mongodb-session": "^5.0.0",
     "cors": "^2.8.5",
-    "express": "^4.21.2",
+    "express": "^5.1.0",
     "express-mongo-sanitize": "^2.2.0",
-    "express-session": "^1.18.1",
+    "express-session": "^1.18.2",
     "fast-array-diff": "^1.1.0",
     "feed": "github:neopostmodern/feed",
-    "graphql": "^16.10.0",
-    "graphql-parse-resolve-info": "^4.13.0",
+    "graphql": "^16.11.0",
+    "graphql-parse-resolve-info": "^4.14.1",
     "graphql-tag": "^2.12.6",
-    "html-entities": "^2.5.5",
-    "jsdom": "^26.0.0",
+    "html-entities": "^2.6.0",
+    "jsdom": "^26.1.0",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
-    "mongoose": "^8.13.1",
+    "mongoose": "^8.18.0",
     "node-fetch": "^3.3.2",
     "passport": "^0.7.0",
     "passport-github": "^1.1.0",
     "tracer": "^1.3.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.9.2"
   },
   "directories": {
     "lib": "lib",
@@ -55,12 +55,12 @@
     "dev": "tsc; node --experimental-strip-types lib/index.ts"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^5.0.5",
+    "@graphql-codegen/cli": "^5.0.7",
     "@graphql-codegen/schema-ast": "^4.1.0",
     "@graphql-codegen/typescript": "^4.1.6",
-    "@graphql-codegen/typescript-resolvers": "^4.5.0",
+    "@graphql-codegen/typescript-resolvers": "^4.5.1",
     "@types/jsdom": "^21.1.7",
-    "@types/lodash": "^4.17.16"
+    "@types/lodash": "^4.17.20"
   },
   "volta": {
     "extends": "../package.json"
