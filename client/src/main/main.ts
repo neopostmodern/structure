@@ -21,11 +21,11 @@ if (process.env.NODE_ENV === 'production') {
 const isDevelopment = import.meta.env.DEV || __DEBUG_PROD__ === 'true';
 
 if (isDevelopment) {
-  require('electron-debug')();
+  import('electron-debug');
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
+  const installer = await import('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = [
     'REACT_DEVELOPER_TOOLS',
@@ -33,8 +33,7 @@ const installExtensions = async () => {
     'APOLLO_DEVELOPER_TOOLS',
   ];
 
-  return installer
-    .default(
+  return installer.default(
       extensions.map((name) => installer[name]),
       forceDownload
     )
@@ -180,10 +179,10 @@ if (!gotSingleInstanceLock) {
     }
   });
 
-  app
-    .whenReady()
-    .then(() => {
-      createWindow();
+
+  (async () => {
+    try {
+      await app.whenReady();
       app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
@@ -191,6 +190,9 @@ if (!gotSingleInstanceLock) {
           createWindow();
         }
       });
-    })
-    .catch(console.log);
+      await createWindow();
+    } catch (error) {
+      console.error('[startup] App or window creation failed!', error)
+    }
+  })();
 }
