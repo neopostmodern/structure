@@ -1,10 +1,14 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
+console.log('[startup] Main started!');
+
 import config from '@structure/config';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { updateElectronApp } from 'update-electron-app';
 import path from 'path';
 import MenuBuilder from './menu';
+
+console.log('[startup] Static imports complete!');
 
 app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar');
 
@@ -163,7 +167,16 @@ const createWindow = async () => {
 //   }
 // });
 
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
 const gotSingleInstanceLock = app.requestSingleInstanceLock();
+console.log('[startup] Got single instance lock', gotSingleInstanceLock)
 
 if (!gotSingleInstanceLock) {
   app.quit();
@@ -182,7 +195,11 @@ if (!gotSingleInstanceLock) {
 
   (async () => {
     try {
+      console.log('[startup] Will create app...');
       await app.whenReady();
+      console.log('[startup] App creation OK')
+
+      console.log('[startup] Will create window...');
       app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
@@ -191,6 +208,7 @@ if (!gotSingleInstanceLock) {
         }
       });
       await createWindow();
+      console.log('[startup] Startup completed!');
     } catch (error) {
       console.error('[startup] App or window creation failed!', error)
     }
