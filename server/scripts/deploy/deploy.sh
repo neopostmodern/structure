@@ -19,7 +19,7 @@ ssh "$USER@$SERVER" "cd $SERVER_FOLDER_BACKEND && tar xf server.tar && rm server
 echo "OK"
 
 echo "Starting backend service (as systemd service '$SYSTEMD_SERVICE_NAME')..."
-ssh "$USER@$SERVER" "systemd --user restart $SYSTEMD_SERVICE_NAME"
+ssh "$USER@$SERVER" "systemctl --user restart $SYSTEMD_SERVICE_NAME"
 echo "OK"
 
 echo -e "\nDeploy finished at $(date)"
