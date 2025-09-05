@@ -5,6 +5,7 @@ import config from '@structure/config' with { type: 'json' }
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import mongoSanitize from 'express-mongo-sanitize'
 import { createServer } from 'http'
 import migrationSystem from './migrations/migrationSystem.mts'
@@ -44,6 +45,16 @@ const corsOptions = {
 const app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+// todo: this is just a hack to bypass https://github.com/fiznool/express-mongo-sanitize/issues/202
+app.use((request: Request, response: Response, next: NextFunction) => {
+  Object.defineProperty(request, 'query', {
+    ...Object.getOwnPropertyDescriptor(request, 'query'),
+    value: request.query,
+    writable: true,
+  })
+
+  next()
+})
 app.use(mongoSanitize())
 app.use(cors(corsOptions))
 setUpGitHubLogin(app)
