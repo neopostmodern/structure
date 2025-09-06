@@ -1,0 +1,55 @@
+{
+  "packageId": "love.structure.app.twa",
+  "host": "app.structure.love",
+  "name": "Structure",
+  "launcherName": "Structure",
+  "display": "standalone",
+  "themeColor": "#FFFFFF",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#FFFFFF",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://app.structure.love/icons/maskable_512x512.png",
+  "maskableIconUrl": "https://app.structure.love/icons/maskable_512x512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "/home/neopostmodern/Code/Structure/android/android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "0.22.1",
+  "appVersionCode": 2103,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://app.structure.love/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://app.structure.love/",
+  "minSdkVersion": 21,
+  "shareTarget": {
+    "action": "https://app.structure.love/notes/add",
+    "method": "GET",
+    "params": {
+      "text": "text",
+      "title": "title",
+      "url": "url"
+    }
+  },
+  "orientation": "default",
+  "fingerprints": [
+    {
+      "value": "77:FC:D1:1C:E0:F4:01:61:D5:98:37:C6:1F:CF:15:01:79:64:A8:65:66:6C:EA:9A:E7:43:D2:92:26:E0:CD:47"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "appVersion": "0.22.1"
+}

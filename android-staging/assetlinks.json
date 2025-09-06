@@ -1,0 +1,6 @@
+[{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target" : { "namespace": "android_app", "package_name": "love.structure.staging_app.twa",
+                     "sha256_cert_fingerprints": ["F7:E1:04:AA:10:E1:73:55:2C:EF:BA:0B:7E:14:8B:07:09:0A:66:75:01:12:CD:D1:B6:E4:56:84:91:43:FD:66"] }
+      }
+]

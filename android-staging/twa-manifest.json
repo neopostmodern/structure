@@ -1,0 +1,57 @@
+{
+  "packageId": "love.structure.staging_app.twa",
+  "host": "staging-app.structure.love",
+  "name": "Structure (staging)",
+  "launcherName": "Structure (staging)",
+  "display": "standalone",
+  "themeColor": "#FFFFFF",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#FFFFFF",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://staging-app.structure.love/icons/maskable_512x512.png",
+  "maskableIconUrl": "https://staging-app.structure.love/icons/maskable_512x512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "0.24.0-beta",
+  "appVersionCode": 7,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://staging-app.structure.love/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://staging-app.structure.love/",
+  "minSdkVersion": 21,
+  "shareTarget": {
+    "action": "https://staging-app.structure.love/notes/add",
+    "method": "GET",
+    "params": {
+      "text": "text",
+      "title": "title",
+      "url": "url"
+    }
+  },
+  "orientation": "default",
+  "fingerprints": [
+    {
+      "value": "F7:E1:04:AA:10:E1:73:55:2C:EF:BA:0B:7E:14:8B:07:09:0A:66:75:01:12:CD:D1:B6:E4:56:84:91:43:FD:66"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "appVersion": "0.24.0-beta"
+}
