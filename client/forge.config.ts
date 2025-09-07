@@ -43,8 +43,10 @@ const config: ForgeConfig = {
     {
       name: '@electron-forge/publisher-github',
       config: {
-        owner: 'neopostmodern',
-        repo: 'structure',
+        repository: {
+          owner: 'neopostmodern',
+          name: 'structure',
+        },
       },
     },
   ],

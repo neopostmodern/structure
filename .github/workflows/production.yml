@@ -103,7 +103,7 @@ jobs:
           node-version-file: 'package.json'
       - name: Build and publish Electron app
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run client:publish:electron
 
   deploy-backend:

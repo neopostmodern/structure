@@ -65,6 +65,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.3",
     "@electron-forge/plugin-fuses": "^7.8.3",
     "@electron-forge/plugin-vite": "^7.8.3",
+    "@electron-forge/publisher-github": "^7.8.3",
     "@electron/fuses": "^1.8.0",
     "@graphql-codegen/cli": "5.0.7",
     "@graphql-codegen/fragment-matcher": "5.1.0",
