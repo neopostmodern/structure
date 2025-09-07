@@ -19,8 +19,8 @@
     "path": "/home/neopostmodern/Code/Structure/android/android.keystore",
     "alias": "android"
   },
-  "appVersionName": "0.24.0",
-  "appVersionCode": 240000,
+  "appVersionName": "0.24.1",
+  "appVersionCode": 240100,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://app.structure.love/manifest.webmanifest",
@@ -51,5 +51,5 @@
   ],
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
-  "appVersion": "0.24.0"
+  "appVersion": "0.24.1"
 }
