@@ -2,5 +2,5 @@
   "name": "@structure/config",
   "main": "./config.json",
   "types": "./config.d.ts",
-  "version": "0.23.1"
+  "version": "0.24.0"
 }
