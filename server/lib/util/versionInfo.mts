@@ -18,7 +18,7 @@ export const versionInfoResolver = {
     versions(root, { currentVersion }) {
       if (currentVersion) {
         return {
-          minimum: currentVersion.split('.')[1] !== '23' ? '0.23.0' : null,
+          minimum: currentVersion.split('.')[1] !== '24' ? '0.24.1' : null,
           current: packageJson.version,
         }
       }
