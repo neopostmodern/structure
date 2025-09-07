@@ -20,8 +20,8 @@
     "path": "./android.keystore",
     "alias": "android"
   },
-  "appVersionName": "0.24.0-beta",
-  "appVersionCode": 7,
+  "appVersionName": "0.24.0",
+  "appVersionCode": 240000,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://staging-app.structure.love/manifest.webmanifest",
@@ -53,5 +53,5 @@
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
   "protocolHandlers": [],
-  "appVersion": "0.24.0-beta"
+  "appVersion": "0.24.0"
 }
