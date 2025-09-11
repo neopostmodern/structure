@@ -6,6 +6,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { OFFLINE_CACHE_MISS } from '../utils/useDataState';
 import Gap from './Gap';
+import { breakPointMobile } from '../styles/constants';
 
 const ErrorContainer = styled.div<{ variant?: 'fullpage' | 'outlined' }>`
   display: flex;
@@ -27,9 +28,13 @@ const ErrorContainer = styled.div<{ variant?: 'fullpage' | 'outlined' }>`
       `;
     }
     throw Error(
-      `[FatalApolloError - ErrorContainer] Unknown variant: ${variant}`
+      `[FatalApolloError - ErrorContainer] Unknown variant: ${variant}`,
     );
   }}
+
+  @media (max-width: ${breakPointMobile}) {
+    margin-top: 5em;
+  }
 `;
 
 const ErrorTitle = styled.div`
