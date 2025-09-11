@@ -45,7 +45,7 @@ const VersionMarks: React.FC<VersionMarksProps> = ({
   }
 
   const updateButtonProps =
-    __BUILD_TARGET__ === 'electron'
+    __BUILD_TARGET__ === 'electron_renderer'
       ? {
           href: config.releaseUrl,
           target: '_blank',
@@ -74,7 +74,7 @@ const VersionMarks: React.FC<VersionMarksProps> = ({
               {...updateButtonProps}
               sx={{ textDecoration: 'none !important' }}
             >
-              {__BUILD_TARGET__ === 'electron' ? 'Update' : 'Reload'} now
+              {__BUILD_TARGET__ === 'electron_renderer' ? 'Update' : 'Reload'} now
             </Button>
           </Box>
         </small>
@@ -97,7 +97,7 @@ const VersionMarks: React.FC<VersionMarksProps> = ({
               {...updateButtonProps}
               sx={{ textDecoration: 'none !important' }}
             >
-              {__BUILD_TARGET__ === 'electron' ? 'Update' : 'Reload'} now
+              {__BUILD_TARGET__ === 'electron_renderer' ? 'Update' : 'Reload'} now
             </Button>
           </Box>
         </small>
