@@ -83,12 +83,12 @@ const ComplexLayout: React.FC<
       variables: {
         currentVersion: packageJson.version,
       },
-    })
+    }),
   );
 
   const isDesktopLayout = useIsDesktopLayout();
   const isUserLoggingIn = useSelector<RootState, boolean>(
-    (state) => state.userInterface.loggingIn
+    (state) => state.userInterface.loggingIn,
   );
   const wasUserLoggingIn = usePrevious(isUserLoggingIn);
   const isLoggedInThenUserId =
@@ -123,7 +123,7 @@ const ComplexLayout: React.FC<
           icon: <AccountCircle />,
         },
       ].filter(({ path }) => isLoggedInThenUserId || path === '/settings'),
-    [isLoggedInThenUserId, profileQuery]
+    [isLoggedInThenUserId, profileQuery],
   );
 
   const online = useIsOnline();
@@ -143,27 +143,20 @@ const ComplexLayout: React.FC<
             <NetworkIndicatorContainer>Offline</NetworkIndicatorContainer>
           )}
           {profileQuery.state === DataState.ERROR ? (
-            <FatalApolloError query={profileQuery} />
+            <NetworkIndicatorContainer align="left" color="error">
+              Failed to load profile and version info.
+            </NetworkIndicatorContainer>
           ) : (
-            <>
-              <VersionMarks
-                versions={
-                  profileQuery.state === DataState.DATA
-                    ? profileQuery.data.versions
-                    : 'loading'
-                }
-                currentPackageVersion={packageJson.version}
-              />
-              {profileQuery.state === DataState.LOADING || loading ? (
-                <Loading
-                  loading={loading}
-                  loadingComponent={loadingComponent}
-                />
-              ) : (
-                children
-              )}
-            </>
+            <VersionMarks
+              versions={
+                profileQuery.state === DataState.DATA
+                  ? profileQuery.data.versions
+                  : 'loading'
+              }
+              currentPackageVersion={packageJson.version}
+            />
           )}
+          {children}
         </Styled.PrimaryContent>
         {primaryActions && (
           <Styled.PrimaryActions>{primaryActions}</Styled.PrimaryActions>
