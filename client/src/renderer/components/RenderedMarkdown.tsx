@@ -8,7 +8,7 @@ import styled from 'styled-components';
 
 const listIndent = '2em';
 
-const markdownStyles = styled(ReactMarkdown)`
+const MarkdownContainer = styled.div`
   font-size: 1rem;
 
   h1,
@@ -96,12 +96,6 @@ const markdownStyles = styled(ReactMarkdown)`
   table {
     min-width: 100%;
   }
-`;
-
-const MarkdownContainer = styled.div`
-  font-size: 1rem;
-
-  ${markdownStyles}
 `;
 
 const EmptyTextarea = styled.div`
