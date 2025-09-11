@@ -38,7 +38,14 @@ const installExtensions = async () => {
   ];
 
   return installer.default(
-      extensions.map((name) => installer[name]),
+      extensions.map((name) => {
+        if (name in installer) {
+          return installer[name]
+        } else {
+          console.error(`Developer extension not available for install: ${name}`);
+          return null;
+        }
+      }).filter(installer => Boolean(installer)),
       forceDownload
     )
     .catch(console.log);
