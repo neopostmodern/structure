@@ -38,16 +38,13 @@ jobs:
         run: npm ci
       - name: Install subpackage dependencies
         run: |
-          packages=( "config" "common" "server" )
+          packages=( "config" "common" "server" "client" )
           for dir in "${packages[@]}"
           do
             pushd "$dir"
             npm ci
             popd
           done
-          pushd client
-          npm ci || echo 'Ignore return code, known errors in postinstall step'
-          popd
       - name: Pack setup
         run: tar cf setup.tar *
       - name: Store setup (as artifact)
