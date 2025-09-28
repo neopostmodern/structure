@@ -5,6 +5,7 @@
   "launcherName": "Structure",
   "display": "standalone",
   "themeColor": "#FFFFFF",
+  "themeColorDark": "#000000",
   "navigationColor": "#000000",
   "navigationColorDark": "#000000",
   "navigationDividerColor": "#000000",
@@ -16,11 +17,11 @@
   "maskableIconUrl": "https://app.structure.love/icons/maskable_512x512.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
-    "path": "/home/neopostmodern/Code/Structure/android/android.keystore",
+    "path": "./android.keystore",
     "alias": "android"
   },
   "appVersionName": "0.24.1",
-  "appVersionCode": 240100,
+  "appVersionCode": 240103,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://app.structure.love/manifest.webmanifest",
@@ -51,5 +52,6 @@
   ],
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
+  "protocolHandlers": [],
   "appVersion": "0.24.1"
 }
