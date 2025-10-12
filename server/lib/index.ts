@@ -1,7 +1,7 @@
 import { ApolloServer, type ApolloServerPlugin } from '@apollo/server'
 import { expressMiddleware } from '@as-integrations/express5'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
-import config from '@structure/config' with { type: 'json' }
+import config from '@structure/config'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'

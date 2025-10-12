@@ -1,5 +1,5 @@
 import { rssFeedUrl } from '@structure/common'
-import config from '@structure/config' with { type: 'json' }
+import config from '@structure/config'
 import { Feed } from 'feed'
 import _ from 'lodash'
 import { submitLink } from './notes/notesMethods.mts'

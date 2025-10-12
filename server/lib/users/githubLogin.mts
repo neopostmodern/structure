@@ -1,4 +1,4 @@
-import config from '@structure/config' with { type: 'json' }
+import config from '@structure/config'
 import ConnectMongoDbSession from 'connect-mongodb-session'
 import session from 'express-session'
 import passport from 'passport'

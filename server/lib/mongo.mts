@@ -1,4 +1,4 @@
-import config from '@structure/config' with { type: 'json' }
+import config from '@structure/config'
 import mongoose from 'mongoose'
 import util from 'util'
 import { Cache } from './cache/cacheModel.mts'

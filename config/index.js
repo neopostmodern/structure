@@ -1,2 +1,2 @@
-const config = require('./config.json')
-module.exports = config
+import config from './config.json' with { type: "json" };
+export default config;

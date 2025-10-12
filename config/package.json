@@ -1,6 +1,7 @@
 {
   "name": "@structure/config",
-  "main": "./config.json",
+  "type": "module",
+  "main": "./index.js",
   "types": "./config.d.ts",
   "version": "0.24.0"
 }
