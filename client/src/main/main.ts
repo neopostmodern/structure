@@ -8,6 +8,8 @@ import { updateElectronApp } from 'update-electron-app';
 import path from 'path';
 import MenuBuilder from './menu';
 
+const __dirname = import.meta.dirname;
+
 console.log('[startup] Static imports complete!');
 
 app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar');
@@ -16,11 +18,6 @@ app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar');
 const CUSTOM_URL_PROTOCOL = 'structure';
 
 let mainWindow: BrowserWindow | null = null;
-
-if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
-}
 
 const isDevelopment = import.meta.env.DEV || __DEBUG_PROD__ === 'true';
 
@@ -201,6 +198,11 @@ if (!gotSingleInstanceLock) {
 
 
   (async () => {
+    if (process.env.NODE_ENV === 'production') {
+      const sourceMapSupport = await import('source-map-support');
+      sourceMapSupport.install();
+    }
+
     try {
       console.log('[startup] Will create app...');
       await app.whenReady();

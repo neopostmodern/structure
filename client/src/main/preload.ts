@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer, clipboard } = require('electron');
+import { contextBridge, ipcRenderer, clipboard } from 'electron';
 
 const validIpcChannels = ['login-closed', 'can-login', 'navigate'];
 type ValidIpcChannels = (typeof validIpcChannels)[number];
