@@ -1,5 +1,6 @@
 {
   "name": "structure",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/neopostmodern/structure.git"
@@ -38,7 +39,7 @@
     "lerna": "^8.2.1",
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.9.3"
   },
   "volta": {
     "node": "22.20.0"
