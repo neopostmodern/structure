@@ -67,6 +67,9 @@ export const tagsResolvers = {
         ...(permissions.toObject ? permissions.toObject() : permissions), // todo: for some reason this is not a plain object when coming from TagPage
       }))
     },
+    async noteCount(tag) {
+      return Note.countDocuments({ tags: tag, deletedAt: null })
+    },
   },
   Query: {
     async tag(root, { tagId }, { user }) {
@@ -96,22 +99,22 @@ export const tagsResolvers = {
       }
       const protectedLimit = limit < 1 || limit > 10 ? 10 : limit
 
-      let tags = (
-        Tag.aggregate().match({ ...baseTagsQuery(context.user, 'read') })
-      )
+      let tags = Tag.aggregate().match({
+        ...baseTagsQuery(context.user, 'read'),
+      })
 
       if (parseResolveInfo(info).fieldsByTypeName.Tag.noteCount) {
         tags
           .lookup({
-              from: "notes",
-              localField: "_id",
-              foreignField: "tags",
-              let: { tagId: "$_id" },
-              pipeline: [ { $count: "count" } ],
-              as: "noteCount"
-           })
-           .unwind("noteCount")
-           .addFields({ noteCount: "$noteCount.count" })
+            from: 'notes',
+            localField: '_id',
+            foreignField: 'tags',
+            let: { tagId: '$_id' },
+            pipeline: [{ $count: 'count' }],
+            as: 'noteCount',
+          })
+          .unwind('noteCount')
+          .addFields({ noteCount: '$noteCount.count' })
       }
 
       return tags.exec()
