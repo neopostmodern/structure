@@ -3,5 +3,5 @@
   "type": "module",
   "main": "./index.js",
   "types": "./config.d.ts",
-  "version": "0.24.0"
+  "version": "0.24.2"
 }
