@@ -95,5 +95,13 @@ Comprehensive PRs are very welcome, as are bug reports, feature requests and oth
 ### Release
 To release a new version, run
 ```
-npm run util:create-release
+npx lerna version
+```
+
+Once the deploy is finished create the Android app with
+```
+cd android
+docker run --rm -ti -v "$PWD":/app ghcr.io/googlechromelabs/bubblewrap:latest merge
+docker run --rm -ti -v "$PWD":/app ghcr.io/googlechromelabs/bubblewrap:latest update
+docker run --rm -ti -v "$PWD":/app ghcr.io/googlechromelabs/bubblewrap:latest build
 ```
