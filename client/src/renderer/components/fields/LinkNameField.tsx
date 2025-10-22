@@ -57,8 +57,8 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
   const [fetchTitleSuggestions, titleSuggestionsQuery] = useDataState(
     useLazyQuery<TitleSuggestionsQuery, TitleSuggestionsQueryVariables>(
       TITLE_SUGGESTIONS_QUERY,
-      { fetchPolicy: 'no-cache', variables: { linkId } }
-    )
+      { fetchPolicy: 'no-cache' },
+    ),
   );
 
   useQuickNumberShortcuts(
@@ -67,7 +67,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
       : [],
     (suggestion) => {
       setValue(name, suggestion);
-    }
+    },
   );
 
   const isOnline = useIsOnline();
@@ -117,7 +117,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
                   getValues(name) === urlAnalyzer(url).suggestedName
                 }
                 onFocus={(): void => {
-                  fetchTitleSuggestions();
+                  fetchTitleSuggestions({ variables: { linkId } });
                 }}
                 label="Title"
                 InputProps={{

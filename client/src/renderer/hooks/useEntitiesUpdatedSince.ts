@@ -72,11 +72,11 @@ const ENTITIES_UPDATED_SINCE_INTERVAL_MS = 60 * 1000;
 
 const mergeNewlyCreatedIntoCache = <EntityType extends StoreObject>(
   cachedEntities: Array<EntityType>,
-  newEntity: EntityType
+  newEntity: EntityType,
 ) => {
   // by default insert at the end, but if note exists, override
   let noteIndexToUpdate = cachedEntities.findIndex(
-    (noteInCache) => noteInCache._id === newEntity._id
+    (noteInCache) => noteInCache._id === newEntity._id,
   );
   if (noteIndexToUpdate === -1) {
     noteIndexToUpdate = cachedEntities.length;
@@ -94,11 +94,6 @@ const useEntitiesUpdatedSince = () => {
       ENTITIES_UPDATED_SINCE_QUERY,
       {
         fetchPolicy: 'no-cache',
-        variables: {
-          get cacheId() {
-            return getUpdatedSinceCacheId();
-          },
-        },
         onCompleted({ entitiesUpdatedSince }) {
           const { cache } = apolloClient;
           const storedCacheId = getUpdatedSinceCacheId();
@@ -127,7 +122,7 @@ const useEntitiesUpdatedSince = () => {
             if (storedCacheId) {
               if (!notesCacheValue) {
                 throw Error(
-                  '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for notes.'
+                  '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for notes.',
                 );
               }
 
@@ -139,7 +134,7 @@ const useEntitiesUpdatedSince = () => {
               if (entitiesUpdatedSince.removedNoteIds.length) {
                 cachedNotes = cachedNotes.filter(
                   ({ _id }) =>
-                    !entitiesUpdatedSince.removedNoteIds.includes(_id)
+                    !entitiesUpdatedSince.removedNoteIds.includes(_id),
                 );
               }
             } else {
@@ -165,7 +160,7 @@ const useEntitiesUpdatedSince = () => {
             if (storedCacheId) {
               if (!tagsCacheValue) {
                 throw Error(
-                  '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for tags.'
+                  '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for tags.',
                 );
               }
 
@@ -205,7 +200,7 @@ const useEntitiesUpdatedSince = () => {
                       fields: {
                         tags(currentTagsOnNote: Array<{ __ref: string }> = []) {
                           return currentTagsOnNote.filter(
-                            ({ __ref }) => __ref.split(':')[1] !== tagId
+                            ({ __ref }) => __ref.split(':')[1] !== tagId,
                           );
                         },
                       },
@@ -214,7 +209,8 @@ const useEntitiesUpdatedSince = () => {
                   removeEntityFromCache(cache, tag);
                 });
                 cachedTags = cachedTags.filter(
-                  ({ _id }) => !entitiesUpdatedSince.removedTagIds.includes(_id)
+                  ({ _id }) =>
+                    !entitiesUpdatedSince.removedTagIds.includes(_id),
                 );
               }
             } else {
@@ -229,11 +225,11 @@ const useEntitiesUpdatedSince = () => {
 
           localStorage.setItem(
             ENTITIES_UPDATED_SINCE_CACHE_ID_STORAGE_KEY,
-            entitiesUpdatedSince.cacheId
+            entitiesUpdatedSince.cacheId,
           );
         },
-      }
-    )
+      },
+    ),
   );
 
   useEffect(() => {
@@ -243,11 +239,15 @@ const useEntitiesUpdatedSince = () => {
 
     (async () => {
       try {
-        await fetchEntitiesUpdatedSince();
+        await fetchEntitiesUpdatedSince({
+          variables: {
+            cacheId: getUpdatedSinceCacheId(),
+          },
+        });
       } catch (error) {
         console.error(
           '[useEntitiesUpdatedSince.useEffect.fetchEntitiesUpdatedSince]',
-          error
+          error,
         );
       }
     })();
