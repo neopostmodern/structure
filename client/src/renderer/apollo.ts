@@ -4,6 +4,7 @@ import {
   InMemoryCache,
   setLogVerbosity,
 } from '@apollo/client';
+import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
 import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist';
 import localforage from 'localforage';
 
@@ -28,12 +29,12 @@ const notesWithTagHelper = (
       tags?: Array<{ __ref: string }>;
     };
   },
-  tagId: string
+  tagId: string,
 ) =>
   Object.values(cacheData).filter(
     (cacheEntry) =>
       (cacheEntry.__typename === 'Link' || cacheEntry.__typename === 'Text') &&
-      cacheEntry.tags!.some((tag) => tag.__ref === `Tag:${tagId}`)
+      cacheEntry.tags!.some((tag) => tag.__ref === `Tag:${tagId}`),
   );
 
 const cache = new InMemoryCache({
@@ -49,7 +50,7 @@ const cache = new InMemoryCache({
               return currentValue;
             }
             return notesWithTagHelper(cache.data.data, tagId).map(
-              ({ __typename, _id }) => toReference({ __typename, _id })
+              ({ __typename, _id }) => toReference({ __typename, _id }),
             );
           },
         },
@@ -94,13 +95,17 @@ const apolloOptions = {
   // eslint-disable-next-line no-underscore-dangle
   cache: cache.restore(window.__APOLLO_CLIENT__),
   ssrMode: false,
-  connectToDevTools: true,
+  devTools: {
+    enabled: import.meta.env.DEV || __DEBUG_PROD__ === 'true',
+  },
 };
 export const apolloClient = new ApolloClient({
   ...apolloOptions,
 });
 
 if (import.meta.env.DEV || __DEBUG_PROD__ === 'true') {
+  loadDevMessages();
+  loadErrorMessages();
   setLogVerbosity('debug');
 }
 
