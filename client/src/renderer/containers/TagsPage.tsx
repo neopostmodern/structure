@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from "@apollo/client/react";
 import { LocalOffer } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { INTERNAL_TAG_PREFIX } from '@structure/common';

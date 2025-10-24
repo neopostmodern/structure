@@ -1,4 +1,5 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useMutation } from "@apollo/client/react";
 import { useDispatch } from 'react-redux';
 import { push } from 'redux-first-history';
 import ErrorSnackbar from '../components/ErrorSnackbar';

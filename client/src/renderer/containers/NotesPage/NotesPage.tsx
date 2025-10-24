@@ -1,4 +1,5 @@
-import { gql, useLazyQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useLazyQuery } from "@apollo/client/react";
 import { CloudOff } from '@mui/icons-material';
 import { CircularProgress, Stack, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';

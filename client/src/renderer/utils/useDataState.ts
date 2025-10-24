@@ -1,9 +1,5 @@
-import {
-  ApolloError,
-  NetworkStatus,
-  QueryResult,
-  QueryTuple,
-} from '@apollo/client';
+import { ErrorLike, NetworkStatus } from '@apollo/client';
+import type { useLazyQuery, useQuery } from '@apollo/client/react';
 import pick from 'lodash/pick';
 import { useMemo } from 'react';
 
@@ -18,16 +14,17 @@ export const OFFLINE_CACHE_MISS = 'OFFLINE_CACHE_MISS';
 
 type OmittedAdditionalFieldNames = 'loading' | 'data' | 'error' | 'called';
 const selectedAdditionalFieldNames = ['networkStatus', 'refetch'] as const;
-type SelectedAdditionalFieldNames = typeof selectedAdditionalFieldNames[number];
+type SelectedAdditionalFieldNames =
+  (typeof selectedAdditionalFieldNames)[number];
 export type SelectedApolloQueryResultFields<QueryData, QueryVariables> = Pick<
-  QueryResult<QueryData, QueryVariables>,
+  useQuery.Result<QueryData, QueryVariables>,
   SelectedAdditionalFieldNames
 >;
 
 export type PolicedData<QueryData> =
   | { state: DataState.LOADING }
   | { state: DataState.DATA; data: QueryData; loadingBackground: boolean }
-  | { state: DataState.ERROR; error: ApolloError };
+  | { state: DataState.ERROR; error: ErrorLike };
 
 export type LazyPolicedData<QueryData> =
   | PolicedData<QueryData>
@@ -35,15 +32,15 @@ export type LazyPolicedData<QueryData> =
 
 const isQueryTuple = <QueryData, QueryVariables>(
   queryReturnValue:
-    | QueryResult<QueryData, QueryVariables>
-    | QueryTuple<QueryData, QueryVariables>
-): queryReturnValue is QueryTuple<QueryData, QueryVariables> =>
+    | useQuery.Result<QueryData, QueryVariables>
+    | useLazyQuery.ResultTuple<QueryData, QueryVariables>,
+): queryReturnValue is useLazyQuery.ResultTuple<QueryData, QueryVariables> =>
   Array.isArray(queryReturnValue);
 
 export type UseDataStateResult<
   QueryData,
   QueryVariables,
-  ApolloQueryDataOverride = void
+  ApolloQueryDataOverride = void,
 > = PolicedData<QueryData> &
   SelectedApolloQueryResultFields<
     ApolloQueryDataOverride extends void ? QueryData : ApolloQueryDataOverride,
@@ -52,7 +49,7 @@ export type UseDataStateResult<
 export type UseDataStateLazyQuery<
   QueryData,
   QueryVariables,
-  ApolloQueryDataOverride = void
+  ApolloQueryDataOverride = void,
 > = LazyPolicedData<QueryData> &
   SelectedApolloQueryResultFields<
     ApolloQueryDataOverride extends void ? QueryData : ApolloQueryDataOverride,
@@ -61,31 +58,33 @@ export type UseDataStateLazyQuery<
 export type UseDataStateLazyResult<
   QueryData,
   QueryVariables,
-  ApolloQueryDataOverride = void
+  ApolloQueryDataOverride = void,
 > = [
-  QueryTuple<QueryData, QueryVariables>[0],
+  useLazyQuery.ResultTuple<QueryData, QueryVariables>[0],
   UseDataStateLazyQuery<
     ApolloQueryDataOverride extends void ? QueryData : ApolloQueryDataOverride,
     QueryVariables
-  >
+  >,
 ];
 
 function useDataState<QueryData, QueryVariables>(
-  queryTuple: QueryTuple<QueryData, QueryVariables>
+  queryTuple: useLazyQuery.ResultTuple<QueryData, QueryVariables>,
 ): UseDataStateLazyResult<QueryData, QueryVariables>;
 function useDataState<QueryData, QueryVariables>(
-  queryResult: QueryResult<QueryData, QueryVariables>
+  queryResult: useQuery.Result<QueryData, QueryVariables>,
 ): UseDataStateResult<QueryData, QueryVariables>;
 function useDataState<QueryData, QueryVariables>(
   queryReturnValue:
-    | QueryResult<QueryData, QueryVariables>
-    | QueryTuple<QueryData, QueryVariables>
+    | useQuery.Result<QueryData, QueryVariables>
+    | useLazyQuery.ResultTuple<QueryData, QueryVariables>,
 ):
   | UseDataStateResult<QueryData, QueryVariables>
   | UseDataStateLazyResult<QueryData, QueryVariables> {
   return useMemo(() => {
-    let queryResult: QueryResult<QueryData, QueryVariables>;
-    let callQuery: QueryTuple<QueryData, QueryVariables>[0] | undefined;
+    let queryResult: useQuery.Result<QueryData, QueryVariables>;
+    let callQuery:
+      | useLazyQuery.ResultTuple<QueryData, QueryVariables>[0]
+      | undefined;
     if (isQueryTuple(queryReturnValue)) {
       callQuery = queryReturnValue[0];
       queryResult = queryReturnValue[1];
@@ -95,7 +94,10 @@ function useDataState<QueryData, QueryVariables>(
     const { loading, data, error, called, ...additionalQueryFields } =
       queryResult;
     const selectedAdditionalQueryFields = pick<
-      Omit<QueryResult<QueryData, QueryVariables>, OmittedAdditionalFieldNames>,
+      Omit<
+        useQuery.Result<QueryData, QueryVariables>,
+        OmittedAdditionalFieldNames
+      >,
       SelectedAdditionalFieldNames
     >(additionalQueryFields, selectedAdditionalFieldNames);
     if (callQuery !== undefined && !called) {
@@ -121,9 +123,8 @@ function useDataState<QueryData, QueryVariables>(
       // see https://github.com/apollographql/apollo-client/issues/7505 (cache-only queries throw no errors when they can't be fulfilled)
       dataState = {
         state: DataState.ERROR,
-        error: new ApolloError({
-          errorMessage: 'Requested data not in cache',
-          extraInfo: OFFLINE_CACHE_MISS,
+        error: new Error('Requested data not in cache', {
+          cause: OFFLINE_CACHE_MISS,
         }),
       };
     } else {

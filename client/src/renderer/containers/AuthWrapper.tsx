@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from "@apollo/client/react";
 import React, { lazy, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import packageJson from '../../../package.json';

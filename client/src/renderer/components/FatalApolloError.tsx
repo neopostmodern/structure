@@ -1,4 +1,5 @@
-import { ApolloError, NetworkStatus } from '@apollo/client';
+import { ErrorLike, NetworkStatus } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AppsOutage, SyncProblem } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { GraphQLErrorCodes } from '@structure/common';
@@ -61,12 +62,12 @@ const FullErrorMessage = styled.pre`
 
 type NetworkErrorProps =
   | {
-      error: ApolloError | undefined; // todo: could be more generic?
+      error: ErrorLike | undefined; // todo: could be more generic?
       refetch: () => void;
     }
   | {
       query: {
-        error: ApolloError;
+        error: ErrorLike;
         refetch: () => void;
         networkStatus: NetworkStatus;
       };
@@ -100,8 +101,10 @@ const FatalApolloError: React.FC<NetworkErrorProps> = (props) => {
   );
 
   if (
-    error.graphQLErrors?.[0]?.extensions.code ===
-    GraphQLErrorCodes.ENTITY_NOT_FOUND
+    CombinedGraphQLErrors.is(error) &&
+    error.errors.some(
+      (e) => e.extensions?.code === GraphQLErrorCodes.ENTITY_NOT_FOUND,
+    )
   ) {
     return (
       <ErrorContainer variant="outlined">
@@ -109,14 +112,12 @@ const FatalApolloError: React.FC<NetworkErrorProps> = (props) => {
         <Gap vertical={1} />
         <AppsOutage sx={{ fontSize: '4rem', color: 'gray' }} />
         <Gap vertical={0.5} />
-        <ErrorInformationSmall>
-          {error.graphQLErrors[0].message}
-        </ErrorInformationSmall>
+        <ErrorInformationSmall>{error.message}</ErrorInformationSmall>
       </ErrorContainer>
     );
   }
 
-  if (error.extraInfo === OFFLINE_CACHE_MISS) {
+  if ('cause' in error && error.cause === OFFLINE_CACHE_MISS) {
     return (
       <ErrorContainer variant="outlined">
         <ErrorTitle>Requested data is not available offline.</ErrorTitle>

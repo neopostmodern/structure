@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from "@apollo/client/react";
 import { Edit, RemoveCircleOutline } from '@mui/icons-material';
 import { CircularProgress, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import { useState } from 'react';

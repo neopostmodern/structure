@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from "@apollo/client/react";
 import { Box, MenuItem, Select, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { NetworkMode, setNetworkMode } from '../actions/configuration';

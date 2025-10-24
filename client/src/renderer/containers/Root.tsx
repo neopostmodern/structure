@@ -1,4 +1,5 @@
-import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { ApolloClient } from '@apollo/client';
+import { ApolloProvider } from "@apollo/client/react";
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { type History } from 'history';
 import React, { lazy, useEffect, useState } from 'react';
@@ -48,7 +49,7 @@ const UserPage = wrap(
 type RootType = {
   store: Store<RootState>;
   history: History;
-  client: ApolloClient<any>;
+  client: ApolloClient;
 };
 
 const Root: React.FC<RootType> = ({ store, history, client }) => {

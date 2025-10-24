@@ -1,4 +1,4 @@
-import { MutationResult } from '@apollo/client';
+import type { useMutation } from "@apollo/client/react";
 import { Box, Typography } from '@mui/material';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { DataState, LazyPolicedData } from '../utils/useDataState';
@@ -32,7 +32,7 @@ const NetworkOperationsIndicator = ({
   mutation,
 }: {
   query?: LazyPolicedData<any>;
-  mutation?: MutationResult;
+  mutation?: useMutation.Result;
 }) => {
   const [backgroundLoadingState, setBackgroundLoadingState] =
     useState<NetworkPhase>(NetworkPhase.IDLE);

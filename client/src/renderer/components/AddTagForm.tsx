@@ -1,4 +1,5 @@
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useMutation, useQuery } from "@apollo/client/react";
 import { Warning as WarningIcon } from '@mui/icons-material';
 import { Skeleton, Tooltip } from '@mui/material';
 import { INTERNAL_TAG_PREFIX } from '@structure/common';

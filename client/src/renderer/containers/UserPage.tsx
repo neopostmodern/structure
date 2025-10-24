@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from "@apollo/client/react";
 import { Launch } from '@mui/icons-material';
 import { Button, Link, Typography } from '@mui/material';
 import { gql } from 'graphql-tag';

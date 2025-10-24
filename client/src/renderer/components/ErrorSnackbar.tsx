@@ -1,4 +1,4 @@
-import { ApolloError } from '@apollo/client';
+import { ErrorLike } from '@apollo/client';
 import { Alert, Button, Snackbar, Portal } from '@mui/material';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -12,8 +12,8 @@ const StyledSnackbar = styled(Snackbar)`
         theme.mixins.toolbar,
         (toolbarRule) =>
           `bottom: calc(${toolbarRule.minHeight}px + ${theme.spacing(
-            2
-          )} + env(safe-area-inset-bottom));`
+            2,
+          )} + env(safe-area-inset-bottom));`,
       )}
   }
 `;
@@ -24,7 +24,7 @@ const ErrorSnackbar = ({
   retry = undefined,
   autoHideDuration = null,
 }: {
-  error: ApolloError | undefined;
+  error: ErrorLike | undefined;
   actionDescription: string;
   retry?: () => void;
   autoHideDuration?: number | null;

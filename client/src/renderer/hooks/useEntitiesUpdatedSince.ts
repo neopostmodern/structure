@@ -1,9 +1,5 @@
-import {
-  gql,
-  StoreObject,
-  useApolloClient,
-  useLazyQuery,
-} from '@apollo/client';
+import { gql, StoreObject } from '@apollo/client';
+import { useApolloClient, useLazyQuery } from "@apollo/client/react";
 import { useEffect } from 'react';
 import { NOTES_QUERY } from '../containers/NotesPage/NotesPage';
 import { TAGS_QUERY } from '../containers/TagsPage';

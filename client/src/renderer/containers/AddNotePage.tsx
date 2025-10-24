@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from "@apollo/client/react";
 import { PostAdd } from '@mui/icons-material';
 import { Stack } from '@mui/material';
 import { FC, useCallback, useEffect, useState } from 'react';

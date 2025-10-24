@@ -101,6 +101,9 @@ const apolloOptions = {
 };
 export const apolloClient = new ApolloClient({
   ...apolloOptions,
+
+  // required for @client
+  // localState: new LocalState({}),
 });
 
 if (import.meta.env.DEV || __DEBUG_PROD__ === 'true') {

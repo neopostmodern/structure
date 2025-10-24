@@ -1,4 +1,6 @@
-import { ApolloError, gql, useMutation } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { useCallback, useState } from 'react';
 import type {
   AddLinkMutation,
@@ -59,10 +61,10 @@ export const useDataImport = () => {
     CreateTagMutationVariables
   >(CREATE_TAG_MUTATION);
   const [addLinkNote] = useMutation<AddLinkMutation, AddLinkMutationVariables>(
-    ADD_LINK_MUTATION
+    ADD_LINK_MUTATION,
   );
   const [addTextNote] = useMutation<AddTextMutation, AddTextMutationVariables>(
-    ADD_TEXT_MUTATION
+    ADD_TEXT_MUTATION,
   );
   const [addTagByNameToNote] = useMutation<
     AddTagByNameToNoteMutation,
@@ -93,9 +95,8 @@ export const useDataImport = () => {
             stats.tags.imported += 1;
           } catch (exception) {
             if (
-              (exception as ApolloError).graphQLErrors?.[0].message.includes(
-                'already exists'
-              )
+              CombinedGraphQLErrors.is(exception) &&
+              exception.errors.some((e) => e.message.includes('already exists'))
             ) {
               stats.tags.duplicate += 1;
             } else {
@@ -149,12 +150,12 @@ export const useDataImport = () => {
           `Imported ${stats.tags.imported} tags ` +
             `(skipped ${stats.tags.duplicate} tags already present) ` +
             `and ${stats.notes.imported} notes ` +
-            `(with ${stats.notes.tagged} tags total)`
+            `(with ${stats.notes.tagged} tags total)`,
         );
         setCurrentImport(IMPORT_COMPLETE);
       })();
     },
-    [setCurrentImport]
+    [setCurrentImport],
   );
   const clearImport = useCallback(() => {
     setCurrentImport(null);

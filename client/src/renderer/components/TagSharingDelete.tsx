@@ -1,4 +1,5 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql } from '@apollo/client';
+import { useMutation } from "@apollo/client/react";
 import { Delete } from '@mui/icons-material';
 import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { useCallback } from 'react';

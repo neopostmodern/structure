@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from "@apollo/client/react";
 import { Typography } from '@mui/material';
 import { bookmarkletCode, rssFeedUrl } from '@structure/common';
 import { gql } from 'graphql-tag';

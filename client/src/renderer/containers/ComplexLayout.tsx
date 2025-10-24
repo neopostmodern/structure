@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from "@apollo/client/react";
 import { AccountCircle, LocalOffer, Settings } from '@mui/icons-material';
 import { CircularProgress, Stack } from '@mui/material';
 import React, { ReactElement, useEffect, useMemo, useState } from 'react';

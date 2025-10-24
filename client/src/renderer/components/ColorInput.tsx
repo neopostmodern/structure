@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery } from "@apollo/client/react";
 import { Close, Colorize } from '@mui/icons-material';
 import {
   Box,
