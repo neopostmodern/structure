@@ -1,5 +1,5 @@
 import { gql, StoreObject } from '@apollo/client';
-import { useApolloClient, useLazyQuery } from "@apollo/client/react";
+import { useApolloClient, useLazyQuery } from '@apollo/client/react';
 import { useEffect } from 'react';
 import { NOTES_QUERY } from '../containers/NotesPage/NotesPage';
 import { TAGS_QUERY } from '../containers/TagsPage';
@@ -239,6 +239,7 @@ const useEntitiesUpdatedSince = () => {
     }
 
     (async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
       try {
         await fetchEntitiesUpdatedSince({
           variables: {

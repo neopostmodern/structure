@@ -1,5 +1,5 @@
 import { ApolloClient } from '@apollo/client';
-import { ApolloProvider } from "@apollo/client/react";
+import { ApolloProvider } from '@apollo/client/react';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { type History } from 'history';
 import React, { lazy, useEffect, useState } from 'react';
@@ -17,33 +17,34 @@ import suspenseWrap from '../utils/suspenseWrap';
 import AuthWrapper from './AuthWrapper';
 import ComplexLayout from './ComplexLayout';
 import NotesPage from './NotesPage';
+import TestPage from './TestPage';
 
 const wrap = (LazyComponent: React.LazyExoticComponent<React.FC<{}>>) =>
   suspenseWrap(LazyComponent, () => <ComplexLayout loading />);
 
 const AddNotePage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './AddNotePage'))
+  lazy(() => import(/* webpackPrefetch: true */ './AddNotePage')),
 );
 const LinkPage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './LinkPage'))
+  lazy(() => import(/* webpackPrefetch: true */ './LinkPage')),
 );
 const MissingPage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './MissingPage'))
+  lazy(() => import(/* webpackPrefetch: true */ './MissingPage')),
 );
 const SettingsPage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './SettingsPage'))
+  lazy(() => import(/* webpackPrefetch: true */ './SettingsPage')),
 );
 const TagPage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './TagPage'))
+  lazy(() => import(/* webpackPrefetch: true */ './TagPage')),
 );
 const TagsPage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './TagsPage'))
+  lazy(() => import(/* webpackPrefetch: true */ './TagsPage')),
 );
 const TextPage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './TextPage'))
+  lazy(() => import(/* webpackPrefetch: true */ './TextPage')),
 );
 const UserPage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './UserPage'))
+  lazy(() => import(/* webpackPrefetch: true */ './UserPage')),
 );
 
 type RootType = {
@@ -55,7 +56,7 @@ type RootType = {
 const Root: React.FC<RootType> = ({ store, history, client }) => {
   const theme = useTheme();
   const [isMigrationsFinished, setIsMigrationFinished] = useState(
-    getMigrationStorageVersionSync() === CURRENT_MIGRATION_VERSION
+    getMigrationStorageVersionSync() === CURRENT_MIGRATION_VERSION,
   );
   useEffect(() => {
     if (isMigrationsFinished) {
@@ -89,7 +90,7 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
           <ThemeProvider theme={theme}>
             <AuthWrapper>
               <Routes>
-                <Route path="/" element={<NotesPage />} />
+                <Route path="/" element={<TestPage />} />
                 <Route path="/notes" element={<NotesPage />} />
                 <Route path="/notes/add" element={<AddNotePage />} />
                 <Route path="/texts/:textId" element={<TextPage />} />
