@@ -8,6 +8,10 @@ import SearchTest from '../components/SearchTest';
 import useEntitiesUpdatedSince from '../hooks/useEntitiesUpdatedSince';
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../reducers';
+import { UserInterfaceStateType } from '../reducers/userInterface';
+
 export const OPTIMISTIC_NOTE_COUNT = 10;
 
 const TestPage: React.FC = () => {
@@ -22,11 +26,19 @@ const TestPage: React.FC = () => {
             _id
           }
         }
+        tags {
+          _id
+          name
+        }
       }
     `,
     {
       fetchPolicy: 'cache-only',
     },
+  );
+
+  const { searchQuery } = useSelector<RootState, UserInterfaceStateType>(
+    (state) => state.userInterface,
   );
 
   const sortedNoteIds = useMemo(() => {
@@ -36,12 +48,32 @@ const TestPage: React.FC = () => {
 
     // todo: it seems with the query like above it should be okay to do filtering here instead of in the notes?
 
-    const noteIds = [...cacheQuery.data.notes];
+    let noteIds = [...cacheQuery.data.notes];
+
     noteIds.sort((a, b) => b.updatedAt - a.updatedAt);
     return noteIds;
   }, [cacheQuery]);
 
+  const sortedAndFilteredNoteIds = useMemo(() => {
+    if (!searchQuery) {
+      return sortedNoteIds;
+    }
+
+    const matchedTags = cacheQuery.data.tags
+      .filter((tag) => tag.name.includes(searchQuery))
+      .map(({ _id }) => _id);
+    return sortedNoteIds.filter(
+      (note) =>
+        note.name.includes(searchQuery) ||
+        note.tags.some((tag) => matchedTags.includes(tag._id)),
+    );
+  }, [sortedNoteIds, searchQuery]);
+
   console.log('cache query', cacheQuery);
+
+  console.log(
+    `Filtered for '${searchQuery}' and found ${sortedAndFilteredNoteIds.length}`,
+  );
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince();
   console.log('updated since', entitiesUpdatedSince);
@@ -73,8 +105,8 @@ const TestPage: React.FC = () => {
   );
 
   let content = null;
-  if (sortedNoteIds !== 'loading') {
-    content = sortedNoteIds
+  if (sortedAndFilteredNoteIds !== 'loading') {
+    content = sortedAndFilteredNoteIds
       .slice(0, notesLimit)
       .map(({ _id }) => <NoteTest key={_id} noteId={_id} />);
 
@@ -88,7 +120,12 @@ const TestPage: React.FC = () => {
         query={entitiesUpdatedSince}
       />
       {content}
-      <div ref={showMoreElement}>more...</div>
+      {sortedAndFilteredNoteIds.length > notesLimit && (
+        <div ref={showMoreElement}>
+          more... (showing {notesLimit} of {sortedAndFilteredNoteIds.length}{' '}
+          notes)
+        </div>
+      )}
     </ComplexLayout>
   );
 };

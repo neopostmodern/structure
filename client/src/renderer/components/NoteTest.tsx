@@ -9,9 +9,6 @@ import * as Styled from './NoteInList.style';
 import NoteInListBatchEditing from './NoteInListBatchEditing';
 import NotesListActionMenu from './NotesListActionMenu';
 import Tags from './Tags';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../reducers';
-import { UserInterfaceStateType } from '../reducers/userInterface';
 import TooltipWithShortcut from './TooltipWithShortcut';
 import { useFragment } from '@apollo/client/react';
 import {
@@ -66,20 +63,6 @@ export const NoteTest: React.FC<{
     },
   });
   const note = noteData.data;
-
-  const { searchQuery } = useSelector<RootState, UserInterfaceStateType>(
-    (state) => state.userInterface,
-  );
-  console.log(note, searchQuery);
-
-  if (searchQuery) {
-    if (
-      !note.name.includes(searchQuery) &&
-      !note.tags.some((tag) => tag.name.includes(searchQuery))
-    ) {
-      return null;
-    }
-  }
 
   return (
     <Styled.Note archived={Boolean(note.archivedAt)}>

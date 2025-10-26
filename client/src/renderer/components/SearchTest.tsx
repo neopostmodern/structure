@@ -3,13 +3,15 @@ import {
   Search as SearchIcon,
 } from '@mui/icons-material';
 import {
+  CircularProgress,
   FormControl,
   IconButton,
   Input,
   InputAdornment,
   InputLabel,
 } from '@mui/material';
-import { useCallback } from 'react';
+import { debounce } from 'lodash';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../reducers';
 import { UserInterfaceStateType } from '../reducers/userInterface';
@@ -20,41 +22,54 @@ const SearchTest = () => {
     (state) => state.userInterface,
   );
 
+  const [displayedSearchQuery, setDisplayedSearchQuery] = useState(searchQuery);
+
   const dispatch = useDispatch();
+  const debouncedSearchQueryUpdate = useMemo(
+    () =>
+      debounce((searchQueryValue) => {
+        console.log('debounced change', searchQueryValue);
+        dispatch(changeSearchQuery(searchQueryValue));
+      }, 200),
+    [dispatch, changeSearchQuery],
+  );
 
   const onChangeSearchQuery = useCallback(
-    (value: string): void => {
-      dispatch(changeSearchQuery(value));
+    ({ target: { value } }: { target: { value: string } }): void => {
+      console.log('change', value);
+      setDisplayedSearchQuery(value);
+      debouncedSearchQueryUpdate(value);
     },
     [dispatch],
   );
   const handleClearSearchText = useCallback(
-    (): void => onChangeSearchQuery(''),
+    (): void => onChangeSearchQuery({ target: { value: '' } }),
     [onChangeSearchQuery],
   );
+
+  let adornment = <SearchIcon />;
+  if (displayedSearchQuery !== searchQuery) {
+    adornment = <CircularProgress color="inherit" disableShrink size="1.2em" />;
+  } else if (displayedSearchQuery.length > 0) {
+    adornment = (
+      <IconButton
+        aria-label="clear text search filter"
+        onClick={handleClearSearchText}
+        edge="end"
+      >
+        <ClearIcon />
+      </IconButton>
+    );
+  }
 
   return (
     <FormControl variant="standard" sx={{ width: '100%' }}>
       <InputLabel>Search</InputLabel>
       <Input
-        onChange={({ target: { value } }): void => {
-          onChangeSearchQuery(value);
-        }}
-        value={searchQuery}
+        onChange={onChangeSearchQuery}
+        value={displayedSearchQuery}
         endAdornment={
-          <InputAdornment position="end">
-            {searchQuery.length > 0 ? (
-              <IconButton
-                aria-label="clear text search filter"
-                onClick={handleClearSearchText}
-                edge="end"
-              >
-                <ClearIcon />
-              </IconButton>
-            ) : (
-              <SearchIcon />
-            )}
-          </InputAdornment>
+          <InputAdornment position="end">{adornment}</InputAdornment>
         }
       />
     </FormControl>
