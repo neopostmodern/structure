@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from '@apollo/client/react';
 import { Typography } from '@mui/material';
 import { gql } from 'graphql-tag';
 import { FC, useCallback } from 'react';
@@ -45,12 +45,7 @@ const TAG_QUERY = gql`
       }
 
       notes {
-        ...BaseNote
-        ... on INote {
-          tags {
-            ...BaseTag
-          }
-        }
+        _id
       }
     }
   }
@@ -63,27 +58,6 @@ const UPDATE_TAG_MUTATION = gql`
   mutation UpdateTag($tag: InputTag!) {
     updateTag(tag: $tag) {
       ...BaseTag
-
-      notes {
-        ... on INote {
-          type
-          _id
-          name
-          createdAt
-          archivedAt
-          changedAt
-          description
-          tags {
-            _id
-            name
-            color
-          }
-        }
-        ... on Link {
-          url
-          domain
-        }
-      }
     }
   }
 
@@ -117,7 +91,7 @@ const TagPage: FC = () => {
     useQuery<TagWithNotesQuery, TagWithNotesQueryVariables>(TAG_QUERY, {
       variables: { tagId },
       fetchPolicy: gracefulNetworkPolicy(),
-    })
+    }),
   );
   const [updateTag, updateTagMutation] = useMutation<
     UpdateTagMutation,
@@ -136,7 +110,7 @@ const TagPage: FC = () => {
         console.error('[TagPage.updateTag]', error);
       });
     },
-    [updateTag]
+    [updateTag],
   );
   const handleDeleteTag = useCallback((): void => {
     deleteTag({
@@ -162,7 +136,7 @@ const TagPage: FC = () => {
           query: TAGS_QUERY,
           data: {
             tags: cacheValue.tags.filter(
-              (tag) => tag._id !== permanentlyDeleteTag._id
+              (tag) => tag._id !== permanentlyDeleteTag._id,
             ),
           },
         });
@@ -214,7 +188,11 @@ const TagPage: FC = () => {
 
       <Gap vertical={4} />
       <Typography variant="h2">Tagged notes</Typography>
-      <NotesList notes={tagQuery.data.tag.notes} />
+      <NotesList
+        noteIds={tagQuery.data.tag.notes?.map(({ _id }) => _id) || []}
+        initialCount={5}
+        expanded={false}
+      />
     </ComplexLayout>
   );
 };

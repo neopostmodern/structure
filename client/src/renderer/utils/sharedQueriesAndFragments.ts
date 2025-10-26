@@ -108,11 +108,6 @@ export const ADD_TAG_BY_NAME_TO_NOTE_MUTATION = gql`
         tags {
           ...BaseTag
           noteCount
-          notes {
-            ... on INote {
-              _id
-            }
-          }
         }
       }
     }
