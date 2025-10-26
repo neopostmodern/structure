@@ -16,6 +16,7 @@ import {
   BASE_TAG_FRAGMENT,
   BASE_USER_FRAGMENT,
 } from '../utils/sharedQueriesAndFragments';
+import TestDeferredTags from './TestDeferredTags';
 
 const RenderedMarkdown = suspenseWrap(
   lazy(() => import(/* webpackPrefetch: true */ './RenderedMarkdown')),
@@ -106,7 +107,7 @@ export const NoteTest: React.FC<{
           )}
         </Styled.NoteInfo>
         <Styled.NoteActions>
-          <Tags tags={note.tags} noteId={note._id} />
+          <TestDeferredTags tags={note.tags} noteId={note._id} />
           <Styled.ActionMenuWrapper>
             <NotesListActionMenu note={note} />
           </Styled.ActionMenuWrapper>

@@ -1,5 +1,5 @@
 import { AddCircle, Create } from '@mui/icons-material';
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { push } from 'redux-first-history';
 import type { NotesForListQuery } from '../generated/graphql';
@@ -8,19 +8,29 @@ import { QUICK_ACCESS_SHORTCUT_PREFIX, SHORTCUTS } from '../utils/keyboard';
 import { noteUrl } from '../utils/routes';
 import EmptyPageInfo from './EmptyPageInfo';
 import Gap from './Gap';
-import NoteInList from './NoteInList';
+import NoteInList from './NoteInList'; // todo
+import NoteTest from '../components/NoteTest';
 import Shortcut from './Shortcut';
+import TestInView from './TestInView';
 
 const NotesList: React.FC<{
-  notes: NotesForListQuery['notes'];
+  noteIds: Array<string>;
   expanded: boolean;
-}> = ({ notes, expanded }) => {
+  initialCount: number;
+}> = ({ noteIds, expanded, initialCount }) => {
   const dispatch = useDispatch();
-  useQuickNumberShortcuts(notes, (note) => {
-    dispatch(push(noteUrl(note)));
-  });
+  // todo
+  // useQuickNumberShortcuts(notes, (note) => {
+  //   dispatch(push(noteUrl(note)));
+  // });
 
-  if (notes.length === 0) {
+  const [notesLimit, setNotesLimit] = useState(initialCount);
+  const handleIsInView = useCallback(
+    () => setNotesLimit((limit) => limit + 10),
+    [setNotesLimit],
+  );
+
+  if (noteIds.length === 0) {
     return (
       <EmptyPageInfo
         icon={Create}
@@ -45,16 +55,12 @@ const NotesList: React.FC<{
     <>
       <Gap vertical={1} />
       <div>
-        {notes.map((note, noteIndex) => (
-          <NoteInList
-            key={note._id}
-            note={note}
-            expanded={expanded}
-            shortcut={
-              SHORTCUTS[`${QUICK_ACCESS_SHORTCUT_PREFIX}${noteIndex + 1}`]
-            }
-          />
+        {noteIds.slice(0, notesLimit).map((noteId, noteIndex) => (
+          <NoteTest key={noteId} noteId={noteId} expanded={expanded} />
         ))}
+        {noteIds.length > notesLimit && (
+          <TestInView onIsInView={handleIsInView} />
+        )}
       </div>
     </>
   );

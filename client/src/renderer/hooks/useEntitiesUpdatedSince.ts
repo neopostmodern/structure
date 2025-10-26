@@ -17,6 +17,7 @@ import {
   BASE_TAG_FRAGMENT,
 } from '../utils/sharedQueriesAndFragments';
 import useDataState, { DataState } from '../utils/useDataState';
+import deferUntilIdle from '../utils/deferUntilIdle';
 import useIsOnline from './useIsOnline';
 
 export const ENTITIES_UPDATED_SINCE_QUERY = gql`
@@ -239,7 +240,7 @@ const useEntitiesUpdatedSince = () => {
     }
 
     (async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise<void>((resolve) => deferUntilIdle(resolve, 5000));
       try {
         await fetchEntitiesUpdatedSince({
           variables: {

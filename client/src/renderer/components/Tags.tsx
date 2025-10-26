@@ -33,7 +33,7 @@ export const REMOVE_TAG_MUTATION = gql`
   ${BASE_TAG_FRAGMENT}
 `;
 
-const TagContainer = styled.div`
+export const TagContainer = styled.div`
   display: flex;
   min-width: 0;
   align-items: center;

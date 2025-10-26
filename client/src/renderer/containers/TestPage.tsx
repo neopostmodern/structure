@@ -1,21 +1,25 @@
 import { gql } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import ComplexLayout from './ComplexLayout';
-import NoteTest from '../components/NoteTest';
-import SearchTest from '../components/SearchTest';
-import useEntitiesUpdatedSince from '../hooks/useEntitiesUpdatedSince';
-import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
-
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { RootState } from '../reducers';
-import { UserInterfaceStateType } from '../reducers/userInterface';
-
-export const OPTIMISTIC_NOTE_COUNT = 10;
+import SearchTest from '../components/SearchTest';
+import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
+import NotesList from '../components/NotesList';
+import useEntitiesUpdatedSince from '../hooks/useEntitiesUpdatedSince';
+import ComplexLayout from './ComplexLayout';
 
 const TestPage: React.FC = () => {
-  const cacheQuery = useQuery(
+  useMemo(() => {
+    performance.mark('testpage:start');
+  }, []);
+  const searchQuery = useSelector<RootState, string>(
+    (state) => state.userInterface.searchQuery,
+  );
+  const skipSearch = !searchQuery;
+  console.log('skip search', skipSearch);
+
+  const notesCacheQuery = useQuery(
     gql`
       query NotesTest {
         notes {
@@ -26,40 +30,43 @@ const TestPage: React.FC = () => {
             _id
           }
         }
-        tags {
-          _id
-          name
-        }
       }
     `,
     {
       fetchPolicy: 'cache-only',
     },
   );
-
-  const { searchQuery } = useSelector<RootState, UserInterfaceStateType>(
-    (state) => state.userInterface,
+  const tagsCacheQuery = useQuery(
+    gql`
+      query TagsTest {
+        tags {
+          _id
+          name
+        }
+      }
+    `,
+    { fetchPolicy: 'cache-only', skip: skipSearch },
   );
 
   const sortedNoteIds = useMemo(() => {
-    if (cacheQuery.dataState !== 'complete') {
+    if (notesCacheQuery.dataState !== 'complete') {
       return 'loading';
     }
 
     // todo: it seems with the query like above it should be okay to do filtering here instead of in the notes?
 
-    let noteIds = [...cacheQuery.data.notes];
+    let noteIds = [...notesCacheQuery.data.notes];
 
     noteIds.sort((a, b) => b.updatedAt - a.updatedAt);
     return noteIds;
-  }, [cacheQuery]);
+  }, [notesCacheQuery]);
 
   const sortedAndFilteredNoteIds = useMemo(() => {
-    if (!searchQuery) {
+    if (skipSearch) {
       return sortedNoteIds;
     }
 
-    const matchedTags = cacheQuery.data.tags
+    const matchedTags = tagsCacheQuery.data.tags
       .filter((tag) => tag.name.includes(searchQuery))
       .map(({ _id }) => _id);
     return sortedNoteIds.filter(
@@ -67,64 +74,34 @@ const TestPage: React.FC = () => {
         note.name.includes(searchQuery) ||
         note.tags.some((tag) => matchedTags.includes(tag._id)),
     );
-  }, [sortedNoteIds, searchQuery]);
+  }, [sortedNoteIds, tagsCacheQuery.data, searchQuery]);
 
-  console.log('cache query', cacheQuery);
+  console.log('cache query', notesCacheQuery);
 
   console.log(
     `Filtered for '${searchQuery}' and found ${sortedAndFilteredNoteIds.length}`,
   );
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince();
-  console.log('updated since', entitiesUpdatedSince);
+  // console.log('updated since', entitiesUpdatedSince);
 
-  const [notesLimit, setNotesLimit] = useState(15);
-
-  const { ref: showMoreElement, inView } = useInView({
-    rootMargin: '0% 0% 20% 0%', // triggers 20vh below viewport
-  });
-  const firstRenderTimestamp = useMemo(() => {
-    return Date.now();
-  }, []);
-  const heuristicFirstContentfulPaintComplete =
-    Date.now() - firstRenderTimestamp > 1000;
-  useEffect(() => {
-    // todo: wait until first full render finished
-    if (heuristicFirstContentfulPaintComplete && inView) {
-      setNotesLimit((limit) => limit + OPTIMISTIC_NOTE_COUNT);
-    }
-  }, [inView, setNotesLimit, heuristicFirstContentfulPaintComplete]);
-
-  console.log(
-    'in view',
-    inView,
-    'limit',
-    notesLimit,
-    'heuristic complete',
-    heuristicFirstContentfulPaintComplete,
-  );
-
-  let content = null;
-  if (sortedAndFilteredNoteIds !== 'loading') {
-    content = sortedAndFilteredNoteIds
-      .slice(0, notesLimit)
-      .map(({ _id }) => <NoteTest key={_id} noteId={_id} />);
-
-    console.log('content', content);
-  }
+  console.log(performance.measure('testpage-render', 'testpage:start'));
 
   return (
-    <ComplexLayout loading={cacheQuery.loading} primaryActions={<SearchTest />}>
+    <ComplexLayout
+      loading={notesCacheQuery.loading}
+      primaryActions={<SearchTest />}
+    >
       <NetworkOperationsIndicator
         key="refresh-indicator"
         query={entitiesUpdatedSince}
       />
-      {content}
-      {sortedAndFilteredNoteIds.length > notesLimit && (
-        <div ref={showMoreElement}>
-          more... (showing {notesLimit} of {sortedAndFilteredNoteIds.length}{' '}
-          notes)
-        </div>
+      {sortedAndFilteredNoteIds !== 'loading' && (
+        <NotesList
+          noteIds={sortedAndFilteredNoteIds}
+          initialCount={15}
+          expanded={false}
+        />
       )}
     </ComplexLayout>
   );
