@@ -22,8 +22,8 @@ const LoginView: React.FC<LoginViewProps> = ({ openLoginModal }) => (
       </Button>
     </Centered>
     Read the documentation on{' '}
-    <a href="https://bericht.neopostmodern.com/posts/how-to-structure">
-      bericht.neopostmodern.com
+    <a href="https://neopostmodern.com/posts/how-to-structure">
+      neopostmodern.com
     </a>
     .
     {__BUILD_TARGET__ === 'web' ? (
