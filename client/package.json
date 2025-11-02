@@ -123,7 +123,7 @@
     "@mui/styled-engine-sc": "^7.3.1",
     "@structure/common": "file:../common",
     "@structure/config": "file:../config",
-    "apollo3-cache-persist": "^0.15.0",
+    "apollo3-cache-persist": "https://github.com/mspiess/apollo-cache-persist",
     "electron-debug": "^4.1.0",
     "electron-log": "^5.4.3",
     "electron-squirrel-startup": "^1.0.1",
