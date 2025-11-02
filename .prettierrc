@@ -4,5 +4,6 @@
   "semi": false,
   "jsxSingleQuote": true,
   "trailingComma": "all",
-  "useTabs": false
+  "useTabs": false,
+  "plugins": ["prettier-plugin-organize-imports"]
 }

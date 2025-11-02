@@ -154,20 +154,6 @@
     "styled-components": "^6.1.19",
     "update-electron-app": "^3.1.1"
   },
-  "prettier": {
-    "overrides": [
-      {
-        "files": [
-          ".prettierrc",
-          ".eslintrc"
-        ],
-        "options": {
-          "parser": "json"
-        }
-      }
-    ],
-    "singleQuote": true
-  },
   "publishConfig": {
     "access": "public"
   },
