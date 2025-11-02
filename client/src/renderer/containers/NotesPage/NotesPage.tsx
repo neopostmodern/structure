@@ -1,11 +1,9 @@
 import { gql } from '@apollo/client'
-import { useLazyQuery } from '@apollo/client/react'
 import { CloudOff } from '@mui/icons-material'
 import { CircularProgress, Stack, Typography } from '@mui/material'
-import React, { useEffect, useRef, useState } from 'react'
-import { useInView } from 'react-intersection-observer'
-import { useDispatch, useSelector } from 'react-redux'
-import { increaseInfiniteScroll, LinkLayout } from '../../actions/userInterface'
+import React, { useRef } from 'react'
+import { useSelector } from 'react-redux'
+import { LinkLayout } from '../../actions/userInterface'
 import Centered from '../../components/Centered'
 import FatalApolloError from '../../components/FatalApolloError'
 import Gap from '../../components/Gap'
@@ -17,28 +15,16 @@ import NotesList from '../../components/NotesList'
 import NotesMenu from '../../components/NotesMenu'
 import NotesPageEmpty from '../../components/NotesPageEmpty'
 import { SkeletonNoteList } from '../../components/Skeletons'
-import type {
-  NotesForListQuery,
-  NotesForListQueryVariables,
-} from '../../generated/graphql'
 import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince'
-import useFilteredNotes, {
-  FilteredNotesAndAllNotes,
-} from '../../hooks/useFilteredNotes'
 import useIsOnline from '../../hooks/useIsOnline'
-import useOptimisticCache from '../../hooks/useOptimisticCache'
 import useShortcut from '../../hooks/useShortcut'
 import { RootState } from '../../reducers'
-import { UserInterfaceStateType } from '../../reducers/userInterface'
 import { SHORTCUTS } from '../../utils/keyboard'
 import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
 } from '../../utils/sharedQueriesAndFragments'
-import useDataState, {
-  DataState,
-  OFFLINE_CACHE_MISS,
-} from '../../utils/useDataState'
+import { DataState, OFFLINE_CACHE_MISS } from '../../utils/useDataState'
 import ComplexLayout from '../ComplexLayout'
 
 export const NOTES_QUERY = gql`
@@ -57,38 +43,45 @@ export const NOTES_QUERY = gql`
   ${BASE_TAG_FRAGMENT}
 `
 
-export const OPTIMISTIC_NOTE_COUNT = 10
-
 const NotesPage: React.FC = () => {
-  const { linkLayout: layout, infiniteScrollLimit } = useSelector<
-    RootState,
-    UserInterfaceStateType
-  >((state) => state.userInterface)
-  const [noteRenderLimit, setNoteRenderLimit] = useState<null | number>(
-    OPTIMISTIC_NOTE_COUNT,
+  const layout = useSelector<RootState, LinkLayout>(
+    (state) => state.userInterface.linkLayout,
   )
-  const dispatch = useDispatch()
+
   const searchInput = useRef<HTMLInputElement | null>(null)
-  const [fetchNotesQuery, notesQuery] = useDataState(
-    useLazyQuery<NotesForListQuery>(NOTES_QUERY, {
-      fetchPolicy: 'cache-only',
-    }),
-  )
-  useEffect(() => {
-    setTimeout(fetchNotesQuery, 100)
-  }, [])
-  const filteredNotesQueryWrapper = useFilteredNotes(notesQuery)
-  const cachedFilteredNotesQueryWrapper = useOptimisticCache<
-    FilteredNotesAndAllNotes,
-    NotesForListQueryVariables,
-    NotesForListQuery
-  >(filteredNotesQueryWrapper, 'notes', ({ notes, archivedCount }) => ({
-    allNotes: null as any, // hack, will not render notes stats from optimistic cache
-    notes: notes.slice(0, OPTIMISTIC_NOTE_COUNT),
-    archivedCount,
-  }))
+
+  const sortedNoteIds = useMemo(() => {
+    if (notesCacheQuery.dataState !== 'complete') {
+      return 'loading'
+    }
+
+    // todo: it seems with the query like above it should be okay to do filtering here instead of in the notes?
+
+    let noteIds = [...notesCacheQuery.data.notes]
+
+    noteIds.sort((a, b) => b.updatedAt - a.updatedAt)
+    return noteIds
+  }, [notesCacheQuery])
+
+  const sortedAndFilteredNoteIds = useMemo(() => {
+    if (skipSearch) {
+      return sortedNoteIds
+    }
+
+    const matchedTags = tagsCacheQuery.data.tags
+      .filter((tag) => tag.name.includes(searchQuery))
+      .map(({ _id }) => _id)
+    return sortedNoteIds.filter(
+      (note) =>
+        note.name.includes(searchQuery) ||
+        note.tags.some((tag) => matchedTags.includes(tag._id)),
+    )
+  }, [sortedNoteIds, tagsCacheQuery.data, searchQuery])
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince()
+  useShortcut(SHORTCUTS.REFRESH, () => {
+    entitiesUpdatedSince.refetch()
+  })
 
   useShortcut(SHORTCUTS.SEARCH, () => {
     searchInput.current?.focus()
@@ -100,41 +93,6 @@ const NotesPage: React.FC = () => {
         ),
       10,
     )
-  })
-
-  const { ref: showMoreElement, inView } = useInView({
-    rootMargin: '0% 0% 20% 0%', // triggers 20vh below viewport
-  })
-
-  // 'rerun' is a dummy variable with no meaning to trigger a re-run of below
-  // hook to check if the element is still in view
-  const [rerun, setRerun] = useState(false)
-  useEffect(() => {
-    if (
-      !inView ||
-      (noteRenderLimit === null &&
-        cachedFilteredNotesQueryWrapper.state === DataState.DATA &&
-        cachedFilteredNotesQueryWrapper.data.notes.length < infiniteScrollLimit)
-    ) {
-      return
-    }
-    if (noteRenderLimit && noteRenderLimit < infiniteScrollLimit) {
-      setNoteRenderLimit(null)
-    } else {
-      dispatch(increaseInfiniteScroll(10))
-    }
-
-    const rerunTimeout = setTimeout(() => {
-      setRerun(!rerun)
-    }, 100)
-
-    return (): void => {
-      clearTimeout(rerunTimeout)
-    }
-  }, [inView, rerun, setRerun])
-
-  useShortcut(SHORTCUTS.REFRESH, () => {
-    entitiesUpdatedSince.refetch()
   })
 
   const isOnline = useIsOnline()
@@ -222,27 +180,10 @@ const NotesPage: React.FC = () => {
       content.push(
         <NotesList
           key='notes-list'
-          notes={matchedNotes.slice(0, noteRenderLimit || infiniteScrollLimit)}
+          noteIds={matchedNotes}
           expanded={layout === LinkLayout.EXPANDED_LIST_LAYOUT}
+          initialCount={15}
         />,
-        <div key='more' ref={showMoreElement}>
-          {matchedNotes.length > infiniteScrollLimit &&
-            noteRenderLimit === null && (
-              <>
-                <SkeletonNoteList />
-                <Gap vertical={2} />
-                <Typography
-                  variant='caption'
-                  color='gray'
-                  textAlign='center'
-                  component='div'
-                >
-                  {matchedNotes.length - infiniteScrollLimit} more notes
-                  loading...
-                </Typography>
-              </>
-            )}
-        </div>,
       )
     }
 

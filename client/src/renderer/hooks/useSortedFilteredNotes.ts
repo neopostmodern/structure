@@ -1,14 +1,14 @@
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { ArchiveState, SortBy } from '../actions/userInterface'
-import type { NotesForListQuery } from '../generated/graphql'
+import type {
+  NotesForSortAndFilterQuery,
+  TagsForSearchQuery,
+} from '../generated/graphql'
 import { RootState } from '../reducers'
-import { UserInterfaceStateType } from '../reducers/userInterface'
-import {
-  DataState,
-  UseDataStateLazyQuery,
-  UseDataStateResult,
-} from '../utils/useDataState'
+import { DataState, PolicedData } from '../utils/useDataState'
 
 const textIncludes = (needle?: string, haystack?: string): boolean => {
   if (!haystack || !needle) {
@@ -19,11 +19,11 @@ const textIncludes = (needle?: string, haystack?: string): boolean => {
 }
 
 interface FilteredNotes {
-  notes: NotesForListQuery['notes']
+  notes: NotesForSortAndFilterQuery['notes']
   archivedCount: number | undefined
 }
 const filterNotes = (
-  notes: NotesForListQuery['notes'],
+  notes: NotesForSortAndFilterQuery['notes'],
   searchQuery: string,
   archiveState: ArchiveState,
 ): FilteredNotes => {
@@ -55,11 +55,11 @@ const filterNotes = (
 }
 
 export type FilteredNotesAndAllNotes = FilteredNotes & {
-  allNotes: NotesForListQuery['notes']
+  allNotes: NotesForSortAndFilterQuery['notes']
 }
 
 const sortByToFieldName: {
-  [sortBy in SortBy]: keyof NotesForListQuery['notes'][number]
+  [sortBy in SortBy]: keyof NotesForSortAndFilterQuery['notes'][number]
 } = {
   [SortBy.CREATED_AT]: 'createdAt',
   [SortBy.UPDATED_AT]: 'updatedAt',
@@ -67,8 +67,8 @@ const sortByToFieldName: {
 }
 
 const extendedCache: {
-  notesData: NotesForListQuery['notes'] | null
-  sortedNotes: NotesForListQuery['notes'] | null
+  notesData: NotesForSortAndFilterQuery['notes'] | null
+  sortedNotes: NotesForSortAndFilterQuery['notes'] | null
   filteredNotes: FilteredNotes | null
   searchQuery: string | null
   archiveState: ArchiveState | null
@@ -82,59 +82,102 @@ const extendedCache: {
   sortBy: null,
 }
 
-const useFilteredNotes = (
-  notesQuery: UseDataStateLazyQuery<NotesForListQuery, undefined>,
-): UseDataStateResult<
-  FilteredNotesAndAllNotes,
-  undefined,
-  NotesForListQuery
-> => {
-  const { archiveState, sortBy, searchQuery } = useSelector<
-    RootState,
-    UserInterfaceStateType
-  >((state) => state.userInterface)
+const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
+  const archiveState = useSelector<RootState, ArchiveState>(
+    (state) => state.userInterface.archiveState,
+  )
+  const sortBy = useSelector<RootState, SortBy>(
+    (state) => state.userInterface.sortBy,
+  )
+  const searchQuery = useSelector<RootState, string>(
+    (state) => state.userInterface.searchQuery,
+  )
+  const skipSearch = !searchQuery
+
+  const notesCacheQuery = useQuery<NotesForSortAndFilterQuery>(
+    gql`
+      query NotesForSortAndFilter {
+        notes {
+          ... on INote {
+            _id
+            createdAt
+            updatedAt
+            changedAt
+            archivedAt
+            name
+            tags {
+              _id
+            }
+          }
+          ... on Link {
+            url
+          }
+        }
+      }
+    `,
+    {
+      fetchPolicy: 'cache-only',
+    },
+  )
+
+  const tagsCacheQuery = useQuery<TagsForSearchQuery>(
+    gql`
+      query TagsForSearch {
+        tags {
+          _id
+          name
+        }
+      }
+    `,
+    { fetchPolicy: 'cache-only', skip: skipSearch },
+  )
 
   const [isFilteringNotes, setIsFilteringNotes] = useState(false)
   const [filteredNotes, setFilteredNotes] =
     useState<null | FilteredNotesAndAllNotes>(null)
   const timeoutRef = useRef<null | NodeJS.Timeout>(null)
-  const allNotes = useMemo<NotesForListQuery['notes'] | null>(() => {
-    if (notesQuery.state !== DataState.DATA) {
+  const allNotesSorted = useMemo<
+    NotesForSortAndFilterQuery['notes'] | null
+  >(() => {
+    if (notesCacheQuery.dataState !== 'complete') {
       return null
     }
 
     if (
-      notesQuery.data.notes === extendedCache.notesData &&
+      notesCacheQuery.data.notes === extendedCache.notesData &&
       sortBy === extendedCache.sortBy
     ) {
       return extendedCache.sortedNotes
     }
     extendedCache.sortBy = sortBy
-    extendedCache.notesData = notesQuery.data.notes
+    extendedCache.notesData = notesCacheQuery.data.notes
 
-    const notes = [...notesQuery.data.notes] // unfreeze
+    const notes = [...notesCacheQuery.data.notes] // unfreeze
     notes.sort(
       (noteA, noteB) =>
         noteB[sortByToFieldName[sortBy]] - noteA[sortByToFieldName[sortBy]],
     )
     return notes
-  }, ['data' in notesQuery && notesQuery.data, sortBy])
+  }, [notesCacheQuery.data, sortBy])
 
   useEffect(() => {
-    if (!allNotes) {
+    if (!allNotesSorted) {
       return
     }
 
     if (
-      allNotes === extendedCache.sortedNotes &&
+      allNotesSorted === extendedCache.sortedNotes &&
       searchQuery === extendedCache.searchQuery &&
       archiveState === extendedCache.archiveState &&
       extendedCache.filteredNotes !== null
     ) {
-      setFilteredNotes({ allNotes, ...extendedCache.filteredNotes })
+      setFilteredNotes({
+        allNotes: allNotesSorted,
+        ...extendedCache.filteredNotes,
+      })
       return
     }
-    extendedCache.sortedNotes = allNotes
+    extendedCache.sortedNotes = allNotesSorted
     extendedCache.searchQuery = searchQuery
     extendedCache.archiveState = archiveState
 
@@ -146,10 +189,14 @@ const useFilteredNotes = (
 
     timeoutRef.current = setTimeout(
       () => {
-        const filteredNotes = filterNotes(allNotes, searchQuery, archiveState)
+        const filteredNotes = filterNotes(
+          allNotesSorted,
+          searchQuery,
+          archiveState,
+        )
         extendedCache.filteredNotes = filteredNotes
         setFilteredNotes({
-          allNotes,
+          allNotes: allNotesSorted,
           ...filteredNotes,
         })
         setIsFilteringNotes(false)
@@ -157,29 +204,25 @@ const useFilteredNotes = (
       searchQuery.length ? 100 : 0,
     )
   }, [
-    allNotes,
+    allNotesSorted,
     searchQuery,
     archiveState,
     setIsFilteringNotes,
     setFilteredNotes,
   ])
 
-  if (notesQuery.state === DataState.UNCALLED) {
-    return { ...notesQuery, state: DataState.LOADING }
-  }
-  if (notesQuery.state !== DataState.DATA) {
-    return notesQuery
-  }
-
-  if (!filteredNotes) {
-    return { ...notesQuery, state: DataState.LOADING }
+  if (!allNotesSorted || !filteredNotes) {
+    return { state: DataState.LOADING }
   }
 
   return {
-    ...notesQuery,
-    data: filteredNotes,
+    state: DataState.DATA,
+    data: {
+      ...filteredNotes,
+      allNotes: allNotesSorted,
+    },
     loadingBackground: isFilteringNotes,
   }
 }
 
-export default useFilteredNotes
+export default useSortedFilteredNotes
