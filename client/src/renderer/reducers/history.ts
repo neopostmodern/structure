@@ -1,28 +1,28 @@
-import { createReducer } from 'redux-act';
+import { createReducer } from 'redux-act'
 import {
   addNoteToHistory,
   registerHistoryBackward,
   registerHistoryForward,
-} from '../actions/history';
+} from '../actions/history'
 
-export const LAST_VISITED_NOTES_STORAGE_KEY = 'last-visited-notes';
+export const LAST_VISITED_NOTES_STORAGE_KEY = 'last-visited-notes'
 
-export type NoteSummary = { type: 'link' | 'text'; id: string };
+export type NoteSummary = { type: 'link' | 'text'; id: string }
 export interface HistoryStateType {
-  lastVisitedNotes: Array<NoteSummary>;
-  lengthOfPast: number;
-  lengthOfFuture: number;
+  lastVisitedNotes: Array<NoteSummary>
+  lengthOfPast: number
+  lengthOfFuture: number
 }
 
 const initialState: HistoryStateType = {
   lastVisitedNotes: JSON.parse(
-    localStorage.getItem(LAST_VISITED_NOTES_STORAGE_KEY) || '[]'
+    localStorage.getItem(LAST_VISITED_NOTES_STORAGE_KEY) || '[]',
   ),
   lengthOfPast: 0,
   lengthOfFuture: 0,
-};
+}
 
-const NOTE_HISTORY_LENGTH = 10;
+const NOTE_HISTORY_LENGTH = 10
 
 export default createReducer<HistoryStateType>(
   {
@@ -44,5 +44,5 @@ export default createReducer<HistoryStateType>(
       lengthOfFuture: Math.max(0, state.lengthOfFuture + 1),
     }),
   },
-  initialState
-);
+  initialState,
+)

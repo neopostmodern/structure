@@ -5,7 +5,7 @@ import {
   Search as SearchIcon,
   Sort,
   ViewList,
-} from '@mui/icons-material';
+} from '@mui/icons-material'
 import {
   FormControl,
   FormHelperText,
@@ -13,9 +13,9 @@ import {
   Input,
   InputAdornment,
   InputLabel,
-} from '@mui/material';
-import { Ref, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+} from '@mui/material'
+import { Ref, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   ArchiveState,
   changeArchiveState,
@@ -24,30 +24,30 @@ import {
   changeSortBy,
   LinkLayout,
   SortBy,
-} from '../actions/userInterface';
-import NoteCount from '../containers/NotesPage/NoteCount';
-import type { NotesForListQuery } from '../generated/graphql';
-import { RootState } from '../reducers';
+} from '../actions/userInterface'
+import NoteCount from '../containers/NotesPage/NoteCount'
+import type { NotesForListQuery } from '../generated/graphql'
+import { RootState } from '../reducers'
 import {
   DEFAULT_ARCHIVE_STATE,
   DEFAULT_SORT_BY,
   UserInterfaceStateType,
-} from '../reducers/userInterface';
-import { SHORTCUTS } from '../utils/keyboard';
+} from '../reducers/userInterface'
+import { SHORTCUTS } from '../utils/keyboard'
 import {
   archiveStateToName,
   layoutToName,
   sortByToName,
-} from '../utils/textHelpers';
-import { Menu, MenuSearchFieldContainer } from './Menu';
-import NotesMenuButton from './NotesMenuButton';
-import TooltipWithShortcut from './TooltipWithShortcut';
+} from '../utils/textHelpers'
+import { Menu, MenuSearchFieldContainer } from './Menu'
+import NotesMenuButton from './NotesMenuButton'
+import TooltipWithShortcut from './TooltipWithShortcut'
 
 interface NotesMenuProps {
-  notes: NotesForListQuery['notes'];
-  matchedNotes: NotesForListQuery['notes'];
-  archivedMatchedNotesCount: number | undefined;
-  searchInput: Ref<HTMLInputElement>;
+  notes: NotesForListQuery['notes']
+  matchedNotes: NotesForListQuery['notes']
+  archivedMatchedNotesCount: number | undefined
+  searchInput: Ref<HTMLInputElement>
 }
 
 const NotesMenu = ({
@@ -62,45 +62,45 @@ const NotesMenu = ({
     sortBy,
     searchQuery,
   } = useSelector<RootState, UserInterfaceStateType>(
-    (state) => state.userInterface
-  );
+    (state) => state.userInterface,
+  )
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
   const onChangeSearchQuery = useCallback(
     (value: string): void => {
-      dispatch(changeSearchQuery(value));
+      dispatch(changeSearchQuery(value))
     },
-    [dispatch]
-  );
+    [dispatch],
+  )
   const handleClearSearchText = useCallback(
     (): void => onChangeSearchQuery(''),
-    [onChangeSearchQuery]
-  );
+    [onChangeSearchQuery],
+  )
 
   const handleChangeLayout = useCallback(
     (newLayout: LinkLayout): void => {
-      dispatch(changeLinkLayout(newLayout));
+      dispatch(changeLinkLayout(newLayout))
     },
-    [dispatch]
-  );
+    [dispatch],
+  )
 
   const handleChangeArchiveState = useCallback(
     (newArchiveState: ArchiveState): void => {
-      dispatch(changeArchiveState(newArchiveState));
+      dispatch(changeArchiveState(newArchiveState))
     },
-    [dispatch]
-  );
+    [dispatch],
+  )
 
   const handleChangeSortBy = useCallback(
     (newSortBy: SortBy) => {
-      dispatch(changeSortBy(newSortBy));
+      dispatch(changeSortBy(newSortBy))
     },
-    [dispatch]
-  );
+    [dispatch],
+  )
 
   return (
-    <Menu direction="vertical-horizontal" style={{ marginTop: '-12px' }}>
+    <Menu direction='vertical-horizontal' style={{ marginTop: '-12px' }}>
       <NotesMenuButton
         icons={[<List />, <ViewList />]}
         options={Object.values(LinkLayout)}
@@ -126,26 +126,26 @@ const NotesMenu = ({
       />
       <MenuSearchFieldContainer>
         <TooltipWithShortcut
-          title=""
+          title=''
           shortcut={SHORTCUTS.SEARCH}
           adjustVerticalDistance={-30}
           disableFocusListener
         >
-          <FormControl variant="standard" sx={{ width: '100%' }}>
+          <FormControl variant='standard' sx={{ width: '100%' }}>
             <InputLabel>Search</InputLabel>
             <Input
               onChange={({ target: { value } }): void => {
-                onChangeSearchQuery(value);
+                onChangeSearchQuery(value)
               }}
               value={searchQuery}
               inputRef={searchInput}
               endAdornment={
-                <InputAdornment position="end">
+                <InputAdornment position='end'>
                   {searchQuery.length > 0 ? (
                     <IconButton
-                      aria-label="clear text search filter"
+                      aria-label='clear text search filter'
                       onClick={handleClearSearchText}
-                      edge="end"
+                      edge='end'
                     >
                       <ClearIcon />
                     </IconButton>
@@ -167,7 +167,7 @@ const NotesMenu = ({
         </TooltipWithShortcut>
       </MenuSearchFieldContainer>
     </Menu>
-  );
-};
+  )
+}
 
-export default NotesMenu;
+export default NotesMenu

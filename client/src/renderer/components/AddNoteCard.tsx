@@ -1,4 +1,4 @@
-import { ArrowForward } from '@mui/icons-material';
+import { ArrowForward } from '@mui/icons-material'
 import {
   Button,
   Card,
@@ -6,32 +6,32 @@ import {
   CardContent,
   CardHeader,
   IconButton,
-} from '@mui/material';
-import { FC } from 'react';
-import styled from 'styled-components';
-import useShortcut from '../hooks/useShortcut';
-import TooltipWithShortcut from './TooltipWithShortcut';
+} from '@mui/material'
+import { FC } from 'react'
+import styled from 'styled-components'
+import useShortcut from '../hooks/useShortcut'
+import TooltipWithShortcut from './TooltipWithShortcut'
 
 const CardButton = styled(Button)`
   text-transform: uppercase;
-`;
+`
 const CardText = styled.pre`
   margin: 0;
   white-space: pre-wrap;
   overflow-wrap: break-word;
   max-height: 5.5em;
   overflow-y: scroll;
-`;
+`
 
 const AddNoteCard: FC<{
-  suggestion?: string;
-  title: string;
-  subtitle?: string;
-  icon: JSX.Element;
-  action?: () => void;
-  actionShortcut?: Array<string>;
-  actions?: { [label: string]: () => void };
-  additionalActions?: JSX.Element;
+  suggestion?: string
+  title: string
+  subtitle?: string
+  icon: JSX.Element
+  action?: () => void
+  actionShortcut?: Array<string>
+  actions?: { [label: string]: () => void }
+  additionalActions?: JSX.Element
 }> = ({
   suggestion,
   title,
@@ -42,11 +42,11 @@ const AddNoteCard: FC<{
   actions,
   additionalActions,
 }) => {
-  useShortcut(actionShortcut, action || (() => {}), true);
+  useShortcut(actionShortcut, action || (() => {}), true)
 
   return (
     <Card
-      variant="outlined"
+      variant='outlined'
       sx={{
         backgroundColor: 'initial',
         cursor: action ? 'pointer' : undefined,
@@ -62,7 +62,7 @@ const AddNoteCard: FC<{
           <>
             {additionalActions}
             {action && (
-              <TooltipWithShortcut title="" shortcut={actionShortcut}>
+              <TooltipWithShortcut title='' shortcut={actionShortcut}>
                 <IconButton>
                   <ArrowForward />
                 </IconButton>
@@ -86,7 +86,7 @@ const AddNoteCard: FC<{
         </CardActions>
       )}
     </Card>
-  );
-};
+  )
+}
 
-export default AddNoteCard;
+export default AddNoteCard

@@ -1,6 +1,6 @@
-import { useContext } from 'react';
-import UserIdContext from '../utils/UserIdContext';
+import { useContext } from 'react'
+import UserIdContext from '../utils/UserIdContext'
 
-const useUserId = () => useContext(UserIdContext);
+const useUserId = () => useContext(UserIdContext)
 
-export default useUserId;
+export default useUserId

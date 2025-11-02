@@ -1,73 +1,72 @@
-import { useQuery } from "@apollo/client/react";
-import { AccountCircle, LocalOffer, Settings } from '@mui/icons-material';
-import { CircularProgress, Stack } from '@mui/material';
-import React, { ReactElement, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
-import UserIdContext from '../utils/UserIdContext';
-import packageJson from '../../../package.json';
-import Centered from '../components/Centered';
-import FatalApolloError from '../components/FatalApolloError';
-import Gap from '../components/Gap';
-import Navigation from '../components/Navigation';
-import { NetworkIndicatorContainer } from '../components/NetworkOperationsIndicator';
-import UserAndMenuIndicatorDesktop from '../components/UserAndMenuIndicatorDesktop';
-import VersionMarks from '../components/VersionMarks';
-import type { ProfileQuery, ProfileQueryVariables } from '../generated/graphql';
-import useIsOnline from '../hooks/useIsOnline';
-import usePrevious from '../hooks/usePrevious';
-import { RootState } from '../reducers';
-import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
-import { PROFILE_QUERY } from '../utils/sharedQueriesAndFragments';
-import useDataState, { DataState } from '../utils/useDataState';
-import * as Styled from './ComplexLayout.style';
+import { useQuery } from '@apollo/client/react'
+import { AccountCircle, LocalOffer, Settings } from '@mui/icons-material'
+import { CircularProgress, Stack } from '@mui/material'
+import React, { ReactElement, useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
+import packageJson from '../../../package.json'
+import Centered from '../components/Centered'
+import Gap from '../components/Gap'
+import Navigation from '../components/Navigation'
+import { NetworkIndicatorContainer } from '../components/NetworkOperationsIndicator'
+import UserAndMenuIndicatorDesktop from '../components/UserAndMenuIndicatorDesktop'
+import VersionMarks from '../components/VersionMarks'
+import type { ProfileQuery, ProfileQueryVariables } from '../generated/graphql'
+import useIsOnline from '../hooks/useIsOnline'
+import usePrevious from '../hooks/usePrevious'
+import { RootState } from '../reducers'
+import { useIsDesktopLayout } from '../utils/mediaQueryHooks'
+import { PROFILE_QUERY } from '../utils/sharedQueriesAndFragments'
+import useDataState, { DataState } from '../utils/useDataState'
+import UserIdContext from '../utils/UserIdContext'
+import * as Styled from './ComplexLayout.style'
 
 export interface AdditionalNavigationItem {
-  label: string;
-  path: string;
-  icon: JSX.Element;
+  label: string
+  path: string
+  icon: JSX.Element
 }
 
 const Loading = ({
   loadingComponent: LoadingComponent,
   loading,
 }: {
-  loading?: boolean | string;
-  loadingComponent?: () => ReactElement;
+  loading?: boolean | string
+  loadingComponent?: () => ReactElement
 }) => {
-  const [showLoading, setShowLoading] = useState(false);
+  const [showLoading, setShowLoading] = useState(false)
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowLoading(true);
-    }, 100);
+      setShowLoading(true)
+    }, 100)
     return () => {
-      clearTimeout(timer);
-    };
-  }, [setShowLoading]);
+      clearTimeout(timer)
+    }
+  }, [setShowLoading])
 
   if (!showLoading) {
-    return null;
+    return null
   }
 
   return LoadingComponent ? (
     <LoadingComponent />
   ) : (
     <Centered>
-      <Stack alignItems="center">
-        <CircularProgress color="inherit" disableShrink />
+      <Stack alignItems='center'>
+        <CircularProgress color='inherit' disableShrink />
         <Gap vertical={1} />
         {typeof loading === 'string' ? loading : <>&nbsp;</>}
       </Stack>
     </Centered>
-  );
-};
+  )
+}
 
 const ComplexLayout: React.FC<
   React.PropsWithChildren<{
-    primaryActions?: JSX.Element | null | false;
-    secondaryActions?: JSX.Element | null;
-    loading?: boolean | string;
-    loadingComponent?: () => ReactElement;
-    wide?: boolean;
+    primaryActions?: JSX.Element | null | false
+    secondaryActions?: JSX.Element | null
+    loading?: boolean | string
+    loadingComponent?: () => ReactElement
+    wide?: boolean
   }>
 > = ({
   children,
@@ -84,21 +83,21 @@ const ComplexLayout: React.FC<
         currentVersion: packageJson.version,
       },
     }),
-  );
+  )
 
-  const isDesktopLayout = useIsDesktopLayout();
+  const isDesktopLayout = useIsDesktopLayout()
   const isUserLoggingIn = useSelector<RootState, boolean>(
     (state) => state.userInterface.loggingIn,
-  );
-  const wasUserLoggingIn = usePrevious(isUserLoggingIn);
+  )
+  const wasUserLoggingIn = usePrevious(isUserLoggingIn)
   const isLoggedInThenUserId =
-    profileQuery.state === DataState.DATA && profileQuery.data.currentUser?._id;
+    profileQuery.state === DataState.DATA && profileQuery.data.currentUser?._id
 
   useEffect(() => {
     if (wasUserLoggingIn && !isUserLoggingIn) {
-      profileQuery.refetch();
+      profileQuery.refetch()
     }
-  }, [wasUserLoggingIn, isUserLoggingIn]);
+  }, [wasUserLoggingIn, isUserLoggingIn])
 
   const additionalNavigationItems: Array<AdditionalNavigationItem> = useMemo(
     () =>
@@ -124,9 +123,9 @@ const ComplexLayout: React.FC<
         },
       ].filter(({ path }) => isLoggedInThenUserId || path === '/settings'),
     [isLoggedInThenUserId, profileQuery],
-  );
+  )
 
-  const online = useIsOnline();
+  const online = useIsOnline()
 
   return (
     <UserIdContext.Provider value={isLoggedInThenUserId || ''}>
@@ -143,7 +142,7 @@ const ComplexLayout: React.FC<
             <NetworkIndicatorContainer>Offline</NetworkIndicatorContainer>
           )}
           {profileQuery.state === DataState.ERROR ? (
-            <NetworkIndicatorContainer align="left" color="error">
+            <NetworkIndicatorContainer align='left' color='error'>
               Failed to load profile and version info.
             </NetworkIndicatorContainer>
           ) : (
@@ -171,7 +170,7 @@ const ComplexLayout: React.FC<
         )}
       </Styled.Container>
     </UserIdContext.Provider>
-  );
-};
+  )
+}
 
-export default ComplexLayout;
+export default ComplexLayout

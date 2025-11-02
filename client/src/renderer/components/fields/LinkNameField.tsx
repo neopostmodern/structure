@@ -1,28 +1,28 @@
-import { gql } from '@apollo/client';
-import { useLazyQuery } from "@apollo/client/react";
+import { gql } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client/react'
 import {
   Autocomplete,
   CircularProgress,
   ListItem,
   ListItemText,
-} from '@mui/material';
-import { urlAnalyzer } from '@structure/common';
-import React, { FocusEvent } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
-import styled from 'styled-components';
+} from '@mui/material'
+import { urlAnalyzer } from '@structure/common'
+import React, { FocusEvent } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import styled from 'styled-components'
 import {
   TitleSuggestionsQuery,
   TitleSuggestionsQueryVariables,
-} from '../../generated/graphql';
-import useIsOnline from '../../hooks/useIsOnline';
-import useQuickNumberShortcuts from '../../hooks/useQuickNumberShortcuts';
-import { breakPointMobile } from '../../styles/constants';
-import { QUICK_ACCESS_SHORTCUT_PREFIX, SHORTCUTS } from '../../utils/keyboard';
-import { isUrlValid } from '../../utils/textHelpers';
-import useDataState, { DataState } from '../../utils/useDataState';
-import ErrorSnackbar from '../ErrorSnackbar';
-import { NameInput } from '../formComponents';
-import Shortcut from '../Shortcut';
+} from '../../generated/graphql'
+import useIsOnline from '../../hooks/useIsOnline'
+import useQuickNumberShortcuts from '../../hooks/useQuickNumberShortcuts'
+import { breakPointMobile } from '../../styles/constants'
+import { QUICK_ACCESS_SHORTCUT_PREFIX, SHORTCUTS } from '../../utils/keyboard'
+import { isUrlValid } from '../../utils/textHelpers'
+import useDataState, { DataState } from '../../utils/useDataState'
+import ErrorSnackbar from '../ErrorSnackbar'
+import { NameInput } from '../formComponents'
+import Shortcut from '../Shortcut'
 
 const ListItemShortcut = styled.div`
   flex-shrink: 0;
@@ -32,19 +32,19 @@ const ListItemShortcut = styled.div`
   @media (max-width: ${breakPointMobile}) {
     display: none;
   }
-`;
+`
 
 const TITLE_SUGGESTIONS_QUERY = gql`
   query TitleSuggestions($linkId: ID!) {
     titleSuggestions(linkId: $linkId)
   }
-`;
+`
 
 interface LinkNameFieldProps {
-  linkId: string;
-  url: string;
-  name: string;
-  readOnly?: boolean;
+  linkId: string
+  url: string
+  name: string
+  readOnly?: boolean
 }
 
 const LinkNameField: React.FC<LinkNameFieldProps> = ({
@@ -53,30 +53,30 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
   linkId,
   readOnly: forceReadOnly = false,
 }) => {
-  const { setValue, getValues } = useFormContext();
+  const { setValue, getValues } = useFormContext()
 
   const [fetchTitleSuggestions, titleSuggestionsQuery] = useDataState(
     useLazyQuery<TitleSuggestionsQuery, TitleSuggestionsQueryVariables>(
       TITLE_SUGGESTIONS_QUERY,
       { fetchPolicy: 'no-cache' },
     ),
-  );
+  )
 
   useQuickNumberShortcuts(
     titleSuggestionsQuery.state === DataState.DATA
       ? titleSuggestionsQuery.data.titleSuggestions
       : [],
     (suggestion) => {
-      setValue(name, suggestion);
+      setValue(name, suggestion)
     },
-  );
+  )
 
-  const isOnline = useIsOnline();
-  const readOnly = !isOnline || forceReadOnly;
+  const isOnline = useIsOnline()
+  const readOnly = !isOnline || forceReadOnly
   const suggestions =
     titleSuggestionsQuery.state === DataState.DATA
       ? titleSuggestionsQuery.data.titleSuggestions
-      : [];
+      : []
 
   return (
     <>
@@ -95,14 +95,14 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
           <Autocomplete
             {...fieldProps}
             onChange={(_, selectedTitleSuggestion) => {
-              onChange(selectedTitleSuggestion);
+              onChange(selectedTitleSuggestion)
             }}
             onBlur={(event: FocusEvent<HTMLInputElement>) => {
-              setValue(name, event.target.value);
-              onBlur();
+              setValue(name, event.target.value)
+              onBlur()
             }}
             loading={titleSuggestionsQuery.state === DataState.LOADING}
-            loadingText="Loading title suggestions..."
+            loadingText='Loading title suggestions...'
             options={suggestions}
             filterOptions={(options) => options}
             disableClearable
@@ -111,22 +111,22 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
             readOnly={readOnly}
             renderInput={({ ...params }) => (
               <NameInput
-                type="text"
+                type='text'
                 {...params}
                 autoFocus={
                   isUrlValid(url) &&
                   getValues(name) === urlAnalyzer(url).suggestedName
                 }
                 onFocus={(): void => {
-                  fetchTitleSuggestions({ variables: { linkId } });
+                  fetchTitleSuggestions({ variables: { linkId } })
                 }}
-                label="Title"
+                label='Title'
                 InputProps={{
                   ...params.InputProps,
                   readOnly,
                   endAdornment:
                     titleSuggestionsQuery.state === DataState.LOADING ? (
-                      <CircularProgress color="inherit" size={20} />
+                      <CircularProgress color='inherit' size={20} />
                     ) : (
                       params.InputProps.endAdornment
                     ),
@@ -134,7 +134,7 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
               />
             )}
             renderOption={(props, suggestion) => {
-              const index = suggestions.indexOf(suggestion);
+              const index = suggestions.indexOf(suggestion)
               return (
                 <ListItem {...props}>
                   <ListItemText>{suggestion}</ListItemText>
@@ -148,13 +148,13 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
                     </ListItemShortcut>
                   ) : undefined}
                 </ListItem>
-              );
+              )
             }}
           />
         )}
       />
     </>
-  );
-};
+  )
+}
 
-export default LinkNameField;
+export default LinkNameField

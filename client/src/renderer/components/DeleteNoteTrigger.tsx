@@ -1,5 +1,5 @@
-import { Delete as DeleteIcon } from '@mui/icons-material';
-import TriggerWithConfirmation from './TriggerWithConfirmation';
+import { Delete as DeleteIcon } from '@mui/icons-material'
+import TriggerWithConfirmation from './TriggerWithConfirmation'
 
 const DeleteNoteTrigger = ({
   note,
@@ -7,10 +7,10 @@ const DeleteNoteTrigger = ({
   loading,
   deleteNote,
 }: {
-  note: { name: string };
-  variant?: 'button' | 'menuitem';
-  loading: boolean;
-  deleteNote: () => void;
+  note: { name: string }
+  variant?: 'button' | 'menuitem'
+  loading: boolean
+  deleteNote: () => void
 }) => {
   return (
     <TriggerWithConfirmation
@@ -18,14 +18,14 @@ const DeleteNoteTrigger = ({
       startIcon={<DeleteIcon />}
       loading={loading}
       onClick={(): void => {
-        deleteNote();
+        deleteNote()
       }}
       confirmationQuestion={`Are you sure you want to delete the note "${note.name}"?`}
-      confirmationButtonLabel="Delete"
+      confirmationButtonLabel='Delete'
     >
       Delete note
     </TriggerWithConfirmation>
-  );
-};
+  )
+}
 
-export default DeleteNoteTrigger;
+export default DeleteNoteTrigger

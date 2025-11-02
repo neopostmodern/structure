@@ -1,32 +1,32 @@
-import { ScreenSearchDesktop } from '@mui/icons-material';
-import { Button } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import { ScreenSearchDesktop } from '@mui/icons-material'
+import { Button } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   ArchiveState,
   changeArchiveState,
   changeSearchQuery,
-} from '../actions/userInterface';
-import { RootState } from '../reducers';
-import { UserInterfaceStateType } from '../reducers/userInterface';
-import { SHORTCUTS } from '../utils/keyboard';
-import EmptyPageInfo from './EmptyPageInfo';
-import Shortcut from './Shortcut';
+} from '../actions/userInterface'
+import { RootState } from '../reducers'
+import { UserInterfaceStateType } from '../reducers/userInterface'
+import { SHORTCUTS } from '../utils/keyboard'
+import EmptyPageInfo from './EmptyPageInfo'
+import Shortcut from './Shortcut'
 
 const NotesPageEmpty = ({
   archivedMatchedNotesCount,
 }: {
-  archivedMatchedNotesCount: number | undefined;
+  archivedMatchedNotesCount: number | undefined
 }) => {
   const { archiveState, searchQuery } = useSelector<
     RootState,
     UserInterfaceStateType
-  >((state) => state.userInterface);
-  const dispatch = useDispatch();
+  >((state) => state.userInterface)
+  const dispatch = useDispatch()
 
   return (
     <EmptyPageInfo
       icon={ScreenSearchDesktop}
-      title="Nothing matches your search or filters."
+      title='Nothing matches your search or filters.'
       subtitle={
         <>
           Did you know you can use{' '}
@@ -38,7 +38,7 @@ const NotesPageEmpty = ({
         <>
           {searchQuery && (
             <Button
-              variant="outlined"
+              variant='outlined'
               onClick={() => dispatch(changeSearchQuery(''))}
             >
               Reset search
@@ -46,7 +46,7 @@ const NotesPageEmpty = ({
           )}
           {(archivedMatchedNotesCount || 0) > 0 && (
             <Button
-              variant="outlined"
+              variant='outlined'
               onClick={() => dispatch(changeArchiveState(ArchiveState.BOTH))}
             >
               Include{' '}
@@ -58,7 +58,7 @@ const NotesPageEmpty = ({
         </>
       }
     ></EmptyPageInfo>
-  );
-};
+  )
+}
 
-export default NotesPageEmpty;
+export default NotesPageEmpty

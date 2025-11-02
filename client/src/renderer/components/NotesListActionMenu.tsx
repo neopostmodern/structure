@@ -5,48 +5,48 @@ import {
   MoreVert,
   Share,
   Unarchive,
-} from '@mui/icons-material';
+} from '@mui/icons-material'
 import {
   CircularProgress,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
-} from '@mui/material';
-import { useState } from 'react';
-import type { NotesForListQuery } from '../generated/graphql';
-import useDeleteNote from '../hooks/useDeleteNote';
-import useHasPermission from '../hooks/useHasPermission';
-import useToggleArchivedNote from '../hooks/useToggleArchivedNote';
-import { openInDefaultBrowser, shareUrl } from '../utils/openWith';
-import DeleteNoteTrigger from './DeleteNoteTrigger';
+} from '@mui/material'
+import { useState } from 'react'
+import type { NotesForListQuery } from '../generated/graphql'
+import useDeleteNote from '../hooks/useDeleteNote'
+import useHasPermission from '../hooks/useHasPermission'
+import useToggleArchivedNote from '../hooks/useToggleArchivedNote'
+import { openInDefaultBrowser, shareUrl } from '../utils/openWith'
+import DeleteNoteTrigger from './DeleteNoteTrigger'
 
 const NotesListActionMenu = ({
   note,
 }: {
-  note: NotesForListQuery['notes'][number];
+  note: NotesForListQuery['notes'][number]
 }) => {
   const {
     toggleArchivedNote,
     errorSnackbar: toggleArchivedNoteErrorSnackbar,
     loading: toggleArchivedNoteLoading,
-  } = useToggleArchivedNote(note);
+  } = useToggleArchivedNote(note)
   const {
     deleteNote,
     errorSnackbar: deleteLinkErrorSnackbar,
     loading: deleteLinkLoading,
-  } = useDeleteNote(note);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  } = useDeleteNote(note)
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
-  const readOnly = !useHasPermission(note, 'notes', 'write');
+  const readOnly = !useHasPermission(note, 'notes', 'write')
 
   if (readOnly && !('url' in note)) {
     // the menu would be empty for text notes
-    return null;
+    return null
   }
 
   return (
@@ -65,7 +65,7 @@ const NotesListActionMenu = ({
             keepMounted
             open={Boolean(anchorEl)}
             onClick={() => {
-              handleClose();
+              handleClose()
             }}
             onClose={handleClose}
           >
@@ -95,9 +95,9 @@ const NotesListActionMenu = ({
             )}
             {!readOnly && [
               <MenuItem
-                key="archive"
+                key='archive'
                 onClick={() => {
-                  toggleArchivedNote();
+                  toggleArchivedNote()
                 }}
               >
                 <ListItemIcon>
@@ -106,12 +106,12 @@ const NotesListActionMenu = ({
                 {note.archivedAt ? 'Unarchive' : 'Archive'}
               </MenuItem>,
               <DeleteNoteTrigger
-                key="delete"
-                variant="menuitem"
+                key='delete'
+                variant='menuitem'
                 note={note}
                 loading={deleteLinkLoading}
                 deleteNote={() => {
-                  deleteNote();
+                  deleteNote()
                 }}
               />,
             ]}
@@ -119,7 +119,7 @@ const NotesListActionMenu = ({
         </>
       )}
     </>
-  );
-};
+  )
+}
 
-export default NotesListActionMenu;
+export default NotesListActionMenu

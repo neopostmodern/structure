@@ -1,26 +1,26 @@
-import { StructureTextField } from './formComponents';
-import SettingsEntry from './SettingsEntry';
+import { StructureTextField } from './formComponents'
+import SettingsEntry from './SettingsEntry'
 
 export type CredentialsOrLoading =
   | 'loading'
   | Array<{
-      name: string;
-      displayName: string;
-      value: string | null | undefined;
-      comment?: string;
-    }>;
+      name: string
+      displayName: string
+      value: string | null | undefined
+      comment?: string
+    }>
 
 const Credentials = ({
   credentials,
   revokeCredential,
   requestNewCredential,
 }: {
-  credentials: CredentialsOrLoading;
-  requestNewCredential: (name: string) => void;
-  revokeCredential: (name: string) => void;
+  credentials: CredentialsOrLoading
+  requestNewCredential: (name: string) => void
+  revokeCredential: (name: string) => void
 }) => {
   if (credentials === 'loading') {
-    return <i>Loading...</i>;
+    return <i>Loading...</i>
   }
 
   return (
@@ -37,7 +37,7 @@ const Credentials = ({
         >
           {value ? (
             <StructureTextField
-              type="text"
+              type='text'
               inputProps={{ readOnly: true }}
               value={value}
             />
@@ -47,7 +47,7 @@ const Credentials = ({
         </SettingsEntry>
       ))}
     </>
-  );
-};
+  )
+}
 
-export default Credentials;
+export default Credentials

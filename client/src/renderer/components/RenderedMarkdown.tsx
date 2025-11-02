@@ -1,12 +1,12 @@
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
-import remarkBreaks from 'remark-breaks';
-import remarkGfm from 'remark-gfm';
-import styled from 'styled-components';
+import React from 'react'
+import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
+import remarkBreaks from 'remark-breaks'
+import remarkGfm from 'remark-gfm'
+import styled from 'styled-components'
 
-const listIndent = '2em';
+const listIndent = '2em'
 
 const MarkdownContainer = styled.div`
   font-size: 1rem;
@@ -96,7 +96,7 @@ const MarkdownContainer = styled.div`
   table {
     min-width: 100%;
   }
-`;
+`
 
 const EmptyTextarea = styled.div`
   border: 1px dashed gray;
@@ -105,28 +105,28 @@ const EmptyTextarea = styled.div`
   text-align: center;
   padding-top: 1.5rem;
   padding-bottom: 1.3rem;
-`;
+`
 
 const CheckboxWrapper = styled.div`
   position: relative;
   width: 0;
-`;
+`
 const CheckboxContainer = styled.div`
   position: absolute;
   right: 0.2em;
-`;
+`
 const ReadonlyCheckbox = ({ checked }) => (
   <CheckboxWrapper>
     <CheckboxContainer>{checked ? '☑' : '☐'}</CheckboxContainer>
   </CheckboxWrapper>
-);
+)
 
 const RenderedMarkdown = ({
   markdown,
   showEmpty = true,
 }: {
-  markdown: string;
-  showEmpty?: boolean;
+  markdown: string
+  showEmpty?: boolean
 }) => {
   if (markdown.length) {
     return (
@@ -146,12 +146,12 @@ const RenderedMarkdown = ({
                 <a
                   href={href}
                   title={title || href}
-                  target="_blank"
-                  rel="noreferrer noopener"
+                  target='_blank'
+                  rel='noreferrer noopener'
                 >
                   {children}
                 </a>
-              );
+              )
             },
             input: ReadonlyCheckbox,
           }}
@@ -159,12 +159,12 @@ const RenderedMarkdown = ({
           {markdown}
         </ReactMarkdown>
       </MarkdownContainer>
-    );
+    )
   }
   if (showEmpty) {
-    return <EmptyTextarea>No content</EmptyTextarea>;
+    return <EmptyTextarea>No content</EmptyTextarea>
   }
-  return null;
-};
+  return null
+}
 
-export default React.memo(RenderedMarkdown);
+export default React.memo(RenderedMarkdown)

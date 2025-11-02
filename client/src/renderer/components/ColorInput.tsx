@@ -1,5 +1,5 @@
-import { useLazyQuery } from "@apollo/client/react";
-import { Close, Colorize } from '@mui/icons-material';
+import { useLazyQuery } from '@apollo/client/react'
+import { Close, Colorize } from '@mui/icons-material'
 import {
   Box,
   Chip,
@@ -12,25 +12,25 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-} from '@mui/material';
-import React from 'react';
-import { useFormContext } from 'react-hook-form';
-import styled from 'styled-components';
-import { TAGS_QUERY } from '../containers/TagsPage';
-import type { TagsQuery } from '../generated/graphql';
-import useColorTagGroups from '../hooks/useColorTagGroups';
-import colorTools from '../utils/colorTools';
-import { useIsMobileLayout } from '../utils/mediaQueryHooks';
-import useDataState from '../utils/useDataState';
-import { StructureTextField } from './formComponents';
-import Gap from './Gap';
+} from '@mui/material'
+import React from 'react'
+import { useFormContext } from 'react-hook-form'
+import styled from 'styled-components'
+import { TAGS_QUERY } from '../containers/TagsPage'
+import type { TagsQuery } from '../generated/graphql'
+import useColorTagGroups from '../hooks/useColorTagGroups'
+import colorTools from '../utils/colorTools'
+import { useIsMobileLayout } from '../utils/mediaQueryHooks'
+import useDataState from '../utils/useDataState'
+import { StructureTextField } from './formComponents'
+import Gap from './Gap'
 
 const ColorIndicator = styled.div<{ color: string }>`
   width: 2.5rem;
   height: 2.5rem;
   border-radius: ${({ theme }) => theme.shape.borderRadius}px;
   background-color: ${({ color }) => color};
-`;
+`
 
 const StyledListItemText = styled(ListItemText)`
   .MuiListItemText-primary {
@@ -38,7 +38,7 @@ const StyledListItemText = styled(ListItemText)`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-`;
+`
 
 const ColorBlockInput = styled(StructureTextField).attrs({ fullWidth: false })`
   margin-bottom: 2rem;
@@ -70,55 +70,55 @@ const ColorBlockInput = styled(StructureTextField).attrs({ fullWidth: false })`
     top: ${({ theme }) => theme.spacing(3)};
     right: ${({ theme }) => theme.spacing(2)};
   }
-`;
+`
 
 const ColorInput = ({
   color,
   name,
   tagName,
 }: {
-  color: string;
-  name: string;
-  tagName: string;
+  color: string
+  name: string
+  tagName: string
 }) => {
   const [fetchTagsQuery, tagsQuery] = useDataState(
-    useLazyQuery<TagsQuery>(TAGS_QUERY, { fetchPolicy: 'cache-only' })
-  );
-  const colorTagGroups = useColorTagGroups(tagsQuery);
+    useLazyQuery<TagsQuery>(TAGS_QUERY, { fetchPolicy: 'cache-only' }),
+  )
+  const colorTagGroups = useColorTagGroups(tagsQuery)
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
 
   const handleClickOpen = () => {
-    setOpen(true);
-    fetchTagsQuery();
-  };
+    setOpen(true)
+    fetchTagsQuery()
+  }
 
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
-  const { register, setValue, trigger } = useFormContext();
-  const { ref: registerRef, ...registerProps } = register('color');
+  const { register, setValue, trigger } = useFormContext()
+  const { ref: registerRef, ...registerProps } = register('color')
 
-  const isMobileLayout = useIsMobileLayout();
+  const isMobileLayout = useIsMobileLayout()
 
   return (
     <>
       <ColorBlockInput
         ref={(ref) => {
-          registerRef(ref);
-          colorTools(ref);
+          registerRef(ref)
+          colorTools(ref)
         }}
         {...registerProps}
-        type="text"
+        type='text'
         style={{ backgroundColor: color }}
         InputProps={{
           endAdornment: (
-            <InputAdornment position="end">
+            <InputAdornment position='end'>
               <IconButton
-                aria-label="color picker"
+                aria-label='color picker'
                 onClick={handleClickOpen}
-                edge="end"
+                edge='end'
               >
                 <Colorize />
               </IconButton>
@@ -129,21 +129,21 @@ const ColorInput = ({
 
       <Dialog fullScreen={isMobileLayout} open={open} onClose={handleClose}>
         <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
+          display='flex'
+          justifyContent='space-between'
+          alignItems='center'
           padding={2}
         >
-          <Typography variant="h6">
+          <Typography variant='h6'>
             Pick an existing color for{' '}
-            <Chip variant="outlined" label={tagName} />
+            <Chip variant='outlined' label={tagName} />
           </Typography>
           <Gap horizontal={2} />
           <IconButton
-            edge="start"
-            color="inherit"
+            edge='start'
+            color='inherit'
             onClick={handleClose}
-            aria-label="close"
+            aria-label='close'
           >
             <Close />
           </IconButton>
@@ -151,15 +151,15 @@ const ColorInput = ({
         <List>
           {Object.entries(colorTagGroups)
             .sort(([_, tagsA], [__, tagsB]) =>
-              Math.sign(tagsB.length - tagsA.length)
+              Math.sign(tagsB.length - tagsA.length),
             )
             .map(([color, tags]) => (
               <ListItem key={color} disablePadding>
                 <ListItemButton
                   onClick={() => {
-                    setValue(name, color);
-                    trigger(name);
-                    handleClose();
+                    setValue(name, color)
+                    trigger(name)
+                    handleClose()
                   }}
                 >
                   <ListItemIcon>
@@ -169,8 +169,8 @@ const ColorInput = ({
                     primary={tags.slice(0, 8).map(({ _id, name }) => (
                       <Chip
                         key={_id}
-                        variant="outlined"
-                        size="small"
+                        variant='outlined'
+                        size='small'
                         label={name}
                         sx={{ marginRight: 1, cursor: 'pointer' }}
                       />
@@ -183,7 +183,7 @@ const ColorInput = ({
         </List>
       </Dialog>
     </>
-  );
-};
+  )
+}
 
-export default ColorInput;
+export default ColorInput

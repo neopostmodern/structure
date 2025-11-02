@@ -1,1 +1,1 @@
-export { default } from './NotesPage';
+export { default } from './NotesPage'

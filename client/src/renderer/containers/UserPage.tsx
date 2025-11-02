@@ -1,21 +1,21 @@
-import { useQuery } from "@apollo/client/react";
-import { Launch } from '@mui/icons-material';
-import { Button, Link, Typography } from '@mui/material';
-import { gql } from 'graphql-tag';
-import { FC } from 'react';
-import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
-import { requestLogout } from '../actions/userInterface';
-import ErrorSnackbar from '../components/ErrorSnackbar';
-import Gap from '../components/Gap';
-import ImportDataWithButton from '../components/ImportDataWithButton';
-import { Menu } from '../components/Menu';
-import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
-import UserInfo from '../components/UserInfo';
-import type { UserQuery } from '../generated/graphql';
-import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
-import useDataState, { DataState } from '../utils/useDataState';
-import ComplexLayout from './ComplexLayout';
+import { useQuery } from '@apollo/client/react'
+import { Launch } from '@mui/icons-material'
+import { Button, Link, Typography } from '@mui/material'
+import { gql } from 'graphql-tag'
+import { FC } from 'react'
+import { useDispatch } from 'react-redux'
+import styled from 'styled-components'
+import { requestLogout } from '../actions/userInterface'
+import ErrorSnackbar from '../components/ErrorSnackbar'
+import Gap from '../components/Gap'
+import ImportDataWithButton from '../components/ImportDataWithButton'
+import { Menu } from '../components/Menu'
+import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator'
+import UserInfo from '../components/UserInfo'
+import type { UserQuery } from '../generated/graphql'
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy'
+import useDataState, { DataState } from '../utils/useDataState'
+import ComplexLayout from './ComplexLayout'
 
 const USER_QUERY = gql`
   query User {
@@ -26,46 +26,46 @@ const USER_QUERY = gql`
       name
     }
   }
-`;
+`
 
 const LinkButton = styled(Button)`
   text-decoration: none;
-` as typeof Button;
+` as typeof Button
 
 const UserPage: FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
   const userQuery = useDataState(
     useQuery<UserQuery>(USER_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
-    })
-  );
+    }),
+  )
 
   return (
     <ComplexLayout
       primaryActions={
-        <Menu direction="vertical-horizontal">
+        <Menu direction='vertical-horizontal'>
           <LinkButton
-            size="huge"
+            size='huge'
             component={Link}
             href={__BACKEND_URL__ + '/export.json'}
-            target="_blank"
-            rel="noopener noreferrer"
+            target='_blank'
+            rel='noopener noreferrer'
             endIcon={<Launch />}
           >
             Export my data
           </LinkButton>
           <ImportDataWithButton />
           <Button
-            size="huge"
+            size='huge'
             onClick={(): void => alert('This feature is not yet available')}
             disabled
           >
             Delete my account
           </Button>
           <Button
-            size="huge"
+            size='huge'
             onClick={(): void => {
-              dispatch(requestLogout());
+              dispatch(requestLogout())
             }}
           >
             Logout
@@ -88,19 +88,19 @@ const UserPage: FC = () => {
           <Gap vertical={2} />
         </>
       )}
-      <Typography variant="h2">About</Typography>
+      <Typography variant='h2'>About</Typography>
       You are using Structure {__VERSION__}
       <br />
       Find the Structure source code{' '}
       <Link
-        href="https://github.com/neopostmodern/structure"
-        target="_blank"
-        rel="noopener noreferrer"
+        href='https://github.com/neopostmodern/structure'
+        target='_blank'
+        rel='noopener noreferrer'
       >
         on GitHub
       </Link>
     </ComplexLayout>
-  );
-};
+  )
+}
 
-export default UserPage;
+export default UserPage

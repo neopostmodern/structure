@@ -1,5 +1,5 @@
-import { Tooltip, TooltipProps } from '@mui/material';
-import Shortcut from './Shortcut';
+import { Tooltip, TooltipProps } from '@mui/material'
+import Shortcut from './Shortcut'
 
 const TooltipWithShortcut = ({
   title,
@@ -8,10 +8,10 @@ const TooltipWithShortcut = ({
   children,
   ...props
 }: TooltipProps & {
-  shortcut?: Array<string>;
-  adjustVerticalDistance?: number;
+  shortcut?: Array<string>
+  adjustVerticalDistance?: number
 }) => {
-  let combinedTitle = title;
+  let combinedTitle = title
   if (shortcut) {
     combinedTitle = (
       <div style={{ textAlign: 'center' }}>
@@ -19,7 +19,7 @@ const TooltipWithShortcut = ({
         {title && <br />}
         <Shortcut shortcuts={shortcut} />
       </div>
-    );
+    )
   }
   return (
     <Tooltip
@@ -40,7 +40,7 @@ const TooltipWithShortcut = ({
     >
       {children}
     </Tooltip>
-  );
-};
+  )
+}
 
-export default TooltipWithShortcut;
+export default TooltipWithShortcut

@@ -1,12 +1,12 @@
-import { Box, Paper } from '@mui/material';
-import styled, { css } from 'styled-components';
+import { Box, Paper } from '@mui/material'
+import styled, { css } from 'styled-components'
 import {
   baseFont,
   breakpointDesktop,
   breakPointMobile,
   containerWidth,
-} from '../styles/constants';
-import mediaQueryObjectToCss from '../utils/mediaQueryObjectToCss';
+} from '../styles/constants'
+import mediaQueryObjectToCss from '../utils/mediaQueryObjectToCss'
 
 export const Container = styled(Paper).attrs(() => ({
   square: true,
@@ -25,12 +25,12 @@ export const Container = styled(Paper).attrs(() => ({
         theme.mixins.toolbar,
         (toolbarRule) =>
           `padding-bottom: calc(${toolbarRule.minHeight}px + ${theme.spacing(
-            2
-          )} + env(safe-area-inset-bottom));`
+            2,
+          )} + env(safe-area-inset-bottom));`,
       )}
-`;
+`
 
-const cornerMaxWidth = css`calc(calc(100% - ${containerWidth}) / 2)`;
+const cornerMaxWidth = css`calc(calc(100% - ${containerWidth}) / 2)`
 const Corner = styled.div`
   @media (min-width: ${breakpointDesktop}rem) {
     position: fixed;
@@ -40,12 +40,12 @@ const Corner = styled.div`
     width: 100%;
     max-width: ${cornerMaxWidth};
   }
-`;
+`
 
 export const Navigation = styled(Corner)`
   top: 0;
   left: 0;
-`;
+`
 
 export const PrimaryContent = styled(Box)<{ wide?: boolean }>`
   width: 100%;
@@ -70,14 +70,14 @@ export const PrimaryContent = styled(Box)<{ wide?: boolean }>`
     padding-top: ${({ theme }) => theme.spacing(4)};
     padding-bottom: ${({ theme }) => theme.spacing(2)};
   }
-`;
+`
 
 const Actions = styled(Corner)`
   @media (min-width: ${breakpointDesktop}rem) {
     padding-left: 3rem;
     max-width: min(${cornerMaxWidth}, 25rem);
   }
-`;
+`
 export const PrimaryActions = styled(Actions)`
   right: 0;
   top: 0;
@@ -85,7 +85,7 @@ export const PrimaryActions = styled(Actions)`
   @media (max-width: ${breakpointDesktop - 0.001}rem) {
     margin-bottom: ${({ theme }) => theme.spacing(2)};
   }
-`;
+`
 export const SecondaryActions = styled(Actions)`
   right: 0;
   bottom: 0;
@@ -94,7 +94,7 @@ export const SecondaryActions = styled(Actions)`
   @media (max-width: ${breakpointDesktop - 0.001}rem) {
     margin-top: auto;
   }
-`;
+`
 export const UserAndMenuIndicator = styled(Corner)`
   left: 0;
   bottom: 0;
@@ -103,4 +103,4 @@ export const UserAndMenuIndicator = styled(Corner)`
     order: -1;
     margin-left: auto;
   }
-`;
+`

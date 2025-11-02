@@ -1,18 +1,18 @@
-import { useQuery } from "@apollo/client/react";
-import { Typography } from '@mui/material';
-import { gql } from 'graphql-tag';
-import { FC } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setBackendUrl } from '../actions/configuration';
-import AdvancedSettings from '../components/AdvancedSettings';
-import { StructureTextField } from '../components/formComponents';
-import Gap from '../components/Gap';
-import SettingsEntry from '../components/SettingsEntry';
-import type { TinyUserQuery } from '../generated/graphql';
-import { RootState } from '../reducers';
-import { ConfigurationStateType } from '../reducers/configuration';
-import ComplexLayout from './ComplexLayout';
-import UserSettingsSection from './UserSettingsSection';
+import { useQuery } from '@apollo/client/react'
+import { Typography } from '@mui/material'
+import { gql } from 'graphql-tag'
+import { FC } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { setBackendUrl } from '../actions/configuration'
+import AdvancedSettings from '../components/AdvancedSettings'
+import { StructureTextField } from '../components/formComponents'
+import Gap from '../components/Gap'
+import SettingsEntry from '../components/SettingsEntry'
+import type { TinyUserQuery } from '../generated/graphql'
+import { RootState } from '../reducers'
+import { ConfigurationStateType } from '../reducers/configuration'
+import ComplexLayout from './ComplexLayout'
+import UserSettingsSection from './UserSettingsSection'
 
 const TINY_USER_QUERY = gql`
   query TinyUser {
@@ -20,23 +20,23 @@ const TINY_USER_QUERY = gql`
       _id
     }
   }
-`;
+`
 
 const SettingsPage: FC = () => {
   const { backendUrl, backendUrlDefault } = useSelector<
     RootState,
     ConfigurationStateType
-  >((state) => state.configuration);
-  const dispatch = useDispatch();
+  >((state) => state.configuration)
+  const dispatch = useDispatch()
   const userQuery = useQuery<TinyUserQuery>(TINY_USER_QUERY, {
     fetchPolicy: 'cache-only',
-  });
+  })
 
-  const isLoggedIn = userQuery.data?.currentUser;
+  const isLoggedIn = userQuery.data?.currentUser
 
   return (
     <ComplexLayout>
-      <Typography variant="h1">Settings</Typography>
+      <Typography variant='h1'>Settings</Typography>
       <Gap vertical={1} />
       {isLoggedIn && (
         <>
@@ -44,20 +44,20 @@ const SettingsPage: FC = () => {
           <Gap vertical={2} />
         </>
       )}
-      <Typography variant="h2">Configuration</Typography>
+      <Typography variant='h2'>Configuration</Typography>
       <SettingsEntry
-        title="Server"
-        actionTitle="Update"
+        title='Server'
+        actionTitle='Update'
         actionHandler={(): void => {
           dispatch(
             setBackendUrl(
               (
                 document.getElementById(
-                  'configuration__backend-url'
+                  'configuration__backend-url',
                 ) as HTMLInputElement
-              ).value
-            )
-          );
+              ).value,
+            ),
+          )
         }}
         readOnly={__BUILD_TARGET__ === 'web'}
         comment={
@@ -87,8 +87,8 @@ const SettingsPage: FC = () => {
         }
       >
         <StructureTextField
-          id="configuration__backend-url"
-          type="text"
+          id='configuration__backend-url'
+          type='text'
           defaultValue={backendUrl}
           placeholder={backendUrlDefault}
           disabled={__BUILD_TARGET__ === 'web'}
@@ -96,7 +96,7 @@ const SettingsPage: FC = () => {
       </SettingsEntry>
       <AdvancedSettings />
     </ComplexLayout>
-  );
-};
+  )
+}
 
-export default SettingsPage;
+export default SettingsPage

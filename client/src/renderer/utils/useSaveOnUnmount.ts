@@ -1,26 +1,26 @@
-import isEqual from 'lodash/isEqual';
-import { useEffect } from 'react';
+import isEqual from 'lodash/isEqual'
+import { useEffect } from 'react'
 
 const useSaveOnUnmount = <FormDataType>(
   {
     onSubmit,
     defaultValues,
   }: {
-    onSubmit: (formData: FormDataType) => void;
-    defaultValues: FormDataType;
+    onSubmit: (formData: FormDataType) => void
+    defaultValues: FormDataType
   },
-  { getValues }: { getValues: () => FormDataType }
+  { getValues }: { getValues: () => FormDataType },
 ) => {
   useEffect(() => {
     return () => {
-      const formValues = getValues();
+      const formValues = getValues()
       if (isEqual(formValues, defaultValues)) {
-        return;
+        return
       }
       // todo: validate here too
-      onSubmit(formValues as FormDataType);
-    };
-  }, [getValues]);
-};
+      onSubmit(formValues as FormDataType)
+    }
+  }, [getValues])
+}
 
-export default useSaveOnUnmount;
+export default useSaveOnUnmount

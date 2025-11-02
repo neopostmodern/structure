@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import { Link } from 'react-router-dom'
+import styled, { css } from 'styled-components'
 
 const baseInteractiveElement = css`
   opacity: 0.75;
@@ -8,7 +8,7 @@ const baseInteractiveElement = css`
     opacity: 1;
     cursor: pointer;
   }
-`;
+`
 
 const baseLink = css`
   text-decoration: none;
@@ -16,15 +16,15 @@ const baseLink = css`
   &:hover {
     text-decoration: none;
   }
-`;
+`
 
 export const InternalLink = styled(Link)`
   ${baseInteractiveElement}
   ${baseLink}
-`;
+`
 
 // todo: move noreferrer etc here / to a component
 export const ExternalLink = styled.a`
   ${baseInteractiveElement}
   ${baseLink}
-`;
+`

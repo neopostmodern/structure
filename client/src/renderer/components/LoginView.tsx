@@ -1,9 +1,9 @@
-import { Button } from '@mui/material';
-import React from 'react';
-import Centered from './Centered';
+import { Button } from '@mui/material'
+import React from 'react'
+import Centered from './Centered'
 
 interface LoginViewProps {
-  openLoginModal: () => void;
+  openLoginModal: () => void
 }
 
 const LoginView: React.FC<LoginViewProps> = ({ openLoginModal }) => (
@@ -14,7 +14,7 @@ const LoginView: React.FC<LoginViewProps> = ({ openLoginModal }) => (
     </b>
     <Centered>
       <Button
-        variant="outlined"
+        variant='outlined'
         onClick={openLoginModal}
         sx={{ fontSize: '2rem' }}
       >
@@ -22,7 +22,7 @@ const LoginView: React.FC<LoginViewProps> = ({ openLoginModal }) => (
       </Button>
     </Centered>
     Read the documentation on{' '}
-    <a href="https://neopostmodern.com/posts/how-to-structure">
+    <a href='https://neopostmodern.com/posts/how-to-structure'>
       neopostmodern.com
     </a>
     .
@@ -30,13 +30,13 @@ const LoginView: React.FC<LoginViewProps> = ({ openLoginModal }) => (
       <>
         {' '}
         Get it on{' '}
-        <a href="https://github.com/neopostmodern/structure/releases/latest">
+        <a href='https://github.com/neopostmodern/structure/releases/latest'>
           GitHub
         </a>
         !
       </>
     ) : null}
   </>
-);
+)
 
-export default LoginView;
+export default LoginView

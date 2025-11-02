@@ -1,13 +1,13 @@
-import { gql } from '@apollo/client';
-import { INTERNAL_TAG_PREFIX } from '@structure/common';
-import React from 'react';
-import styled from 'styled-components';
-import useHasPermission from '../hooks/useHasPermission';
-import useIsOnline from '../hooks/useIsOnline';
-import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments';
-import { DisplayOnlyTag } from '../utils/types';
-import AddTagButtonOrForm from './AddTagButtonOrForm';
-import TagWithContextMenu from './TagWithContextMenu';
+import { gql } from '@apollo/client'
+import { INTERNAL_TAG_PREFIX } from '@structure/common'
+import React from 'react'
+import styled from 'styled-components'
+import useHasPermission from '../hooks/useHasPermission'
+import useIsOnline from '../hooks/useIsOnline'
+import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments'
+import { DisplayOnlyTag } from '../utils/types'
+import AddTagButtonOrForm from './AddTagButtonOrForm'
+import TagWithContextMenu from './TagWithContextMenu'
 
 export const REMOVE_TAG_MUTATION = gql`
   mutation RemoveTagByIdFromNote($noteId: ID!, $tagId: ID!) {
@@ -31,7 +31,7 @@ export const REMOVE_TAG_MUTATION = gql`
     }
   }
   ${BASE_TAG_FRAGMENT}
-`;
+`
 
 const TagContainer = styled.div`
   display: flex;
@@ -39,13 +39,13 @@ const TagContainer = styled.div`
   align-items: center;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
-`;
+`
 
 interface TagsProps {
-  tags: Array<DisplayOnlyTag>;
-  noteId: string;
-  withShortcuts?: boolean;
-  size?: 'small' | 'medium';
+  tags: Array<DisplayOnlyTag>
+  noteId: string
+  withShortcuts?: boolean
+  size?: 'small' | 'medium'
 }
 
 const Tags: React.FC<TagsProps> = ({
@@ -54,8 +54,8 @@ const Tags: React.FC<TagsProps> = ({
   size,
   withShortcuts = false,
 }) => {
-  const readOnly = !useHasPermission({ tags }, 'notes', 'write');
-  const isOnline = useIsOnline();
+  const readOnly = !useHasPermission({ tags }, 'notes', 'write')
+  const isOnline = useIsOnline()
 
   return (
     <TagContainer>
@@ -78,7 +78,7 @@ const Tags: React.FC<TagsProps> = ({
         />
       )}
     </TagContainer>
-  );
-};
+  )
+}
 
-export default React.memo(Tags);
+export default React.memo(Tags)

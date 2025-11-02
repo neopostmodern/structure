@@ -1,18 +1,18 @@
-import React from 'react';
-import styled from 'styled-components';
-import { ColorCache } from '../utils/colorTools';
-import { DisplayOnlyTag } from '../utils/types';
-import Tag from './Tag';
+import React from 'react'
+import styled from 'styled-components'
+import { ColorCache } from '../utils/colorTools'
+import { DisplayOnlyTag } from '../utils/types'
+import Tag from './Tag'
 
 const AutocompleteTagMore = styled.div`
   font-weight: bold;
-`;
+`
 
 const TagAutocompleteSuggestions: React.FC<{
-  autocompleteSuggestions: Array<DisplayOnlyTag>;
-  focusedAutocompleteIndex: number | null;
-  onSelectTag: (tag: DisplayOnlyTag) => void;
-  maxSuggestionCount: number;
+  autocompleteSuggestions: Array<DisplayOnlyTag>
+  focusedAutocompleteIndex: number | null
+  onSelectTag: (tag: DisplayOnlyTag) => void
+  maxSuggestionCount: number
 }> = ({
   autocompleteSuggestions,
   focusedAutocompleteIndex,
@@ -38,16 +38,16 @@ const TagAutocompleteSuggestions: React.FC<{
             marginBottom: 1,
           }}
           onClick={(): void => {
-            onSelectTag(tag);
+            onSelectTag(tag)
           }}
         />
       ))}
     {autocompleteSuggestions.length > maxSuggestionCount ? (
-      <AutocompleteTagMore key="more">
+      <AutocompleteTagMore key='more'>
         +{autocompleteSuggestions.length - maxSuggestionCount}
       </AutocompleteTagMore>
     ) : null}
   </>
-);
+)
 
-export default TagAutocompleteSuggestions;
+export default TagAutocompleteSuggestions

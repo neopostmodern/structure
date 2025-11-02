@@ -11,35 +11,35 @@
  */
 
 export default function (Mousetrap) {
-  const _globalCallbacks = {};
-  const _originalStopCallback = Mousetrap.prototype.stopCallback;
+  const _globalCallbacks = {}
+  const _originalStopCallback = Mousetrap.prototype.stopCallback
 
   Mousetrap.prototype.stopCallback = function (e, element, combo, sequence) {
-    const self = this;
+    const self = this
 
     if (self.paused) {
-      return true;
+      return true
     }
 
     if (_globalCallbacks[combo] || _globalCallbacks[sequence]) {
-      return false;
+      return false
     }
 
-    return _originalStopCallback.call(self, e, element, combo);
-  };
+    return _originalStopCallback.call(self, e, element, combo)
+  }
 
   Mousetrap.prototype.bindGlobal = function (keys, callback, action) {
-    this.bind(keys, callback, action);
+    this.bind(keys, callback, action)
 
     if (keys instanceof Array) {
       for (let i = 0; i < keys.length; i++) {
-        _globalCallbacks[keys[i]] = true;
+        _globalCallbacks[keys[i]] = true
       }
-      return;
+      return
     }
 
-    _globalCallbacks[keys] = true;
-  };
+    _globalCallbacks[keys] = true
+  }
 
-  Mousetrap.init();
+  Mousetrap.init()
 }

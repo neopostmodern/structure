@@ -1,24 +1,24 @@
-import { createTheme, useMediaQuery } from '@mui/material';
-import { useMemo } from 'react';
-import { baseFont } from './constants';
+import { createTheme, useMediaQuery } from '@mui/material'
+import { useMemo } from 'react'
+import { baseFont } from './constants'
 
 declare module '@mui/material/styles' {
   interface Palette {
-    neutral: Palette['primary'];
+    neutral: Palette['primary']
   }
   interface PaletteOptions {
-    neutral: PaletteOptions['primary'];
+    neutral: PaletteOptions['primary']
   }
   interface PaletteColor {
-    neutral?: string;
+    neutral?: string
   }
   interface SimplePaletteColorOptions {
-    neutral?: string;
+    neutral?: string
   }
 }
 declare module '@mui/material/Button' {
   interface ButtonPropsSizeOverrides {
-    huge: true;
+    huge: true
   }
 }
 
@@ -26,10 +26,10 @@ const headerTypographyDefaults = {
   fontFamily: baseFont,
   fontWeight: 400,
   marginBottom: '0.2em',
-};
+}
 
 const useTheme = () => {
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
 
   return useMemo(() => {
     const theme = createTheme({
@@ -80,7 +80,7 @@ const useTheme = () => {
           },
         },
       },
-    });
+    })
     return createTheme(theme, {
       palette: {
         neutral: {
@@ -88,8 +88,8 @@ const useTheme = () => {
           contrastText: '#fff',
         },
       },
-    });
-  }, [prefersDarkMode]);
-};
+    })
+  }, [prefersDarkMode])
+}
 
-export default useTheme;
+export default useTheme

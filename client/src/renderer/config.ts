@@ -9,4 +9,4 @@ export default {
 
   apiVersion: 7,
   releaseUrl: 'https://github.com/neopostmodern/structure/releases/latest',
-};
+}

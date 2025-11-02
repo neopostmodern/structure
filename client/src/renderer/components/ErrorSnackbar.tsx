@@ -1,9 +1,9 @@
-import { ErrorLike } from '@apollo/client';
-import { Alert, Button, Snackbar, Portal } from '@mui/material';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { breakPointMobile } from '../styles/constants';
-import mediaQueryObjectToCss from '../utils/mediaQueryObjectToCss';
+import { ErrorLike } from '@apollo/client'
+import { Alert, Button, Portal, Snackbar } from '@mui/material'
+import { useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { breakPointMobile } from '../styles/constants'
+import mediaQueryObjectToCss from '../utils/mediaQueryObjectToCss'
 
 const StyledSnackbar = styled(Snackbar)`
   @media (max-width: ${breakPointMobile}) {
@@ -16,7 +16,7 @@ const StyledSnackbar = styled(Snackbar)`
           )} + env(safe-area-inset-bottom));`,
       )}
   }
-`;
+`
 
 const ErrorSnackbar = ({
   error,
@@ -24,26 +24,26 @@ const ErrorSnackbar = ({
   retry = undefined,
   autoHideDuration = null,
 }: {
-  error: ErrorLike | undefined;
-  actionDescription: string;
-  retry?: () => void;
-  autoHideDuration?: number | null;
+  error: ErrorLike | undefined
+  actionDescription: string
+  retry?: () => void
+  autoHideDuration?: number | null
 }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (error) {
-      console.error(error);
-      setOpen(true);
+      console.error(error)
+      setOpen(true)
     }
     if (!error) {
-      setOpen(false);
+      setOpen(false)
     }
-  }, [error]);
+  }, [error])
 
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   return (
     <Portal>
@@ -54,13 +54,13 @@ const ErrorSnackbar = ({
       >
         <Alert
           onClose={handleClose}
-          severity="error"
+          severity='error'
           sx={{ width: '100%' }}
           action={
             retry ? (
               <Button
                 onClick={() => {
-                  retry();
+                  retry()
                 }}
               >
                 Retry
@@ -74,7 +74,7 @@ const ErrorSnackbar = ({
         </Alert>
       </StyledSnackbar>
     </Portal>
-  );
-};
+  )
+}
 
-export default ErrorSnackbar;
+export default ErrorSnackbar

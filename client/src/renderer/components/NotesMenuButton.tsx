@@ -1,4 +1,4 @@
-import { Check } from '@mui/icons-material';
+import { Check } from '@mui/icons-material'
 import {
   Badge,
   Button,
@@ -7,27 +7,27 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-} from '@mui/material';
-import { MouseEvent, useCallback, useState } from 'react';
-import styled from 'styled-components';
-import { useIsMobileLayout } from '../utils/mediaQueryHooks';
+} from '@mui/material'
+import { MouseEvent, useCallback, useState } from 'react'
+import styled from 'styled-components'
+import { useIsMobileLayout } from '../utils/mediaQueryHooks'
 
 const DesktopButton = styled(Button)`
   max-width: 100%;
-`;
+`
 const ButtonLabel = styled.div`
   overflow-x: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
+`
 
 type NotesMenuButtonProps<T> = {
-  options: Array<T>;
-  optionToName: (option: T) => string;
-  onSelectOption: (option: T) => void;
-  value: T;
-  defaultValue?: T;
-} & ({ icon: JSX.Element } | { icons: Array<JSX.Element> });
+  options: Array<T>
+  optionToName: (option: T) => string
+  onSelectOption: (option: T) => void
+  value: T
+  defaultValue?: T
+} & ({ icon: JSX.Element } | { icons: Array<JSX.Element> })
 
 const NotesMenuButton = <T,>({
   options,
@@ -37,34 +37,34 @@ const NotesMenuButton = <T,>({
   defaultValue,
   ...optionalProps
 }: NotesMenuButtonProps<T>) => {
-  const isMobileLayout = useIsMobileLayout();
+  const isMobileLayout = useIsMobileLayout()
 
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 
   const handleClose = useCallback(() => {
-    setAnchorEl(null);
-  }, [setAnchorEl]);
+    setAnchorEl(null)
+  }, [setAnchorEl])
   const handleMenuItemClick = useCallback(
     (event: MouseEvent<HTMLLIElement>) => {
-      const option = event.currentTarget.dataset.value as T;
-      onSelectOption(option);
+      const option = event.currentTarget.dataset.value as T
+      onSelectOption(option)
     },
-    [onSelectOption]
-  );
+    [onSelectOption],
+  )
 
-  const valueIndex = options.indexOf(value);
+  const valueIndex = options.indexOf(value)
   const buttonIcon =
     'icons' in optionalProps
       ? optionalProps.icons[valueIndex]
-      : optionalProps.icon;
+      : optionalProps.icon
 
   return (
     <>
       {isMobileLayout ? (
         <Badge
-          variant="dot"
-          color="primary"
-          overlap="circular"
+          variant='dot'
+          color='primary'
+          overlap='circular'
           invisible={defaultValue ? value === defaultValue : true}
         >
           <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
@@ -75,7 +75,7 @@ const NotesMenuButton = <T,>({
         <DesktopButton
           startIcon={buttonIcon}
           onClick={(event) => setAnchorEl(event.currentTarget)}
-          size="huge"
+          size='huge'
         >
           <ButtonLabel>{optionToName(value)}</ButtonLabel>
         </DesktopButton>
@@ -85,7 +85,7 @@ const NotesMenuButton = <T,>({
         keepMounted
         open={Boolean(anchorEl)}
         onClick={() => {
-          handleClose();
+          handleClose()
         }}
         onClose={handleClose}
       >
@@ -112,7 +112,7 @@ const NotesMenuButton = <T,>({
         ))}
       </Menu>
     </>
-  );
-};
+  )
+}
 
-export default NotesMenuButton;
+export default NotesMenuButton

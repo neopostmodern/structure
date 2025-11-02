@@ -1,33 +1,33 @@
-import { ArrowForward } from '@mui/icons-material';
+import { ArrowForward } from '@mui/icons-material'
 import {
   FormControl,
   FormHelperText,
   IconButton,
   Input,
   InputAdornment,
-} from '@mui/material';
-import React, { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import styled from 'styled-components';
-import type { AddTextMutationVariables } from '../generated/graphql';
-import { isUrlValid } from '../utils/textHelpers';
+} from '@mui/material'
+import React, { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import styled from 'styled-components'
+import type { AddTextMutationVariables } from '../generated/graphql'
+import { isUrlValid } from '../utils/textHelpers'
 
 const AddLinkInput = styled(Input)`
   input {
     font-size: 200%;
   }
-`;
+`
 
 const SubmitButtonContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
-`;
+`
 
 type AddLinkFormProps = {
-  defaultValue?: string;
-  onSubmitUrl: (url: string) => void;
-  onSubmitText: (textVariables: AddTextMutationVariables) => void;
-  onAbort: () => void;
-};
+  defaultValue?: string
+  onSubmitUrl: (url: string) => void
+  onSubmitText: (textVariables: AddTextMutationVariables) => void
+  onAbort: () => void
+}
 
 const AddNoteForm: React.FC<AddLinkFormProps> = ({
   defaultValue,
@@ -36,26 +36,26 @@ const AddNoteForm: React.FC<AddLinkFormProps> = ({
   onAbort,
 }) => {
   const { formState, handleSubmit, setValue, control } = useForm<{
-    urlOrTitle: string;
+    urlOrTitle: string
   }>({
     defaultValues: {
       urlOrTitle: '',
     },
-  });
+  })
   useEffect(() => {
     if (defaultValue) {
-      setValue('urlOrTitle', defaultValue, { shouldDirty: true });
+      setValue('urlOrTitle', defaultValue, { shouldDirty: true })
     }
-  }, [defaultValue, setValue]);
+  }, [defaultValue, setValue])
   const submitHandler = handleSubmit(({ urlOrTitle }) => {
     if (isUrlValid(urlOrTitle)) {
-      onSubmitUrl(urlOrTitle);
+      onSubmitUrl(urlOrTitle)
     } else {
-      onSubmitText({ title: urlOrTitle });
+      onSubmitText({ title: urlOrTitle })
     }
-  });
+  })
 
-  let endAdornment: JSX.Element | undefined;
+  let endAdornment: JSX.Element | undefined
   if (
     !Object.keys(formState.errors).length &&
     formState.dirtyFields.urlOrTitle
@@ -63,40 +63,40 @@ const AddNoteForm: React.FC<AddLinkFormProps> = ({
     endAdornment = (
       <IconButton
         onClick={() => {
-          submitHandler();
+          submitHandler()
         }}
       >
         <ArrowForward />
       </IconButton>
-    );
+    )
   }
 
   return (
     <form onSubmit={submitHandler}>
       <Controller
-        name="urlOrTitle"
+        name='urlOrTitle'
         control={control}
         rules={{
           required: 'URL or title is required',
         }}
         render={({ field }) => (
-          <FormControl variant="standard" fullWidth>
+          <FormControl variant='standard' fullWidth>
             <AddLinkInput
               {...field}
               autoFocus
               inputProps={{
                 autocomplete: 'off',
               }}
-              type="text"
-              placeholder="Enter URL or text note title"
+              type='text'
+              placeholder='Enter URL or text note title'
               onKeyDown={(event): void => {
                 if (event.key === 'Escape') {
-                  onAbort();
+                  onAbort()
                 }
               }}
               endAdornment={
                 endAdornment ? (
-                  <InputAdornment position="end">{endAdornment}</InputAdornment>
+                  <InputAdornment position='end'>{endAdornment}</InputAdornment>
                 ) : undefined
               }
             />
@@ -109,7 +109,7 @@ const AddNoteForm: React.FC<AddLinkFormProps> = ({
         )}
       />
     </form>
-  );
-};
+  )
+}
 
-export default AddNoteForm;
+export default AddNoteForm

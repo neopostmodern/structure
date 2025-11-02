@@ -1,4 +1,4 @@
-import { Add, ArrowBack, ArrowForward, Home, Menu } from '@mui/icons-material';
+import { Add, ArrowBack, ArrowForward, Home, Menu } from '@mui/icons-material'
 import {
   AppBar,
   Box,
@@ -13,25 +13,25 @@ import {
   Toolbar,
   Tooltip,
   useMediaQuery,
-} from '@mui/material';
-import React, { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { goBack, goForward } from 'redux-first-history';
-import styled, { css } from 'styled-components';
-import { AdditionalNavigationItem } from '../containers/ComplexLayout';
-import { RootState } from '../reducers';
-import { HistoryStateType } from '../reducers/history';
-import { breakpointDesktop, breakPointMobile } from '../styles/constants';
-import { SHORTCUTS } from '../utils/keyboard';
-import LastVisitedNotes from './LastVisitedNotes';
-import TooltipWithShortcut from './TooltipWithShortcut';
+} from '@mui/material'
+import React, { useCallback, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { goBack, goForward } from 'redux-first-history'
+import styled, { css } from 'styled-components'
+import { AdditionalNavigationItem } from '../containers/ComplexLayout'
+import { RootState } from '../reducers'
+import { HistoryStateType } from '../reducers/history'
+import { breakpointDesktop, breakPointMobile } from '../styles/constants'
+import { SHORTCUTS } from '../utils/keyboard'
+import LastVisitedNotes from './LastVisitedNotes'
+import TooltipWithShortcut from './TooltipWithShortcut'
 
 const CustomDesktopAppBar = styled(Box)`
   @media (min-width: 40rem) and (max-width: ${breakpointDesktop - 0.001}rem) {
     margin-top: -0.5rem;
   }
-`;
+`
 
 const TitleLine = styled.div`
   display: flex;
@@ -48,7 +48,7 @@ const TitleLine = styled.div`
     flex-basis: 27rem;
     flex-grow: 0;
   }
-`;
+`
 
 const TitleLink = styled(Link)`
   font-size: 2.5rem;
@@ -63,12 +63,12 @@ const TitleLink = styled(Link)`
   @media (min-width: ${breakpointDesktop}rem) {
     margin-left: ${({ theme }) => theme.spacing(1)};
   }
-`;
+`
 
 const HistoryTools = styled.div`
   align-self: center;
   display: flex;
-`;
+`
 
 const ResponsiveFab = styled(Fab)<{ centered?: boolean }>`
   ${({ centered = false }) =>
@@ -81,62 +81,59 @@ const ResponsiveFab = styled(Fab)<{ centered?: boolean }>`
       right: 0;
       margin: 0 auto;
     `}
-`;
+`
 
 const Navigation = ({
   drawerNavigationItems,
 }: {
-  drawerNavigationItems?: Array<AdditionalNavigationItem>;
+  drawerNavigationItems?: Array<AdditionalNavigationItem>
 }) => {
-  const isMobileLayout = useMediaQuery(`(max-width: ${breakPointMobile})`);
+  const isMobileLayout = useMediaQuery(`(max-width: ${breakPointMobile})`)
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
   const { lengthOfPast, lengthOfFuture } = useSelector<
     RootState,
     HistoryStateType
-  >((state) => state.history);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const handleGoBack = useCallback(
-    () => dispatch(goBack()),
-    [dispatch, goBack]
-  );
+  >((state) => state.history)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const handleGoBack = useCallback(() => dispatch(goBack()), [dispatch, goBack])
   const handleGoForward = useCallback(
     () => dispatch(goForward()),
-    [dispatch, goForward]
-  );
+    [dispatch, goForward],
+  )
   const handleDrawerOpen = useCallback(
     () => setIsDrawerOpen(true),
-    [setIsDrawerOpen]
-  );
+    [setIsDrawerOpen],
+  )
   const handleDrawerClose = useCallback(
     () => setIsDrawerOpen(false),
-    [setIsDrawerOpen]
-  );
+    [setIsDrawerOpen],
+  )
 
   const addNoteFab = (
     <TooltipWithShortcut
-      title="Add new note"
+      title='Add new note'
       shortcut={SHORTCUTS.NEW_NOTE_PAGE}
     >
       <ResponsiveFab
         centered={isMobileLayout || undefined}
-        color="primary"
-        aria-label="add"
+        color='primary'
+        aria-label='add'
         component={Link}
-        to="/notes/add"
+        to='/notes/add'
       >
-        <Add fontSize="large" />
+        <Add fontSize='large' />
       </ResponsiveFab>
     </TooltipWithShortcut>
-  );
+  )
   const menuButton = (
     <IconButton onClick={handleDrawerOpen}>
       <Menu />
     </IconButton>
-  );
+  )
   const historyTools = (
     <HistoryTools>
-      <Tooltip title="Navigate back">
+      <Tooltip title='Navigate back'>
         <span>
           <IconButton onClick={handleGoBack} disabled={lengthOfPast <= 0}>
             <ArrowBack />
@@ -144,7 +141,7 @@ const Navigation = ({
         </span>
       </Tooltip>
       <LastVisitedNotes />
-      <Tooltip title="Navigate forward">
+      <Tooltip title='Navigate forward'>
         <span>
           <IconButton onClick={handleGoForward} disabled={lengthOfFuture <= 0}>
             <ArrowForward />
@@ -152,19 +149,19 @@ const Navigation = ({
         </span>
       </Tooltip>
     </HistoryTools>
-  );
+  )
 
   return (
     <>
       {!isMobileLayout && (
-        <CustomDesktopAppBar display="flex" alignItems="center">
+        <CustomDesktopAppBar display='flex' alignItems='center'>
           <TitleLine>
             <TooltipWithShortcut
-              title="Back to homepage"
+              title='Back to homepage'
               shortcut={SHORTCUTS.HOME_PAGE}
               adjustVerticalDistance={-20}
             >
-              <TitleLink to="/">Structure</TitleLink>
+              <TitleLink to='/'>Structure</TitleLink>
             </TooltipWithShortcut>{' '}
             {historyTools}
             {addNoteFab}
@@ -175,7 +172,7 @@ const Navigation = ({
         </CustomDesktopAppBar>
       )}
       {drawerNavigationItems && (
-        <Drawer anchor="right" open={isDrawerOpen} onClose={handleDrawerClose}>
+        <Drawer anchor='right' open={isDrawerOpen} onClose={handleDrawerClose}>
           <List>
             {drawerNavigationItems.map(({ label, path, icon }) => (
               <ListItem key={path} disablePadding>
@@ -190,7 +187,7 @@ const Navigation = ({
       )}
       {isMobileLayout && (
         <AppBar
-          position="fixed"
+          position='fixed'
           sx={{
             top: 'auto',
             bottom: 0,
@@ -213,7 +210,7 @@ const Navigation = ({
         </AppBar>
       )}
     </>
-  );
-};
+  )
+}
 
-export default React.memo(Navigation);
+export default React.memo(Navigation)

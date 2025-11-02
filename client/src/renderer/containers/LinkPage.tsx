@@ -1,26 +1,26 @@
-import { useMutation, useQuery } from "@apollo/client/react";
-import { gql } from 'graphql-tag';
-import React, { useCallback } from 'react';
-import { useParams } from 'react-router';
-import FatalApolloError from '../components/FatalApolloError';
-import LinkForm, { LinkInForm } from '../components/LinkForm';
-import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
-import NotePageMenu from '../components/NotePageMenu';
-import Tags from '../components/Tags';
+import { useMutation, useQuery } from '@apollo/client/react'
+import { gql } from 'graphql-tag'
+import React, { useCallback } from 'react'
+import { useParams } from 'react-router'
+import FatalApolloError from '../components/FatalApolloError'
+import LinkForm, { LinkInForm } from '../components/LinkForm'
+import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator'
+import NotePageMenu from '../components/NotePageMenu'
+import Tags from '../components/Tags'
 import type {
   LinkQuery,
   LinkQueryVariables,
   UpdateLinkMutation,
   UpdateLinkMutationVariables,
-} from '../generated/graphql';
-import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
-import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
+} from '../generated/graphql'
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy'
+import { useIsDesktopLayout } from '../utils/mediaQueryHooks'
 import {
   BASE_TAG_FRAGMENT,
   BASE_USER_FRAGMENT,
-} from '../utils/sharedQueriesAndFragments';
-import useDataState, { DataState } from '../utils/useDataState';
-import ComplexLayout from './ComplexLayout';
+} from '../utils/sharedQueriesAndFragments'
+import useDataState, { DataState } from '../utils/useDataState'
+import ComplexLayout from './ComplexLayout'
 
 const LINK_QUERY = gql`
   query Link($linkId: ID) {
@@ -44,7 +44,7 @@ const LINK_QUERY = gql`
   }
   ${BASE_USER_FRAGMENT}
   ${BASE_TAG_FRAGMENT}
-`;
+`
 
 const UPDATE_LINK_MUTATION = gql`
   mutation UpdateLink($link: InputLink!) {
@@ -64,47 +64,47 @@ const UPDATE_LINK_MUTATION = gql`
       }
     }
   }
-`;
+`
 
 const LinkPage: React.FC = () => {
-  const isDesktopLayout = useIsDesktopLayout();
+  const isDesktopLayout = useIsDesktopLayout()
 
-  const { linkId } = useParams();
+  const { linkId } = useParams()
   const linkQuery = useDataState(
     useQuery<LinkQuery, LinkQueryVariables>(LINK_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
       variables: { linkId },
-    })
-  );
+    }),
+  )
 
   const [updateLink, updateLinkMutation] = useMutation<
     UpdateLinkMutation,
     UpdateLinkMutationVariables
-  >(UPDATE_LINK_MUTATION);
+  >(UPDATE_LINK_MUTATION)
   const handleSubmit = useCallback(
     (updatedLink: LinkInForm): void => {
       updateLink({ variables: { link: updatedLink } }).catch((error) => {
-        console.error('[LinkPage.updateLink]', error);
-      });
+        console.error('[LinkPage.updateLink]', error)
+      })
     },
-    [updateLink]
-  );
+    [updateLink],
+  )
 
   if (linkQuery.state === DataState.LOADING) {
-    return <ComplexLayout loading />;
+    return <ComplexLayout loading />
   }
   if (linkQuery.state === DataState.ERROR) {
     return (
       <ComplexLayout>
         <FatalApolloError query={linkQuery} />
       </ComplexLayout>
-    );
+    )
   }
 
-  const { link } = linkQuery.data;
+  const { link } = linkQuery.data
   const tagsComponent = (
-    <Tags tags={link.tags} size="medium" withShortcuts noteId={link._id} />
-  );
+    <Tags tags={link.tags} size='medium' withShortcuts noteId={link._id} />
+  )
 
   return (
     <ComplexLayout
@@ -121,7 +121,7 @@ const LinkPage: React.FC = () => {
         tagsComponent={!isDesktopLayout && tagsComponent}
       />
     </ComplexLayout>
-  );
-};
+  )
+}
 
-export default LinkPage;
+export default LinkPage

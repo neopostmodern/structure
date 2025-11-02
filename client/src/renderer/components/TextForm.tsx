@@ -1,30 +1,30 @@
-import isEqual from 'lodash/isEqual';
-import pick from 'lodash/pick';
-import React from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import type { NotesForListQuery } from '../generated/graphql';
-import useHasPermission from '../hooks/useHasPermission';
-import useSyncForm from '../hooks/useSyncForm';
-import { OptionalReactComponent } from '../utils/types';
-import useSaveOnUnmount from '../utils/useSaveOnUnmount';
-import { NameInput } from './formComponents';
-import Gap from './Gap';
-import MarkedTextarea from './MarkedTextarea';
+import isEqual from 'lodash/isEqual'
+import pick from 'lodash/pick'
+import React from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import type { NotesForListQuery } from '../generated/graphql'
+import useHasPermission from '../hooks/useHasPermission'
+import useSyncForm from '../hooks/useSyncForm'
+import { OptionalReactComponent } from '../utils/types'
+import useSaveOnUnmount from '../utils/useSaveOnUnmount'
+import { NameInput } from './formComponents'
+import Gap from './Gap'
+import MarkedTextarea from './MarkedTextarea'
 
-type NoteType = NotesForListQuery['notes'][number];
+type NoteType = NotesForListQuery['notes'][number]
 
 const textFormFields: Array<keyof NoteType> = [
   '_id',
   'updatedAt',
   'name',
   'description',
-];
-export type TextInForm = Pick<NoteType, typeof textFormFields[number]>;
+]
+export type TextInForm = Pick<NoteType, (typeof textFormFields)[number]>
 
 interface TextFormProps {
-  text: NoteType;
-  onSubmit: (text: TextInForm) => void;
-  tagsComponent?: OptionalReactComponent;
+  text: NoteType
+  onSubmit: (text: TextInForm) => void
+  tagsComponent?: OptionalReactComponent
 }
 
 const TextForm: React.FC<TextFormProps> = ({
@@ -32,32 +32,32 @@ const TextForm: React.FC<TextFormProps> = ({
   onSubmit,
   tagsComponent,
 }) => {
-  const defaultValues = pick(text, textFormFields) as TextInForm;
+  const defaultValues = pick(text, textFormFields) as TextInForm
   const formProps = useForm<TextInForm>({
     defaultValues,
     mode: 'onBlur',
     resolver: (formValues) => {
       if (!isEqual(formValues, defaultValues)) {
-        onSubmit(formValues);
+        onSubmit(formValues)
       }
-      return { values: formValues, errors: {} };
+      return { values: formValues, errors: {} }
     },
-  });
-  const { register, reset, handleSubmit } = formProps;
+  })
+  const { register, reset, handleSubmit } = formProps
 
-  useSyncForm(reset, defaultValues, text);
+  useSyncForm(reset, defaultValues, text)
 
-  useSaveOnUnmount({ onSubmit, defaultValues }, formProps);
+  useSaveOnUnmount({ onSubmit, defaultValues }, formProps)
 
-  const onlyReadPermission = !useHasPermission(text, 'notes', 'write');
+  const onlyReadPermission = !useHasPermission(text, 'notes', 'write')
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formProps}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <NameInput
-          type="text"
-          label="Title"
+          type='text'
+          label='Title'
           {...register('name', { required: true })}
           inputProps={{ readOnly: onlyReadPermission }}
         />
@@ -70,10 +70,10 @@ const TextForm: React.FC<TextFormProps> = ({
         )}
         <Gap vertical={2} />
 
-        <MarkedTextarea name="description" readOnly={onlyReadPermission} />
+        <MarkedTextarea name='description' readOnly={onlyReadPermission} />
       </form>
     </FormProvider>
-  );
-};
+  )
+}
 
-export default TextForm;
+export default TextForm

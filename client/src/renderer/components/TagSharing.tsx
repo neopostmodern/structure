@@ -1,13 +1,13 @@
-import type { TagsQuery } from '../generated/graphql';
-import useHasPermission from '../hooks/useHasPermission';
-import Gap from './Gap';
-import TagSharingAdd from './TagSharingAdd';
-import TagSharingTable from './TagSharingTable';
+import type { TagsQuery } from '../generated/graphql'
+import useHasPermission from '../hooks/useHasPermission'
+import Gap from './Gap'
+import TagSharingAdd from './TagSharingAdd'
+import TagSharingTable from './TagSharingTable'
 
-type TagType = TagsQuery['tags'][number];
+type TagType = TagsQuery['tags'][number]
 
 const TagSharing = ({ tag }: { tag: TagType }) => {
-  const hasSharePermission = useHasPermission({ tags: [tag] }, 'tag', 'share');
+  const hasSharePermission = useHasPermission({ tags: [tag] }, 'tag', 'share')
   return (
     <div>
       <TagSharingTable tag={tag} readOnly={!hasSharePermission} />
@@ -18,7 +18,7 @@ const TagSharing = ({ tag }: { tag: TagType }) => {
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default TagSharing;
+export default TagSharing

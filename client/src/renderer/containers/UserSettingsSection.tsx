@@ -1,24 +1,24 @@
-import { useMutation, useQuery } from "@apollo/client/react";
-import { Typography } from '@mui/material';
-import { bookmarkletCode, rssFeedUrl } from '@structure/common';
-import { gql } from 'graphql-tag';
-import { FC } from 'react';
-import { useSelector } from 'react-redux';
-import Credentials, { CredentialsOrLoading } from '../components/Credentials';
-import FatalApolloError from '../components/FatalApolloError';
-import { StructureTextField } from '../components/formComponents';
-import SettingsEntry from '../components/SettingsEntry';
+import { useMutation, useQuery } from '@apollo/client/react'
+import { Typography } from '@mui/material'
+import { bookmarkletCode, rssFeedUrl } from '@structure/common'
+import { gql } from 'graphql-tag'
+import { FC } from 'react'
+import { useSelector } from 'react-redux'
+import Credentials, { CredentialsOrLoading } from '../components/Credentials'
+import FatalApolloError from '../components/FatalApolloError'
+import { StructureTextField } from '../components/formComponents'
+import SettingsEntry from '../components/SettingsEntry'
 import type {
   RequestNewCredentialMutation,
   RequestNewCredentialMutationVariables,
   RevokeCredentialMutation,
   RevokeCredentialMutationVariables,
   UserCredentialsQuery,
-} from '../generated/graphql';
-import { RootState } from '../reducers';
-import { ConfigurationStateType } from '../reducers/configuration';
-import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
-import useDataState, { DataState } from '../utils/useDataState';
+} from '../generated/graphql'
+import { RootState } from '../reducers'
+import { ConfigurationStateType } from '../reducers/configuration'
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy'
+import useDataState, { DataState } from '../utils/useDataState'
 
 const userCredentialsFragment = gql`
   fragment UserCredentialsFragment on User {
@@ -29,7 +29,7 @@ const userCredentialsFragment = gql`
       rss
     }
   }
-`;
+`
 
 const USER_CREDENTIALS_QUERY = gql`
   ${userCredentialsFragment}
@@ -38,7 +38,7 @@ const USER_CREDENTIALS_QUERY = gql`
       ...UserCredentialsFragment
     }
   }
-`;
+`
 const REQUEST_NEW_CREDENTIAL_MUTATION = gql`
   ${userCredentialsFragment}
   mutation RequestNewCredential($purpose: String!) {
@@ -46,7 +46,7 @@ const REQUEST_NEW_CREDENTIAL_MUTATION = gql`
       ...UserCredentialsFragment
     }
   }
-`;
+`
 const REVOKE_CREDENTIAL_MUTATION = gql`
   ${userCredentialsFragment}
   mutation RevokeCredential($purpose: String!) {
@@ -54,38 +54,38 @@ const REVOKE_CREDENTIAL_MUTATION = gql`
       ...UserCredentialsFragment
     }
   }
-`;
+`
 
 const UserSettingsSection: FC = () => {
   const { backendUrl } = useSelector<RootState, ConfigurationStateType>(
-    (state) => state.configuration
-  );
+    (state) => state.configuration,
+  )
   const userQuery = useDataState(
     useQuery<UserCredentialsQuery>(USER_CREDENTIALS_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
-    })
-  );
+    }),
+  )
   const [requestNewCredential] = useMutation<
     RequestNewCredentialMutation,
     RequestNewCredentialMutationVariables
-  >(REQUEST_NEW_CREDENTIAL_MUTATION);
+  >(REQUEST_NEW_CREDENTIAL_MUTATION)
   const [revokeCredential] = useMutation<
     RevokeCredentialMutation,
     RevokeCredentialMutationVariables
-  >(REVOKE_CREDENTIAL_MUTATION);
+  >(REVOKE_CREDENTIAL_MUTATION)
 
   if (userQuery.state === DataState.ERROR) {
     return (
       <>
-        <Typography variant="h2">Integrations</Typography>
+        <Typography variant='h2'>Integrations</Typography>
         <FatalApolloError query={userQuery} />
       </>
-    );
+    )
   }
 
-  let credentialsConfiguration: CredentialsOrLoading;
+  let credentialsConfiguration: CredentialsOrLoading
   if (userQuery.state === DataState.LOADING) {
-    credentialsConfiguration = 'loading';
+    credentialsConfiguration = 'loading'
   } else {
     credentialsConfiguration = [
       {
@@ -95,7 +95,7 @@ const UserSettingsSection: FC = () => {
           userQuery.data.currentUser?.credentials?.bookmarklet &&
           bookmarkletCode(
             backendUrl,
-            userQuery.data.currentUser.credentials.bookmarklet
+            userQuery.data.currentUser.credentials.bookmarklet,
           ),
         comment:
           'This bookmarklet will save links in the background. You will not be able to change the title or tag it immediately. The bookmarklet uses an authentication token.',
@@ -107,18 +107,18 @@ const UserSettingsSection: FC = () => {
           userQuery.data.currentUser?.credentials?.rss &&
           rssFeedUrl(backendUrl, userQuery.data.currentUser.credentials.rss),
       },
-    ];
+    ]
   }
 
   return (
     <>
-      <Typography variant="h2">Integrations</Typography>
+      <Typography variant='h2'>Integrations</Typography>
       <SettingsEntry
-        title="Bookmarklet (desktop app)"
-        comment="This bookmarklet will save links via the desktop app. To use it, the desktop app must be running (or it will be opened) and you must be logged in. The bookmarklet contains no authentication token."
+        title='Bookmarklet (desktop app)'
+        comment='This bookmarklet will save links via the desktop app. To use it, the desktop app must be running (or it will be opened) and you must be logged in. The bookmarklet contains no authentication token.'
       >
         <StructureTextField
-          type="text"
+          type='text'
           inputProps={{ readOnly: true }}
           value={`javascript:void(open('${backendUrl}/desktop/add?url='+encodeURIComponent(location.href)))`}
         />
@@ -131,10 +131,10 @@ const UserSettingsSection: FC = () => {
             (web app)
           </>
         }
-        comment="This bookmarklet will save links via the web app. The web app will open in a new tab and you must be logged in. The bookmarklet contains no authentication token."
+        comment='This bookmarklet will save links via the web app. The web app will open in a new tab and you must be logged in. The bookmarklet contains no authentication token.'
       >
         <StructureTextField
-          type="text"
+          type='text'
           inputProps={{ readOnly: true }}
           value={`javascript:void(open('${__WEB_FRONTEND_HOST__}/notes/add?url='+encodeURIComponent(location.href)+'&autoSubmit'))`}
         />
@@ -142,14 +142,14 @@ const UserSettingsSection: FC = () => {
       <Credentials
         credentials={credentialsConfiguration}
         requestNewCredential={(purpose): void => {
-          requestNewCredential({ variables: { purpose } });
+          requestNewCredential({ variables: { purpose } })
         }}
         revokeCredential={(purpose): void => {
-          revokeCredential({ variables: { purpose } });
+          revokeCredential({ variables: { purpose } })
         }}
       />
     </>
-  );
-};
+  )
+}
 
-export default UserSettingsSection;
+export default UserSettingsSection

@@ -1,151 +1,151 @@
-import { useMutation } from "@apollo/client/react";
-import { PostAdd } from '@mui/icons-material';
-import { Stack } from '@mui/material';
-import { FC, useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useLocation } from 'react-router';
-import { push, replace } from 'redux-first-history';
-import AddNoteCard from '../components/AddNoteCard';
-import AddNoteForm from '../components/AddNoteForm';
-import AddNoteFromClipboard from '../components/AddNoteFromClipboard';
-import ErrorSnackbar from '../components/ErrorSnackbar';
-import Gap from '../components/Gap';
+import { useMutation } from '@apollo/client/react'
+import { PostAdd } from '@mui/icons-material'
+import { Stack } from '@mui/material'
+import { FC, useCallback, useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useLocation } from 'react-router'
+import { push, replace } from 'redux-first-history'
+import AddNoteCard from '../components/AddNoteCard'
+import AddNoteForm from '../components/AddNoteForm'
+import AddNoteFromClipboard from '../components/AddNoteFromClipboard'
+import ErrorSnackbar from '../components/ErrorSnackbar'
+import Gap from '../components/Gap'
 import type {
   AddLinkMutation,
   AddLinkMutationVariables,
   AddTextMutation,
   AddTextMutationVariables,
   NotesForListQuery,
-} from '../generated/graphql';
+} from '../generated/graphql'
 import {
   ADD_LINK_MUTATION,
   ADD_TEXT_MUTATION,
-} from '../utils/sharedQueriesAndFragments';
-import { isUrlValid } from '../utils/textHelpers';
-import ComplexLayout from './ComplexLayout';
-import { NOTES_QUERY } from './NotesPage/NotesPage';
+} from '../utils/sharedQueriesAndFragments'
+import { isUrlValid } from '../utils/textHelpers'
+import ComplexLayout from './ComplexLayout'
+import { NOTES_QUERY } from './NotesPage/NotesPage'
 
 const AddNotePage: FC = () => {
-  const dispatch = useDispatch();
-  const [defaultValue, setDefaultValue] = useState('');
+  const dispatch = useDispatch()
+  const [defaultValue, setDefaultValue] = useState('')
 
   const [addLink, addLinkMutation] = useMutation<
     AddLinkMutation,
     AddLinkMutationVariables
   >(ADD_LINK_MUTATION, {
     onCompleted: ({ submitLink }) => {
-      dispatch(replace(`/links/${submitLink._id}`));
+      dispatch(replace(`/links/${submitLink._id}`))
     },
     onError: (error) => {
-      console.error(error);
+      console.error(error)
     },
     update: (cache, { data }) => {
       if (!data) {
-        return;
+        return
       }
-      const { submitLink } = data;
+      const { submitLink } = data
 
       const cacheValue = cache.readQuery<NotesForListQuery>({
         query: NOTES_QUERY,
-      });
+      })
 
       if (!cacheValue) {
-        return;
+        return
       }
 
-      const { notes } = cacheValue;
+      const { notes } = cacheValue
       cache.writeQuery({
         query: NOTES_QUERY,
         data: { notes: [...notes, { ...submitLink, type: 'LINK' }] },
-      });
+      })
     },
-  });
+  })
   const handleSubmitUrl = useCallback(
     (url: string): void => {
-      addLink({ variables: { url } });
+      addLink({ variables: { url } })
     },
-    [addLink]
-  );
+    [addLink],
+  )
 
   const [addText, addTextMutation] = useMutation<
     AddTextMutation,
     AddTextMutationVariables
   >(ADD_TEXT_MUTATION, {
     onCompleted: ({ createText }) => {
-      dispatch(replace(`/texts/${createText._id}`));
+      dispatch(replace(`/texts/${createText._id}`))
     },
     update: (cache, { data }) => {
       if (!data) {
-        return;
+        return
       }
-      const { createText } = data;
+      const { createText } = data
 
       const cacheValue = cache.readQuery<NotesForListQuery>({
         query: NOTES_QUERY,
-      });
+      })
 
       if (!cacheValue) {
-        return;
+        return
       }
 
-      const { notes } = cacheValue;
+      const { notes } = cacheValue
       cache.writeQuery({
         query: NOTES_QUERY,
         data: { notes: [...notes, { ...createText, type: 'TEXT' }] },
-      });
+      })
     },
-  });
+  })
   const handleSubmitText = useCallback(
     (variables: AddTextMutationVariables) => {
-      (async () => {
+      ;(async () => {
         try {
-          await addText({ variables });
+          await addText({ variables })
         } catch (error) {
-          console.error('[AddNotePage.handleSubmitText (addText)]', error);
+          console.error('[AddNotePage.handleSubmitText (addText)]', error)
         }
-      })();
+      })()
     },
-    [addText]
-  );
+    [addText],
+  )
   const handleCreateQuickTextNote = useCallback(() => {
-    (async () => {
+    ;(async () => {
       try {
-        await addText();
+        await addText()
       } catch (error) {
         console.error(
           '[AddNotePage.handleCreateQuickTextNote (addText)]',
-          error
-        );
+          error,
+        )
       }
-    })();
-  }, [addText]);
+    })()
+  }, [addText])
 
   const handleAbort = useCallback((): void => {
-    dispatch(push('/'));
-  }, [dispatch, push]);
+    dispatch(push('/'))
+  }, [dispatch, push])
 
-  const [isNoteAddedFromUrl, setIsNoteAddedFromUrl] = useState(false);
-  const urlSearchParams = new URLSearchParams(useLocation().search);
+  const [isNoteAddedFromUrl, setIsNoteAddedFromUrl] = useState(false)
+  const urlSearchParams = new URLSearchParams(useLocation().search)
 
   useEffect(() => {
     if (isNoteAddedFromUrl) {
-      return;
+      return
     }
-    const urlOrText = urlSearchParams.get('url') || urlSearchParams.get('text');
-    const title = urlSearchParams.get('title');
+    const urlOrText = urlSearchParams.get('url') || urlSearchParams.get('text')
+    const title = urlSearchParams.get('title')
 
     if (!urlOrText) {
-      return;
+      return
     }
 
-    setIsNoteAddedFromUrl(true);
+    setIsNoteAddedFromUrl(true)
 
     if (isUrlValid(urlOrText)) {
-      handleSubmitUrl(urlOrText); // todo: handle title
+      handleSubmitUrl(urlOrText) // todo: handle title
     } else {
-      handleSubmitText({ description: urlOrText, title });
+      handleSubmitText({ description: urlOrText, title })
     }
-  }, [urlSearchParams, isNoteAddedFromUrl, setIsNoteAddedFromUrl]);
+  }, [urlSearchParams, isNoteAddedFromUrl, setIsNoteAddedFromUrl])
 
   return (
     <ComplexLayout
@@ -171,13 +171,13 @@ const AddNotePage: FC = () => {
           onSubmitUrl={handleSubmitUrl}
         />
         <AddNoteCard
-          title="Quick text-only note"
+          title='Quick text-only note'
           icon={<PostAdd />}
           action={handleCreateQuickTextNote}
         />
       </Stack>
     </ComplexLayout>
-  );
-};
+  )
+}
 
-export default AddNotePage;
+export default AddNotePage

@@ -1,27 +1,27 @@
-import { Checkbox } from '@mui/material';
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setBatchSelected } from '../actions/userInterface';
-import { RootState } from '../reducers';
-import { UserInterfaceStateType } from '../reducers/userInterface';
-import Gap from './Gap';
+import { Checkbox } from '@mui/material'
+import React, { useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { setBatchSelected } from '../actions/userInterface'
+import { RootState } from '../reducers'
+import { UserInterfaceStateType } from '../reducers/userInterface'
+import Gap from './Gap'
 
 const NoteInListBatchEditing = ({ noteId }: { noteId: string }) => {
   const { batchEditing, batchSelections } = useSelector<
     RootState,
     UserInterfaceStateType
-  >((state) => state.userInterface);
-  const dispatch = useDispatch();
+  >((state) => state.userInterface)
+  const dispatch = useDispatch()
 
   const handleCheckboxClick = useCallback(
     (event): void => {
-      dispatch(setBatchSelected(noteId, event.target.checked));
+      dispatch(setBatchSelected(noteId, event.target.checked))
     },
-    [dispatch, setBatchSelected]
-  );
+    [dispatch, setBatchSelected],
+  )
 
   if (!batchEditing) {
-    return null;
+    return null
   }
 
   return (
@@ -32,7 +32,7 @@ const NoteInListBatchEditing = ({ noteId }: { noteId: string }) => {
       />
       <Gap horizontal={1} />
     </>
-  );
-};
+  )
+}
 
-export default React.memo(NoteInListBatchEditing);
+export default React.memo(NoteInListBatchEditing)

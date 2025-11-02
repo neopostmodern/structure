@@ -1,4 +1,4 @@
-import { LoadingButton } from '@mui/lab';
+import { LoadingButton } from '@mui/lab'
 import {
   Box,
   Button,
@@ -10,18 +10,18 @@ import {
   ListItemIcon,
   MenuItem,
   Modal,
-} from '@mui/material';
-import { PropsWithChildren, ReactNode, useState } from 'react';
+} from '@mui/material'
+import { PropsWithChildren, ReactNode, useState } from 'react'
 
 type TriggerWithConfirmationProps = PropsWithChildren<{
-  startIcon: ReactNode | undefined;
-  onClick: () => void;
-  confirmationQuestion: string;
-  confirmationButtonLabel: string;
-  variant: 'button' | 'menuitem';
-  loading: boolean;
-  modalInterstitial?: boolean;
-}>;
+  startIcon: ReactNode | undefined
+  onClick: () => void
+  confirmationQuestion: string
+  confirmationButtonLabel: string
+  variant: 'button' | 'menuitem'
+  loading: boolean
+  modalInterstitial?: boolean
+}>
 
 const TriggerWithConfirmation = ({
   confirmationQuestion,
@@ -33,22 +33,22 @@ const TriggerWithConfirmation = ({
   modalInterstitial,
   children,
 }: TriggerWithConfirmationProps) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false)
 
-  const handleTriggerClick = () => setDialogOpen(true);
+  const handleTriggerClick = () => setDialogOpen(true)
   const handleCloseDialog = () => {
-    setDialogOpen(false);
-  };
+    setDialogOpen(false)
+  }
 
   return (
     <>
       {modalInterstitial && (
         <Modal open={loading}>
           <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="100vh"
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            height='100vh'
           >
             <CircularProgress disableShrink />
           </Box>
@@ -73,11 +73,11 @@ const TriggerWithConfirmation = ({
       <Dialog
         open={dialogOpen}
         onClose={handleCloseDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
       >
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id='alert-dialog-description'>
             {confirmationQuestion}
           </DialogContentText>
         </DialogContent>
@@ -85,8 +85,8 @@ const TriggerWithConfirmation = ({
           <Button onClick={handleCloseDialog}>Cancel</Button>
           <Button
             onClick={() => {
-              onClick();
-              handleCloseDialog();
+              onClick()
+              handleCloseDialog()
             }}
             autoFocus
           >
@@ -95,7 +95,7 @@ const TriggerWithConfirmation = ({
         </DialogActions>
       </Dialog>
     </>
-  );
-};
+  )
+}
 
-export default TriggerWithConfirmation;
+export default TriggerWithConfirmation

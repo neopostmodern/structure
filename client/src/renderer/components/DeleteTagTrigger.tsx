@@ -1,5 +1,5 @@
-import { Delete as DeleteIcon } from '@mui/icons-material';
-import TriggerWithConfirmation from './TriggerWithConfirmation';
+import { Delete as DeleteIcon } from '@mui/icons-material'
+import TriggerWithConfirmation from './TriggerWithConfirmation'
 
 const DeleteTagTrigger = ({
   tag,
@@ -7,10 +7,10 @@ const DeleteTagTrigger = ({
   loading,
   deleteNote,
 }: {
-  tag: { name: string; notes: Array<unknown> };
-  variant?: 'button' | 'menuitem';
-  loading: boolean;
-  deleteNote: () => void;
+  tag: { name: string; notes: Array<unknown> }
+  variant?: 'button' | 'menuitem'
+  loading: boolean
+  deleteNote: () => void
 }) => {
   return (
     <TriggerWithConfirmation
@@ -19,14 +19,14 @@ const DeleteTagTrigger = ({
       loading={loading}
       modalInterstitial
       onClick={(): void => {
-        deleteNote();
+        deleteNote()
       }}
       confirmationQuestion={`Are you sure you want to delete the tag "${tag.name}"? It will be removed from ${tag.notes.length} notes. Deleting a tag cannot be undone.`}
-      confirmationButtonLabel="Delete"
+      confirmationButtonLabel='Delete'
     >
       Delete tag
     </TriggerWithConfirmation>
-  );
-};
+  )
+}
 
-export default DeleteTagTrigger;
+export default DeleteTagTrigger

@@ -1,11 +1,11 @@
-import Mousetrap from 'mousetrap';
-import makeMousetrapGlobal from '../utils/mousetrapGlobal';
+import Mousetrap from 'mousetrap'
+import makeMousetrapGlobal from '../utils/mousetrapGlobal'
 
-makeMousetrapGlobal(Mousetrap);
+makeMousetrapGlobal(Mousetrap)
 
-export const GLOBAL = 'GLOBAL/';
-export const MODIFIER = 'REGULAR_MODIFIER';
-export const DESKTOP_ONLY_MODIFIER = 'DESKTOP_ONLY_MODIFIER';
+export const GLOBAL = 'GLOBAL/'
+export const MODIFIER = 'REGULAR_MODIFIER'
+export const DESKTOP_ONLY_MODIFIER = 'DESKTOP_ONLY_MODIFIER'
 export enum Modifier {
   CONTROL = 'CONTROL',
   COMMAND = 'COMMAND',
@@ -13,17 +13,17 @@ export enum Modifier {
 
 const config = {
   modifier: Modifier.CONTROL,
-};
-(async () => {
+}
+;(async () => {
   if (/(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
-    config.modifier = Modifier.COMMAND;
+    config.modifier = Modifier.COMMAND
   }
-})();
+})()
 
-export const getModifier = () => config.modifier;
+export const getModifier = () => config.modifier
 
 export const adaptShortcutsForPlatform = (
-  shortcuts: Array<string | false>
+  shortcuts: Array<string | false>,
 ): Array<string> =>
   shortcuts
     .filter((shortcut): shortcut is string => Boolean(shortcut))
@@ -31,28 +31,28 @@ export const adaptShortcutsForPlatform = (
       if (shortcut.includes(DESKTOP_ONLY_MODIFIER)) {
         const desktopShortcut = shortcut.replace(
           DESKTOP_ONLY_MODIFIER,
-          MODIFIER
-        );
+          MODIFIER,
+        )
         const webShortcut = shortcut
           .replace(DESKTOP_ONLY_MODIFIER + '+', '')
-          .replace(GLOBAL, '');
+          .replace(GLOBAL, '')
         if (__BUILD_TARGET__ === 'web') {
-          return webShortcut;
+          return webShortcut
         } else {
-          return [desktopShortcut, webShortcut];
+          return [desktopShortcut, webShortcut]
         }
       }
-      return shortcut;
+      return shortcut
     })
     .flat()
     .map((shortcut) =>
       shortcut.replace(
         MODIFIER,
-        getModifier() === Modifier.COMMAND ? 'command' : 'ctrl'
-      )
-    );
+        getModifier() === Modifier.COMMAND ? 'command' : 'ctrl',
+      ),
+    )
 
-export const QUICK_ACCESS_SHORTCUT_PREFIX = 'QUICK_';
+export const QUICK_ACCESS_SHORTCUT_PREFIX = 'QUICK_'
 const shortcutTemplates: { [shortcutName: string]: Array<string | false> } = {
   HOME_PAGE: [`${GLOBAL}${MODIFIER}+.`, 'esc'],
   SETTINGS_PAGE: [`${GLOBAL}${MODIFIER}+,`],
@@ -80,48 +80,48 @@ const shortcutTemplates: { [shortcutName: string]: Array<string | false> } = {
   [`${QUICK_ACCESS_SHORTCUT_PREFIX}7`]: [`${GLOBAL}${MODIFIER}+7`],
   [`${QUICK_ACCESS_SHORTCUT_PREFIX}8`]: [`${GLOBAL}${MODIFIER}+8`],
   [`${QUICK_ACCESS_SHORTCUT_PREFIX}9`]: [`${GLOBAL}${MODIFIER}+9`],
-};
+}
 export const SHORTCUTS: {
-  [shortcutName: string]: Array<string>;
-} = {};
+  [shortcutName: string]: Array<string>
+} = {}
 for (const shortcutName in shortcutTemplates) {
   SHORTCUTS[shortcutName] = adaptShortcutsForPlatform(
-    shortcutTemplates[shortcutName]
-  );
+    shortcutTemplates[shortcutName],
+  )
 }
 
 export const getKeyForDisplay = (keyDescription: string): string => {
   if (keyDescription === Modifier.COMMAND) {
-    return '⌘';
+    return '⌘'
   }
   if (keyDescription === Modifier.CONTROL) {
-    return 'ctrl';
+    return 'ctrl'
   }
   if (keyDescription === 'enter') {
-    return '↵';
+    return '↵'
   }
-  return keyDescription;
-};
+  return keyDescription
+}
 
 export const bindShortcut = (
   shortcuts: Array<string>,
-  callback: (event: KeyboardEvent) => void
+  callback: (event: KeyboardEvent) => void,
 ): (() => void) => {
   let wrappedCallback = (event: KeyboardEvent) => {
-    event.preventDefault();
-    callback(event);
-  };
+    event.preventDefault()
+    callback(event)
+  }
   shortcuts.forEach((shortcut) => {
     if (shortcut.includes(GLOBAL)) {
-      Mousetrap.bindGlobal(shortcut.replace(GLOBAL, ''), wrappedCallback);
+      Mousetrap.bindGlobal(shortcut.replace(GLOBAL, ''), wrappedCallback)
     } else {
-      Mousetrap.bind(shortcut, wrappedCallback);
+      Mousetrap.bind(shortcut, wrappedCallback)
     }
-  });
+  })
 
   return (): void => {
     shortcuts.forEach((shortcut) => {
-      Mousetrap.unbind(shortcut.replace(GLOBAL, ''));
-    });
-  };
-};
+      Mousetrap.unbind(shortcut.replace(GLOBAL, ''))
+    })
+  }
+}

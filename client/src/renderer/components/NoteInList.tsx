@@ -1,31 +1,31 @@
-import React, { lazy } from 'react';
-import TimeAgo from 'react-timeago';
-import type { NotesForListQuery } from '../generated/graphql';
-import useUserId from '../hooks/useUserId';
-import { noteUrl } from '../utils/routes';
-import suspenseWrap from '../utils/suspenseWrap';
-import * as Styled from './NoteInList.style';
-import NoteInListBatchEditing from './NoteInListBatchEditing';
-import NotesListActionMenu from './NotesListActionMenu';
-import Tags from './Tags';
-import TooltipWithShortcut from './TooltipWithShortcut';
+import React, { lazy } from 'react'
+import TimeAgo from 'react-timeago'
+import type { NotesForListQuery } from '../generated/graphql'
+import useUserId from '../hooks/useUserId'
+import { noteUrl } from '../utils/routes'
+import suspenseWrap from '../utils/suspenseWrap'
+import * as Styled from './NoteInList.style'
+import NoteInListBatchEditing from './NoteInListBatchEditing'
+import NotesListActionMenu from './NotesListActionMenu'
+import Tags from './Tags'
+import TooltipWithShortcut from './TooltipWithShortcut'
 
 const RenderedMarkdown = suspenseWrap(
-  lazy(() => import(/* webpackPrefetch: true */ './RenderedMarkdown'))
-);
+  lazy(() => import(/* webpackPrefetch: true */ './RenderedMarkdown')),
+)
 
 export const NoteInList: React.FC<{
-  note: NotesForListQuery['notes'][number];
-  expanded: boolean;
-  shortcut?: Array<string>;
+  note: NotesForListQuery['notes'][number]
+  expanded: boolean
+  shortcut?: Array<string>
 }> = ({ note, expanded, shortcut }) => {
-  const userId = useUserId();
+  const userId = useUserId()
   return (
     <Styled.Note archived={Boolean(note.archivedAt)}>
       <NoteInListBatchEditing noteId={note._id} />
       <Styled.NoteContainer>
         <Styled.NoteTitleLine>
-          <TooltipWithShortcut title="" shortcut={shortcut} placement="left">
+          <TooltipWithShortcut title='' shortcut={shortcut} placement='left'>
             <Styled.NoteTitleLink to={noteUrl(note)}>
               {note.name}
             </Styled.NoteTitleLink>
@@ -50,8 +50,8 @@ export const NoteInList: React.FC<{
           {'url' in note && (
             <Styled.LinkDomain
               href={note.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              target='_blank'
+              rel='noopener noreferrer'
               title={note.url}
             >
               {note.domain}
@@ -72,7 +72,7 @@ export const NoteInList: React.FC<{
         )}
       </Styled.NoteContainer>
     </Styled.Note>
-  );
-};
+  )
+}
 
-export default React.memo(NoteInList);
+export default React.memo(NoteInList)

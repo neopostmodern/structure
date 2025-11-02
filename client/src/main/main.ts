@@ -1,76 +1,81 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
-console.log('[startup] Main started!');
+console.log('[startup] Main started!')
 
-import config from '@structure/config';
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
-import { updateElectronApp } from 'update-electron-app';
-import path from 'path';
-import MenuBuilder from './menu';
+import config from '@structure/config'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import path from 'path'
+import { updateElectronApp } from 'update-electron-app'
+import MenuBuilder from './menu'
 
-const __dirname = import.meta.dirname;
+const __dirname = import.meta.dirname
 
-console.log('[startup] Static imports complete!');
+console.log('[startup] Static imports complete!')
 
-app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar');
+app.commandLine.appendSwitch('--enable-features', 'OverlayScrollbar')
 
 // see package.json
-const CUSTOM_URL_PROTOCOL = 'structure';
+const CUSTOM_URL_PROTOCOL = 'structure'
 
-let mainWindow: BrowserWindow | null = null;
+let mainWindow: BrowserWindow | null = null
 
-const isDevelopment = import.meta.env.DEV || __DEBUG_PROD__ === 'true';
+const isDevelopment = import.meta.env.DEV || __DEBUG_PROD__ === 'true'
 
 if (isDevelopment) {
-  import('electron-debug');
+  import('electron-debug')
 }
 
 const installExtensions = async () => {
-  const installer = await import('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+  const installer = await import('electron-devtools-installer')
+  const forceDownload = !!process.env.UPGRADE_EXTENSIONS
   const extensions = [
     'REACT_DEVELOPER_TOOLS',
     'REDUX_DEVTOOLS',
     'APOLLO_DEVELOPER_TOOLS',
-  ];
+  ]
 
-  return installer.default(
-      extensions.map((name) => {
-        if (name in installer) {
-          return installer[name]
-        } else {
-          console.error(`Developer extension not available for install: ${name}`);
-          return null;
-        }
-      }).filter(installer => Boolean(installer)),
-      forceDownload
+  return installer
+    .default(
+      extensions
+        .map((name) => {
+          if (name in installer) {
+            return installer[name]
+          } else {
+            console.error(
+              `Developer extension not available for install: ${name}`,
+            )
+            return null
+          }
+        })
+        .filter((installer) => Boolean(installer)),
+      forceDownload,
     )
-    .catch(console.log);
-};
+    .catch(console.log)
+}
 
 const handleParameters = (argv: Array<string>) => {
-  const structureLink = argv[argv.length - 1];
-  const structureLinkPrefix = `${CUSTOM_URL_PROTOCOL}://`;
+  const structureLink = argv[argv.length - 1]
+  const structureLinkPrefix = `${CUSTOM_URL_PROTOCOL}://`
   if (structureLink && structureLink.startsWith(structureLinkPrefix)) {
     mainWindow?.webContents.send(
       'navigate',
-      structureLink.replace(structureLinkPrefix, '')
-    );
+      structureLink.replace(structureLinkPrefix, ''),
+    )
   }
-};
+}
 
 const createWindow = async () => {
   if (isDevelopment) {
-    await installExtensions();
+    await installExtensions()
   }
 
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
+    : path.join(__dirname, '../../assets')
 
   const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
+    return path.join(RESOURCES_PATH, ...paths)
+  }
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -81,82 +86,83 @@ const createWindow = async () => {
       preload: path.join(__dirname, 'preload.js'),
       sandbox: false,
     },
-  });
+  })
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
   } else {
     mainWindow.loadFile(
-      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
-    );
+      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`),
+    )
   }
 
   mainWindow.on('ready-to-show', async () => {
     if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+      throw new Error('"mainWindow" is not defined')
     }
 
     if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
+      mainWindow.minimize()
     } else {
-      mainWindow.show();
+      mainWindow.show()
     }
-  });
+  })
 
   mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
+    mainWindow = null
+  })
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  const menuBuilder = new MenuBuilder(mainWindow)
+  menuBuilder.buildMenu()
 
   mainWindow.webContents.on('did-finish-load', async () => {
     if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+      throw new Error('"mainWindow" is not defined')
     }
 
-    const cookies = await mainWindow?.webContents.session.cookies.get({});
+    const cookies = await mainWindow?.webContents.session.cookies.get({})
     if (cookies.some(({ name }) => name === 'logged_in')) {
-      ipcMain.emit('can-login');
+      ipcMain.emit('can-login')
     }
-  });
+  })
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (url.endsWith('/login/github') || url.endsWith('/logout')) {
-      return { action: 'allow' };
+      return { action: 'allow' }
     }
 
-    shell.openExternal(url);
-    return { action: 'deny' };
-  });
+    shell.openExternal(url)
+    return { action: 'deny' }
+  })
 
   mainWindow.webContents.on('did-create-window', (browserWindow) => {
+    browserWindow.webContents.toggleDevTools()
     browserWindow.webContents.on('did-finish-load', () => {
       if (
         browserWindow.webContents.getURL().startsWith(config.WEB_FRONTEND_HOST)
       ) {
-        browserWindow.close();
+        browserWindow.close()
       }
-    });
-  });
+    })
+  })
 
   // enable toggling dev-tools for production app
   ipcMain.on('toggle-dev-tools', () => {
-    mainWindow?.webContents.toggleDevTools();
-  });
+    mainWindow?.webContents.toggleDevTools()
+  })
 
   ipcMain.on('restart', () => {
-    console.log('Restarting application...');
-    app.relaunch();
-    app.exit(0);
-  });
+    console.log('Restarting application...')
+    app.relaunch()
+    app.exit(0)
+  })
 
-  handleParameters(process.argv);
+  handleParameters(process.argv)
 
-  updateElectronApp();
-};
+  updateElectronApp()
+}
 
 /**
  * Add event listeners...
@@ -172,54 +178,53 @@ const createWindow = async () => {
 // });
 
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-});
+  console.error('Uncaught Exception:', error)
+})
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection:', reason);
-});
+  console.error('Unhandled Rejection:', reason)
+})
 
-const gotSingleInstanceLock = app.requestSingleInstanceLock();
+const gotSingleInstanceLock = app.requestSingleInstanceLock()
 console.log('[startup] Got single instance lock', gotSingleInstanceLock)
 
 if (!gotSingleInstanceLock) {
-  app.quit();
+  app.quit()
 } else {
   app.on('second-instance', (_event, argv) => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
       if (mainWindow.isMinimized()) {
-        mainWindow.restore();
+        mainWindow.restore()
       }
-      mainWindow.focus();
-      handleParameters(argv);
+      mainWindow.focus()
+      handleParameters(argv)
     }
-  });
+  })
 
-
-  (async () => {
+  ;(async () => {
     if (process.env.NODE_ENV === 'production') {
-      const sourceMapSupport = await import('source-map-support');
-      sourceMapSupport.install();
+      const sourceMapSupport = await import('source-map-support')
+      sourceMapSupport.install()
     }
 
     try {
-      console.log('[startup] Will create app...');
-      await app.whenReady();
+      console.log('[startup] Will create app...')
+      await app.whenReady()
       console.log('[startup] App creation OK')
 
-      console.log('[startup] Will create window...');
+      console.log('[startup] Will create window...')
       app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
         if (mainWindow === null) {
-          createWindow();
+          createWindow()
         }
-      });
-      await createWindow();
-      console.log('[startup] Startup completed!');
+      })
+      await createWindow()
+      console.log('[startup] Startup completed!')
     } catch (error) {
       console.error('[startup] App or window creation failed!', error)
     }
-  })();
+  })()
 }

@@ -1,4 +1,4 @@
-import { gql } from 'graphql-tag';
+import { gql } from 'graphql-tag'
 
 export const PROFILE_QUERY = gql`
   query Profile($currentVersion: String!) {
@@ -11,14 +11,14 @@ export const PROFILE_QUERY = gql`
       minimum
     }
   }
-`;
+`
 
 export const BASE_USER_FRAGMENT = gql`
   fragment BaseUser on User {
     _id
     name
   }
-`;
+`
 
 export const BASE_TAG_FRAGMENT = gql`
   fragment BaseTag on Tag {
@@ -52,7 +52,7 @@ export const BASE_TAG_FRAGMENT = gql`
       }
     }
   }
-`;
+`
 
 export const BASE_NOTE_FRAGMENT = gql`
   fragment BaseNote on INote {
@@ -80,7 +80,7 @@ export const BASE_NOTE_FRAGMENT = gql`
     }
   }
   ${BASE_USER_FRAGMENT}
-`;
+`
 export const ADD_LINK_MUTATION = gql`
   ${BASE_NOTE_FRAGMENT}
   mutation AddLink($url: String!, $title: String, $description: String) {
@@ -88,7 +88,7 @@ export const ADD_LINK_MUTATION = gql`
       ...BaseNote
     }
   }
-`;
+`
 
 export const ADD_TEXT_MUTATION = gql`
   ${BASE_NOTE_FRAGMENT}
@@ -97,7 +97,7 @@ export const ADD_TEXT_MUTATION = gql`
       ...BaseNote
     }
   }
-`;
+`
 
 export const ADD_TAG_BY_NAME_TO_NOTE_MUTATION = gql`
   mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
@@ -118,4 +118,4 @@ export const ADD_TAG_BY_NAME_TO_NOTE_MUTATION = gql`
     }
   }
   ${BASE_TAG_FRAGMENT}
-`;
+`

@@ -1,12 +1,12 @@
-import React from 'react';
-import { ArchiveState } from '../../actions/userInterface';
-import type { NotesForListQuery } from '../../generated/graphql';
+import React from 'react'
+import { ArchiveState } from '../../actions/userInterface'
+import type { NotesForListQuery } from '../../generated/graphql'
 
 interface NoteCountProps {
-  notes: NotesForListQuery['notes'];
-  matchedNotes?: NotesForListQuery['notes'];
-  archivedMatchedNotesCount?: number;
-  archiveState: ArchiveState;
+  notes: NotesForListQuery['notes']
+  matchedNotes?: NotesForListQuery['notes']
+  archivedMatchedNotesCount?: number
+  archiveState: ArchiveState
 }
 
 const NoteCount: React.FC<NoteCountProps> = ({
@@ -17,33 +17,33 @@ const NoteCount: React.FC<NoteCountProps> = ({
 }) => {
   if (notes && matchedNotes) {
     const archivedNotesCount = notes.filter((note) =>
-      Boolean(note.archivedAt)
-    ).length;
-    let displayableNoteCount = notes.length;
-    let totalNotes = displayableNoteCount.toString();
+      Boolean(note.archivedAt),
+    ).length
+    let displayableNoteCount = notes.length
+    let totalNotes = displayableNoteCount.toString()
     if (archiveState === ArchiveState.ONLY_ARCHIVE) {
-      displayableNoteCount = archivedNotesCount;
+      displayableNoteCount = archivedNotesCount
       totalNotes = `(${
         notes.length - archivedNotesCount
-      }+) ${archivedNotesCount}`;
+      }+) ${archivedNotesCount}`
     } else if (archiveState === ArchiveState.NO_ARCHIVE) {
-      displayableNoteCount = notes.length - archivedNotesCount;
+      displayableNoteCount = notes.length - archivedNotesCount
       totalNotes = `${
         notes.length - archivedNotesCount
-      } (+${archivedNotesCount})`;
+      } (+${archivedNotesCount})`
     }
     if (matchedNotes.length === displayableNoteCount) {
-      return <>{totalNotes}</>;
+      return <>{totalNotes}</>
     }
 
-    let matchedNotesCount = matchedNotes.length.toString();
+    let matchedNotesCount = matchedNotes.length.toString()
     if (archiveState === ArchiveState.ONLY_ARCHIVE) {
       matchedNotesCount = `(${
         matchedNotes.length - archivedMatchedNotesCount
-      }+) ${archivedMatchedNotesCount}`;
+      }+) ${archivedMatchedNotesCount}`
     } else if (archiveState === ArchiveState.NO_ARCHIVE) {
       if (archivedMatchedNotesCount && archivedMatchedNotesCount > 0) {
-        matchedNotesCount = `${matchedNotes.length} (+${archivedMatchedNotesCount})`;
+        matchedNotesCount = `${matchedNotes.length} (+${archivedMatchedNotesCount})`
       }
     }
 
@@ -51,9 +51,9 @@ const NoteCount: React.FC<NoteCountProps> = ({
       <>
         {matchedNotesCount} / {totalNotes}
       </>
-    );
+    )
   }
-  return <>&nbsp;</>;
-};
+  return <>&nbsp;</>
+}
 
-export default NoteCount;
+export default NoteCount

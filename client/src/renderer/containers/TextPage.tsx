@@ -1,25 +1,25 @@
-import { useMutation, useQuery } from "@apollo/client/react";
-import { gql } from 'graphql-tag';
-import { FC, useCallback } from 'react';
-import { useParams } from 'react-router';
-import FatalApolloError from '../components/FatalApolloError';
-import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator';
-import NotePageMenu from '../components/NotePageMenu';
-import Tags from '../components/Tags';
-import TextForm, { TextInForm } from '../components/TextForm';
+import { useMutation, useQuery } from '@apollo/client/react'
+import { gql } from 'graphql-tag'
+import { FC, useCallback } from 'react'
+import { useParams } from 'react-router'
+import FatalApolloError from '../components/FatalApolloError'
+import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator'
+import NotePageMenu from '../components/NotePageMenu'
+import Tags from '../components/Tags'
+import TextForm, { TextInForm } from '../components/TextForm'
 import type {
   TextQuery,
   UpdateTextMutation,
   UpdateTextMutationVariables,
-} from '../generated/graphql';
-import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy';
-import { useIsDesktopLayout } from '../utils/mediaQueryHooks';
+} from '../generated/graphql'
+import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy'
+import { useIsDesktopLayout } from '../utils/mediaQueryHooks'
 import {
   BASE_TAG_FRAGMENT,
   BASE_USER_FRAGMENT,
-} from '../utils/sharedQueriesAndFragments';
-import useDataState, { DataState } from '../utils/useDataState';
-import ComplexLayout from './ComplexLayout';
+} from '../utils/sharedQueriesAndFragments'
+import useDataState, { DataState } from '../utils/useDataState'
+import ComplexLayout from './ComplexLayout'
 
 const TEXT_QUERY = gql`
   query Text($textId: ID) {
@@ -41,7 +41,7 @@ const TEXT_QUERY = gql`
   }
   ${BASE_USER_FRAGMENT}
   ${BASE_TAG_FRAGMENT}
-`;
+`
 
 const UPDATE_TEXT_MUTATION = gql`
   mutation UpdateText($text: InputText!) {
@@ -60,45 +60,45 @@ const UPDATE_TEXT_MUTATION = gql`
       }
     }
   }
-`;
+`
 
 const TextPage: FC = () => {
-  const isDesktopLayout = useIsDesktopLayout();
-  const { textId } = useParams();
+  const isDesktopLayout = useIsDesktopLayout()
+  const { textId } = useParams()
   const textQuery = useDataState(
     useQuery<TextQuery>(TEXT_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
       variables: { textId },
-    })
-  );
+    }),
+  )
   const [updateText, updateTextMutation] = useMutation<
     UpdateTextMutation,
     UpdateTextMutationVariables
-  >(UPDATE_TEXT_MUTATION);
+  >(UPDATE_TEXT_MUTATION)
   const handleSubmit = useCallback(
     (updatedText: TextInForm) => {
       updateText({ variables: { text: updatedText } }).catch((error) => {
-        console.error('[TextPage.updateText]', error);
-      });
+        console.error('[TextPage.updateText]', error)
+      })
     },
-    [updateText]
-  );
+    [updateText],
+  )
 
   if (textQuery.state === DataState.LOADING) {
-    return <ComplexLayout loading />;
+    return <ComplexLayout loading />
   }
   if (textQuery.state === DataState.ERROR) {
     return (
       <ComplexLayout>
         <FatalApolloError query={textQuery} />
       </ComplexLayout>
-    );
+    )
   }
 
-  const { text } = textQuery.data;
+  const { text } = textQuery.data
   const tagsComponent = (
-    <Tags tags={text.tags} size="medium" noteId={text._id} withShortcuts />
-  );
+    <Tags tags={text.tags} size='medium' noteId={text._id} withShortcuts />
+  )
 
   return (
     <ComplexLayout
@@ -115,7 +115,7 @@ const TextPage: FC = () => {
         tagsComponent={!isDesktopLayout && tagsComponent}
       />
     </ComplexLayout>
-  );
-};
+  )
+}
 
-export default TextPage;
+export default TextPage

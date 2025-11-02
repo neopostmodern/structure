@@ -1,8 +1,8 @@
-import type { useMutation } from "@apollo/client/react";
-import { Box, Typography } from '@mui/material';
-import { PropsWithChildren, useEffect, useState } from 'react';
-import { DataState, LazyPolicedData } from '../utils/useDataState';
-import ErrorSnackbar from './ErrorSnackbar';
+import type { useMutation } from '@apollo/client/react'
+import { Box, Typography } from '@mui/material'
+import { PropsWithChildren, useEffect, useState } from 'react'
+import { DataState, LazyPolicedData } from '../utils/useDataState'
+import ErrorSnackbar from './ErrorSnackbar'
 
 enum NetworkPhase {
   IDLE,
@@ -10,8 +10,8 @@ enum NetworkPhase {
   NOTIFY_COMPLETE,
 }
 
-const DISPLAY_BACKGROUND_LOAD_NOTIFICATION_LENGTH = 700;
-const DISPLAY_SAVED_NOTIFICATION_LENGTH = 1000;
+const DISPLAY_BACKGROUND_LOAD_NOTIFICATION_LENGTH = 700
+const DISPLAY_SAVED_NOTIFICATION_LENGTH = 1000
 
 export const NetworkIndicatorContainer = ({
   children,
@@ -20,68 +20,68 @@ export const NetworkIndicatorContainer = ({
 }: PropsWithChildren<{ align?: 'left' | 'right'; color?: string }>) => (
   <Box sx={{ position: 'relative' }}>
     <Box sx={{ position: 'absolute', bottom: 0, [align]: 0 }}>
-      <Typography variant="caption" color={color}>
+      <Typography variant='caption' color={color}>
         {children}
       </Typography>
     </Box>
   </Box>
-);
+)
 
 const NetworkOperationsIndicator = ({
   query,
   mutation,
 }: {
-  query?: LazyPolicedData<any>;
-  mutation?: useMutation.Result;
+  query?: LazyPolicedData<any>
+  mutation?: useMutation.Result
 }) => {
   const [backgroundLoadingState, setBackgroundLoadingState] =
-    useState<NetworkPhase>(NetworkPhase.IDLE);
+    useState<NetworkPhase>(NetworkPhase.IDLE)
   const [savingState, setSavingState] = useState<NetworkPhase>(
-    NetworkPhase.IDLE
-  );
+    NetworkPhase.IDLE,
+  )
 
-  const isLoading = query?.state === DataState.LOADING;
+  const isLoading = query?.state === DataState.LOADING
   const isLoadingBackground =
-    query?.state === DataState.DATA && query?.loadingBackground;
-  const isSaving = mutation?.loading;
-  const isError = mutation?.error;
+    query?.state === DataState.DATA && query?.loadingBackground
+  const isSaving = mutation?.loading
+  const isError = mutation?.error
 
   useEffect(() => {
     if (isSaving) {
       if (savingState === NetworkPhase.IDLE) {
-        setSavingState(NetworkPhase.IN_PROGRESS);
+        setSavingState(NetworkPhase.IN_PROGRESS)
       }
     } else if (isLoading || isLoadingBackground) {
       if (backgroundLoadingState === NetworkPhase.IDLE) {
-        setBackgroundLoadingState(NetworkPhase.IN_PROGRESS);
+        setBackgroundLoadingState(NetworkPhase.IN_PROGRESS)
       }
     } else {
       if (savingState === NetworkPhase.IN_PROGRESS) {
-        setSavingState(NetworkPhase.NOTIFY_COMPLETE);
+        setSavingState(NetworkPhase.NOTIFY_COMPLETE)
         setTimeout(() => {
-          setSavingState(NetworkPhase.IDLE);
-        }, DISPLAY_SAVED_NOTIFICATION_LENGTH);
+          setSavingState(NetworkPhase.IDLE)
+        }, DISPLAY_SAVED_NOTIFICATION_LENGTH)
       }
       if (backgroundLoadingState === NetworkPhase.IN_PROGRESS) {
-        setBackgroundLoadingState(NetworkPhase.NOTIFY_COMPLETE);
+        setBackgroundLoadingState(NetworkPhase.NOTIFY_COMPLETE)
         setTimeout(() => {
-          setBackgroundLoadingState(NetworkPhase.IDLE);
-        }, DISPLAY_BACKGROUND_LOAD_NOTIFICATION_LENGTH);
+          setBackgroundLoadingState(NetworkPhase.IDLE)
+        }, DISPLAY_BACKGROUND_LOAD_NOTIFICATION_LENGTH)
       }
     }
-  }, [savingState, setSavingState, isSaving, isLoadingBackground, isLoading]);
+  }, [savingState, setSavingState, isSaving, isLoadingBackground, isLoading])
 
-  let message;
+  let message
   if (isError) {
-    message = 'Save failed!';
+    message = 'Save failed!'
   } else if (savingState === NetworkPhase.IN_PROGRESS) {
-    message = 'Saving...';
+    message = 'Saving...'
   } else if (savingState === NetworkPhase.NOTIFY_COMPLETE) {
-    message = 'Saved.';
+    message = 'Saved.'
   } else if (backgroundLoadingState === NetworkPhase.IN_PROGRESS) {
-    message = 'Refreshing...';
+    message = 'Refreshing...'
   } else if (backgroundLoadingState === NetworkPhase.NOTIFY_COMPLETE) {
-    message = 'Up to date.';
+    message = 'Up to date.'
   }
 
   return (
@@ -89,9 +89,9 @@ const NetworkOperationsIndicator = ({
       <NetworkIndicatorContainer color={isError ? 'error' : undefined}>
         {message}
       </NetworkIndicatorContainer>
-      <ErrorSnackbar error={mutation?.error} actionDescription="save" />
+      <ErrorSnackbar error={mutation?.error} actionDescription='save' />
     </>
-  );
-};
+  )
+}
 
-export default NetworkOperationsIndicator;
+export default NetworkOperationsIndicator

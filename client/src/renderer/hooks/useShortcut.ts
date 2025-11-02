@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { bindShortcut } from '../utils/keyboard';
+import { useEffect } from 'react'
+import { bindShortcut } from '../utils/keyboard'
 
 /**
  * Register a shortcut while the component is mounted
@@ -8,15 +8,15 @@ import { bindShortcut } from '../utils/keyboard';
  */
 const useShortcut = (
   shortcut: Array<string> | null | undefined,
-  callback: (event: KeyboardEvent) => void
+  callback: (event: KeyboardEvent) => void,
 ) => {
   useEffect(() => {
     if (!shortcut) {
-      return;
+      return
     }
 
-    return bindShortcut(shortcut, callback);
-  }, [shortcut, callback]);
-};
+    return bindShortcut(shortcut, callback)
+  }, [shortcut, callback])
+}
 
-export default useShortcut;
+export default useShortcut

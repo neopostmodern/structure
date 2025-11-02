@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const Centered: React.FC<React.PropsWithChildren<{ height?: string }>> = ({
   children,
@@ -15,7 +15,7 @@ const Centered: React.FC<React.PropsWithChildren<{ height?: string }>> = ({
     >
       <div>{children}</div>
     </div>
-  );
-};
+  )
+}
 
-export default Centered;
+export default Centered

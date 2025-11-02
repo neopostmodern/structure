@@ -1,8 +1,8 @@
-import styled, { css } from 'styled-components';
-import { breakpointDesktop } from '../styles/constants';
+import styled, { css } from 'styled-components'
+import { breakpointDesktop } from '../styles/constants'
 
 export const Menu = styled.div<{
-  direction?: 'vertical' | 'vertical-horizontal';
+  direction?: 'vertical' | 'vertical-horizontal'
 }>`
   display: flex;
   flex-direction: column;
@@ -23,7 +23,7 @@ export const Menu = styled.div<{
         }
       }
     `}
-`;
+`
 
 export const StickyMenu = styled(Menu)`
   position: sticky;
@@ -31,7 +31,7 @@ export const StickyMenu = styled(Menu)`
   padding-top: 1em;
   padding-bottom: 0.3em;
   background-color: rgba(255, 255, 255, 0.8);
-`;
+`
 
 export const MenuSearchFieldContainer = styled.div`
   flex-basis: 22.5ch;
@@ -41,4 +41,4 @@ export const MenuSearchFieldContainer = styled.div`
   @media (max-width: ${breakpointDesktop - 0.001}rem) {
     margin-left: auto;
   }
-`;
+`

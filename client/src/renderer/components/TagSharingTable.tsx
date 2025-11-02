@@ -1,29 +1,29 @@
-import { gql } from '@apollo/client';
-import { useMutation } from "@apollo/client/react";
+import { gql } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import {
   Edit,
   LocalOffer,
   Person,
   Share,
   Visibility,
-} from '@mui/icons-material';
+} from '@mui/icons-material'
 import {
   CircularProgress,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
-} from '@mui/material';
-import { MouseEvent, useCallback, useState } from 'react';
-import styled from 'styled-components';
+} from '@mui/material'
+import { MouseEvent, useCallback, useState } from 'react'
+import styled from 'styled-components'
 import type {
   TagsQuery,
   UpdatePermissionOnTagMutation,
   UpdatePermissionOnTagMutationVariables,
-} from '../generated/graphql';
-import useUserId from '../hooks/useUserId';
-import ErrorSnackbar from './ErrorSnackbar';
-import { FORM_SUBHEADER_STYLES } from './formComponents';
-import TagSharingDelete from './TagSharingDelete';
+} from '../generated/graphql'
+import useUserId from '../hooks/useUserId'
+import ErrorSnackbar from './ErrorSnackbar'
+import { FORM_SUBHEADER_STYLES } from './formComponents'
+import TagSharingDelete from './TagSharingDelete'
 
 const PermissionsTable = styled.table`
   thead {
@@ -35,22 +35,22 @@ const PermissionsTable = styled.table`
   tbody tr:not(:last-of-type) td {
     border-bottom: transparent 1em solid;
   }
-`;
+`
 
-type TagType = TagsQuery['tags'][number];
+type TagType = TagsQuery['tags'][number]
 
 const permissionsObjectToGrantedLabels = (
   permissions:
     | {
-        [mode: string]: boolean;
+        [mode: string]: boolean
       }
     | {
-        __typename?: string;
-      }
+        __typename?: string
+      },
 ): Array<string> =>
   Object.entries(permissions)
     .filter(([mode, granted]) => mode !== '__typename' && granted)
-    .map(([mode]) => mode);
+    .map(([mode]) => mode)
 
 const UPDATE_PERMISSION_ON_TAG_MUTATION = gql`
   mutation UpdatePermissionOnTag(
@@ -86,36 +86,36 @@ const UPDATE_PERMISSION_ON_TAG_MUTATION = gql`
       }
     }
   }
-`;
+`
 
 const TagSharingTable = ({
   tag,
   readOnly = false,
 }: {
-  tag: TagType;
-  readOnly?: boolean;
+  tag: TagType
+  readOnly?: boolean
 }) => {
-  const userId = useUserId();
+  const userId = useUserId()
 
   const [updatePermissionOnTag, updatePermissionOnTagMutation] = useMutation<
     UpdatePermissionOnTagMutation,
     UpdatePermissionOnTagMutationVariables
-  >(UPDATE_PERMISSION_ON_TAG_MUTATION);
+  >(UPDATE_PERMISSION_ON_TAG_MUTATION)
   const [mutationActiveOnUserId, setMutationActiveOnUserId] = useState<
     string | null
-  >();
+  >()
 
   const handlePermissionsChange = useCallback(
     (event: MouseEvent<HTMLElement>, newPermissions: Array<string>) => {
       const { resource, userId } = (
         event.currentTarget.parentNode! as HTMLDivElement
-      ).dataset;
-      const mode = (event.currentTarget as HTMLButtonElement).value;
-      const granted = newPermissions.includes(mode);
+      ).dataset
+      const mode = (event.currentTarget as HTMLButtonElement).value
+      const granted = newPermissions.includes(mode)
 
-      (async () => {
+      ;(async () => {
         try {
-          setMutationActiveOnUserId(userId);
+          setMutationActiveOnUserId(userId)
           await updatePermissionOnTag({
             variables: {
               tagId: tag._id,
@@ -124,26 +124,26 @@ const TagSharingTable = ({
               mode,
               granted,
             },
-          });
+          })
         } catch (error) {
-          console.error('[TagSharingTable.handlePermissionsChange]', error);
+          console.error('[TagSharingTable.handlePermissionsChange]', error)
         } finally {
-          setMutationActiveOnUserId(null);
+          setMutationActiveOnUserId(null)
         }
-      })();
+      })()
     },
-    [setMutationActiveOnUserId, updatePermissionOnTag]
-  );
+    [setMutationActiveOnUserId, updatePermissionOnTag],
+  )
 
   if (!tag.permissions || tag.permissions.length === 1) {
-    return <div>This tag is not shared with anybody yet</div>;
+    return <div>This tag is not shared with anybody yet</div>
   }
 
   return (
     <>
       <ErrorSnackbar
         error={updatePermissionOnTagMutation.error}
-        actionDescription="Update tag permission"
+        actionDescription='Update tag permission'
       />
       <PermissionsTable>
         <thead>
@@ -159,7 +159,7 @@ const TagSharingTable = ({
               <td>
                 {permission.user.name}{' '}
                 {tag.user._id === permission.user._id && (
-                  <Tooltip title="Creator">
+                  <Tooltip title='Creator'>
                     <Person style={{ verticalAlign: 'bottom' }} />
                   </Tooltip>
                 )}
@@ -168,27 +168,27 @@ const TagSharingTable = ({
                 <ToggleButtonGroup
                   value={permissionsObjectToGrantedLabels(permission.tag)}
                   onChange={handlePermissionsChange}
-                  data-resource="tag"
+                  data-resource='tag'
                   data-user-id={permission.user._id}
-                  size="small"
+                  size='small'
                 >
-                  <ToggleButton value="read" disabled>
-                    <Tooltip title="See tag">
+                  <ToggleButton value='read' disabled>
+                    <Tooltip title='See tag'>
                       <Visibility />
                     </Tooltip>
                   </ToggleButton>
-                  <ToggleButton value="write" disabled={readOnly}>
-                    <Tooltip title="Edit tag">
+                  <ToggleButton value='write' disabled={readOnly}>
+                    <Tooltip title='Edit tag'>
                       <Edit />
                     </Tooltip>
                   </ToggleButton>
-                  <ToggleButton value="use" disabled={readOnly}>
-                    <Tooltip title="Use tag">
+                  <ToggleButton value='use' disabled={readOnly}>
+                    <Tooltip title='Use tag'>
                       <LocalOffer />
                     </Tooltip>
                   </ToggleButton>
-                  <ToggleButton value="share" disabled={readOnly}>
-                    <Tooltip title="Share tag">
+                  <ToggleButton value='share' disabled={readOnly}>
+                    <Tooltip title='Share tag'>
                       <Share />
                     </Tooltip>
                   </ToggleButton>
@@ -198,17 +198,17 @@ const TagSharingTable = ({
                 <ToggleButtonGroup
                   value={permissionsObjectToGrantedLabels(permission.notes)}
                   onChange={handlePermissionsChange}
-                  data-resource="notes"
+                  data-resource='notes'
                   data-user-id={permission.user._id}
-                  size="small"
+                  size='small'
                 >
-                  <ToggleButton value="read" disabled>
-                    <Tooltip title="See tagged notes">
+                  <ToggleButton value='read' disabled>
+                    <Tooltip title='See tagged notes'>
                       <Visibility />
                     </Tooltip>
                   </ToggleButton>
-                  <ToggleButton value="write" disabled={readOnly}>
-                    <Tooltip title="Edit tagged notes">
+                  <ToggleButton value='write' disabled={readOnly}>
+                    <Tooltip title='Edit tagged notes'>
                       <Edit />
                     </Tooltip>
                   </ToggleButton>
@@ -216,7 +216,7 @@ const TagSharingTable = ({
               </td>
               <td>
                 {mutationActiveOnUserId === permission.user._id ? (
-                  <CircularProgress size="1.2em" disableShrink />
+                  <CircularProgress size='1.2em' disableShrink />
                 ) : (
                   tag.user._id !== permission.user._id &&
                   (!readOnly || userId === permission.user._id) && (
@@ -232,7 +232,7 @@ const TagSharingTable = ({
         </tbody>
       </PermissionsTable>
     </>
-  );
-};
+  )
+}
 
-export default TagSharingTable;
+export default TagSharingTable

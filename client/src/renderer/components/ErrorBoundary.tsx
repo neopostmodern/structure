@@ -1,25 +1,25 @@
-import React from 'react';
+import React from 'react'
 
-type ErrorBoundaryProps = React.PropsWithChildren<{}>;
+type ErrorBoundaryProps = React.PropsWithChildren<{}>
 
 export default class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,
   { error: Error | ErrorEvent | undefined }
 > {
   constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { error: undefined };
+    super(props)
+    this.state = { error: undefined }
   }
 
   static getDerivedStateFromError({ name, stack, message }: Error) {
     // Update state so the next render will show the fallback UI.
-    return { error: { name, stack, message } };
+    return { error: { name, stack, message } }
   }
 
   componentDidMount() {
     window.addEventListener('error', (event) => {
-      this.setState({ error: event });
-    });
+      this.setState({ error: event })
+    })
   }
 
   // todo: report error to server?
@@ -27,12 +27,12 @@ export default class ErrorBoundary extends React.Component<
 
   render() {
     if (this.state.error) {
-      let caughtBy = 'React error boundary';
-      let additionalInformation;
-      let error = this.state.error;
+      let caughtBy = 'React error boundary'
+      let additionalInformation
+      let error = this.state.error
       if ('lineno' in error) {
-        caughtBy = 'window global error handler';
-        const { filename, lineno, colno } = error as ErrorEvent;
+        caughtBy = 'window global error handler'
+        const { filename, lineno, colno } = error as ErrorEvent
         additionalInformation = (
           <>
             <small>
@@ -42,9 +42,9 @@ export default class ErrorBoundary extends React.Component<
             <br />
             <br />
           </>
-        );
+        )
       }
-      let stack = ('error' in error ? error.error : error)?.stack;
+      let stack = ('error' in error ? error.error : error)?.stack
       return (
         <div>
           <h1>Something went wrong.</h1>
@@ -67,8 +67,8 @@ export default class ErrorBoundary extends React.Component<
             <>Stack not available</>
           )}
         </div>
-      );
+      )
     }
-    return this.props.children;
+    return this.props.children
   }
 }
