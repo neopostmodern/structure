@@ -1,8 +1,14 @@
+import { gql } from '@apollo/client'
+import { useFragment } from '@apollo/client/react'
 import React, { lazy } from 'react'
 import TimeAgo from 'react-timeago'
-import type { NotesForListQuery } from '../generated/graphql'
+import { NoteInListFragment } from '../generated/graphql'
 import useUserId from '../hooks/useUserId'
 import { noteUrl } from '../utils/routes'
+import {
+  BASE_TAG_FRAGMENT,
+  BASE_USER_FRAGMENT,
+} from '../utils/sharedQueriesAndFragments'
 import suspenseWrap from '../utils/suspenseWrap'
 import * as Styled from './NoteInList.style'
 import NoteInListBatchEditing from './NoteInListBatchEditing'
@@ -15,11 +21,55 @@ const RenderedMarkdown = suspenseWrap(
 )
 
 export const NoteInList: React.FC<{
-  note: NotesForListQuery['notes'][number]
+  noteId: string
   expanded: boolean
   shortcut?: Array<string>
-}> = ({ note, expanded, shortcut }) => {
+}> = ({ noteId, expanded, shortcut }) => {
   const userId = useUserId()
+
+  const noteData = useFragment<NoteInListFragment>({
+    fragment: gql`
+      fragment NoteInList on INote {
+        ... on INote {
+          # type
+          _id
+          name
+          createdAt
+          updatedAt
+          changedAt
+          archivedAt
+          deletedAt
+          description
+          tags {
+            ...BaseTag
+          }
+          user {
+            ...BaseUser
+          }
+        }
+        ... on Link {
+          url
+          domain
+        }
+      }
+      ${BASE_USER_FRAGMENT}
+      ${BASE_TAG_FRAGMENT}
+    `,
+    fragmentName: 'NoteInList',
+    from: {
+      __typename: 'Text',
+      _id: noteId,
+    },
+  })
+  if (noteData.dataState === 'partial') {
+    console.error(
+      `[NoteInList] Partial data received from cache. Missing data: ${noteData.missing}`,
+    )
+    throw Error('[NoteInList] Received partial data.')
+  }
+
+  const note = noteData.data
+
   return (
     <Styled.Note archived={Boolean(note.archivedAt)}>
       <NoteInListBatchEditing noteId={note._id} />

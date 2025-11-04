@@ -352,10 +352,21 @@ export type Versions = {
   recommended?: Maybe<Scalars['String']['output']>;
 };
 
+export type TagsWithCountsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TagsWithCountsQuery = { __typename: 'Query', tags: Array<{ __typename: 'Tag', noteCount: number, _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> };
+
 export type VisitedNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type VisitedNotesQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string } | { __typename: 'Text', _id: string, name: string }> };
+
+type NoteInList_Link_Fragment = { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } };
+
+type NoteInList_Text_Fragment = { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } };
+
+export type NoteInListFragment = NoteInList_Link_Fragment | NoteInList_Text_Fragment;
 
 export type ShareTagMutationVariables = Exact<{
   tagId: Scalars['ID']['input'];
@@ -530,15 +541,15 @@ export type TagWithNoteIdsQueryVariables = Exact<{
 
 export type TagWithNoteIdsQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null } };
 
-export type TagsWithCountsQueryVariables = Exact<{ [key: string]: never; }>;
+export type NotesForSortAndFilterQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TagsWithCountsQuery = { __typename: 'Query', tags: Array<{ __typename: 'Tag', noteCount: number, _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> };
+export type NotesForSortAndFilterQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, name: string, url: string, tags: Array<{ __typename: 'Tag', _id: string }> } | { __typename: 'Text', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, name: string, tags: Array<{ __typename: 'Tag', _id: string }> }> };
 
-export type TagCountsQueryVariables = Exact<{ [key: string]: never; }>;
+export type TagsForSearchQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TagCountsQuery = { __typename: 'Query', tags: Array<{ __typename: 'Tag', _id: string, noteCount: number }> };
+export type TagsForSearchQuery = { __typename: 'Query', tags: Array<{ __typename: 'Tag', _id: string, name: string }> };
 
 export type ToggleArchivedNoteMutationVariables = Exact<{
   noteId: Scalars['ID']['input'];
@@ -587,17 +598,8 @@ export type AddTagByNameToNoteMutationVariables = Exact<{
 }>;
 
 
-export type AddTagByNameToNoteMutation = { __typename: 'Mutation', addTagByNameToNote: { __typename: 'Link', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } | { __typename: 'Text', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
+export type AddTagByNameToNoteMutation = { __typename: 'Mutation', addTagByNameToNote: { __typename: 'Link', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', noteCount: number, _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } | { __typename: 'Text', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', noteCount: number, _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
 
-export const UserCredentialsFragmentFragmentDoc = gql`
-    fragment UserCredentialsFragment on User {
-  _id
-  credentials {
-    bookmarklet
-    rss
-  }
-}
-    `;
 export const BaseTagFragmentDoc = gql`
     fragment BaseTag on Tag {
   _id
@@ -634,6 +636,40 @@ export const BaseUserFragmentDoc = gql`
   name
 }
     `;
+export const NoteInListFragmentDoc = gql`
+    fragment NoteInList on INote {
+  ... on INote {
+    _id
+    name
+    createdAt
+    updatedAt
+    changedAt
+    archivedAt
+    deletedAt
+    description
+    tags {
+      ...BaseTag
+    }
+    user {
+      ...BaseUser
+    }
+  }
+  ... on Link {
+    url
+    domain
+  }
+}
+    ${BaseTagFragmentDoc}
+${BaseUserFragmentDoc}`;
+export const UserCredentialsFragmentFragmentDoc = gql`
+    fragment UserCredentialsFragment on User {
+  _id
+  credentials {
+    bookmarklet
+    rss
+  }
+}
+    `;
 export const BaseNoteFragmentDoc = gql`
     fragment BaseNote on INote {
   ... on INote {
@@ -658,6 +694,46 @@ export const BaseNoteFragmentDoc = gql`
   }
 }
     ${BaseUserFragmentDoc}`;
+export const TagsWithCountsDocument = gql`
+    query TagsWithCounts {
+  tags {
+    ...BaseTag
+    noteCount
+  }
+}
+    ${BaseTagFragmentDoc}`;
+
+/**
+ * __useTagsWithCountsQuery__
+ *
+ * To run a query within a React component, call `useTagsWithCountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTagsWithCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTagsWithCountsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTagsWithCountsQuery(baseOptions?: Apollo.QueryHookOptions<TagsWithCountsQuery, TagsWithCountsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TagsWithCountsQuery, TagsWithCountsQueryVariables>(TagsWithCountsDocument, options);
+      }
+export function useTagsWithCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TagsWithCountsQuery, TagsWithCountsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TagsWithCountsQuery, TagsWithCountsQueryVariables>(TagsWithCountsDocument, options);
+        }
+export function useTagsWithCountsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TagsWithCountsQuery, TagsWithCountsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TagsWithCountsQuery, TagsWithCountsQueryVariables>(TagsWithCountsDocument, options);
+        }
+export type TagsWithCountsQueryHookResult = ReturnType<typeof useTagsWithCountsQuery>;
+export type TagsWithCountsLazyQueryHookResult = ReturnType<typeof useTagsWithCountsLazyQuery>;
+export type TagsWithCountsSuspenseQueryHookResult = ReturnType<typeof useTagsWithCountsSuspenseQuery>;
+export type TagsWithCountsQueryResult = Apollo.QueryResult<TagsWithCountsQuery, TagsWithCountsQueryVariables>;
 export const VisitedNotesDocument = gql`
     query VisitedNotes {
   notes {
@@ -1806,86 +1882,98 @@ export type TagWithNoteIdsQueryHookResult = ReturnType<typeof useTagWithNoteIdsQ
 export type TagWithNoteIdsLazyQueryHookResult = ReturnType<typeof useTagWithNoteIdsLazyQuery>;
 export type TagWithNoteIdsSuspenseQueryHookResult = ReturnType<typeof useTagWithNoteIdsSuspenseQuery>;
 export type TagWithNoteIdsQueryResult = Apollo.QueryResult<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>;
-export const TagsWithCountsDocument = gql`
-    query TagsWithCounts {
-  tags {
-    ...BaseTag
-    noteCount
-  }
-}
-    ${BaseTagFragmentDoc}`;
-
-/**
- * __useTagsWithCountsQuery__
- *
- * To run a query within a React component, call `useTagsWithCountsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTagsWithCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTagsWithCountsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useTagsWithCountsQuery(baseOptions?: Apollo.QueryHookOptions<TagsWithCountsQuery, TagsWithCountsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TagsWithCountsQuery, TagsWithCountsQueryVariables>(TagsWithCountsDocument, options);
+export const NotesForSortAndFilterDocument = gql`
+    query NotesForSortAndFilter {
+  notes {
+    ... on INote {
+      _id
+      createdAt
+      updatedAt
+      changedAt
+      archivedAt
+      name
+      tags {
+        _id
       }
-export function useTagsWithCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TagsWithCountsQuery, TagsWithCountsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TagsWithCountsQuery, TagsWithCountsQueryVariables>(TagsWithCountsDocument, options);
-        }
-export function useTagsWithCountsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TagsWithCountsQuery, TagsWithCountsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<TagsWithCountsQuery, TagsWithCountsQueryVariables>(TagsWithCountsDocument, options);
-        }
-export type TagsWithCountsQueryHookResult = ReturnType<typeof useTagsWithCountsQuery>;
-export type TagsWithCountsLazyQueryHookResult = ReturnType<typeof useTagsWithCountsLazyQuery>;
-export type TagsWithCountsSuspenseQueryHookResult = ReturnType<typeof useTagsWithCountsSuspenseQuery>;
-export type TagsWithCountsQueryResult = Apollo.QueryResult<TagsWithCountsQuery, TagsWithCountsQueryVariables>;
-export const TagCountsDocument = gql`
-    query TagCounts {
-  tags {
-    _id
-    noteCount
+    }
+    ... on Link {
+      url
+    }
   }
 }
     `;
 
 /**
- * __useTagCountsQuery__
+ * __useNotesForSortAndFilterQuery__
  *
- * To run a query within a React component, call `useTagCountsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTagCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useNotesForSortAndFilterQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotesForSortAndFilterQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useTagCountsQuery({
+ * const { data, loading, error } = useNotesForSortAndFilterQuery({
  *   variables: {
  *   },
  * });
  */
-export function useTagCountsQuery(baseOptions?: Apollo.QueryHookOptions<TagCountsQuery, TagCountsQueryVariables>) {
+export function useNotesForSortAndFilterQuery(baseOptions?: Apollo.QueryHookOptions<NotesForSortAndFilterQuery, NotesForSortAndFilterQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TagCountsQuery, TagCountsQueryVariables>(TagCountsDocument, options);
+        return Apollo.useQuery<NotesForSortAndFilterQuery, NotesForSortAndFilterQueryVariables>(NotesForSortAndFilterDocument, options);
       }
-export function useTagCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TagCountsQuery, TagCountsQueryVariables>) {
+export function useNotesForSortAndFilterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NotesForSortAndFilterQuery, NotesForSortAndFilterQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TagCountsQuery, TagCountsQueryVariables>(TagCountsDocument, options);
+          return Apollo.useLazyQuery<NotesForSortAndFilterQuery, NotesForSortAndFilterQueryVariables>(NotesForSortAndFilterDocument, options);
         }
-export function useTagCountsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TagCountsQuery, TagCountsQueryVariables>) {
+export function useNotesForSortAndFilterSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<NotesForSortAndFilterQuery, NotesForSortAndFilterQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<TagCountsQuery, TagCountsQueryVariables>(TagCountsDocument, options);
+          return Apollo.useSuspenseQuery<NotesForSortAndFilterQuery, NotesForSortAndFilterQueryVariables>(NotesForSortAndFilterDocument, options);
         }
-export type TagCountsQueryHookResult = ReturnType<typeof useTagCountsQuery>;
-export type TagCountsLazyQueryHookResult = ReturnType<typeof useTagCountsLazyQuery>;
-export type TagCountsSuspenseQueryHookResult = ReturnType<typeof useTagCountsSuspenseQuery>;
-export type TagCountsQueryResult = Apollo.QueryResult<TagCountsQuery, TagCountsQueryVariables>;
+export type NotesForSortAndFilterQueryHookResult = ReturnType<typeof useNotesForSortAndFilterQuery>;
+export type NotesForSortAndFilterLazyQueryHookResult = ReturnType<typeof useNotesForSortAndFilterLazyQuery>;
+export type NotesForSortAndFilterSuspenseQueryHookResult = ReturnType<typeof useNotesForSortAndFilterSuspenseQuery>;
+export type NotesForSortAndFilterQueryResult = Apollo.QueryResult<NotesForSortAndFilterQuery, NotesForSortAndFilterQueryVariables>;
+export const TagsForSearchDocument = gql`
+    query TagsForSearch {
+  tags {
+    _id
+    name
+  }
+}
+    `;
+
+/**
+ * __useTagsForSearchQuery__
+ *
+ * To run a query within a React component, call `useTagsForSearchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTagsForSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTagsForSearchQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTagsForSearchQuery(baseOptions?: Apollo.QueryHookOptions<TagsForSearchQuery, TagsForSearchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TagsForSearchQuery, TagsForSearchQueryVariables>(TagsForSearchDocument, options);
+      }
+export function useTagsForSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TagsForSearchQuery, TagsForSearchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TagsForSearchQuery, TagsForSearchQueryVariables>(TagsForSearchDocument, options);
+        }
+export function useTagsForSearchSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TagsForSearchQuery, TagsForSearchQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TagsForSearchQuery, TagsForSearchQueryVariables>(TagsForSearchDocument, options);
+        }
+export type TagsForSearchQueryHookResult = ReturnType<typeof useTagsForSearchQuery>;
+export type TagsForSearchLazyQueryHookResult = ReturnType<typeof useTagsForSearchLazyQuery>;
+export type TagsForSearchSuspenseQueryHookResult = ReturnType<typeof useTagsForSearchSuspenseQuery>;
+export type TagsForSearchQueryResult = Apollo.QueryResult<TagsForSearchQuery, TagsForSearchQueryVariables>;
 export const ToggleArchivedNoteDocument = gql`
     mutation ToggleArchivedNote($noteId: ID!) {
   toggleArchivedNote(noteId: $noteId) {
@@ -2045,6 +2133,7 @@ export const AddTagByNameToNoteDocument = gql`
       updatedAt
       tags {
         ...BaseTag
+        noteCount
         notes {
           ... on INote {
             _id

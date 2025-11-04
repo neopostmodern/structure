@@ -1,39 +1,20 @@
-import {
-  BackspaceOutlined as ClearIcon,
-  FilterAlt,
-  List,
-  Search as SearchIcon,
-  Sort,
-  ViewList,
-} from '@mui/icons-material'
-import {
-  FormControl,
-  FormHelperText,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-} from '@mui/material'
+import { FilterAlt, List, Sort, ViewList } from '@mui/icons-material'
 import { Ref, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   ArchiveState,
   changeArchiveState,
   changeLinkLayout,
-  changeSearchQuery,
   changeSortBy,
   LinkLayout,
   SortBy,
 } from '../actions/userInterface'
-import NoteCount from '../containers/NotesPage/NoteCount'
-import type { NotesForListQuery } from '../generated/graphql'
 import { RootState } from '../reducers'
 import {
   DEFAULT_ARCHIVE_STATE,
   DEFAULT_SORT_BY,
   UserInterfaceStateType,
 } from '../reducers/userInterface'
-import { SHORTCUTS } from '../utils/keyboard'
 import {
   archiveStateToName,
   layoutToName,
@@ -41,42 +22,26 @@ import {
 } from '../utils/textHelpers'
 import { Menu, MenuSearchFieldContainer } from './Menu'
 import NotesMenuButton from './NotesMenuButton'
-import TooltipWithShortcut from './TooltipWithShortcut'
+import { SearchField } from './SearchField'
 
 interface NotesMenuProps {
-  notes: NotesForListQuery['notes']
-  matchedNotes: NotesForListQuery['notes']
-  archivedMatchedNotesCount: number | undefined
-  searchInput: Ref<HTMLInputElement>
+  noteCountsWithSearchMatchesString: string | null
+  searchInputRef: Ref<HTMLInputElement>
 }
 
 const NotesMenu = ({
-  notes,
-  matchedNotes,
-  archivedMatchedNotesCount,
-  searchInput,
+  searchInputRef,
+  noteCountsWithSearchMatchesString,
 }: NotesMenuProps) => {
   const {
     linkLayout: layout,
     archiveState,
     sortBy,
-    searchQuery,
   } = useSelector<RootState, UserInterfaceStateType>(
     (state) => state.userInterface,
   )
 
   const dispatch = useDispatch()
-
-  const onChangeSearchQuery = useCallback(
-    (value: string): void => {
-      dispatch(changeSearchQuery(value))
-    },
-    [dispatch],
-  )
-  const handleClearSearchText = useCallback(
-    (): void => onChangeSearchQuery(''),
-    [onChangeSearchQuery],
-  )
 
   const handleChangeLayout = useCallback(
     (newLayout: LinkLayout): void => {
@@ -125,46 +90,10 @@ const NotesMenu = ({
         defaultValue={DEFAULT_SORT_BY}
       />
       <MenuSearchFieldContainer>
-        <TooltipWithShortcut
-          title=''
-          shortcut={SHORTCUTS.SEARCH}
-          adjustVerticalDistance={-30}
-          disableFocusListener
-        >
-          <FormControl variant='standard' sx={{ width: '100%' }}>
-            <InputLabel>Search</InputLabel>
-            <Input
-              onChange={({ target: { value } }): void => {
-                onChangeSearchQuery(value)
-              }}
-              value={searchQuery}
-              inputRef={searchInput}
-              endAdornment={
-                <InputAdornment position='end'>
-                  {searchQuery.length > 0 ? (
-                    <IconButton
-                      aria-label='clear text search filter'
-                      onClick={handleClearSearchText}
-                      edge='end'
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  ) : (
-                    <SearchIcon />
-                  )}
-                </InputAdornment>
-              }
-            />
-            <FormHelperText sx={{ textAlign: 'right' }}>
-              <NoteCount
-                notes={notes}
-                matchedNotes={matchedNotes}
-                archiveState={archiveState}
-                archivedMatchedNotesCount={archivedMatchedNotesCount}
-              />
-            </FormHelperText>
-          </FormControl>
-        </TooltipWithShortcut>
+        <SearchField
+          inputRef={searchInputRef}
+          noteCountsWithSearchMatchesString={noteCountsWithSearchMatchesString}
+        />
       </MenuSearchFieldContainer>
     </Menu>
   )
