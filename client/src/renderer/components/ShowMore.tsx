@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material'
 import { useEffect, useMemo } from 'react'
 import { useInView } from 'react-intersection-observer'
-import Gap from '../../components/Gap'
+import Gap from './Gap'
 import { SkeletonNoteList } from './Skeletons'
 
 const ShowMore = ({

@@ -3,29 +3,33 @@ import { CloudOff } from '@mui/icons-material'
 import { CircularProgress, Stack, Typography } from '@mui/material'
 import React, { useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { LinkLayout } from '../../actions/userInterface'
-import Centered from '../../components/Centered'
-import FatalApolloError from '../../components/FatalApolloError'
-import Gap from '../../components/Gap'
+import { LinkLayout } from '../actions/userInterface'
+import Centered from '../components/Centered'
+import FatalApolloError from '../components/FatalApolloError'
+import Gap from '../components/Gap'
 import NetworkOperationsIndicator, {
   NetworkIndicatorContainer,
-} from '../../components/NetworkOperationsIndicator'
-import NoteBatchEditingBar from '../../components/NoteBatchEditingBar'
-import NotesList from '../../components/NotesList'
-import NotesMenu from '../../components/NotesMenu'
-import NotesPageEmpty from '../../components/NotesPageEmpty'
-import { SkeletonNoteList } from '../../components/Skeletons'
-import useEntitiesUpdatedSince from '../../hooks/useEntitiesUpdatedSince'
-import useIsOnline from '../../hooks/useIsOnline'
-import useShortcut from '../../hooks/useShortcut'
-import { RootState } from '../../reducers'
-import { SHORTCUTS } from '../../utils/keyboard'
+} from '../components/NetworkOperationsIndicator'
+import NoteBatchEditingBar from '../components/NoteBatchEditingBar'
+import NotesList from '../components/NotesList'
+import NotesMenu from '../components/NotesMenu'
+import NotesPageEmpty from '../components/NotesPageEmpty'
+import { SkeletonNoteList } from '../components/Skeletons'
+import useEntitiesUpdatedSince from '../hooks/useEntitiesUpdatedSince'
+import useIsOnline from '../hooks/useIsOnline'
+import useShortcut from '../hooks/useShortcut'
+import useSortedFilteredNotes from '../hooks/useSortedFilteredNotes'
+import { RootState } from '../reducers'
+import { SHORTCUTS } from '../utils/keyboard'
+import noteCountsWithSearchMatchesString from '../utils/noteCountsWithSearchMatchesString'
 import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
-} from '../../utils/sharedQueriesAndFragments'
-import { DataState, OFFLINE_CACHE_MISS } from '../../utils/useDataState'
-import ComplexLayout from '../ComplexLayout'
+} from '../utils/sharedQueriesAndFragments'
+import { DataState, OFFLINE_CACHE_MISS } from '../utils/useDataState'
+import ComplexLayout from './ComplexLayout'
+
+export const OPTIMISTIC_NOTE_COUNT = 15
 
 export const NOTES_QUERY = gql`
   query NotesForList {
@@ -44,39 +48,17 @@ export const NOTES_QUERY = gql`
 `
 
 const NotesPage: React.FC = () => {
+  console.log('notes page')
   const layout = useSelector<RootState, LinkLayout>(
     (state) => state.userInterface.linkLayout,
   )
+  const archiveState = useSelector<RootState, LinkLayout>(
+    (state) => state.userInterface.archiveState,
+  )
 
-  const searchInput = useRef<HTMLInputElement | null>(null)
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
 
-  const sortedNoteIds = useMemo(() => {
-    if (notesCacheQuery.dataState !== 'complete') {
-      return 'loading'
-    }
-
-    // todo: it seems with the query like above it should be okay to do filtering here instead of in the notes?
-
-    let noteIds = [...notesCacheQuery.data.notes]
-
-    noteIds.sort((a, b) => b.updatedAt - a.updatedAt)
-    return noteIds
-  }, [notesCacheQuery])
-
-  const sortedAndFilteredNoteIds = useMemo(() => {
-    if (skipSearch) {
-      return sortedNoteIds
-    }
-
-    const matchedTags = tagsCacheQuery.data.tags
-      .filter((tag) => tag.name.includes(searchQuery))
-      .map(({ _id }) => _id)
-    return sortedNoteIds.filter(
-      (note) =>
-        note.name.includes(searchQuery) ||
-        note.tags.some((tag) => matchedTags.includes(tag._id)),
-    )
-  }, [sortedNoteIds, tagsCacheQuery.data, searchQuery])
+  const cachedFilteredNotesPseudoQuery = useSortedFilteredNotes()
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince()
   useShortcut(SHORTCUTS.REFRESH, () => {
@@ -84,12 +66,12 @@ const NotesPage: React.FC = () => {
   })
 
   useShortcut(SHORTCUTS.SEARCH, () => {
-    searchInput.current?.focus()
+    searchInputRef.current?.focus()
     setTimeout(
       () =>
-        searchInput.current?.setSelectionRange(
+        searchInputRef.current?.setSelectionRange(
           0,
-          searchInput.current?.value.length,
+          searchInputRef.current?.value.length,
         ),
       10,
     )
@@ -100,9 +82,9 @@ const NotesPage: React.FC = () => {
   const content = []
   let primaryActions = null
 
-  if (cachedFilteredNotesQueryWrapper.state === DataState.ERROR) {
+  if (cachedFilteredNotesPseudoQuery.state === DataState.ERROR) {
     if (
-      cachedFilteredNotesQueryWrapper.error.extraInfo === OFFLINE_CACHE_MISS &&
+      cachedFilteredNotesPseudoQuery.error.extraInfo === OFFLINE_CACHE_MISS &&
       (entitiesUpdatedSince.state === DataState.UNCALLED ||
         entitiesUpdatedSince.state === DataState.LOADING)
     ) {
@@ -133,14 +115,11 @@ const NotesPage: React.FC = () => {
       )
     } else {
       content.push(
-        <FatalApolloError
-          key='error'
-          query={cachedFilteredNotesQueryWrapper}
-        />,
+        <FatalApolloError key='error' query={cachedFilteredNotesPseudoQuery} />,
       )
     }
-  } else if (cachedFilteredNotesQueryWrapper.state === DataState.DATA) {
-    if (cachedFilteredNotesQueryWrapper.loadingBackground) {
+  } else if (cachedFilteredNotesPseudoQuery.state === DataState.DATA) {
+    if (cachedFilteredNotesPseudoQuery.loadingBackground) {
       content.push(
         <NetworkIndicatorContainer key='searching' align='left'>
           Filtering...
@@ -152,7 +131,7 @@ const NotesPage: React.FC = () => {
       allNotes,
       notes: matchedNotes,
       archivedCount: archivedMatchedNotesCount,
-    } = cachedFilteredNotesQueryWrapper.data
+    } = cachedFilteredNotesPseudoQuery.data
 
     content.push(
       <NoteBatchEditingBar key='batch-operations-menu' notes={matchedNotes} />,
@@ -165,11 +144,7 @@ const NotesPage: React.FC = () => {
       />,
     )
 
-    if (
-      matchedNotes.length === 0 &&
-      notesQuery.state === DataState.DATA &&
-      notesQuery.data.notes.length > 0
-    ) {
+    if (matchedNotes.length === 0 && allNotes.length > 0) {
       content.push(
         <NotesPageEmpty
           key='empty-search-filter'
@@ -180,19 +155,22 @@ const NotesPage: React.FC = () => {
       content.push(
         <NotesList
           key='notes-list'
-          noteIds={matchedNotes}
+          noteIds={matchedNotes.map(({ _id }) => _id)}
           expanded={layout === LinkLayout.EXPANDED_LIST_LAYOUT}
-          initialCount={15}
+          initialCount={OPTIMISTIC_NOTE_COUNT}
         />,
       )
     }
 
     primaryActions = (
       <NotesMenu
-        matchedNotes={matchedNotes}
-        notes={allNotes}
-        searchInput={searchInput}
-        archivedMatchedNotesCount={archivedMatchedNotesCount}
+        noteCountsWithSearchMatchesString={noteCountsWithSearchMatchesString({
+          notes: allNotes,
+          matchedNotes: matchedNotes,
+          archiveState,
+          archivedMatchedNotesCount,
+        })}
+        searchInputRef={searchInputRef}
       />
     )
   }
@@ -200,7 +178,7 @@ const NotesPage: React.FC = () => {
   return (
     <ComplexLayout
       primaryActions={primaryActions}
-      loading={cachedFilteredNotesQueryWrapper.state === DataState.LOADING}
+      loading={cachedFilteredNotesPseudoQuery.state === DataState.LOADING}
       loadingComponent={SkeletonNoteList}
     >
       {[...content]}

@@ -1,9 +1,11 @@
 import { gql } from '@apollo/client'
+import { Skeleton } from '@mui/material'
 import { INTERNAL_TAG_PREFIX } from '@structure/common'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import useHasPermission from '../hooks/useHasPermission'
 import useIsOnline from '../hooks/useIsOnline'
+import deferUntilIdle from '../utils/deferUntilIdle'
 import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments'
 import { DisplayOnlyTag } from '../utils/types'
 import AddTagButtonOrForm from './AddTagButtonOrForm'
@@ -56,6 +58,23 @@ const Tags: React.FC<TagsProps> = ({
 }) => {
   const readOnly = !useHasPermission({ tags }, 'notes', 'write')
   const isOnline = useIsOnline()
+
+  const [showSkeleton, setShowSkeleton] = useState(true)
+  useEffect(() => {
+    deferUntilIdle(() => setShowSkeleton(false), 1000)
+  }, [setShowSkeleton])
+
+  if (showSkeleton) {
+    return (
+      <TagContainer>
+        {tags.map((tag) => (
+          <Skeleton key={tag._id} variant='text' height={'2.2rem'}>
+            <div>{tag.name}</div>
+          </Skeleton>
+        ))}
+      </TagContainer>
+    )
+  }
 
   return (
     <TagContainer>

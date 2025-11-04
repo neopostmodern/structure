@@ -62,6 +62,9 @@ export const NoteInList: React.FC<{
     },
   })
   if (noteData.dataState === 'partial') {
+    console.error(
+      `[NoteInList] Partial data received from cache. Missing data: ${noteData.missing}`,
+    )
     throw Error('[NoteInList] Received partial data.')
   }
 

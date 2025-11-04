@@ -23,7 +23,7 @@ import {
 } from '../utils/sharedQueriesAndFragments'
 import { isUrlValid } from '../utils/textHelpers'
 import ComplexLayout from './ComplexLayout'
-import { NOTES_QUERY } from './NotesPage/NotesPage'
+import { NOTES_QUERY } from './NotesPage'
 
 const AddNotePage: FC = () => {
   const dispatch = useDispatch()

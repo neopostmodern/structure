@@ -1,7 +1,12 @@
+import { gql } from '@apollo/client'
+import { useApolloClient } from '@apollo/client/react'
 import { AddCircle, Create } from '@mui/icons-material'
 import React, { useCallback, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { push } from 'redux-first-history'
+import useQuickNumberShortcuts from '../hooks/useQuickNumberShortcuts'
 import { QUICK_ACCESS_SHORTCUT_PREFIX, SHORTCUTS } from '../utils/keyboard'
+import { noteUrl } from '../utils/routes'
 import EmptyPageInfo from './EmptyPageInfo'
 import Gap from './Gap'
 import NoteInList from './NoteInList'
@@ -14,10 +19,41 @@ const NotesList: React.FC<{
   initialCount: number
 }> = ({ noteIds, expanded, initialCount }) => {
   const dispatch = useDispatch()
-  // todo
-  // useQuickNumberShortcuts(notes, (note) => {
-  //   dispatch(push(noteUrl(note)))
-  // })
+  const apolloClient = useApolloClient()
+
+  useQuickNumberShortcuts(noteIds, (noteId) => {
+    // todo: simplifiy once link and text have been merged into note
+    const link = apolloClient.readQuery({
+      query: gql`
+        query ReadNoteTypeIfLink($noteId: ID!) {
+          link(linkId: $noteId) {
+            __typename
+            _id
+          }
+        }
+      `,
+      variables: {
+        noteId,
+      },
+    })
+    const text = apolloClient.readQuery({
+      query: gql`
+        query ReadNoteTypeIfLink($noteId: ID!) {
+          text(textId: $noteId) {
+            __typename
+            _id
+          }
+        }
+      `,
+      variables: {
+        noteId,
+      },
+    })
+
+    const note = link !== null ? link.link : text.text
+
+    dispatch(push(noteUrl(note)))
+  })
 
   const [notesDisplayLimit, setNotesDisplayLimit] = useState(initialCount)
   const handleIsInView = useCallback(

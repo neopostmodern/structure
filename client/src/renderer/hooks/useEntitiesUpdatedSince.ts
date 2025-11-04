@@ -1,7 +1,7 @@
 import { gql, StoreObject } from '@apollo/client'
 import { useApolloClient, useLazyQuery } from '@apollo/client/react'
 import { useEffect } from 'react'
-import { NOTES_QUERY } from '../containers/NotesPage/NotesPage'
+import { NOTES_QUERY } from '../containers/NotesPage'
 import { TAGS_QUERY } from '../containers/TagsPage'
 import type {
   EntitiesUpdatedSinceQuery,
@@ -12,6 +12,7 @@ import type {
   TagWithNoteIdsQueryVariables,
 } from '../generated/graphql'
 import { removeEntityFromCache } from '../utils/cache'
+import deferUntilIdle from '../utils/deferUntilIdle'
 import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
@@ -239,6 +240,8 @@ const useEntitiesUpdatedSince = () => {
     }
 
     ;(async () => {
+      await new Promise<void>((resolve) => deferUntilIdle(resolve, 5000))
+
       try {
         await fetchEntitiesUpdatedSince({
           variables: {

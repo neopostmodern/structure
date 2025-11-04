@@ -1,6 +1,6 @@
 import { Button, keyframes } from '@mui/material'
 import styled from 'styled-components'
-import { OPTIMISTIC_NOTE_COUNT } from '../containers/NotesPage/NotesPage'
+import { OPTIMISTIC_NOTE_COUNT } from '../containers/NotesPage'
 import { ExternalLink, InternalLink } from './CommonStyles'
 import UserAvatar from './UserAvatar'
 

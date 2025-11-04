@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { ArchiveState, SortBy } from '../actions/userInterface'
 import type {
@@ -26,14 +26,25 @@ const filterNotes = (
   notes: NotesForSortAndFilterQuery['notes'],
   searchQuery: string,
   archiveState: ArchiveState,
+  tagsCacheQuery: useQuery.Result<TagsForSearchQuery>,
 ): FilteredNotes => {
   let filteredNotes = notes.filter((note) => !note.deletedAt)
   if (searchQuery.length !== 0) {
+    if (tagsCacheQuery.dataState !== 'complete') {
+      throw new Error(
+        '[useSortedFilteredNotes] Illegal state: tags not loaded from cache.',
+      )
+    }
+
+    const matchedTagIds = tagsCacheQuery.data.tags
+      .filter((tag) => textIncludes(searchQuery, tag.name))
+      .map(({ _id }) => _id)
+
     filteredNotes = filteredNotes.filter(
       (note) =>
         ('url' in note && textIncludes(searchQuery, note.url)) ||
         textIncludes(searchQuery, note.name) ||
-        note.tags.some((tag) => textIncludes(searchQuery, tag.name)),
+        note.tags.some((tag) => matchedTagIds.includes(tag._id)),
     )
   }
 
@@ -132,10 +143,6 @@ const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
     { fetchPolicy: 'cache-only', skip: skipSearch },
   )
 
-  const [isFilteringNotes, setIsFilteringNotes] = useState(false)
-  const [filteredNotes, setFilteredNotes] =
-    useState<null | FilteredNotesAndAllNotes>(null)
-  const timeoutRef = useRef<null | NodeJS.Timeout>(null)
   const allNotesSorted = useMemo<
     NotesForSortAndFilterQuery['notes'] | null
   >(() => {
@@ -160,68 +167,35 @@ const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
     return notes
   }, [notesCacheQuery.data, sortBy])
 
-  useEffect(() => {
-    if (!allNotesSorted) {
-      return
-    }
+  if (!allNotesSorted) {
+    return { state: DataState.LOADING }
+  }
 
-    if (
-      allNotesSorted === extendedCache.sortedNotes &&
-      searchQuery === extendedCache.searchQuery &&
-      archiveState === extendedCache.archiveState &&
-      extendedCache.filteredNotes !== null
-    ) {
-      setFilteredNotes({
-        allNotes: allNotesSorted,
-        ...extendedCache.filteredNotes,
-      })
-      return
-    }
+  if (
+    allNotesSorted !== extendedCache.sortedNotes ||
+    searchQuery !== extendedCache.searchQuery ||
+    archiveState !== extendedCache.archiveState ||
+    extendedCache.filteredNotes === null
+  ) {
     extendedCache.sortedNotes = allNotesSorted
     extendedCache.searchQuery = searchQuery
     extendedCache.archiveState = archiveState
 
-    setIsFilteringNotes(true)
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    timeoutRef.current = setTimeout(
-      () => {
-        const filteredNotes = filterNotes(
-          allNotesSorted,
-          searchQuery,
-          archiveState,
-        )
-        extendedCache.filteredNotes = filteredNotes
-        setFilteredNotes({
-          allNotes: allNotesSorted,
-          ...filteredNotes,
-        })
-        setIsFilteringNotes(false)
-      },
-      searchQuery.length ? 100 : 0,
+    extendedCache.filteredNotes = filterNotes(
+      allNotesSorted,
+      searchQuery,
+      archiveState,
+      tagsCacheQuery,
     )
-  }, [
-    allNotesSorted,
-    searchQuery,
-    archiveState,
-    setIsFilteringNotes,
-    setFilteredNotes,
-  ])
-
-  if (!allNotesSorted || !filteredNotes) {
-    return { state: DataState.LOADING }
   }
 
   return {
     state: DataState.DATA,
     data: {
-      ...filteredNotes,
+      ...extendedCache.filteredNotes,
       allNotes: allNotesSorted,
     },
-    loadingBackground: isFilteringNotes,
+    loadingBackground: false,
   }
 }
 

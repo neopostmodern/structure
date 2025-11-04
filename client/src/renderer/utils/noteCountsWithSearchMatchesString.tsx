@@ -1,19 +1,19 @@
-import React from 'react'
-import { ArchiveState } from '../../actions/userInterface'
-import type { NotesForListQuery } from '../../generated/graphql'
+import { ArchiveState } from '../actions/userInterface'
 
-interface NoteCountProps {
-  notes: NotesForListQuery['notes']
-  matchedNotes?: NotesForListQuery['notes']
-  archivedMatchedNotesCount?: number
-  archiveState: ArchiveState
+interface NoteForCount {
+  archivedAt: unknown
 }
 
-const NoteCount: React.FC<NoteCountProps> = ({
+const noteCountsWithSearchMatchesString = ({
   notes,
   matchedNotes,
   archiveState,
   archivedMatchedNotesCount,
+}: {
+  notes: Array<NoteForCount>
+  matchedNotes?: Array<NoteForCount>
+  archivedMatchedNotesCount?: number
+  archiveState: ArchiveState
 }) => {
   if (notes && matchedNotes) {
     const archivedNotesCount = notes.filter((note) =>
@@ -33,7 +33,7 @@ const NoteCount: React.FC<NoteCountProps> = ({
       } (+${archivedNotesCount})`
     }
     if (matchedNotes.length === displayableNoteCount) {
-      return <>{totalNotes}</>
+      return totalNotes
     }
 
     let matchedNotesCount = matchedNotes.length.toString()
@@ -47,13 +47,9 @@ const NoteCount: React.FC<NoteCountProps> = ({
       }
     }
 
-    return (
-      <>
-        {matchedNotesCount} / {totalNotes}
-      </>
-    )
+    return `${matchedNotesCount} / ${totalNotes}`
   }
-  return <>&nbsp;</>
+  return null
 }
 
-export default NoteCount
+export default noteCountsWithSearchMatchesString
