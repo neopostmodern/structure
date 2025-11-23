@@ -3,7 +3,7 @@ import { CloudOff } from '@mui/icons-material'
 import { CircularProgress, Stack, Typography } from '@mui/material'
 import React, { useRef } from 'react'
 import { useSelector } from 'react-redux'
-import { LinkLayout } from '../actions/userInterface'
+import { ArchiveState, LinkLayout } from '../actions/userInterface'
 import Centered from '../components/Centered'
 import FatalApolloError from '../components/FatalApolloError'
 import Gap from '../components/Gap'
@@ -26,7 +26,7 @@ import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
 } from '../utils/sharedQueriesAndFragments'
-import { DataState, OFFLINE_CACHE_MISS } from '../utils/useDataState'
+import { DataState } from '../utils/useDataState'
 import ComplexLayout from './ComplexLayout'
 
 export const OPTIMISTIC_NOTE_COUNT = 15
@@ -48,11 +48,10 @@ export const NOTES_QUERY = gql`
 `
 
 const NotesPage: React.FC = () => {
-  console.log('notes page')
   const layout = useSelector<RootState, LinkLayout>(
     (state) => state.userInterface.linkLayout,
   )
-  const archiveState = useSelector<RootState, LinkLayout>(
+  const archiveState = useSelector<RootState, ArchiveState>(
     (state) => state.userInterface.archiveState,
   )
 
@@ -83,41 +82,35 @@ const NotesPage: React.FC = () => {
   let primaryActions = null
 
   if (cachedFilteredNotesPseudoQuery.state === DataState.ERROR) {
-    if (
-      cachedFilteredNotesPseudoQuery.error.extraInfo === OFFLINE_CACHE_MISS &&
-      (entitiesUpdatedSince.state === DataState.UNCALLED ||
-        entitiesUpdatedSince.state === DataState.LOADING)
-    ) {
-      content.push(
-        <Centered key='first-load'>
-          <Stack alignItems='center'>
-            {isOnline ? (
-              <>
-                <CircularProgress color='inherit' disableShrink />
-                <Gap vertical={1} />
-                <Typography variant='caption'>
-                  Loading notes for the first time, this might take a while...
-                </Typography>
-              </>
-            ) : (
-              <>
-                <CloudOff sx={{ fontSize: '4rem', color: 'gray' }} />
-                <Gap vertical={1} />
-                <Typography variant='caption' textAlign='center'>
-                  Your notes are not cached yet and can't be loaded at the
-                  moment because you're offline.
-                  <br /> Please try again later.
-                </Typography>
-              </>
-            )}
-          </Stack>
-        </Centered>,
-      )
-    } else {
-      content.push(
-        <FatalApolloError key='error' query={cachedFilteredNotesPseudoQuery} />,
-      )
-    }
+    content.push(
+      <FatalApolloError key='error' query={cachedFilteredNotesPseudoQuery} />,
+    )
+  } else if (cachedFilteredNotesPseudoQuery.state === DataState.LOADING) {
+    content.push(
+      <Centered key='first-load'>
+        <Stack alignItems='center'>
+          {isOnline ? (
+            <>
+              <CircularProgress color='inherit' disableShrink />
+              <Gap vertical={1} />
+              <Typography variant='caption'>
+                Loading notes for the first time, this might take a while...
+              </Typography>
+            </>
+          ) : (
+            <>
+              <CloudOff sx={{ fontSize: '4rem', color: 'gray' }} />
+              <Gap vertical={1} />
+              <Typography variant='caption' textAlign='center'>
+                Your notes are not cached yet and can't be loaded at the moment
+                because you're offline.
+                <br /> Please try again later.
+              </Typography>
+            </>
+          )}
+        </Stack>
+      </Centered>,
+    )
   } else if (cachedFilteredNotesPseudoQuery.state === DataState.DATA) {
     if (cachedFilteredNotesPseudoQuery.loadingBackground) {
       content.push(
