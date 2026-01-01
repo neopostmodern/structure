@@ -2,7 +2,7 @@ import config from '@structure/config'
 import ConnectMongoDbSession from 'connect-mongodb-session'
 import session from 'express-session'
 import passport from 'passport'
-import PassportGithub from 'passport-github'
+import PassportGithub from 'passport-github2'
 import { logger } from '../util/logging.mts'
 import { createOwnershipTagOnUser } from './methods/createOwnershipTagOnUser.mts'
 import { User } from './userModel.mts'
@@ -50,9 +50,8 @@ export function setUpGitHubLogin(app) {
             },
           }).save()
 
-          const newUserWithOwnershipTagId = await createOwnershipTagOnUser(
-            newUser,
-          )
+          const newUserWithOwnershipTagId =
+            await createOwnershipTagOnUser(newUser)
           cb(null, newUserWithOwnershipTagId)
         })()
       },
