@@ -49,6 +49,7 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
+    "generate-graphql-schema-and-types": "npm run generate-schema && npm run generate-types",
     "generate-schema": "graphql-codegen --config scripts/codegen/codegen-schema.yml",
     "generate-types": "graphql-codegen --config scripts/codegen/codegen-types.yml",
     "start": "node --experimental-strip-types lib/index.ts",
