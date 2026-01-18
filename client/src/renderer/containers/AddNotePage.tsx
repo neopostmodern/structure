@@ -11,16 +11,11 @@ import AddNoteFromClipboard from '../components/AddNoteFromClipboard'
 import ErrorSnackbar from '../components/ErrorSnackbar'
 import Gap from '../components/Gap'
 import type {
-  AddLinkMutation,
-  AddLinkMutationVariables,
-  AddTextMutation,
-  AddTextMutationVariables,
+  AddNoteMutation,
+  AddNoteMutationVariables,
   NotesForListQuery,
 } from '../generated/graphql'
-import {
-  ADD_LINK_MUTATION,
-  ADD_TEXT_MUTATION,
-} from '../utils/sharedQueriesAndFragments'
+import { ADD_NOTE_MUTATION } from '../utils/sharedQueriesAndFragments'
 import { isUrlValid } from '../utils/textHelpers'
 import ComplexLayout from './ComplexLayout'
 import { NOTES_QUERY } from './NotesPage'
@@ -29,12 +24,12 @@ const AddNotePage: FC = () => {
   const dispatch = useDispatch()
   const [defaultValue, setDefaultValue] = useState('')
 
-  const [addLink, addLinkMutation] = useMutation<
-    AddLinkMutation,
-    AddLinkMutationVariables
-  >(ADD_LINK_MUTATION, {
-    onCompleted: ({ submitLink }) => {
-      dispatch(replace(`/links/${submitLink._id}`))
+  const [addNote, addNoteMutation] = useMutation<
+    AddNoteMutation,
+    AddNoteMutationVariables
+  >(ADD_NOTE_MUTATION, {
+    onCompleted: ({ createNote }) => {
+      dispatch(replace(`/notes/${createNote._id}`))
     },
     onError: (error) => {
       console.error(error)
@@ -43,7 +38,7 @@ const AddNotePage: FC = () => {
       if (!data) {
         return
       }
-      const { submitLink } = data
+      const { createNote } = data
 
       const cacheValue = cache.readQuery<NotesForListQuery>({
         query: NOTES_QUERY,
@@ -56,61 +51,33 @@ const AddNotePage: FC = () => {
       const { notes } = cacheValue
       cache.writeQuery({
         query: NOTES_QUERY,
-        data: { notes: [...notes, { ...submitLink, type: 'LINK' }] },
+        data: { notes: [...notes, createNote] },
       })
     },
   })
   const handleSubmitUrl = useCallback(
     (url: string): void => {
-      addLink({ variables: { url } })
+      addNote({ variables: { url } })
     },
-    [addLink],
+    [addNote],
   )
 
-  const [addText, addTextMutation] = useMutation<
-    AddTextMutation,
-    AddTextMutationVariables
-  >(ADD_TEXT_MUTATION, {
-    onCompleted: ({ createText }) => {
-      dispatch(replace(`/texts/${createText._id}`))
-    },
-    update: (cache, { data }) => {
-      if (!data) {
-        return
-      }
-      const { createText } = data
-
-      const cacheValue = cache.readQuery<NotesForListQuery>({
-        query: NOTES_QUERY,
-      })
-
-      if (!cacheValue) {
-        return
-      }
-
-      const { notes } = cacheValue
-      cache.writeQuery({
-        query: NOTES_QUERY,
-        data: { notes: [...notes, { ...createText, type: 'TEXT' }] },
-      })
-    },
-  })
-  const handleSubmitText = useCallback(
-    (variables: AddTextMutationVariables) => {
+  const handleSubmitNote = useCallback(
+    (variables: AddNoteMutationVariables) => {
       ;(async () => {
         try {
-          await addText({ variables })
+          await addNote({ variables })
         } catch (error) {
           console.error('[AddNotePage.handleSubmitText (addText)]', error)
         }
       })()
     },
-    [addText],
+    [addNote],
   )
   const handleCreateQuickTextNote = useCallback(() => {
     ;(async () => {
       try {
-        await addText()
+        await addNote()
       } catch (error) {
         console.error(
           '[AddNotePage.handleCreateQuickTextNote (addText)]',
@@ -118,7 +85,7 @@ const AddNotePage: FC = () => {
         )
       }
     })()
-  }, [addText])
+  }, [addNote])
 
   const handleAbort = useCallback((): void => {
     dispatch(push('/'))
@@ -143,32 +110,27 @@ const AddNotePage: FC = () => {
     if (isUrlValid(urlOrText)) {
       handleSubmitUrl(urlOrText) // todo: handle title
     } else {
-      handleSubmitText({ description: urlOrText, title })
+      handleSubmitNote({ description: urlOrText, title })
     }
   }, [urlSearchParams, isNoteAddedFromUrl, setIsNoteAddedFromUrl])
 
   return (
-    <ComplexLayout
-      loading={
-        (addLinkMutation.loading || addTextMutation.loading) && 'Creating note'
-      }
-    >
+    <ComplexLayout loading={addNoteMutation.loading && 'Creating note'}>
       <ErrorSnackbar
-        error={addTextMutation.error || addLinkMutation.error}
+        error={addNoteMutation.error}
         actionDescription={'create note'}
       />
       <Stack gap={1}>
         <AddNoteForm
           defaultValue={defaultValue}
           onSubmitUrl={handleSubmitUrl}
-          onSubmitText={handleSubmitText}
+          onSubmitNote={handleSubmitNote}
           onAbort={handleAbort}
         />
         <Gap vertical={2} />
         <AddNoteFromClipboard
           onEdit={setDefaultValue}
-          onSubmitText={handleSubmitText}
-          onSubmitUrl={handleSubmitUrl}
+          onSubmitNote={handleSubmitNote}
         />
         <AddNoteCard
           title='Quick text-only note'

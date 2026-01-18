@@ -51,10 +51,8 @@ const UPDATED_NOTES_CACHE_QUERY = gql`
     notes {
       ...BaseNote
 
-      ... on INote {
-        tags {
-          _id
-        }
+      tags {
+        _id
       }
     }
   }
@@ -187,9 +185,7 @@ const useEntitiesUpdatedSince = () => {
                   tag(tagId: $tagId) {
                     _id
                     notes {
-                      ... on INote {
-                        _id
-                      }
+                      _id
                     }
                   }
                 }

@@ -1,5 +1,3 @@
-import { gql } from '@apollo/client'
-import { useApolloClient } from '@apollo/client/react'
 import { AddCircle, Create } from '@mui/icons-material'
 import React, { useCallback, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -19,40 +17,9 @@ const NotesList: React.FC<{
   initialCount: number
 }> = ({ noteIds, expanded, initialCount }) => {
   const dispatch = useDispatch()
-  const apolloClient = useApolloClient()
 
   useQuickNumberShortcuts(noteIds, (noteId) => {
-    // todo: simplifiy once link and text have been merged into note
-    const link = apolloClient.readQuery({
-      query: gql`
-        query ReadNoteTypeIfLink($noteId: ID!) {
-          link(linkId: $noteId) {
-            __typename
-            _id
-          }
-        }
-      `,
-      variables: {
-        noteId,
-      },
-    })
-    const text = apolloClient.readQuery({
-      query: gql`
-        query ReadNoteTypeIfLink($noteId: ID!) {
-          text(textId: $noteId) {
-            __typename
-            _id
-          }
-        }
-      `,
-      variables: {
-        noteId,
-      },
-    })
-
-    const note = link !== null ? link.link : text.text
-
-    dispatch(push(noteUrl(note)))
+    dispatch(push(noteUrl(noteId)))
   })
 
   const [notesDisplayLimit, setNotesDisplayLimit] = useState(initialCount)

@@ -2,19 +2,19 @@ import isEqual from 'lodash/isEqual'
 import pick from 'lodash/pick'
 import React from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import type { LinkQuery } from '../generated/graphql'
+import type { NoteQuery } from '../generated/graphql'
 import useHasPermission from '../hooks/useHasPermission'
 import useSyncForm from '../hooks/useSyncForm'
 import { isUrlValid } from '../utils/textHelpers'
 import { OptionalReactComponent } from '../utils/types'
 import useSaveOnUnmount from '../utils/useSaveOnUnmount'
-import LinkNameField from './fields/LinkNameField'
+import NoteNameField from './fields/NoteNameField'
 import UrlField from './fields/UrlField'
 import { FormSubheader } from './formComponents'
 import Gap from './Gap'
 import MarkedTextarea from './MarkedTextarea'
 
-const linkFormFields: Array<keyof LinkQuery['link']> = [
+const noteFormFields: Array<keyof NoteQuery['note']> = [
   '_id',
   'updatedAt',
   'url',
@@ -22,26 +22,26 @@ const linkFormFields: Array<keyof LinkQuery['link']> = [
   'description',
   'archivedAt',
 ]
-export type LinkInForm = Pick<
-  LinkQuery['link'],
-  (typeof linkFormFields)[number]
+export type NoteInForm = Pick<
+  NoteQuery['note'],
+  (typeof noteFormFields)[number]
 >
 
-type LinkFormProps = {
-  link: LinkQuery['link']
-  onSubmit: (updatedLink: LinkInForm) => void
+type NoteFormProps = {
+  note: NoteQuery['note']
+  onSubmit: (updatedNote: NoteInForm) => void
   tagsComponent?: OptionalReactComponent
 }
 
-const LinkForm: React.FC<LinkFormProps> = ({
-  link,
+const NoteForm: React.FC<NoteFormProps> = ({
+  note,
   onSubmit,
   tagsComponent,
 }) => {
-  const defaultValues = pick(link, linkFormFields)
-  const onlyReadPermission = !useHasPermission(link, 'notes', 'write')
+  const defaultValues = pick(note, noteFormFields)
+  const onlyReadPermission = !useHasPermission(note, 'notes', 'write')
 
-  const formProps = useForm<LinkInForm>({
+  const formProps = useForm<NoteInForm>({
     defaultValues,
     mode: 'onBlur',
     resolver: (formValues) => {
@@ -63,17 +63,17 @@ const LinkForm: React.FC<LinkFormProps> = ({
   })
   const { watch, handleSubmit, reset } = formProps
 
-  useSyncForm(reset, defaultValues, link)
+  useSyncForm(reset, defaultValues, note)
   useSaveOnUnmount({ onSubmit, defaultValues }, formProps)
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formProps}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <LinkNameField
+        <NoteNameField
           url={watch('url')}
           name='name'
-          linkId={link._id}
+          noteId={note._id}
           readOnly={onlyReadPermission}
         />
         <Gap vertical={0.5} />
@@ -94,4 +94,4 @@ const LinkForm: React.FC<LinkFormProps> = ({
   )
 }
 
-export default LinkForm
+export default NoteForm

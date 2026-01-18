@@ -33,14 +33,11 @@ const notesWithTagHelper = (
 ) =>
   Object.values(cacheData).filter(
     (cacheEntry) =>
-      (cacheEntry.__typename === 'Link' || cacheEntry.__typename === 'Text') &&
+      cacheEntry.__typename === 'Note' &&
       cacheEntry.tags!.some((tag) => tag.__ref === `Tag:${tagId}`),
   )
 
 const cache = new InMemoryCache({
-  possibleTypes: {
-    INote: ['Link', 'Text'],
-  },
   typePolicies: {
     Tag: {
       fields: {
@@ -58,16 +55,10 @@ const cache = new InMemoryCache({
     },
     Query: {
       fields: {
-        link(_, { args: { linkId }, toReference }) {
+        note(_, { args: { noteId }, toReference }) {
           return toReference({
-            __typename: 'Link',
-            id: linkId,
-          })
-        },
-        text(_, { args: { textId }, toReference }) {
-          return toReference({
-            __typename: 'Text',
-            id: textId,
+            __typename: 'Note',
+            id: noteId,
           })
         },
         tag(_, { args: { tagId }, toReference }) {

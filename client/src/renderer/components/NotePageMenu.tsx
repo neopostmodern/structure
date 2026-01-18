@@ -1,7 +1,7 @@
 import { Archive, Replay } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 import { Tooltip } from '@mui/material'
-import type { LinkQuery, TextQuery } from '../generated/graphql'
+import type { NoteQuery } from '../generated/graphql'
 import useDeleteNote from '../hooks/useDeleteNote'
 import useHasPermission from '../hooks/useHasPermission'
 import useToggleArchivedNote from '../hooks/useToggleArchivedNote'
@@ -10,11 +10,7 @@ import DeleteNoteTrigger from './DeleteNoteTrigger'
 import EntityMetadata from './EntityMetadata'
 import { Menu } from './Menu'
 
-const NotePageMenu = ({
-  note,
-}: {
-  note: LinkQuery['link'] | TextQuery['text']
-}) => {
+const NotePageMenu = ({ note }: { note: NoteQuery['note'] }) => {
   const onlyReadPermission = !useHasPermission(note, 'notes', 'write')
 
   const {

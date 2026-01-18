@@ -10,11 +10,9 @@ import { DateOrTimestamp } from '../utils/textHelpers'
 const TOGGLE_ARCHIVED_MUTATION = gql`
   mutation ToggleArchivedNote($noteId: ID!) {
     toggleArchivedNote(noteId: $noteId) {
-      ... on INote {
-        _id
-        archivedAt
-        updatedAt
-      }
+      _id
+      archivedAt
+      updatedAt
     }
   }
 `

@@ -109,19 +109,15 @@ const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
     gql`
       query NotesForSortAndFilter {
         notes {
-          ... on INote {
+          _id
+          createdAt
+          updatedAt
+          changedAt
+          archivedAt
+          name
+          url
+          tags {
             _id
-            createdAt
-            updatedAt
-            changedAt
-            archivedAt
-            name
-            tags {
-              _id
-            }
-          }
-          ... on Link {
-            url
           }
         }
       }

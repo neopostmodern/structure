@@ -1,17 +1,29 @@
 import { decode } from 'html-entities'
 import { JSDOM } from 'jsdom'
+import Moment from 'moment/moment.js'
 import { Types } from 'mongoose'
 import fetch from 'node-fetch'
 import { Tag } from '../tags/tagModel.mts'
 import { basePermissionsQueryOnTags } from '../tags/tagsMethods.mts'
-import { Link } from './notesModels.mts'
+import { Note } from './notesModels.mts'
 
 const { ObjectId } = Types
 
-export function submitLink(user, { url, title, description }) {
-  return new Link({
+export function createNote(
+  user,
+  {
     url,
-    name: title,
+    title,
+    description,
+  }: { url?: string; title?: string; description?: string },
+) {
+  let prefilledTitle: string = title
+  if (!title && !url) {
+    prefilledTitle = Moment().format('dddd, MMMM Do YYYY')
+  }
+  return new Note({
+    url,
+    name: prefilledTitle,
     description,
     user,
     tags: [user.internal.ownershipTagId],
@@ -43,8 +55,6 @@ export async function fetchTitleSuggestions(url: string) {
     })
 }
 
-export const leanTypeEnumFixer = (notes) =>
-  notes.map((note) => ({ ...note, type: note.type.toUpperCase() }))
 export const baseNotesQuery = async (user, mode = 'read') => {
   const tagIdsWithNoteReadPermissionAndSharing = await Tag.aggregate([
     {

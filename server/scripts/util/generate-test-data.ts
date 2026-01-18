@@ -1,9 +1,9 @@
+import { readFileSync } from 'fs'
 import { initializeMongo } from '../../lib/mongo.mts'
-import { User } from '../../lib/users/userModel.mts'
-import { Text } from '../../lib/notes/notesModels.mts'
+import { Note } from '../../lib/notes/notesModels.mts'
 import { Tag } from '../../lib/tags/tagModel.mts'
 import { createTagObject } from '../../lib/tags/tagsMethods.mts'
-import { readFileSync } from 'fs'
+import { User } from '../../lib/users/userModel.mts'
 
 const TAG_COUNT = 2_000
 const NOTE_COUNT = 10_000
@@ -102,7 +102,7 @@ for (let noteIndex = 0; noteIndex < NOTE_COUNT; noteIndex++) {
   const randomTagIds = getRandomTagIds()
   tagAssociationsCount += randomTagIds.length
 
-  await new Text({
+  await new Note({
     name: `${getRandomWord()} ${getRandomWord()} ${getRandomWord()} #${noteIndex + 1}`,
     description,
     user,

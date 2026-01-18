@@ -1,16 +1,17 @@
 import { useMutation, useQuery } from '@apollo/client/react'
 import { gql } from 'graphql-tag'
-import { FC, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { useParams } from 'react-router'
 import FatalApolloError from '../components/FatalApolloError'
 import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator'
+import NoteForm, { NoteInForm } from '../components/NoteForm'
 import NotePageMenu from '../components/NotePageMenu'
 import Tags from '../components/Tags'
-import TextForm, { TextInForm } from '../components/TextForm'
 import type {
-  TextQuery,
-  UpdateTextMutation,
-  UpdateTextMutationVariables,
+  NoteQuery,
+  NoteQueryVariables,
+  UpdateNoteMutation,
+  UpdateNoteMutationVariables,
 } from '../generated/graphql'
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy'
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks'
@@ -21,9 +22,9 @@ import {
 import useDataState, { DataState } from '../utils/useDataState'
 import ComplexLayout from './ComplexLayout'
 
-const TEXT_QUERY = gql`
-  query Text($textId: ID) {
-    text(textId: $textId) {
+const NOTE_QUERY = gql`
+  query Note($noteId: ID!) {
+    note(noteId: $noteId) {
       _id
       createdAt
       updatedAt
@@ -32,8 +33,10 @@ const TEXT_QUERY = gql`
       user {
         ...BaseUser
       }
+      url
       name
       description
+      domain
       tags {
         ...BaseTag
       }
@@ -43,14 +46,15 @@ const TEXT_QUERY = gql`
   ${BASE_TAG_FRAGMENT}
 `
 
-const UPDATE_TEXT_MUTATION = gql`
-  mutation UpdateText($text: InputText!) {
-    updateText(text: $text) {
+const UPDATE_NOTE_MUTATION = gql`
+  mutation UpdateNote($note: InputNote!) {
+    updateNote(note: $note) {
       _id
       createdAt
       updatedAt
       changedAt
-      archivedAt
+      url
+      domain
       name
       description
       tags {
@@ -62,55 +66,57 @@ const UPDATE_TEXT_MUTATION = gql`
   }
 `
 
-const TextPage: FC = () => {
+const NotePage: React.FC = () => {
   const isDesktopLayout = useIsDesktopLayout()
-  const { textId } = useParams()
-  const textQuery = useDataState(
-    useQuery<TextQuery>(TEXT_QUERY, {
+
+  const { noteId } = useParams()
+  const noteQuery = useDataState(
+    useQuery<NoteQuery, NoteQueryVariables>(NOTE_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
-      variables: { textId },
+      variables: { noteId },
     }),
   )
-  const [updateText, updateTextMutation] = useMutation<
-    UpdateTextMutation,
-    UpdateTextMutationVariables
-  >(UPDATE_TEXT_MUTATION)
+
+  const [updateNote, updateNoteMutation] = useMutation<
+    UpdateNoteMutation,
+    UpdateNoteMutationVariables
+  >(UPDATE_NOTE_MUTATION)
   const handleSubmit = useCallback(
-    (updatedText: TextInForm) => {
-      updateText({ variables: { text: updatedText } }).catch((error) => {
-        console.error('[TextPage.updateText]', error)
+    (updatedNote: NoteInForm): void => {
+      updateNote({ variables: { note: updatedNote } }).catch((error) => {
+        console.error('[NotePage.updateNote]', error)
       })
     },
-    [updateText],
+    [updateNote],
   )
 
-  if (textQuery.state === DataState.LOADING) {
+  if (noteQuery.state === DataState.LOADING) {
     return <ComplexLayout loading />
   }
-  if (textQuery.state === DataState.ERROR) {
+  if (noteQuery.state === DataState.ERROR) {
     return (
       <ComplexLayout>
-        <FatalApolloError query={textQuery} />
+        <FatalApolloError query={noteQuery} />
       </ComplexLayout>
     )
   }
 
-  const { text } = textQuery.data
+  const { note } = noteQuery.data
   const tagsComponent = (
-    <Tags tags={text.tags} size='medium' noteId={text._id} withShortcuts />
+    <Tags tags={note.tags} size='medium' withShortcuts noteId={note._id} />
   )
 
   return (
     <ComplexLayout
       primaryActions={isDesktopLayout && tagsComponent}
-      secondaryActions={<NotePageMenu note={text} />}
+      secondaryActions={<NotePageMenu note={note} />}
     >
       <NetworkOperationsIndicator
-        query={textQuery}
-        mutation={updateTextMutation}
+        query={noteQuery}
+        mutation={updateNoteMutation}
       />
-      <TextForm
-        text={text}
+      <NoteForm
+        note={note}
         onSubmit={handleSubmit}
         tagsComponent={!isDesktopLayout && tagsComponent}
       />
@@ -118,4 +124,4 @@ const TextPage: FC = () => {
   )
 }
 
-export default TextPage
+export default NotePage

@@ -1,4 +1,4 @@
-import { baseNotesQuery, leanTypeEnumFixer } from '../../notes/notesMethods.mts'
+import { baseNotesQuery } from '../../notes/notesMethods.mts'
 import { Note } from '../../notes/notesModels.mts'
 import { Tag } from '../../tags/tagModel.mts'
 import { baseTagsQuery } from '../../tags/tagsMethods.mts'
@@ -43,7 +43,6 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
         .project(entityQueryProjection)
         .sort({ createdAt: -1 })
         .toArray()
-        .then(leanTypeEnumFixer)
     }
 
     // we're fetching notes with full population because we don't have any data cached and can save lookups down the road
@@ -58,7 +57,7 @@ export const entitiesUpdatedSince = async (cacheId, user) => {
       .populate('user')
       .lean()
 
-    return notesLookup.exec().then(leanTypeEnumFixer)
+    return notesLookup.exec()
   }
   timerStart('entitesUpdatedSince: load notes from DB')
   const notes = await fetchNotes()

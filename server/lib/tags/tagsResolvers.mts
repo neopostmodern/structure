@@ -2,7 +2,6 @@ import { GraphQLErrorCodes, INTERNAL_TAG_PREFIX } from '@structure/common'
 import { GraphQLError } from 'graphql'
 import { parseResolveInfo } from 'graphql-parse-resolve-info'
 import type { TagPermissionsArgs } from '../graphQLTypes.d.ts'
-import { leanTypeEnumFixer } from '../notes/notesMethods.mts'
 import { Note } from '../notes/notesModels.mts'
 import { getCachedUser } from '../users/methods/getCachedUser.mts'
 import { User } from '../users/userModel.mts'
@@ -26,8 +25,7 @@ export const tagsResolvers = {
       }
       // todo: check permissions!
       //  (test: B shares N with A. A adds tag Y to N. B unshares (by untagging X) N, then A should not see N despite it having the tag Y.
-      const notes = await Note.find({ tags: tag, deletedAt: null }).lean()
-      return leanTypeEnumFixer(notes)
+      return Note.find({ tags: tag, deletedAt: null }).lean()
     },
     async user(tag, args, context) {
       if (tag.user && tag.user._id) {

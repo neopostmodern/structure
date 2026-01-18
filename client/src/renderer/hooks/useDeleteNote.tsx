@@ -12,10 +12,8 @@ import { removeEntityFromCache } from '../utils/cache'
 const TOGGLE_DELETED_NOTE_MUTATION = gql`
   mutation ToggleDeletedNote($noteId: ID!) {
     toggleDeletedNote(noteId: $noteId) {
-      ... on INote {
-        _id
-        deletedAt
-      }
+      _id
+      deletedAt
     }
   }
 `

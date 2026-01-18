@@ -29,14 +29,11 @@ const historyMiddleware: Middleware<{}, RootState> =
         store.dispatch(registerHistoryForward())
       }
 
-      if (
-        pathname &&
-        (pathname.includes('links') || pathname.includes('texts'))
-      ) {
-        const [, type, id] = pathname.split('/')
-        store.dispatch(
-          addNoteToHistory({ type: type.substr(0, type.length - 1), id }),
-        )
+      if (pathname && pathname.includes('notes')) {
+        const [, , id] = pathname.split('/')
+        if (id && id !== 'add') {
+          store.dispatch(addNoteToHistory({ type: 'note', id }))
+        }
       }
     }
     return next(action)

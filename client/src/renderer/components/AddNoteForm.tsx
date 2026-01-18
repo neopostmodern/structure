@@ -6,10 +6,10 @@ import {
   Input,
   InputAdornment,
 } from '@mui/material'
-import React, { useEffect } from 'react'
+import React, { JSX, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import styled from 'styled-components'
-import type { AddTextMutationVariables } from '../generated/graphql'
+import type { AddNoteMutationVariables } from '../generated/graphql'
 import { isUrlValid } from '../utils/textHelpers'
 
 const AddLinkInput = styled(Input)`
@@ -18,21 +18,15 @@ const AddLinkInput = styled(Input)`
   }
 `
 
-const SubmitButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`
-
 type AddLinkFormProps = {
   defaultValue?: string
-  onSubmitUrl: (url: string) => void
-  onSubmitText: (textVariables: AddTextMutationVariables) => void
+  onSubmitNote: (note: AddNoteMutationVariables) => void
   onAbort: () => void
 }
 
 const AddNoteForm: React.FC<AddLinkFormProps> = ({
   defaultValue,
-  onSubmitUrl,
-  onSubmitText,
+  onSubmitNote,
   onAbort,
 }) => {
   const { formState, handleSubmit, setValue, control } = useForm<{
@@ -49,9 +43,9 @@ const AddNoteForm: React.FC<AddLinkFormProps> = ({
   }, [defaultValue, setValue])
   const submitHandler = handleSubmit(({ urlOrTitle }) => {
     if (isUrlValid(urlOrTitle)) {
-      onSubmitUrl(urlOrTitle)
+      onSubmitNote({ url: urlOrTitle })
     } else {
-      onSubmitText({ title: urlOrTitle })
+      onSubmitNote({ title: urlOrTitle })
     }
   })
 

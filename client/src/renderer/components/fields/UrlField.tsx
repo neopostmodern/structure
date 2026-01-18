@@ -1,6 +1,6 @@
 import { ContentCopy, Launch, Share } from '@mui/icons-material'
-import { Box, IconButton, Tooltip } from '@mui/material'
-import React from 'react'
+import { Box, Button, IconButton, Tooltip } from '@mui/material'
+import React, { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import useIsOnline from '../../hooks/useIsOnline'
 import { openInDefaultBrowser, shareUrl } from '../../utils/openWith'
@@ -16,9 +16,26 @@ const UrlField: React.FC<UrlFieldProps> = ({
   readOnly: forceReadOnly = false,
 }) => {
   const { watch, register, getValues, formState } = useFormContext()
+  const [forceShowUrlField, setForceShowUrlField] = useState(
+    Boolean(getValues(name)),
+  )
 
   const isOnline = useIsOnline()
   const readOnly = !isOnline || forceReadOnly
+
+  if (!getValues(name) && !forceShowUrlField) {
+    return (
+      <Button
+        variant='outlined'
+        size='small'
+        onClick={() => setForceShowUrlField(true)}
+      >
+        Add URL
+      </Button>
+    )
+  }
+
+  const { onBlur, ...registerProps } = register(name)
 
   return (
     <>
@@ -26,8 +43,14 @@ const UrlField: React.FC<UrlFieldProps> = ({
         <StructureTextField
           type='text'
           label='URL'
-          InputProps={{ readOnly }}
-          {...register(name)}
+          InputProps={{ readOnly, autoFocus: forceShowUrlField }}
+          onBlur={(event) => {
+            onBlur(event)
+            if (!event.target.value) {
+              setForceShowUrlField(false)
+            }
+          }}
+          {...registerProps}
         />
         <Tooltip title='Copy URL'>
           <IconButton

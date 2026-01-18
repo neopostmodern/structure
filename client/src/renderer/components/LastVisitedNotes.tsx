@@ -20,10 +20,8 @@ import TooltipWithShortcut from './TooltipWithShortcut'
 const VISITED_NOTES_QUERY = gql`
   query VisitedNotes {
     notes {
-      ... on INote {
-        _id
-        name
-      }
+      _id
+      name
     }
   }
 `
@@ -76,8 +74,7 @@ const LastVisitedNotes = () => {
   )
 
   const dispatch = useDispatch()
-  const navigateToNote = ({ type: __typename, id: _id }: NoteSummary) =>
-    dispatch(push(noteUrl({ __typename, _id })))
+  const navigateToNote = ({ id }: NoteSummary) => dispatch(push(noteUrl(id)))
 
   const handleKeyUp = useCallback(
     (event: KeyboardEvent) => {
@@ -115,8 +112,7 @@ const LastVisitedNotes = () => {
        */
       const currentFocusIndex =
         (getActiveMenuItemIndex() || 0) +
-        (!window.location.href.includes('/links/') &&
-        !window.location.href.includes('/texts/') &&
+        (!window.location.href.includes('/notes/') &&
         firstShortCutActivation.current
           ? -1
           : 0)

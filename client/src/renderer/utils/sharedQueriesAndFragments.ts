@@ -55,45 +55,31 @@ export const BASE_TAG_FRAGMENT = gql`
 `
 
 export const BASE_NOTE_FRAGMENT = gql`
-  fragment BaseNote on INote {
-    ... on INote {
-      # type
-      _id
-      name
-      createdAt
-      updatedAt
-      changedAt
-      archivedAt
-      deletedAt
+  fragment BaseNote on Note {
+    _id
+    url
+    domain
+    name
+    createdAt
+    updatedAt
+    changedAt
+    archivedAt
+    deletedAt
 
-      description
-      tags {
-        _id
-      }
-      user {
-        ...BaseUser
-      }
+    description
+    tags {
+      _id
     }
-    ... on Link {
-      url
-      domain
+    user {
+      ...BaseUser
     }
   }
   ${BASE_USER_FRAGMENT}
 `
-export const ADD_LINK_MUTATION = gql`
+export const ADD_NOTE_MUTATION = gql`
   ${BASE_NOTE_FRAGMENT}
-  mutation AddLink($url: String!, $title: String, $description: String) {
-    submitLink(url: $url, title: $title, description: $description) {
-      ...BaseNote
-    }
-  }
-`
-
-export const ADD_TEXT_MUTATION = gql`
-  ${BASE_NOTE_FRAGMENT}
-  mutation AddText($title: String, $description: String) {
-    createText(title: $title, description: $description) {
+  mutation AddNote($url: String, $title: String, $description: String) {
+    createNote(url: $url, title: $title, description: $description) {
       ...BaseNote
     }
   }
@@ -102,17 +88,13 @@ export const ADD_TEXT_MUTATION = gql`
 export const ADD_TAG_BY_NAME_TO_NOTE_MUTATION = gql`
   mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
     addTagByNameToNote(noteId: $noteId, name: $tagName) {
-      ... on INote {
-        _id
-        updatedAt
-        tags {
-          ...BaseTag
-          noteCount
-          notes {
-            ... on INote {
-              _id
-            }
-          }
+      _id
+      updatedAt
+      tags {
+        ...BaseTag
+        noteCount
+        notes {
+          _id
         }
       }
     }

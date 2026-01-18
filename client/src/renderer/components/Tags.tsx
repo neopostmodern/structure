@@ -14,20 +14,16 @@ import TagWithContextMenu from './TagWithContextMenu'
 export const REMOVE_TAG_MUTATION = gql`
   mutation RemoveTagByIdFromNote($noteId: ID!, $tagId: ID!) {
     removeTagByIdFromNote(noteId: $noteId, tagId: $tagId) {
-      ... on INote {
+      _id
+      updatedAt
+      user {
         _id
-        updatedAt
-        user {
-          _id
-        }
-        tags {
-          ...BaseTag
+      }
+      tags {
+        ...BaseTag
 
-          notes {
-            ... on INote {
-              _id
-            }
-          }
+        notes {
+          _id
         }
       }
     }

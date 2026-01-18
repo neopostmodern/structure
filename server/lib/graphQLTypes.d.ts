@@ -4,196 +4,152 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  Date: any;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  Date: { input: any; output: any; }
 };
 
 export type BaseObject = {
-  _id: Scalars['ID'];
-  createdAt: Scalars['Date'];
-  updatedAt: Scalars['Date'];
+  _id: Scalars['ID']['output'];
+  createdAt: Scalars['Date']['output'];
+  updatedAt: Scalars['Date']['output'];
 };
 
 export type Credentials = {
   __typename?: 'Credentials';
-  bookmarklet?: Maybe<Scalars['String']>;
-  rss?: Maybe<Scalars['String']>;
+  bookmarklet?: Maybe<Scalars['String']['output']>;
+  rss?: Maybe<Scalars['String']['output']>;
 };
 
 export type EntitiesUpdatedSince = {
   __typename?: 'EntitiesUpdatedSince';
   addedNotes: Array<Note>;
   addedTags: Array<Tag>;
-  cacheId: Scalars['ID'];
-  removedNoteIds: Array<Scalars['ID']>;
-  removedTagIds: Array<Scalars['ID']>;
+  cacheId: Scalars['ID']['output'];
+  removedNoteIds: Array<Scalars['ID']['output']>;
+  removedTagIds: Array<Scalars['ID']['output']>;
   updatedNotes: Array<Note>;
   updatedTags: Array<Tag>;
 };
 
-export type INote = {
-  _id: Scalars['ID'];
-  archivedAt?: Maybe<Scalars['Date']>;
-  createdAt: Scalars['Date'];
-  deletedAt?: Maybe<Scalars['Date']>;
-  description: Scalars['String'];
-  name: Scalars['String'];
-  tags: Array<Tag>;
-  type: NoteType;
-  updatedAt: Scalars['Date'];
-  user: User;
-};
-
-export type InputLink = {
-  _id: Scalars['ID'];
-  archivedAt?: InputMaybe<Scalars['Date']>;
-  description?: InputMaybe<Scalars['String']>;
-  domain?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  path?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['Date']>;
-  url?: InputMaybe<Scalars['String']>;
+export type InputNote = {
+  _id: Scalars['ID']['input'];
+  archivedAt?: InputMaybe<Scalars['Date']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  domain?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  path?: InputMaybe<Scalars['String']['input']>;
+  updatedAt: Scalars['Date']['input'];
+  url?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputTag = {
-  _id: Scalars['ID'];
-  color: Scalars['String'];
-  name: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['Date']>;
-};
-
-export type InputText = {
-  _id: Scalars['ID'];
-  description?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['Date']>;
-};
-
-export type Link = BaseObject & INote & {
-  __typename?: 'Link';
-  _id: Scalars['ID'];
-  archivedAt?: Maybe<Scalars['Date']>;
-  createdAt: Scalars['Date'];
-  deletedAt?: Maybe<Scalars['Date']>;
-  description: Scalars['String'];
-  domain: Scalars['String'];
-  name: Scalars['String'];
-  path: Scalars['String'];
-  tags: Array<Tag>;
-  type: NoteType;
-  updatedAt: Scalars['Date'];
-  url: Scalars['String'];
-  user: User;
+  _id: Scalars['ID']['input'];
+  color: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  updatedAt?: InputMaybe<Scalars['Date']['input']>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   addTagByNameToNote: Note;
+  createNote: Note;
   createTag: Tag;
-  createText: Text;
   permanentlyDeleteTag: Tag;
   removeTagByIdFromNote: Note;
   requestNewCredential: User;
   revokeCredential: User;
   shareTag: Tag;
-  submitLink: Link;
   toggleArchivedNote: Note;
   toggleDeletedNote: Note;
   unshareTag: Tag;
-  updateLink: Link;
+  updateNote: Note;
   updatePermissionOnTag: Tag;
   updateTag: Tag;
-  updateText: Text;
 };
 
 
 export type MutationAddTagByNameToNoteArgs = {
-  name: Scalars['String'];
-  noteId: Scalars['ID'];
+  name: Scalars['String']['input'];
+  noteId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateNoteArgs = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type MutationCreateTagArgs = {
-  color?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-};
-
-
-export type MutationCreateTextArgs = {
-  description?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
 };
 
 
 export type MutationPermanentlyDeleteTagArgs = {
-  tagId: Scalars['ID'];
+  tagId: Scalars['ID']['input'];
 };
 
 
 export type MutationRemoveTagByIdFromNoteArgs = {
-  noteId: Scalars['ID'];
-  tagId: Scalars['ID'];
+  noteId: Scalars['ID']['input'];
+  tagId: Scalars['ID']['input'];
 };
 
 
 export type MutationRequestNewCredentialArgs = {
-  purpose: Scalars['String'];
+  purpose: Scalars['String']['input'];
 };
 
 
 export type MutationRevokeCredentialArgs = {
-  purpose: Scalars['String'];
+  purpose: Scalars['String']['input'];
 };
 
 
 export type MutationShareTagArgs = {
-  tagId: Scalars['ID'];
-  username: Scalars['String'];
-};
-
-
-export type MutationSubmitLinkArgs = {
-  description?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
-  url: Scalars['String'];
+  tagId: Scalars['ID']['input'];
+  username: Scalars['String']['input'];
 };
 
 
 export type MutationToggleArchivedNoteArgs = {
-  noteId: Scalars['ID'];
+  noteId: Scalars['ID']['input'];
 };
 
 
 export type MutationToggleDeletedNoteArgs = {
-  noteId: Scalars['ID'];
+  noteId: Scalars['ID']['input'];
 };
 
 
 export type MutationUnshareTagArgs = {
-  tagId: Scalars['ID'];
-  userId: Scalars['ID'];
+  tagId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 
-export type MutationUpdateLinkArgs = {
-  link: InputLink;
+export type MutationUpdateNoteArgs = {
+  note: InputNote;
 };
 
 
 export type MutationUpdatePermissionOnTagArgs = {
-  granted: Scalars['Boolean'];
-  mode: Scalars['String'];
-  resource: Scalars['String'];
-  tagId: Scalars['ID'];
-  userId: Scalars['ID'];
+  granted: Scalars['Boolean']['input'];
+  mode: Scalars['String']['input'];
+  resource: Scalars['String']['input'];
+  tagId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -201,133 +157,113 @@ export type MutationUpdateTagArgs = {
   tag: InputTag;
 };
 
-
-export type MutationUpdateTextArgs = {
-  text: InputText;
+export type Note = BaseObject & {
+  __typename?: 'Note';
+  _id: Scalars['ID']['output'];
+  archivedAt?: Maybe<Scalars['Date']['output']>;
+  changedAt: Scalars['Date']['output'];
+  createdAt: Scalars['Date']['output'];
+  deletedAt?: Maybe<Scalars['Date']['output']>;
+  description: Scalars['String']['output'];
+  domain?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  path?: Maybe<Scalars['String']['output']>;
+  tags: Array<Tag>;
+  updatedAt: Scalars['Date']['output'];
+  url?: Maybe<Scalars['String']['output']>;
+  user: User;
 };
-
-export type Note = Link | Text;
-
-export enum NoteType {
-  Link = 'LINK',
-  Text = 'TEXT'
-}
 
 export type NotesPermissions = {
   __typename?: 'NotesPermissions';
-  read: Scalars['Boolean'];
-  write: Scalars['Boolean'];
+  read: Scalars['Boolean']['output'];
+  write: Scalars['Boolean']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
   currentUser?: Maybe<User>;
   entitiesUpdatedSince: EntitiesUpdatedSince;
-  link: Link;
-  links: Array<Link>;
+  note: Note;
   notes: Array<Note>;
   tag: Tag;
   tags: Array<Tag>;
-  text: Text;
-  titleSuggestions: Array<Scalars['String']>;
+  titleSuggestions: Array<Scalars['String']['output']>;
   versions: Versions;
 };
 
 
 export type QueryEntitiesUpdatedSinceArgs = {
-  cacheId?: InputMaybe<Scalars['ID']>;
+  cacheId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
-export type QueryLinkArgs = {
-  linkId?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type QueryLinksArgs = {
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
+export type QueryNoteArgs = {
+  noteId: Scalars['ID']['input'];
 };
 
 
 export type QueryNotesArgs = {
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type QueryTagArgs = {
-  tagId?: InputMaybe<Scalars['ID']>;
+  tagId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
 export type QueryTagsArgs = {
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryTextArgs = {
-  textId?: InputMaybe<Scalars['ID']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type QueryTitleSuggestionsArgs = {
-  linkId: Scalars['ID'];
+  noteId: Scalars['ID']['input'];
 };
 
 
 export type QueryVersionsArgs = {
-  currentVersion?: InputMaybe<Scalars['String']>;
+  currentVersion?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Tag = BaseObject & {
   __typename?: 'Tag';
-  _id: Scalars['ID'];
-  color: Scalars['String'];
-  createdAt: Scalars['Date'];
-  name: Scalars['String'];
+  _id: Scalars['ID']['output'];
+  changedAt: Scalars['Date']['output'];
+  color: Scalars['String']['output'];
+  createdAt: Scalars['Date']['output'];
+  name: Scalars['String']['output'];
+  noteCount: Scalars['Int']['output'];
   notes?: Maybe<Array<Maybe<Note>>>;
   permissions: Array<UserPermissions>;
-  updatedAt: Scalars['Date'];
+  updatedAt: Scalars['Date']['output'];
   user: User;
 };
 
 
 export type TagPermissionsArgs = {
-  onlyMine?: InputMaybe<Scalars['Boolean']>;
+  onlyMine?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type TagPermissions = {
   __typename?: 'TagPermissions';
-  read: Scalars['Boolean'];
-  share: Scalars['Boolean'];
-  use: Scalars['Boolean'];
-  write: Scalars['Boolean'];
-};
-
-export type Text = BaseObject & INote & {
-  __typename?: 'Text';
-  _id: Scalars['ID'];
-  archivedAt?: Maybe<Scalars['Date']>;
-  createdAt: Scalars['Date'];
-  deletedAt?: Maybe<Scalars['Date']>;
-  description: Scalars['String'];
-  name: Scalars['String'];
-  tags: Array<Tag>;
-  type: NoteType;
-  updatedAt: Scalars['Date'];
-  user: User;
+  read: Scalars['Boolean']['output'];
+  share: Scalars['Boolean']['output'];
+  use: Scalars['Boolean']['output'];
+  write: Scalars['Boolean']['output'];
 };
 
 export type User = BaseObject & {
   __typename?: 'User';
-  _id: Scalars['ID'];
-  authenticationProvider?: Maybe<Scalars['String']>;
-  createdAt: Scalars['Date'];
+  _id: Scalars['ID']['output'];
+  authenticationProvider?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['Date']['output'];
   credentials?: Maybe<Credentials>;
-  name: Scalars['String'];
-  updatedAt: Scalars['Date'];
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
 };
 
 export type UserPermissions = {
@@ -339,10 +275,10 @@ export type UserPermissions = {
 
 export type Versions = {
   __typename?: 'Versions';
-  current: Scalars['String'];
-  minimum?: Maybe<Scalars['String']>;
+  current: Scalars['String']['output'];
+  minimum?: Maybe<Scalars['String']['output']>;
   /** @deprecated Upgrade to 0.20.0+ and use 'current' field */
-  recommended?: Maybe<Scalars['String']>;
+  recommended?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -412,39 +348,30 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-/** Mapping of union types */
-export type ResolversUnionTypes = {
-  Note: ( Link ) | ( Text );
-};
 
-/** Mapping of union parent types */
-export type ResolversUnionParentTypes = {
-  Note: ( Link ) | ( Text );
+/** Mapping of interface types */
+export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = {
+  BaseObject: ( Note ) | ( Tag ) | ( User );
 };
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  BaseObject: ResolversTypes['Link'] | ResolversTypes['Tag'] | ResolversTypes['Text'] | ResolversTypes['User'];
-  ID: ResolverTypeWrapper<Scalars['ID']>;
+  BaseObject: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['BaseObject']>;
+  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Credentials: ResolverTypeWrapper<Credentials>;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  Date: ResolverTypeWrapper<Scalars['Date']>;
-  EntitiesUpdatedSince: ResolverTypeWrapper<Omit<EntitiesUpdatedSince, 'addedNotes' | 'updatedNotes'> & { addedNotes: Array<ResolversTypes['Note']>, updatedNotes: Array<ResolversTypes['Note']> }>;
-  INote: ResolversTypes['Link'] | ResolversTypes['Text'];
-  InputLink: InputLink;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Date: ResolverTypeWrapper<Scalars['Date']['output']>;
+  EntitiesUpdatedSince: ResolverTypeWrapper<EntitiesUpdatedSince>;
+  InputNote: InputNote;
   InputTag: InputTag;
-  InputText: InputText;
-  Link: ResolverTypeWrapper<Link>;
   Mutation: ResolverTypeWrapper<{}>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Note: ResolverTypeWrapper<ResolversUnionTypes['Note']>;
-  NoteType: NoteType;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  Note: ResolverTypeWrapper<Note>;
   NotesPermissions: ResolverTypeWrapper<NotesPermissions>;
   Query: ResolverTypeWrapper<{}>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  Tag: ResolverTypeWrapper<Omit<Tag, 'notes'> & { notes?: Maybe<Array<Maybe<ResolversTypes['Note']>>> }>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  Tag: ResolverTypeWrapper<Tag>;
   TagPermissions: ResolverTypeWrapper<TagPermissions>;
-  Text: ResolverTypeWrapper<Text>;
   User: ResolverTypeWrapper<User>;
   UserPermissions: ResolverTypeWrapper<UserPermissions>;
   Versions: ResolverTypeWrapper<Versions>;
@@ -452,33 +379,29 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  BaseObject: ResolversParentTypes['Link'] | ResolversParentTypes['Tag'] | ResolversParentTypes['Text'] | ResolversParentTypes['User'];
-  ID: Scalars['ID'];
+  BaseObject: ResolversInterfaceTypes<ResolversParentTypes>['BaseObject'];
+  ID: Scalars['ID']['output'];
   Credentials: Credentials;
-  String: Scalars['String'];
-  Date: Scalars['Date'];
-  EntitiesUpdatedSince: Omit<EntitiesUpdatedSince, 'addedNotes' | 'updatedNotes'> & { addedNotes: Array<ResolversParentTypes['Note']>, updatedNotes: Array<ResolversParentTypes['Note']> };
-  INote: ResolversParentTypes['Link'] | ResolversParentTypes['Text'];
-  InputLink: InputLink;
+  String: Scalars['String']['output'];
+  Date: Scalars['Date']['output'];
+  EntitiesUpdatedSince: EntitiesUpdatedSince;
+  InputNote: InputNote;
   InputTag: InputTag;
-  InputText: InputText;
-  Link: Link;
   Mutation: {};
-  Boolean: Scalars['Boolean'];
-  Note: ResolversUnionParentTypes['Note'];
+  Boolean: Scalars['Boolean']['output'];
+  Note: Note;
   NotesPermissions: NotesPermissions;
   Query: {};
-  Int: Scalars['Int'];
-  Tag: Omit<Tag, 'notes'> & { notes?: Maybe<Array<Maybe<ResolversParentTypes['Note']>>> };
+  Int: Scalars['Int']['output'];
+  Tag: Tag;
   TagPermissions: TagPermissions;
-  Text: Text;
   User: User;
   UserPermissions: UserPermissions;
   Versions: Versions;
 };
 
 export type BaseObjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['BaseObject'] = ResolversParentTypes['BaseObject']> = {
-  __resolveType: TypeResolveFn<'Link' | 'Tag' | 'Text' | 'User', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Note' | 'Tag' | 'User', ParentType, ContextType>;
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
@@ -505,58 +428,38 @@ export type EntitiesUpdatedSinceResolvers<ContextType = any, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type INoteResolvers<ContextType = any, ParentType extends ResolversParentTypes['INote'] = ResolversParentTypes['INote']> = {
-  __resolveType: TypeResolveFn<'Link' | 'Text', ParentType, ContextType>;
-  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  archivedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  deletedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['NoteType'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-};
-
-export type LinkResolvers<ContextType = any, ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']> = {
-  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  archivedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  deletedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  domain?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['NoteType'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   addTagByNameToNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationAddTagByNameToNoteArgs, 'name' | 'noteId'>>;
+  createNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, Partial<MutationCreateNoteArgs>>;
   createTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationCreateTagArgs, 'name'>>;
-  createText?: Resolver<ResolversTypes['Text'], ParentType, ContextType, Partial<MutationCreateTextArgs>>;
   permanentlyDeleteTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationPermanentlyDeleteTagArgs, 'tagId'>>;
   removeTagByIdFromNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationRemoveTagByIdFromNoteArgs, 'noteId' | 'tagId'>>;
   requestNewCredential?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRequestNewCredentialArgs, 'purpose'>>;
   revokeCredential?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRevokeCredentialArgs, 'purpose'>>;
   shareTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationShareTagArgs, 'tagId' | 'username'>>;
-  submitLink?: Resolver<ResolversTypes['Link'], ParentType, ContextType, RequireFields<MutationSubmitLinkArgs, 'url'>>;
   toggleArchivedNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationToggleArchivedNoteArgs, 'noteId'>>;
   toggleDeletedNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationToggleDeletedNoteArgs, 'noteId'>>;
   unshareTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationUnshareTagArgs, 'tagId' | 'userId'>>;
-  updateLink?: Resolver<ResolversTypes['Link'], ParentType, ContextType, RequireFields<MutationUpdateLinkArgs, 'link'>>;
+  updateNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationUpdateNoteArgs, 'note'>>;
   updatePermissionOnTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationUpdatePermissionOnTagArgs, 'granted' | 'mode' | 'resource' | 'tagId' | 'userId'>>;
   updateTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationUpdateTagArgs, 'tag'>>;
-  updateText?: Resolver<ResolversTypes['Text'], ParentType, ContextType, RequireFields<MutationUpdateTextArgs, 'text'>>;
 };
 
 export type NoteResolvers<ContextType = any, ParentType extends ResolversParentTypes['Note'] = ResolversParentTypes['Note']> = {
-  __resolveType: TypeResolveFn<'Link' | 'Text', ParentType, ContextType>;
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  archivedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  changedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  deletedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  domain?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type NotesPermissionsResolvers<ContextType = any, ParentType extends ResolversParentTypes['NotesPermissions'] = ResolversParentTypes['NotesPermissions']> = {
@@ -568,21 +471,21 @@ export type NotesPermissionsResolvers<ContextType = any, ParentType extends Reso
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   currentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   entitiesUpdatedSince?: Resolver<ResolversTypes['EntitiesUpdatedSince'], ParentType, ContextType, Partial<QueryEntitiesUpdatedSinceArgs>>;
-  link?: Resolver<ResolversTypes['Link'], ParentType, ContextType, Partial<QueryLinkArgs>>;
-  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType, Partial<QueryLinksArgs>>;
+  note?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<QueryNoteArgs, 'noteId'>>;
   notes?: Resolver<Array<ResolversTypes['Note']>, ParentType, ContextType, Partial<QueryNotesArgs>>;
   tag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, Partial<QueryTagArgs>>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType, Partial<QueryTagsArgs>>;
-  text?: Resolver<ResolversTypes['Text'], ParentType, ContextType, Partial<QueryTextArgs>>;
-  titleSuggestions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryTitleSuggestionsArgs, 'linkId'>>;
+  titleSuggestions?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryTitleSuggestionsArgs, 'noteId'>>;
   versions?: Resolver<ResolversTypes['Versions'], ParentType, ContextType, Partial<QueryVersionsArgs>>;
 };
 
 export type TagResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tag'] = ResolversParentTypes['Tag']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  changedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   color?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  noteCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   notes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Note']>>>, ParentType, ContextType>;
   permissions?: Resolver<Array<ResolversTypes['UserPermissions']>, ParentType, ContextType, Partial<TagPermissionsArgs>>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
@@ -595,20 +498,6 @@ export type TagPermissionsResolvers<ContextType = any, ParentType extends Resolv
   share?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   use?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   write?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type TextResolvers<ContextType = any, ParentType extends ResolversParentTypes['Text'] = ResolversParentTypes['Text']> = {
-  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  archivedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  deletedAt?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['NoteType'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -641,15 +530,12 @@ export type Resolvers<ContextType = any> = {
   Credentials?: CredentialsResolvers<ContextType>;
   Date?: GraphQLScalarType;
   EntitiesUpdatedSince?: EntitiesUpdatedSinceResolvers<ContextType>;
-  INote?: INoteResolvers<ContextType>;
-  Link?: LinkResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Note?: NoteResolvers<ContextType>;
   NotesPermissions?: NotesPermissionsResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   TagPermissions?: TagPermissionsResolvers<ContextType>;
-  Text?: TextResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserPermissions?: UserPermissionsResolvers<ContextType>;
   Versions?: VersionsResolvers<ContextType>;

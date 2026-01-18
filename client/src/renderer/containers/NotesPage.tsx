@@ -36,10 +36,8 @@ export const NOTES_QUERY = gql`
     notes {
       ...BaseNote
 
-      ... on INote {
-        tags {
-          ...BaseTag
-        }
+      tags {
+        ...BaseTag
       }
     }
   }

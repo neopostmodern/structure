@@ -21,28 +21,14 @@ type EntitiesUpdatedSince {
   updatedTags: [Tag!]!
 }
 
-interface INote {
-  _id: ID!
-  archivedAt: Date
-  changedAt: Date!
-  createdAt: Date!
-  deletedAt: Date
-  description: String!
-  name: String!
-  tags: [Tag!]!
-  type: NoteType!
-  updatedAt: Date!
-  user: User!
-}
-
-input InputLink {
+input InputNote {
   _id: ID!
   archivedAt: Date
   description: String
   domain: String
   name: String
   path: String
-  updatedAt: Date
+  updatedAt: Date!
   url: String
 }
 
@@ -53,54 +39,37 @@ input InputTag {
   updatedAt: Date
 }
 
-input InputText {
-  _id: ID!
-  description: String
-  name: String
-  updatedAt: Date
+type Mutation {
+  addTagByNameToNote(name: String!, noteId: ID!): Note!
+  createNote(description: String, title: String, url: String): Note!
+  createTag(color: String, name: String!): Tag!
+  permanentlyDeleteTag(tagId: ID!): Tag!
+  removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
+  requestNewCredential(purpose: String!): User!
+  revokeCredential(purpose: String!): User!
+  shareTag(tagId: ID!, username: String!): Tag!
+  toggleArchivedNote(noteId: ID!): Note!
+  toggleDeletedNote(noteId: ID!): Note!
+  unshareTag(tagId: ID!, userId: ID!): Tag!
+  updateNote(note: InputNote!): Note!
+  updatePermissionOnTag(granted: Boolean!, mode: String!, resource: String!, tagId: ID!, userId: ID!): Tag!
+  updateTag(tag: InputTag!): Tag!
 }
 
-type Link implements BaseObject & INote {
+type Note implements BaseObject {
   _id: ID!
   archivedAt: Date
   changedAt: Date!
   createdAt: Date!
   deletedAt: Date
   description: String!
-  domain: String!
+  domain: String
   name: String!
-  path: String!
+  path: String
   tags: [Tag!]!
-  type: NoteType!
   updatedAt: Date!
-  url: String!
+  url: String
   user: User!
-}
-
-type Mutation {
-  addTagByNameToNote(name: String!, noteId: ID!): Note!
-  createTag(color: String, name: String!): Tag!
-  createText(description: String, title: String): Text!
-  permanentlyDeleteTag(tagId: ID!): Tag!
-  removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
-  requestNewCredential(purpose: String!): User!
-  revokeCredential(purpose: String!): User!
-  shareTag(tagId: ID!, username: String!): Tag!
-  submitLink(description: String, title: String, url: String!): Link!
-  toggleArchivedNote(noteId: ID!): Note!
-  toggleDeletedNote(noteId: ID!): Note!
-  unshareTag(tagId: ID!, userId: ID!): Tag!
-  updateLink(link: InputLink!): Link!
-  updatePermissionOnTag(granted: Boolean!, mode: String!, resource: String!, tagId: ID!, userId: ID!): Tag!
-  updateTag(tag: InputTag!): Tag!
-  updateText(text: InputText!): Text!
-}
-
-union Note = Link | Text
-
-enum NoteType {
-  LINK
-  TEXT
 }
 
 type NotesPermissions {
@@ -111,13 +80,11 @@ type NotesPermissions {
 type Query {
   currentUser: User
   entitiesUpdatedSince(cacheId: ID): EntitiesUpdatedSince!
-  link(linkId: ID): Link!
-  links(limit: Int, offset: Int): [Link!]!
+  note(noteId: ID!): Note!
   notes(limit: Int, offset: Int): [Note!]!
   tag(tagId: ID): Tag!
   tags(limit: Int, offset: Int): [Tag!]!
-  text(textId: ID): Text!
-  titleSuggestions(linkId: ID!): [String!]!
+  titleSuggestions(noteId: ID!): [String!]!
   versions(currentVersion: String): Versions!
 }
 
@@ -139,20 +106,6 @@ type TagPermissions {
   share: Boolean!
   use: Boolean!
   write: Boolean!
-}
-
-type Text implements BaseObject & INote {
-  _id: ID!
-  archivedAt: Date
-  changedAt: Date!
-  createdAt: Date!
-  deletedAt: Date
-  description: String!
-  name: String!
-  tags: [Tag!]!
-  type: NoteType!
-  updatedAt: Date!
-  user: User!
 }
 
 type User implements BaseObject {

@@ -2,13 +2,13 @@ import { rssFeedUrl } from '@structure/common'
 import config from '@structure/config'
 import { Feed } from 'feed'
 import _ from 'lodash'
-import { submitLink } from './notes/notesMethods.mts'
-import { Link, Note } from './notes/notesModels.mts'
+import { Meta } from './meta/metaModel.mts'
+import { createNote } from './notes/notesMethods.mts'
+import { Note } from './notes/notesModels.mts'
 import { Tag } from './tags/tagModel.mts'
 import { addTagByNameToNote } from './tags/tagsMethods.mts'
 import { User } from './users/userModel.mts'
 import { logger } from './util/logging.mts'
-import { Meta } from './meta/metaModel.mts';
 
 const restApi = (app) => {
   app.get('/', (request, response) => {
@@ -50,7 +50,7 @@ body {
         if (!user) {
           throw Error('No user with provided credential (token) found.')
         }
-        return submitLink(user, url).then(({ _id }) =>
+        return createNote(user, { url }).then(({ _id }) =>
           addTagByNameToNote(user, _id, 'from:bookmarklet'),
         )
       })
@@ -122,19 +122,19 @@ body {
           },
         })
 
-        return Link.find({ user })
+        return Note.find({ user })
           .sort({ createdAt: -1 })
           .limit(10)
           .exec()
-          .then((links) => {
-            links.forEach((link) => {
+          .then((notes) => {
+            notes.forEach((note) => {
               feed.addItem({
-                title: link.name,
-                guid: link._id.toString(),
+                title: note.name,
+                guid: note._id.toString(),
                 guidIsPermaLink: false,
-                link: link.url,
-                description: link.description,
-                date: link.createdAt,
+                link: note.url, // todo: is this allowed to be null?
+                description: note.description,
+                date: note.createdAt,
               })
             })
           })
@@ -190,13 +190,13 @@ body {
       await Meta.updateOne(
         { _id: 'heartbeat' },
         { $set: { timestamp: new Date().toISOString() } },
-        { upsert: true }
+        { upsert: true },
       )
 
       response.status(200).send('OK')
     } catch (error) {
       console.error(`/hello - Failed to write heartbeat to database!`)
-      console.error(error);
+      console.error(error)
 
       response.status(500).send('Database error.')
     }

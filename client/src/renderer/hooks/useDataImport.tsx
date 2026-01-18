@@ -3,22 +3,18 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors'
 import { useMutation } from '@apollo/client/react'
 import { useCallback, useState } from 'react'
 import type {
-  AddLinkMutation,
-  AddLinkMutationVariables,
+  AddNoteMutation,
+  AddNoteMutationVariables,
   AddTagByNameToNoteMutation,
   AddTagByNameToNoteMutationVariables,
-  AddTextMutation,
-  AddTextMutationVariables,
   CreateTagMutation,
   CreateTagMutationVariables,
-  Link,
   Note,
   Tag,
 } from '../generated/graphql'
 import {
-  ADD_LINK_MUTATION,
+  ADD_NOTE_MUTATION,
   ADD_TAG_BY_NAME_TO_NOTE_MUTATION,
-  ADD_TEXT_MUTATION,
   BASE_TAG_FRAGMENT,
 } from '../utils/sharedQueriesAndFragments'
 
@@ -60,11 +56,8 @@ export const useDataImport = () => {
     CreateTagMutation,
     CreateTagMutationVariables
   >(CREATE_TAG_MUTATION)
-  const [addLinkNote] = useMutation<AddLinkMutation, AddLinkMutationVariables>(
-    ADD_LINK_MUTATION,
-  )
-  const [addTextNote] = useMutation<AddTextMutation, AddTextMutationVariables>(
-    ADD_TEXT_MUTATION,
+  const [addNote] = useMutation<AddNoteMutation, AddNoteMutationVariables>(
+    ADD_NOTE_MUTATION,
   )
   const [addTagByNameToNote] = useMutation<
     AddTagByNameToNoteMutation,
@@ -111,27 +104,15 @@ export const useDataImport = () => {
         }
 
         for (const noteIndex in importData.notes) {
-          const note = importData.notes[noteIndex]
-          let createdNote
-          if ((note.type as string) === 'Link') {
-            const { url, name, description } = note as Link
-            createdNote = (
-              await addLinkNote({
-                variables: { url, title: name, description },
-              })
-            ).data!.submitLink
-          } else {
-            const { name, description } = note
-            createdNote = (
-              await addTextNote({
-                variables: { title: name, description },
-              })
-            ).data!.createText
-          }
-
+          const { name, url, description, tags } = importData.notes[noteIndex]
+          const createdNote = (
+            await addNote({
+              variables: { title: name, url, description },
+            })
+          ).data!.createNote
           stats.notes.imported += 1
 
-          for (const tag of note.tags) {
+          for (const tag of tags) {
             const tagName = tagIdNameMap[tag as any] // tags are only imported as ID references (string)
             await addTagByNameToNote({
               variables: { noteId: createdNote._id, tagName },

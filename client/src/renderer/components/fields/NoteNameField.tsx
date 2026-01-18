@@ -35,22 +35,22 @@ const ListItemShortcut = styled.div`
 `
 
 const TITLE_SUGGESTIONS_QUERY = gql`
-  query TitleSuggestions($linkId: ID!) {
-    titleSuggestions(linkId: $linkId)
+  query TitleSuggestions($noteId: ID!) {
+    titleSuggestions(noteId: $noteId)
   }
 `
 
-interface LinkNameFieldProps {
-  linkId: string
-  url: string
+interface NoteNameFieldProps {
+  noteId: string
+  url?: string | null
   name: string
   readOnly?: boolean
 }
 
-const LinkNameField: React.FC<LinkNameFieldProps> = ({
+const NoteNameField: React.FC<NoteNameFieldProps> = ({
   url,
   name,
-  linkId,
+  noteId,
   readOnly: forceReadOnly = false,
 }) => {
   const { setValue, getValues } = useFormContext()
@@ -114,11 +114,15 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
                 type='text'
                 {...params}
                 autoFocus={
+                  url !== undefined &&
+                  url !== null &&
                   isUrlValid(url) &&
                   getValues(name) === urlAnalyzer(url).suggestedName
                 }
                 onFocus={(): void => {
-                  fetchTitleSuggestions({ variables: { linkId } })
+                  if (url) {
+                    fetchTitleSuggestions({ variables: { noteId } })
+                  }
                 }}
                 label='Title'
                 InputProps={{
@@ -157,4 +161,4 @@ const LinkNameField: React.FC<LinkNameFieldProps> = ({
   )
 }
 
-export default LinkNameField
+export default NoteNameField

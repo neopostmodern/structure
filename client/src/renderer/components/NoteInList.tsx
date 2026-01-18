@@ -29,27 +29,22 @@ export const NoteInList: React.FC<{
 
   const noteData = useFragment<NoteInListFragment>({
     fragment: gql`
-      fragment NoteInList on INote {
-        ... on INote {
-          # type
-          _id
-          name
-          createdAt
-          updatedAt
-          changedAt
-          archivedAt
-          deletedAt
-          description
-          tags {
-            ...BaseTag
-          }
-          user {
-            ...BaseUser
-          }
+      fragment NoteInList on Note {
+        _id
+        name
+        url
+        domain
+        createdAt
+        updatedAt
+        changedAt
+        archivedAt
+        deletedAt
+        description
+        tags {
+          ...BaseTag
         }
-        ... on Link {
-          url
-          domain
+        user {
+          ...BaseUser
         }
       }
       ${BASE_USER_FRAGMENT}
@@ -57,7 +52,7 @@ export const NoteInList: React.FC<{
     `,
     fragmentName: 'NoteInList',
     from: {
-      __typename: 'Text',
+      __typename: 'Note',
       _id: noteId,
     },
   })
@@ -76,16 +71,12 @@ export const NoteInList: React.FC<{
       <Styled.NoteContainer>
         <Styled.NoteTitleLine>
           <TooltipWithShortcut title='' shortcut={shortcut} placement='left'>
-            <Styled.NoteTitleLink to={noteUrl(note)}>
+            <Styled.NoteTitleLink to={noteUrl(note._id)}>
               {note.name}
             </Styled.NoteTitleLink>
           </TooltipWithShortcut>
-          {note.__typename !== 'Link' && (
-            <Styled.NoteTypeBadge>
-              &lt;
-              {note.__typename.toLowerCase()}
-              &gt;
-            </Styled.NoteTypeBadge>
+          {!note.url && (
+            <Styled.NoteTypeBadge>&lt;text&gt;</Styled.NoteTypeBadge>
           )}
           <Styled.UserContainer>
             {note.user._id !== userId && (
@@ -97,7 +88,7 @@ export const NoteInList: React.FC<{
           </Styled.NoteAddedDate>
         </Styled.NoteTitleLine>
         <Styled.NoteInfo>
-          {'url' in note && (
+          {note.url && (
             <Styled.LinkDomain
               href={note.url}
               target='_blank'

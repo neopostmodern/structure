@@ -45,9 +45,7 @@ const TAG_QUERY = gql`
       }
 
       notes {
-        ... on INote {
-          _id
-        }
+        _id
       }
     }
   }
@@ -70,11 +68,9 @@ const DELETE_TAG_MUTATION = gql`
     permanentlyDeleteTag(tagId: $tagId) {
       _id
       notes {
-        ... on INote {
+        _id
+        tags {
           _id
-          tags {
-            _id
-          }
         }
       }
     }

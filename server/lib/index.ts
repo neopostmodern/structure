@@ -1,11 +1,11 @@
 import { ApolloServer, type ApolloServerPlugin } from '@apollo/server'
-import { expressMiddleware } from '@as-integrations/express5'
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
+import { expressMiddleware } from '@as-integrations/express5'
 import config from '@structure/config'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import type { NextFunction, Request, Response } from 'express'
 import express from 'express'
-import type { Request, Response, NextFunction } from 'express'
 import mongoSanitize from 'express-mongo-sanitize'
 import { createServer } from 'http'
 import migrationSystem from './migrations/migrationSystem.mts'
@@ -143,7 +143,7 @@ await initializeMongo()
 
 try {
   logger.info('Running migrations...')
-  await migrationSystem.migrateTo(8)
+  await migrationSystem.migrateTo(9)
   logger.info('Migrations complete.')
   await runExpressServer()
 } catch (error) {

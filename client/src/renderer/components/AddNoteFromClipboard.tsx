@@ -9,7 +9,7 @@ import { IconButton } from '@mui/material'
 import { FC, MouseEventHandler, useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearClipboard, requestClipboard } from '../actions/userInterface'
-import type { AddTextMutationVariables } from '../generated/graphql'
+import type { AddNoteMutationVariables } from '../generated/graphql'
 import {
   CLIPBOARD_NOT_AVAILABLE,
   CLIPBOARD_NOT_GRANTED,
@@ -21,9 +21,8 @@ import AddNoteCard from './AddNoteCard'
 
 const AddNoteFromClipboard: FC<{
   onEdit: (suggestion: string) => void
-  onSubmitText: (text: AddTextMutationVariables) => void
-  onSubmitUrl: (url: string) => void
-}> = ({ onEdit, onSubmitText, onSubmitUrl }) => {
+  onSubmitNote: (text: AddNoteMutationVariables) => void
+}> = ({ onEdit, onSubmitNote }) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -99,17 +98,17 @@ const AddNoteFromClipboard: FC<{
   let actions
   if (isUrl) {
     action = () => {
-      onSubmitUrl(clipboard)
+      onSubmitNote({ url: clipboard })
     }
     actionShortcut = SHORTCUTS.QUICK_SUBMIT
   } else if (isShort) {
     actions = {
-      'Add as title': () => onSubmitText({ title: clipboard }),
-      'Add as content': () => onSubmitText({ description: clipboard }),
+      'Add as title': () => onSubmitNote({ title: clipboard }),
+      'Add as content': () => onSubmitNote({ description: clipboard }),
     }
   } else {
     action = () => {
-      onSubmitText({ description: clipboard })
+      onSubmitNote({ description: clipboard })
     }
   }
 

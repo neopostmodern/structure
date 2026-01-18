@@ -41,28 +41,14 @@ export type EntitiesUpdatedSince = {
   updatedTags: Array<Tag>;
 };
 
-export type INote = {
-  _id: Scalars['ID']['output'];
-  archivedAt?: Maybe<Scalars['Date']['output']>;
-  changedAt: Scalars['Date']['output'];
-  createdAt: Scalars['Date']['output'];
-  deletedAt?: Maybe<Scalars['Date']['output']>;
-  description: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  tags: Array<Tag>;
-  type: NoteType;
-  updatedAt: Scalars['Date']['output'];
-  user: User;
-};
-
-export type InputLink = {
+export type InputNote = {
   _id: Scalars['ID']['input'];
   archivedAt?: InputMaybe<Scalars['Date']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   domain?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   path?: InputMaybe<Scalars['String']['input']>;
-  updatedAt?: InputMaybe<Scalars['Date']['input']>;
+  updatedAt: Scalars['Date']['input'];
   url?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -73,49 +59,22 @@ export type InputTag = {
   updatedAt?: InputMaybe<Scalars['Date']['input']>;
 };
 
-export type InputText = {
-  _id: Scalars['ID']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  updatedAt?: InputMaybe<Scalars['Date']['input']>;
-};
-
-export type Link = BaseObject & INote & {
-  __typename: 'Link';
-  _id: Scalars['ID']['output'];
-  archivedAt?: Maybe<Scalars['Date']['output']>;
-  changedAt: Scalars['Date']['output'];
-  createdAt: Scalars['Date']['output'];
-  deletedAt?: Maybe<Scalars['Date']['output']>;
-  description: Scalars['String']['output'];
-  domain: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  path: Scalars['String']['output'];
-  tags: Array<Tag>;
-  type: NoteType;
-  updatedAt: Scalars['Date']['output'];
-  url: Scalars['String']['output'];
-  user: User;
-};
-
 export type Mutation = {
   __typename: 'Mutation';
   addTagByNameToNote: Note;
+  createNote: Note;
   createTag: Tag;
-  createText: Text;
   permanentlyDeleteTag: Tag;
   removeTagByIdFromNote: Note;
   requestNewCredential: User;
   revokeCredential: User;
   shareTag: Tag;
-  submitLink: Link;
   toggleArchivedNote: Note;
   toggleDeletedNote: Note;
   unshareTag: Tag;
-  updateLink: Link;
+  updateNote: Note;
   updatePermissionOnTag: Tag;
   updateTag: Tag;
-  updateText: Text;
 };
 
 
@@ -125,15 +84,16 @@ export type MutationAddTagByNameToNoteArgs = {
 };
 
 
-export type MutationCreateTagArgs = {
-  color?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
+export type MutationCreateNoteArgs = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
 };
 
 
-export type MutationCreateTextArgs = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
+export type MutationCreateTagArgs = {
+  color?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
 };
 
 
@@ -164,13 +124,6 @@ export type MutationShareTagArgs = {
 };
 
 
-export type MutationSubmitLinkArgs = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
-  url: Scalars['String']['input'];
-};
-
-
 export type MutationToggleArchivedNoteArgs = {
   noteId: Scalars['ID']['input'];
 };
@@ -187,8 +140,8 @@ export type MutationUnshareTagArgs = {
 };
 
 
-export type MutationUpdateLinkArgs = {
-  link: InputLink;
+export type MutationUpdateNoteArgs = {
+  note: InputNote;
 };
 
 
@@ -205,17 +158,22 @@ export type MutationUpdateTagArgs = {
   tag: InputTag;
 };
 
-
-export type MutationUpdateTextArgs = {
-  text: InputText;
+export type Note = BaseObject & {
+  __typename: 'Note';
+  _id: Scalars['ID']['output'];
+  archivedAt?: Maybe<Scalars['Date']['output']>;
+  changedAt: Scalars['Date']['output'];
+  createdAt: Scalars['Date']['output'];
+  deletedAt?: Maybe<Scalars['Date']['output']>;
+  description: Scalars['String']['output'];
+  domain?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  path?: Maybe<Scalars['String']['output']>;
+  tags: Array<Tag>;
+  updatedAt: Scalars['Date']['output'];
+  url?: Maybe<Scalars['String']['output']>;
+  user: User;
 };
-
-export type Note = Link | Text;
-
-export enum NoteType {
-  Link = 'LINK',
-  Text = 'TEXT'
-}
 
 export type NotesPermissions = {
   __typename: 'NotesPermissions';
@@ -227,12 +185,10 @@ export type Query = {
   __typename: 'Query';
   currentUser?: Maybe<User>;
   entitiesUpdatedSince: EntitiesUpdatedSince;
-  link: Link;
-  links: Array<Link>;
+  note: Note;
   notes: Array<Note>;
   tag: Tag;
   tags: Array<Tag>;
-  text: Text;
   titleSuggestions: Array<Scalars['String']['output']>;
   versions: Versions;
 };
@@ -243,14 +199,8 @@ export type QueryEntitiesUpdatedSinceArgs = {
 };
 
 
-export type QueryLinkArgs = {
-  linkId?: InputMaybe<Scalars['ID']['input']>;
-};
-
-
-export type QueryLinksArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
+export type QueryNoteArgs = {
+  noteId: Scalars['ID']['input'];
 };
 
 
@@ -271,13 +221,8 @@ export type QueryTagsArgs = {
 };
 
 
-export type QueryTextArgs = {
-  textId?: InputMaybe<Scalars['ID']['input']>;
-};
-
-
 export type QueryTitleSuggestionsArgs = {
-  linkId: Scalars['ID']['input'];
+  noteId: Scalars['ID']['input'];
 };
 
 
@@ -310,21 +255,6 @@ export type TagPermissions = {
   share: Scalars['Boolean']['output'];
   use: Scalars['Boolean']['output'];
   write: Scalars['Boolean']['output'];
-};
-
-export type Text = BaseObject & INote & {
-  __typename: 'Text';
-  _id: Scalars['ID']['output'];
-  archivedAt?: Maybe<Scalars['Date']['output']>;
-  changedAt: Scalars['Date']['output'];
-  createdAt: Scalars['Date']['output'];
-  deletedAt?: Maybe<Scalars['Date']['output']>;
-  description: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  tags: Array<Tag>;
-  type: NoteType;
-  updatedAt: Scalars['Date']['output'];
-  user: User;
 };
 
 export type User = BaseObject & {
@@ -360,13 +290,9 @@ export type TagsWithCountsQuery = { __typename: 'Query', tags: Array<{ __typenam
 export type VisitedNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type VisitedNotesQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string } | { __typename: 'Text', _id: string, name: string }> };
+export type VisitedNotesQuery = { __typename: 'Query', notes: Array<{ __typename: 'Note', _id: string, name: string }> };
 
-type NoteInList_Link_Fragment = { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } };
-
-type NoteInList_Text_Fragment = { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } };
-
-export type NoteInListFragment = NoteInList_Link_Fragment | NoteInList_Text_Fragment;
+export type NoteInListFragment = { __typename: 'Note', _id: string, name: string, url?: string | null, domain?: string | null, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } };
 
 export type ShareTagMutationVariables = Exact<{
   tagId: Scalars['ID']['input'];
@@ -401,33 +327,33 @@ export type RemoveTagByIdFromNoteMutationVariables = Exact<{
 }>;
 
 
-export type RemoveTagByIdFromNoteMutation = { __typename: 'Mutation', removeTagByIdFromNote: { __typename: 'Link', _id: string, updatedAt: any, user: { __typename: 'User', _id: string }, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } | { __typename: 'Text', _id: string, updatedAt: any, user: { __typename: 'User', _id: string }, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
+export type RemoveTagByIdFromNoteMutation = { __typename: 'Mutation', removeTagByIdFromNote: { __typename: 'Note', _id: string, updatedAt: any, user: { __typename: 'User', _id: string }, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Note', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
 
 export type TitleSuggestionsQueryVariables = Exact<{
-  linkId: Scalars['ID']['input'];
+  noteId: Scalars['ID']['input'];
 }>;
 
 
 export type TitleSuggestionsQuery = { __typename: 'Query', titleSuggestions: Array<string> };
 
-export type LinkQueryVariables = Exact<{
-  linkId?: InputMaybe<Scalars['ID']['input']>;
+export type NoteQueryVariables = Exact<{
+  noteId: Scalars['ID']['input'];
 }>;
 
 
-export type LinkQuery = { __typename: 'Query', link: { __typename: 'Link', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, url: string, name: string, description: string, domain: string, user: { __typename: 'User', _id: string, name: string }, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
+export type NoteQuery = { __typename: 'Query', note: { __typename: 'Note', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, url?: string | null, name: string, description: string, domain?: string | null, user: { __typename: 'User', _id: string, name: string }, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
 
-export type UpdateLinkMutationVariables = Exact<{
-  link: InputLink;
+export type UpdateNoteMutationVariables = Exact<{
+  note: InputNote;
 }>;
 
 
-export type UpdateLinkMutation = { __typename: 'Mutation', updateLink: { __typename: 'Link', _id: string, createdAt: any, updatedAt: any, changedAt: any, url: string, domain: string, name: string, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
+export type UpdateNoteMutation = { __typename: 'Mutation', updateNote: { __typename: 'Note', _id: string, createdAt: any, updatedAt: any, changedAt: any, url?: string | null, domain?: string | null, name: string, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
 
 export type NotesForListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotesForListQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } }> };
+export type NotesForListQuery = { __typename: 'Query', notes: Array<{ __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } }> };
 
 export type TinyUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -439,21 +365,21 @@ export type TagWithNotesQueryVariables = Exact<{
 }>;
 
 
-export type TagWithNotesQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, notes?: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } } | null> | null, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
+export type TagWithNotesQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, notes?: Array<{ __typename: 'Note', _id: string } | null> | null, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
 
 export type UpdateTagMutationVariables = Exact<{
   tag: InputTag;
 }>;
 
 
-export type UpdateTagMutation = { __typename: 'Mutation', updateTag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', type: NoteType, _id: string, name: string, createdAt: any, archivedAt?: any | null, changedAt: any, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | { __typename: 'Text', type: NoteType, _id: string, name: string, createdAt: any, archivedAt?: any | null, changedAt: any, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
+export type UpdateTagMutation = { __typename: 'Mutation', updateTag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
 
 export type DeleteTagMutationVariables = Exact<{
   tagId: Scalars['ID']['input'];
 }>;
 
 
-export type DeleteTagMutation = { __typename: 'Mutation', permanentlyDeleteTag: { __typename: 'Tag', _id: string, notes?: Array<{ __typename: 'Link', _id: string, tags: Array<{ __typename: 'Tag', _id: string }> } | { __typename: 'Text', _id: string, tags: Array<{ __typename: 'Tag', _id: string }> } | null> | null } };
+export type DeleteTagMutation = { __typename: 'Mutation', permanentlyDeleteTag: { __typename: 'Tag', _id: string, notes?: Array<{ __typename: 'Note', _id: string, tags: Array<{ __typename: 'Tag', _id: string }> } | null> | null } };
 
 export type TagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -466,20 +392,6 @@ export type UpdateTag2MutationVariables = Exact<{
 
 
 export type UpdateTag2Mutation = { __typename: 'Mutation', updateTag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
-
-export type TextQueryVariables = Exact<{
-  textId?: InputMaybe<Scalars['ID']['input']>;
-}>;
-
-
-export type TextQuery = { __typename: 'Query', text: { __typename: 'Text', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, name: string, description: string, user: { __typename: 'User', _id: string, name: string }, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
-
-export type UpdateTextMutationVariables = Exact<{
-  text: InputText;
-}>;
-
-
-export type UpdateTextMutation = { __typename: 'Mutation', updateText: { __typename: 'Text', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, name: string, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
 
 export type UserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -520,31 +432,31 @@ export type ToggleDeletedNoteMutationVariables = Exact<{
 }>;
 
 
-export type ToggleDeletedNoteMutation = { __typename: 'Mutation', toggleDeletedNote: { __typename: 'Link', _id: string, deletedAt?: any | null } | { __typename: 'Text', _id: string, deletedAt?: any | null } };
+export type ToggleDeletedNoteMutation = { __typename: 'Mutation', toggleDeletedNote: { __typename: 'Note', _id: string, deletedAt?: any | null } };
 
 export type EntitiesUpdatedSinceQueryVariables = Exact<{
   cacheId?: InputMaybe<Scalars['ID']['input']>;
 }>;
 
 
-export type EntitiesUpdatedSinceQuery = { __typename: 'Query', entitiesUpdatedSince: { __typename: 'EntitiesUpdatedSince', removedNoteIds: Array<string>, removedTagIds: Array<string>, cacheId: string, addedNotes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }>, updatedNotes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }>, addedTags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, updatedTags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
+export type EntitiesUpdatedSinceQuery = { __typename: 'Query', entitiesUpdatedSince: { __typename: 'EntitiesUpdatedSince', removedNoteIds: Array<string>, removedTagIds: Array<string>, cacheId: string, addedNotes: Array<{ __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }>, updatedNotes: Array<{ __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }>, addedTags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, updatedTags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
 
 export type UpdatedNotesCacheQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UpdatedNotesCacheQueryQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } } | { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }> };
+export type UpdatedNotesCacheQueryQuery = { __typename: 'Query', notes: Array<{ __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }> };
 
 export type TagWithNoteIdsQueryVariables = Exact<{
   tagId: Scalars['ID']['input'];
 }>;
 
 
-export type TagWithNoteIdsQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null } };
+export type TagWithNoteIdsQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, notes?: Array<{ __typename: 'Note', _id: string } | null> | null } };
 
 export type NotesForSortAndFilterQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NotesForSortAndFilterQuery = { __typename: 'Query', notes: Array<{ __typename: 'Link', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, name: string, url: string, tags: Array<{ __typename: 'Tag', _id: string }> } | { __typename: 'Text', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, name: string, tags: Array<{ __typename: 'Tag', _id: string }> }> };
+export type NotesForSortAndFilterQuery = { __typename: 'Query', notes: Array<{ __typename: 'Note', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, name: string, url?: string | null, tags: Array<{ __typename: 'Tag', _id: string }> }> };
 
 export type TagsForSearchQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -556,7 +468,7 @@ export type ToggleArchivedNoteMutationVariables = Exact<{
 }>;
 
 
-export type ToggleArchivedNoteMutation = { __typename: 'Mutation', toggleArchivedNote: { __typename: 'Link', _id: string, archivedAt?: any | null, updatedAt: any } | { __typename: 'Text', _id: string, archivedAt?: any | null, updatedAt: any } };
+export type ToggleArchivedNoteMutation = { __typename: 'Mutation', toggleArchivedNote: { __typename: 'Note', _id: string, archivedAt?: any | null, updatedAt: any } };
 
 export type ProfileQueryVariables = Exact<{
   currentVersion: Scalars['String']['input'];
@@ -569,28 +481,16 @@ export type BaseUserFragment = { __typename: 'User', _id: string, name: string }
 
 export type BaseTagFragment = { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> };
 
-type BaseNote_Link_Fragment = { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } };
+export type BaseNoteFragment = { __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } };
 
-type BaseNote_Text_Fragment = { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } };
-
-export type BaseNoteFragment = BaseNote_Link_Fragment | BaseNote_Text_Fragment;
-
-export type AddLinkMutationVariables = Exact<{
-  url: Scalars['String']['input'];
+export type AddNoteMutationVariables = Exact<{
+  url?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type AddLinkMutation = { __typename: 'Mutation', submitLink: { __typename: 'Link', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, url: string, domain: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } } };
-
-export type AddTextMutationVariables = Exact<{
-  title?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-}>;
-
-
-export type AddTextMutation = { __typename: 'Mutation', createText: { __typename: 'Text', _id: string, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } } };
+export type AddNoteMutation = { __typename: 'Mutation', createNote: { __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } } };
 
 export type AddTagByNameToNoteMutationVariables = Exact<{
   noteId: Scalars['ID']['input'];
@@ -598,7 +498,7 @@ export type AddTagByNameToNoteMutationVariables = Exact<{
 }>;
 
 
-export type AddTagByNameToNoteMutation = { __typename: 'Mutation', addTagByNameToNote: { __typename: 'Link', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', noteCount: number, _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } | { __typename: 'Text', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', noteCount: number, _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Link', _id: string } | { __typename: 'Text', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
+export type AddTagByNameToNoteMutation = { __typename: 'Mutation', addTagByNameToNote: { __typename: 'Note', _id: string, updatedAt: any, tags: Array<{ __typename: 'Tag', noteCount: number, _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, notes?: Array<{ __typename: 'Note', _id: string } | null> | null, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
 
 export const BaseTagFragmentDoc = gql`
     fragment BaseTag on Tag {
@@ -637,26 +537,22 @@ export const BaseUserFragmentDoc = gql`
 }
     `;
 export const NoteInListFragmentDoc = gql`
-    fragment NoteInList on INote {
-  ... on INote {
-    _id
-    name
-    createdAt
-    updatedAt
-    changedAt
-    archivedAt
-    deletedAt
-    description
-    tags {
-      ...BaseTag
-    }
-    user {
-      ...BaseUser
-    }
+    fragment NoteInList on Note {
+  _id
+  name
+  url
+  domain
+  createdAt
+  updatedAt
+  changedAt
+  archivedAt
+  deletedAt
+  description
+  tags {
+    ...BaseTag
   }
-  ... on Link {
-    url
-    domain
+  user {
+    ...BaseUser
   }
 }
     ${BaseTagFragmentDoc}
@@ -671,26 +567,22 @@ export const UserCredentialsFragmentFragmentDoc = gql`
 }
     `;
 export const BaseNoteFragmentDoc = gql`
-    fragment BaseNote on INote {
-  ... on INote {
+    fragment BaseNote on Note {
+  _id
+  url
+  domain
+  name
+  createdAt
+  updatedAt
+  changedAt
+  archivedAt
+  deletedAt
+  description
+  tags {
     _id
-    name
-    createdAt
-    updatedAt
-    changedAt
-    archivedAt
-    deletedAt
-    description
-    tags {
-      _id
-    }
-    user {
-      ...BaseUser
-    }
   }
-  ... on Link {
-    url
-    domain
+  user {
+    ...BaseUser
   }
 }
     ${BaseUserFragmentDoc}`;
@@ -737,10 +629,8 @@ export type TagsWithCountsQueryResult = Apollo.QueryResult<TagsWithCountsQuery, 
 export const VisitedNotesDocument = gql`
     query VisitedNotes {
   notes {
-    ... on INote {
-      _id
-      name
-    }
+    _id
+    name
   }
 }
     `;
@@ -938,19 +828,15 @@ export type UpdatePermissionOnTagMutationOptions = Apollo.BaseMutationOptions<Up
 export const RemoveTagByIdFromNoteDocument = gql`
     mutation RemoveTagByIdFromNote($noteId: ID!, $tagId: ID!) {
   removeTagByIdFromNote(noteId: $noteId, tagId: $tagId) {
-    ... on INote {
+    _id
+    updatedAt
+    user {
       _id
-      updatedAt
-      user {
+    }
+    tags {
+      ...BaseTag
+      notes {
         _id
-      }
-      tags {
-        ...BaseTag
-        notes {
-          ... on INote {
-            _id
-          }
-        }
       }
     }
   }
@@ -984,8 +870,8 @@ export type RemoveTagByIdFromNoteMutationHookResult = ReturnType<typeof useRemov
 export type RemoveTagByIdFromNoteMutationResult = Apollo.MutationResult<RemoveTagByIdFromNoteMutation>;
 export type RemoveTagByIdFromNoteMutationOptions = Apollo.BaseMutationOptions<RemoveTagByIdFromNoteMutation, RemoveTagByIdFromNoteMutationVariables>;
 export const TitleSuggestionsDocument = gql`
-    query TitleSuggestions($linkId: ID!) {
-  titleSuggestions(linkId: $linkId)
+    query TitleSuggestions($noteId: ID!) {
+  titleSuggestions(noteId: $noteId)
 }
     `;
 
@@ -1001,7 +887,7 @@ export const TitleSuggestionsDocument = gql`
  * @example
  * const { data, loading, error } = useTitleSuggestionsQuery({
  *   variables: {
- *      linkId: // value for 'linkId'
+ *      noteId: // value for 'noteId'
  *   },
  * });
  */
@@ -1021,9 +907,9 @@ export type TitleSuggestionsQueryHookResult = ReturnType<typeof useTitleSuggesti
 export type TitleSuggestionsLazyQueryHookResult = ReturnType<typeof useTitleSuggestionsLazyQuery>;
 export type TitleSuggestionsSuspenseQueryHookResult = ReturnType<typeof useTitleSuggestionsSuspenseQuery>;
 export type TitleSuggestionsQueryResult = Apollo.QueryResult<TitleSuggestionsQuery, TitleSuggestionsQueryVariables>;
-export const LinkDocument = gql`
-    query Link($linkId: ID) {
-  link(linkId: $linkId) {
+export const NoteDocument = gql`
+    query Note($noteId: ID!) {
+  note(noteId: $noteId) {
     _id
     createdAt
     updatedAt
@@ -1045,40 +931,40 @@ export const LinkDocument = gql`
 ${BaseTagFragmentDoc}`;
 
 /**
- * __useLinkQuery__
+ * __useNoteQuery__
  *
- * To run a query within a React component, call `useLinkQuery` and pass it any options that fit your needs.
- * When your component renders, `useLinkQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useNoteQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNoteQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useLinkQuery({
+ * const { data, loading, error } = useNoteQuery({
  *   variables: {
- *      linkId: // value for 'linkId'
+ *      noteId: // value for 'noteId'
  *   },
  * });
  */
-export function useLinkQuery(baseOptions?: Apollo.QueryHookOptions<LinkQuery, LinkQueryVariables>) {
+export function useNoteQuery(baseOptions: Apollo.QueryHookOptions<NoteQuery, NoteQueryVariables> & ({ variables: NoteQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<LinkQuery, LinkQueryVariables>(LinkDocument, options);
+        return Apollo.useQuery<NoteQuery, NoteQueryVariables>(NoteDocument, options);
       }
-export function useLinkLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LinkQuery, LinkQueryVariables>) {
+export function useNoteLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NoteQuery, NoteQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<LinkQuery, LinkQueryVariables>(LinkDocument, options);
+          return Apollo.useLazyQuery<NoteQuery, NoteQueryVariables>(NoteDocument, options);
         }
-export function useLinkSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<LinkQuery, LinkQueryVariables>) {
+export function useNoteSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<NoteQuery, NoteQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<LinkQuery, LinkQueryVariables>(LinkDocument, options);
+          return Apollo.useSuspenseQuery<NoteQuery, NoteQueryVariables>(NoteDocument, options);
         }
-export type LinkQueryHookResult = ReturnType<typeof useLinkQuery>;
-export type LinkLazyQueryHookResult = ReturnType<typeof useLinkLazyQuery>;
-export type LinkSuspenseQueryHookResult = ReturnType<typeof useLinkSuspenseQuery>;
-export type LinkQueryResult = Apollo.QueryResult<LinkQuery, LinkQueryVariables>;
-export const UpdateLinkDocument = gql`
-    mutation UpdateLink($link: InputLink!) {
-  updateLink(link: $link) {
+export type NoteQueryHookResult = ReturnType<typeof useNoteQuery>;
+export type NoteLazyQueryHookResult = ReturnType<typeof useNoteLazyQuery>;
+export type NoteSuspenseQueryHookResult = ReturnType<typeof useNoteSuspenseQuery>;
+export type NoteQueryResult = Apollo.QueryResult<NoteQuery, NoteQueryVariables>;
+export const UpdateNoteDocument = gql`
+    mutation UpdateNote($note: InputNote!) {
+  updateNote(note: $note) {
     _id
     createdAt
     updatedAt
@@ -1095,40 +981,38 @@ export const UpdateLinkDocument = gql`
   }
 }
     `;
-export type UpdateLinkMutationFn = Apollo.MutationFunction<UpdateLinkMutation, UpdateLinkMutationVariables>;
+export type UpdateNoteMutationFn = Apollo.MutationFunction<UpdateNoteMutation, UpdateNoteMutationVariables>;
 
 /**
- * __useUpdateLinkMutation__
+ * __useUpdateNoteMutation__
  *
- * To run a mutation, you first call `useUpdateLinkMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateLinkMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateNoteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateNoteMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateLinkMutation, { data, loading, error }] = useUpdateLinkMutation({
+ * const [updateNoteMutation, { data, loading, error }] = useUpdateNoteMutation({
  *   variables: {
- *      link: // value for 'link'
+ *      note: // value for 'note'
  *   },
  * });
  */
-export function useUpdateLinkMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLinkMutation, UpdateLinkMutationVariables>) {
+export function useUpdateNoteMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNoteMutation, UpdateNoteMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateLinkMutation, UpdateLinkMutationVariables>(UpdateLinkDocument, options);
+        return Apollo.useMutation<UpdateNoteMutation, UpdateNoteMutationVariables>(UpdateNoteDocument, options);
       }
-export type UpdateLinkMutationHookResult = ReturnType<typeof useUpdateLinkMutation>;
-export type UpdateLinkMutationResult = Apollo.MutationResult<UpdateLinkMutation>;
-export type UpdateLinkMutationOptions = Apollo.BaseMutationOptions<UpdateLinkMutation, UpdateLinkMutationVariables>;
+export type UpdateNoteMutationHookResult = ReturnType<typeof useUpdateNoteMutation>;
+export type UpdateNoteMutationResult = Apollo.MutationResult<UpdateNoteMutation>;
+export type UpdateNoteMutationOptions = Apollo.BaseMutationOptions<UpdateNoteMutation, UpdateNoteMutationVariables>;
 export const NotesForListDocument = gql`
     query NotesForList {
   notes {
     ...BaseNote
-    ... on INote {
-      tags {
-        ...BaseTag
-      }
+    tags {
+      ...BaseTag
     }
   }
 }
@@ -1213,18 +1097,12 @@ export const TagWithNotesDocument = gql`
       ...BaseUser
     }
     notes {
-      ...BaseNote
-      ... on INote {
-        tags {
-          ...BaseTag
-        }
-      }
+      _id
     }
   }
 }
     ${BaseTagFragmentDoc}
-${BaseUserFragmentDoc}
-${BaseNoteFragmentDoc}`;
+${BaseUserFragmentDoc}`;
 
 /**
  * __useTagWithNotesQuery__
@@ -1262,26 +1140,6 @@ export const UpdateTagDocument = gql`
     mutation UpdateTag($tag: InputTag!) {
   updateTag(tag: $tag) {
     ...BaseTag
-    notes {
-      ... on INote {
-        type
-        _id
-        name
-        createdAt
-        archivedAt
-        changedAt
-        description
-        tags {
-          _id
-          name
-          color
-        }
-      }
-      ... on Link {
-        url
-        domain
-      }
-    }
   }
 }
     ${BaseTagFragmentDoc}`;
@@ -1316,11 +1174,9 @@ export const DeleteTagDocument = gql`
   permanentlyDeleteTag(tagId: $tagId) {
     _id
     notes {
-      ... on INote {
+      _id
+      tags {
         _id
-        tags {
-          _id
-        }
       }
     }
   }
@@ -1424,103 +1280,6 @@ export function useUpdateTag2Mutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateTag2MutationHookResult = ReturnType<typeof useUpdateTag2Mutation>;
 export type UpdateTag2MutationResult = Apollo.MutationResult<UpdateTag2Mutation>;
 export type UpdateTag2MutationOptions = Apollo.BaseMutationOptions<UpdateTag2Mutation, UpdateTag2MutationVariables>;
-export const TextDocument = gql`
-    query Text($textId: ID) {
-  text(textId: $textId) {
-    _id
-    createdAt
-    updatedAt
-    changedAt
-    archivedAt
-    user {
-      ...BaseUser
-    }
-    name
-    description
-    tags {
-      ...BaseTag
-    }
-  }
-}
-    ${BaseUserFragmentDoc}
-${BaseTagFragmentDoc}`;
-
-/**
- * __useTextQuery__
- *
- * To run a query within a React component, call `useTextQuery` and pass it any options that fit your needs.
- * When your component renders, `useTextQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTextQuery({
- *   variables: {
- *      textId: // value for 'textId'
- *   },
- * });
- */
-export function useTextQuery(baseOptions?: Apollo.QueryHookOptions<TextQuery, TextQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TextQuery, TextQueryVariables>(TextDocument, options);
-      }
-export function useTextLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TextQuery, TextQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TextQuery, TextQueryVariables>(TextDocument, options);
-        }
-export function useTextSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TextQuery, TextQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<TextQuery, TextQueryVariables>(TextDocument, options);
-        }
-export type TextQueryHookResult = ReturnType<typeof useTextQuery>;
-export type TextLazyQueryHookResult = ReturnType<typeof useTextLazyQuery>;
-export type TextSuspenseQueryHookResult = ReturnType<typeof useTextSuspenseQuery>;
-export type TextQueryResult = Apollo.QueryResult<TextQuery, TextQueryVariables>;
-export const UpdateTextDocument = gql`
-    mutation UpdateText($text: InputText!) {
-  updateText(text: $text) {
-    _id
-    createdAt
-    updatedAt
-    changedAt
-    archivedAt
-    name
-    description
-    tags {
-      _id
-      name
-      color
-    }
-  }
-}
-    `;
-export type UpdateTextMutationFn = Apollo.MutationFunction<UpdateTextMutation, UpdateTextMutationVariables>;
-
-/**
- * __useUpdateTextMutation__
- *
- * To run a mutation, you first call `useUpdateTextMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateTextMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateTextMutation, { data, loading, error }] = useUpdateTextMutation({
- *   variables: {
- *      text: // value for 'text'
- *   },
- * });
- */
-export function useUpdateTextMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTextMutation, UpdateTextMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateTextMutation, UpdateTextMutationVariables>(UpdateTextDocument, options);
-      }
-export type UpdateTextMutationHookResult = ReturnType<typeof useUpdateTextMutation>;
-export type UpdateTextMutationResult = Apollo.MutationResult<UpdateTextMutation>;
-export type UpdateTextMutationOptions = Apollo.BaseMutationOptions<UpdateTextMutation, UpdateTextMutationVariables>;
 export const UserDocument = gql`
     query User {
   currentUser {
@@ -1705,10 +1464,8 @@ export type CreateTagMutationOptions = Apollo.BaseMutationOptions<CreateTagMutat
 export const ToggleDeletedNoteDocument = gql`
     mutation ToggleDeletedNote($noteId: ID!) {
   toggleDeletedNote(noteId: $noteId) {
-    ... on INote {
-      _id
-      deletedAt
-    }
+    _id
+    deletedAt
   }
 }
     `;
@@ -1797,10 +1554,8 @@ export const UpdatedNotesCacheQueryDocument = gql`
     query UpdatedNotesCacheQuery {
   notes {
     ...BaseNote
-    ... on INote {
-      tags {
-        _id
-      }
+    tags {
+      _id
     }
   }
 }
@@ -1842,9 +1597,7 @@ export const TagWithNoteIdsDocument = gql`
   tag(tagId: $tagId) {
     _id
     notes {
-      ... on INote {
-        _id
-      }
+      _id
     }
   }
 }
@@ -1885,19 +1638,15 @@ export type TagWithNoteIdsQueryResult = Apollo.QueryResult<TagWithNoteIdsQuery, 
 export const NotesForSortAndFilterDocument = gql`
     query NotesForSortAndFilter {
   notes {
-    ... on INote {
+    _id
+    createdAt
+    updatedAt
+    changedAt
+    archivedAt
+    name
+    url
+    tags {
       _id
-      createdAt
-      updatedAt
-      changedAt
-      archivedAt
-      name
-      tags {
-        _id
-      }
-    }
-    ... on Link {
-      url
     }
   }
 }
@@ -1977,11 +1726,9 @@ export type TagsForSearchQueryResult = Apollo.QueryResult<TagsForSearchQuery, Ta
 export const ToggleArchivedNoteDocument = gql`
     mutation ToggleArchivedNote($noteId: ID!) {
   toggleArchivedNote(noteId: $noteId) {
-    ... on INote {
-      _id
-      archivedAt
-      updatedAt
-    }
+    _id
+    archivedAt
+    updatedAt
   }
 }
     `;
@@ -2056,27 +1803,27 @@ export type ProfileQueryHookResult = ReturnType<typeof useProfileQuery>;
 export type ProfileLazyQueryHookResult = ReturnType<typeof useProfileLazyQuery>;
 export type ProfileSuspenseQueryHookResult = ReturnType<typeof useProfileSuspenseQuery>;
 export type ProfileQueryResult = Apollo.QueryResult<ProfileQuery, ProfileQueryVariables>;
-export const AddLinkDocument = gql`
-    mutation AddLink($url: String!, $title: String, $description: String) {
-  submitLink(url: $url, title: $title, description: $description) {
+export const AddNoteDocument = gql`
+    mutation AddNote($url: String, $title: String, $description: String) {
+  createNote(url: $url, title: $title, description: $description) {
     ...BaseNote
   }
 }
     ${BaseNoteFragmentDoc}`;
-export type AddLinkMutationFn = Apollo.MutationFunction<AddLinkMutation, AddLinkMutationVariables>;
+export type AddNoteMutationFn = Apollo.MutationFunction<AddNoteMutation, AddNoteMutationVariables>;
 
 /**
- * __useAddLinkMutation__
+ * __useAddNoteMutation__
  *
- * To run a mutation, you first call `useAddLinkMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddLinkMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useAddNoteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddNoteMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [addLinkMutation, { data, loading, error }] = useAddLinkMutation({
+ * const [addNoteMutation, { data, loading, error }] = useAddNoteMutation({
  *   variables: {
  *      url: // value for 'url'
  *      title: // value for 'title'
@@ -2084,61 +1831,23 @@ export type AddLinkMutationFn = Apollo.MutationFunction<AddLinkMutation, AddLink
  *   },
  * });
  */
-export function useAddLinkMutation(baseOptions?: Apollo.MutationHookOptions<AddLinkMutation, AddLinkMutationVariables>) {
+export function useAddNoteMutation(baseOptions?: Apollo.MutationHookOptions<AddNoteMutation, AddNoteMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddLinkMutation, AddLinkMutationVariables>(AddLinkDocument, options);
+        return Apollo.useMutation<AddNoteMutation, AddNoteMutationVariables>(AddNoteDocument, options);
       }
-export type AddLinkMutationHookResult = ReturnType<typeof useAddLinkMutation>;
-export type AddLinkMutationResult = Apollo.MutationResult<AddLinkMutation>;
-export type AddLinkMutationOptions = Apollo.BaseMutationOptions<AddLinkMutation, AddLinkMutationVariables>;
-export const AddTextDocument = gql`
-    mutation AddText($title: String, $description: String) {
-  createText(title: $title, description: $description) {
-    ...BaseNote
-  }
-}
-    ${BaseNoteFragmentDoc}`;
-export type AddTextMutationFn = Apollo.MutationFunction<AddTextMutation, AddTextMutationVariables>;
-
-/**
- * __useAddTextMutation__
- *
- * To run a mutation, you first call `useAddTextMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddTextMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addTextMutation, { data, loading, error }] = useAddTextMutation({
- *   variables: {
- *      title: // value for 'title'
- *      description: // value for 'description'
- *   },
- * });
- */
-export function useAddTextMutation(baseOptions?: Apollo.MutationHookOptions<AddTextMutation, AddTextMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddTextMutation, AddTextMutationVariables>(AddTextDocument, options);
-      }
-export type AddTextMutationHookResult = ReturnType<typeof useAddTextMutation>;
-export type AddTextMutationResult = Apollo.MutationResult<AddTextMutation>;
-export type AddTextMutationOptions = Apollo.BaseMutationOptions<AddTextMutation, AddTextMutationVariables>;
+export type AddNoteMutationHookResult = ReturnType<typeof useAddNoteMutation>;
+export type AddNoteMutationResult = Apollo.MutationResult<AddNoteMutation>;
+export type AddNoteMutationOptions = Apollo.BaseMutationOptions<AddNoteMutation, AddNoteMutationVariables>;
 export const AddTagByNameToNoteDocument = gql`
     mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
   addTagByNameToNote(noteId: $noteId, name: $tagName) {
-    ... on INote {
-      _id
-      updatedAt
-      tags {
-        ...BaseTag
-        noteCount
-        notes {
-          ... on INote {
-            _id
-          }
-        }
+    _id
+    updatedAt
+    tags {
+      ...BaseTag
+      noteCount
+      notes {
+        _id
       }
     }
   }
@@ -2180,18 +1889,9 @@ export type AddTagByNameToNoteMutationOptions = Apollo.BaseMutationOptions<AddTa
       const result: PossibleTypesResultData = {
   "possibleTypes": {
     "BaseObject": [
-      "Link",
+      "Note",
       "Tag",
-      "Text",
       "User"
-    ],
-    "INote": [
-      "Link",
-      "Text"
-    ],
-    "Note": [
-      "Link",
-      "Text"
     ]
   }
 };

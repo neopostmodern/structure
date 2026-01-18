@@ -7,7 +7,7 @@ import {
 
 export const LAST_VISITED_NOTES_STORAGE_KEY = 'last-visited-notes'
 
-export type NoteSummary = { type: 'link' | 'text'; id: string }
+export type NoteSummary = { type: 'note'; id: string }
 export interface HistoryStateType {
   lastVisitedNotes: Array<NoteSummary>
   lengthOfPast: number

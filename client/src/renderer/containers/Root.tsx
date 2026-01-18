@@ -24,8 +24,8 @@ const wrap = (LazyComponent: React.LazyExoticComponent<React.FC<{}>>) =>
 const AddNotePage = wrap(
   lazy(() => import(/* webpackPrefetch: true */ './AddNotePage')),
 )
-const LinkPage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './LinkPage')),
+const NotePage = wrap(
+  lazy(() => import(/* webpackPrefetch: true */ './NotePage')),
 )
 const MissingPage = wrap(
   lazy(() => import(/* webpackPrefetch: true */ './MissingPage')),
@@ -38,9 +38,6 @@ const TagPage = wrap(
 )
 const TagsPage = wrap(
   lazy(() => import(/* webpackPrefetch: true */ './TagsPage')),
-)
-const TextPage = wrap(
-  lazy(() => import(/* webpackPrefetch: true */ './TextPage')),
 )
 const UserPage = wrap(
   lazy(() => import(/* webpackPrefetch: true */ './UserPage')),
@@ -92,8 +89,7 @@ const Root: React.FC<RootType> = ({ store, history, client }) => {
                 <Route path='/' element={<NotesPage />} />
                 <Route path='/notes' element={<NotesPage />} />
                 <Route path='/notes/add' element={<AddNotePage />} />
-                <Route path='/texts/:textId' element={<TextPage />} />
-                <Route path='/links/:linkId' element={<LinkPage />} />
+                <Route path='/notes/:noteId' element={<NotePage />} />
 
                 <Route path='/settings' element={<SettingsPage />} />
                 <Route path='/me' element={<UserPage />} />

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { Meta } from '../meta/metaModel.mts'
-import { Link, Note, Text } from '../notes/notesModels.mts'
+import { Note } from '../notes/notesModels.mts'
 import { Tag } from '../tags/tagModel.mts'
 import { ALL_PERMISSIONS } from '../tags/tagsMethods.mts'
 import { User } from '../users/userModel.mts'
@@ -42,18 +42,19 @@ migrations.set(0, {
 migrations.set(1, {
   name: 'links-add-domain',
   async up() {
-    return Link.find().then((links) =>
+    // $ne also ensures the key exists at all
+    return Note.find({ url: { $ne: null } }).then((links) =>
       Promise.all(links.map((link) => link.save())),
     )
   },
   async down() {
-    return Link.updateMany({}, { $unset: { domain: true, path: true } })
+    return Note.updateMany({}, { $unset: { domain: true, path: true } })
   },
 })
 migrations.set(2, {
   name: 'links-add-name-description',
   async up() {
-    return Link.find().then((links) =>
+    return Note.find({ url: { $ne: null } }).then((links) =>
       Promise.all(
         links.map((link) => {
           // pre-save hook does some of the necessary work
@@ -65,7 +66,10 @@ migrations.set(2, {
     )
   },
   async down() {
-    return Link.updateMany({}, { $unset: { name: true, description: true } })
+    return Note.updateMany(
+      { url: { $ne: null } },
+      { $unset: { name: true, description: true } },
+    )
   },
 })
 migrations.set(3, {
@@ -82,9 +86,8 @@ migrations.set(3, {
     }
   },
   async down() {
-    return Text.deleteMany({})
-      .then(() => mongoose.connection.db.collection('notes').rename('links'))
-      .then(() => Link.updateMany({}, { $unset: { type: true } }))
+    console.warn('Removal migration of note type is kind of fake.')
+    return Note.updateMany({}, { $unset: { type: true } })
   },
 })
 migrations.set(4, {
@@ -299,6 +302,17 @@ migrations.set(8, {
   async down() {
     await Note.updateMany({}, { $unset: { changedAt: 1 } })
     await Tag.updateMany({}, { $unset: { changedAt: 1 } })
+  },
+})
+
+migrations.set(9, {
+  name: 'unify-notes-from-links-and-texts',
+  async up() {
+    return Note.updateMany({}, { $unset: { type: true } })
+  },
+  async down() {
+    await Note.updateMany({ url: { $ne: null } }, { $set: { type: 'Link' } })
+    await Note.updateMany({ url: null }, { $set: { type: 'Text' } })
   },
 })
 
