@@ -9,7 +9,6 @@ import { RootState } from '../reducers'
 
 const historyMiddleware: Middleware<{}, RootState> =
   (store) => (next) => (action) => {
-    console.log(action)
     if (action.type === CALL_HISTORY_METHOD) {
       if (action.payload.method === 'goBack') {
         store.dispatch(registerHistoryBackward())
