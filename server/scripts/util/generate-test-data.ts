@@ -1,4 +1,5 @@
 import { readFileSync } from 'fs'
+import { join } from 'path'
 import { initializeMongo } from '../../lib/mongo.mts'
 import { Note } from '../../lib/notes/notesModels.mts'
 import { Tag } from '../../lib/tags/tagModel.mts'
@@ -8,7 +9,10 @@ import { User } from '../../lib/users/userModel.mts'
 const TAG_COUNT = 2_000
 const NOTE_COUNT = 10_000
 
-const isms = readFileSync('../../../resources/isms.txt', 'utf8').split('\n')
+const isms = readFileSync(
+  join(import.meta.dirname, '../../../resources/isms.txt'),
+  'utf8',
+).split('\n')
 
 const colors = [
   'blue',
