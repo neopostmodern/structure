@@ -13,12 +13,10 @@ import Gap from '../components/Gap'
 import type {
   AddNoteMutation,
   AddNoteMutationVariables,
-  NotesForListQuery,
 } from '../generated/graphql'
 import { ADD_NOTE_MUTATION } from '../utils/sharedQueriesAndFragments'
 import { isUrlValid } from '../utils/textHelpers'
 import ComplexLayout from './ComplexLayout'
-import { NOTES_QUERY } from './NotesPage'
 
 const AddNotePage: FC = () => {
   const dispatch = useDispatch()
@@ -40,18 +38,13 @@ const AddNotePage: FC = () => {
       }
       const { createNote } = data
 
-      const cacheValue = cache.readQuery<NotesForListQuery>({
-        query: NOTES_QUERY,
-      })
-
-      if (!cacheValue) {
-        return
-      }
-
-      const { notes } = cacheValue
-      cache.writeQuery({
-        query: NOTES_QUERY,
-        data: { notes: [...notes, createNote] },
+      cache.modify({
+        id: 'ROOT_QUERY',
+        fields: {
+          notes(currentRefs: Readonly<Array<{ __ref: string }>>) {
+            return currentRefs.concat([{ __ref: `Note:${createNote._id}` }])
+          },
+        },
       })
     },
   })
