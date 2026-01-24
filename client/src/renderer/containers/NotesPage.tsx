@@ -83,7 +83,7 @@ const NotesPage: React.FC = () => {
     content.push(
       <FatalApolloError key='error' query={cachedFilteredNotesPseudoQuery} />,
     )
-  } else if (cachedFilteredNotesPseudoQuery.state === DataState.LOADING) {
+  } else if (cachedFilteredNotesPseudoQuery.state !== DataState.DATA) {
     content.push(
       <Centered key='first-load'>
         <Stack alignItems='center'>
