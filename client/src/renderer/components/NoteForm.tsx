@@ -46,9 +46,7 @@ const NoteForm: React.FC<NoteFormProps> = ({
     mode: 'onBlur',
     resolver: (formValues) => {
       const errors: { [key: string]: string } = {}
-      if (!formValues.url) {
-        errors.url = 'URL is required'
-      } else if (!isUrlValid(formValues.url)) {
+      if (formValues.url && !isUrlValid(formValues.url)) {
         errors.url =
           'Not a valid URL – did you forget the protocol? (e.g. https://)'
       }
