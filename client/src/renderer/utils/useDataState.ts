@@ -107,7 +107,10 @@ function useDataState<QueryData, QueryVariables>(
       ]
     }
     let dataState: PolicedData<QueryData>
-    if (data) {
+    if (
+      data &&
+      (queryResult.observable.options.fetchPolicy !== 'no-cache' || !loading)
+    ) {
       dataState = {
         state: DataState.DATA,
         data,
