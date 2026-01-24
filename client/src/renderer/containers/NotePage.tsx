@@ -66,10 +66,9 @@ const UPDATE_NOTE_MUTATION = gql`
   }
 `
 
-const NotePage: React.FC = () => {
+const NotePage: React.FC<{ noteId: string }> = ({ noteId }) => {
   const isDesktopLayout = useIsDesktopLayout()
 
-  const { noteId } = useParams()
   const noteQuery = useDataState(
     useQuery<NoteQuery, NoteQueryVariables>(NOTE_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
@@ -124,4 +123,10 @@ const NotePage: React.FC = () => {
   )
 }
 
-export default NotePage
+export default () => {
+  const { noteId } = useParams()
+  // The unique key forces a remount of the NotePage when switching from one
+  // note to another. The remount avoids a few difficult issues.
+  // One of them is related to data fetching, so this can't be moved further down.
+  return <NotePage key={noteId} noteId={noteId!} />
+}
