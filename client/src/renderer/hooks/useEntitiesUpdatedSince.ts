@@ -1,18 +1,14 @@
-import { gql, StoreObject } from '@apollo/client'
+import { gql } from '@apollo/client'
 import { useApolloClient, useLazyQuery } from '@apollo/client/react'
 import { useEffect } from 'react'
-import { NOTES_QUERY } from '../containers/NotesPage'
 import { TAGS_QUERY } from '../containers/TagsPage'
 import type {
   EntitiesUpdatedSinceQuery,
   EntitiesUpdatedSinceQueryVariables,
-  NotesForListQuery,
-  TagsQuery,
-  TagWithNoteIdsQuery,
-  TagWithNoteIdsQueryVariables,
 } from '../generated/graphql'
-import { removeEntityFromCache } from '../utils/cache'
+import { cacheRefUpdater } from '../utils/cache'
 import deferUntilIdle from '../utils/deferUntilIdle'
+import logger from '../utils/logger'
 import performanceMeasurements from '../utils/performanceMeasurements'
 import {
   BASE_NOTE_FRAGMENT,
@@ -47,8 +43,8 @@ export const ENTITIES_UPDATED_SINCE_QUERY = gql`
   ${BASE_TAG_FRAGMENT}
 `
 
-const UPDATED_NOTES_CACHE_QUERY = gql`
-  query UpdatedNotesCacheQuery {
+const POPULATE_NOTES_CACHE_QUERY = gql`
+  query PopulateNotesCacheQuery {
     notes {
       ...BaseNote
 
@@ -59,27 +55,32 @@ const UPDATED_NOTES_CACHE_QUERY = gql`
   }
   ${BASE_NOTE_FRAGMENT}
 `
+const WRITE_NOTE_TO_CACHE_QUERY = gql`
+  query WriteNoteToCacheQuery($noteId: String!) {
+    note(noteId: $noteId) {
+      ...BaseNote
+
+      tags {
+        _id
+      }
+    }
+  }
+  ${BASE_NOTE_FRAGMENT}
+`
+const WRITE_TAG_TO_CACHE_QUERY = gql`
+  query WriteTagToCacheQuery($tagId: String!) {
+    tag(tagId: $tagId) {
+      ...BaseTag
+    }
+  }
+  ${BASE_TAG_FRAGMENT}
+`
 
 export const ENTITIES_UPDATED_SINCE_CACHE_ID_STORAGE_KEY =
   'updatedSince-cacheId'
 const getUpdatedSinceCacheId = () =>
   localStorage.getItem(ENTITIES_UPDATED_SINCE_CACHE_ID_STORAGE_KEY)
 const ENTITIES_UPDATED_SINCE_INTERVAL_MS = 60 * 1000
-
-const mergeNewlyCreatedIntoCache = <EntityType extends StoreObject>(
-  cachedEntities: Array<EntityType>,
-  newEntity: EntityType,
-) => {
-  // by default insert at the end, but if note exists, override
-  let noteIndexToUpdate = cachedEntities.findIndex(
-    (noteInCache) => noteInCache._id === newEntity._id,
-  )
-  if (noteIndexToUpdate === -1) {
-    noteIndexToUpdate = cachedEntities.length
-  }
-
-  cachedEntities[noteIndexToUpdate] = newEntity
-}
 
 const useEntitiesUpdatedSince = () => {
   logger.trace('[useEntitiesUpdatedSince] Hook start')
@@ -96,6 +97,12 @@ const useEntitiesUpdatedSince = () => {
   )
 
   useEffect(() => {
+    /*
+    This hook runs when data from the "entities updated since" query comes in.
+    It syncs the data to the cache, quite manually.
+    At the moment for performance reason it adds/updates individual entities
+    first and then in a second step updates the list of entities.
+     */
     performanceMeasurements.setReferencePoint(
       'useEntitiesUpdatedSince:useEffect',
     )
@@ -116,122 +123,49 @@ const useEntitiesUpdatedSince = () => {
 
     if (!storedCacheId) {
       cache.writeQuery({
-        query: NOTES_QUERY,
-        data: { notes: [] },
+        query: POPULATE_NOTES_CACHE_QUERY,
+        data: { notes: updatedEntities.addedNotes },
       })
       cache.writeQuery({
         query: TAGS_QUERY,
-        data: { tags: [] },
+        data: { tags: updatedEntities.addedTags },
       })
-    }
-
-    if (
-      updatedEntities.addedNotes.length ||
-      updatedEntities.removedNoteIds.length
-    ) {
-      const notesCacheValue = cache.readQuery<NotesForListQuery>({
-        query: UPDATED_NOTES_CACHE_QUERY,
-      })
-
-      let cachedNotes: NotesForListQuery['notes']
-
-      if (storedCacheId) {
-        if (!notesCacheValue) {
-          throw Error(
-            '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for notes.',
-          )
-        }
-
-        cachedNotes = notesCacheValue.notes.slice()
-
-        updatedEntities.addedNotes.forEach((note) => {
-          mergeNewlyCreatedIntoCache(cachedNotes, note)
-        })
-        if (updatedEntities.removedNoteIds.length) {
-          cachedNotes = cachedNotes.filter(
-            ({ _id }) => !updatedEntities.removedNoteIds.includes(_id),
-          )
-        }
-      } else {
-        cachedNotes = updatedEntities.addedNotes
-      }
-
-      cache.writeQuery({
-        query: UPDATED_NOTES_CACHE_QUERY,
-        data: { notes: cachedNotes },
-      })
-    }
-
-    if (
-      updatedEntities.addedTags.length ||
-      updatedEntities.removedTagIds.length
-    ) {
-      const tagsCacheValue = cache.readQuery<TagsQuery>({
-        query: TAGS_QUERY,
-      })
-
-      let cachedTags: TagsQuery['tags']
-
-      if (storedCacheId) {
-        if (!tagsCacheValue) {
-          throw Error(
-            '[NotesPage: ENTITIES_UPDATED_SINCE_QUERY.onCompleted] Failed to read cache for tags.',
-          )
-        }
-
-        cachedTags = tagsCacheValue.tags.slice()
-
-        updatedEntities.addedTags.forEach((tag) => {
-          mergeNewlyCreatedIntoCache(cachedTags, tag)
-        })
-
-        if (updatedEntities.removedTagIds.length) {
-          updatedEntities.removedTagIds.forEach((tagId) => {
-            const tagQuery = cache.readQuery<
-              TagWithNoteIdsQuery,
-              TagWithNoteIdsQueryVariables
-            >({
-              query: gql`
-                query TagWithNoteIds($tagId: ID!) {
-                  tag(tagId: $tagId) {
-                    _id
-                    notes {
-                      _id
-                    }
-                  }
-                }
-              `,
-              variables: { tagId },
-            })
-            if (!tagQuery?.tag) {
-              return
-            }
-            const { tag } = tagQuery
-            tag.notes?.forEach((note) => {
-              cache.modify({
-                id: cache.identify(note!),
-                fields: {
-                  tags(currentTagsOnNote: Array<{ __ref: string }> = []) {
-                    return currentTagsOnNote.filter(
-                      ({ __ref }) => __ref.split(':')[1] !== tagId,
-                    )
-                  },
-                },
-              })
-            })
-            removeEntityFromCache(cache, tag)
+    } else {
+      ;[...updatedEntities.addedNotes, ...updatedEntities.updatedNotes].forEach(
+        (note) => {
+          cache.writeQuery({
+            query: WRITE_NOTE_TO_CACHE_QUERY,
+            data: { note },
+            variables: { noteId: note._id },
           })
-          cachedTags = cachedTags.filter(
-            ({ _id }) => !updatedEntities.removedTagIds.includes(_id),
-          )
-        }
-      } else {
-        cachedTags = updatedEntities.addedTags
-      }
+        },
+      )
+      ;[...updatedEntities.addedTags, ...updatedEntities.updatedTags].forEach(
+        (tag) => {
+          cache.writeQuery({
+            query: WRITE_TAG_TO_CACHE_QUERY,
+            data: { tag },
+            variables: { tagId: tag._id },
+          })
+        },
+      )
 
-      cache.writeQuery({
-        query: TAGS_QUERY,
-        data: { tags: cachedTags },
+      // todo: actually remove entities from cache with removeEntityFromCache() ?
+
+      cache.modify({
+        id: 'ROOT_QUERY',
+        fields: {
+          notes: cacheRefUpdater(
+            'Note',
+            updatedEntities.addedNotes,
+            updatedEntities.removedNoteIds,
+          ),
+          tags: cacheRefUpdater(
+            'Tag',
+            updatedEntities.addedTags,
+            updatedEntities.removedTagIds,
+          ),
+        },
       })
     }
 
@@ -239,16 +173,25 @@ const useEntitiesUpdatedSince = () => {
       ENTITIES_UPDATED_SINCE_CACHE_ID_STORAGE_KEY,
       updatedEntities.cacheId,
     )
-  }, [entitiesUpdatedSince])
     performanceMeasurements.printMeasurement(
       'useEntitiesUpdatedSince:useEffect',
       '[useEntitiesUpdatedSince] useEffect (subprocess)',
     )
+  }, [
+    /*
+    this check is weird, but the hook must not run again if the data itself
+    didn't change and somehow the response object can change without the data
+    changing (after it completed)
+     */
+    entitiesUpdatedSince.state === DataState.DATA && entitiesUpdatedSince.data,
+  ])
 
   useEffect(() => {
     if (!isOnline) {
       return
     }
+
+    const abortController = new AbortController()
 
     ;(async () => {
       await new Promise<void>((resolve) => deferUntilIdle(resolve, 5000))
@@ -258,6 +201,11 @@ const useEntitiesUpdatedSince = () => {
           variables: {
             cacheId: getUpdatedSinceCacheId(),
           },
+          context: {
+            fetchOptions: {
+              signal: abortController.signal,
+            },
+          },
         })
       } catch (error) {
         logger.error(
@@ -266,6 +214,8 @@ const useEntitiesUpdatedSince = () => {
         )
       }
     })()
+
+    return () => abortController.abort()
   }, [fetchEntitiesUpdatedSince, isOnline])
 
   useEffect(() => {
