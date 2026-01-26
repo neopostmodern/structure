@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client'
 import { CloudOff } from '@mui/icons-material'
 import { CircularProgress, Stack, Typography } from '@mui/material'
 import React, { useRef } from 'react'
@@ -23,28 +22,10 @@ import { RootState } from '../reducers'
 import { SHORTCUTS } from '../utils/keyboard'
 import logger from '../utils/logger'
 import noteCountsWithSearchMatchesString from '../utils/noteCountsWithSearchMatchesString'
-import {
-  BASE_NOTE_FRAGMENT,
-  BASE_TAG_FRAGMENT,
-} from '../utils/sharedQueriesAndFragments'
 import { DataState } from '../utils/useDataState'
 import ComplexLayout from './ComplexLayout'
 
 export const OPTIMISTIC_NOTE_COUNT = 15
-
-export const NOTES_QUERY = gql`
-  query NotesForList {
-    notes {
-      ...BaseNote
-
-      tags {
-        ...BaseTag
-      }
-    }
-  }
-  ${BASE_NOTE_FRAGMENT}
-  ${BASE_TAG_FRAGMENT}
-`
 
 const NotesPage: React.FC = () => {
   logger.trace('[NotesPage] Start of render cycle')
