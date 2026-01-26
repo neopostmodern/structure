@@ -4,6 +4,7 @@ import React, { lazy } from 'react'
 import TimeAgo from 'react-timeago'
 import { NoteInListFragment } from '../generated/graphql'
 import useUserId from '../hooks/useUserId'
+import logger from '../utils/logger'
 import { noteUrl } from '../utils/routes'
 import {
   BASE_TAG_FRAGMENT,
@@ -57,8 +58,9 @@ export const NoteInList: React.FC<{
     },
   })
   if (noteData.dataState === 'partial') {
-    console.error(
-      `[NoteInList] Partial data received from cache. Missing data: ${noteData.missing}`,
+    logger.error(
+      `[NoteInList] Partial data received from cache for note '${noteId}'. Missing data:`,
+      noteData.missing,
     )
     throw Error('[NoteInList] Received partial data.')
   }

@@ -13,6 +13,7 @@ import type {
 } from '../generated/graphql'
 import { removeEntityFromCache } from '../utils/cache'
 import deferUntilIdle from '../utils/deferUntilIdle'
+import performanceMeasurements from '../utils/performanceMeasurements'
 import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
@@ -81,6 +82,7 @@ const mergeNewlyCreatedIntoCache = <EntityType extends StoreObject>(
 }
 
 const useEntitiesUpdatedSince = () => {
+  logger.trace('[useEntitiesUpdatedSince] Hook start')
   const apolloClient = useApolloClient()
   const isOnline = useIsOnline()
 
@@ -94,6 +96,9 @@ const useEntitiesUpdatedSince = () => {
   )
 
   useEffect(() => {
+    performanceMeasurements.setReferencePoint(
+      'useEntitiesUpdatedSince:useEffect',
+    )
     if (entitiesUpdatedSince.state !== DataState.DATA) {
       return
     }
@@ -102,6 +107,12 @@ const useEntitiesUpdatedSince = () => {
 
     const { cache } = apolloClient
     const storedCacheId = getUpdatedSinceCacheId()
+
+    logger.trace('[useEntitiesUpdatedSince] useEffect', {
+      storedCacheId,
+      updatedEntities,
+      entitiesUpdatedSince,
+    })
 
     if (!storedCacheId) {
       cache.writeQuery({
@@ -229,6 +240,10 @@ const useEntitiesUpdatedSince = () => {
       updatedEntities.cacheId,
     )
   }, [entitiesUpdatedSince])
+    performanceMeasurements.printMeasurement(
+      'useEntitiesUpdatedSince:useEffect',
+      '[useEntitiesUpdatedSince] useEffect (subprocess)',
+    )
 
   useEffect(() => {
     if (!isOnline) {
@@ -245,7 +260,7 @@ const useEntitiesUpdatedSince = () => {
           },
         })
       } catch (error) {
-        console.error(
+        logger.error(
           '[useEntitiesUpdatedSince.useEffect.fetchEntitiesUpdatedSince]',
           error,
         )

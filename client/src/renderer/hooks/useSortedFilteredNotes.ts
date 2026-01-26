@@ -8,6 +8,8 @@ import type {
   TagsForSearchQuery,
 } from '../generated/graphql'
 import { RootState } from '../reducers'
+import logger from '../utils/logger'
+import performanceMeasurements from '../utils/performanceMeasurements'
 import { DataState, PolicedData } from '../utils/useDataState'
 
 const textIncludes = (needle?: string, haystack?: string): boolean => {
@@ -94,6 +96,8 @@ const extendedCache: {
 }
 
 const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
+  logger.trace('[useSortedFilteredNotes] Hook start')
+  performanceMeasurements.setReferencePoint('useSortedFilteredNotes')
   const archiveState = useSelector<RootState, ArchiveState>(
     (state) => state.userInterface.archiveState,
   )
@@ -138,10 +142,17 @@ const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
     `,
     { fetchPolicy: 'cache-only', skip: skipSearch },
   )
+  performanceMeasurements.printMeasurement(
+    'useSortedFilteredNotes',
+    '[useSortedFilteredNotes] Fetch data',
+  )
 
   const allNotesSorted = useMemo<
     NotesForSortAndFilterQuery['notes'] | null
   >(() => {
+    performanceMeasurements.setReferencePoint(
+      'useSortedFilteredNotes:useMemo-sort',
+    )
     if (notesCacheQuery.dataState !== 'complete') {
       return null
     }
@@ -160,6 +171,10 @@ const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
       (noteA, noteB) =>
         noteB[sortByToFieldName[sortBy]] - noteA[sortByToFieldName[sortBy]],
     )
+    performanceMeasurements.printMeasurement(
+      'useSortedFilteredNotes:useMemo-sort',
+      '[useSortedFilteredNotes] useMemo [sorting] (subprocess)',
+    )
     return notes
   }, [notesCacheQuery.data, sortBy])
 
@@ -173,6 +188,9 @@ const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
     archiveState !== extendedCache.archiveState ||
     extendedCache.filteredNotes === null
   ) {
+    performanceMeasurements.setReferencePoint(
+      'useSortedFilteredNotes:useMemo-filter',
+    )
     extendedCache.sortedNotes = allNotesSorted
     extendedCache.searchQuery = searchQuery
     extendedCache.archiveState = archiveState
@@ -183,7 +201,16 @@ const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
       archiveState,
       tagsCacheQuery,
     )
+    performanceMeasurements.printMeasurement(
+      'useSortedFilteredNotes:useMemo-filter',
+      '[useSortedFilteredNotes] filtered (subprocess)',
+    )
   }
+
+  performanceMeasurements.printMeasurement(
+    'useSortedFilteredNotes',
+    '[useSortedFilteredNotes] Hook total',
+  )
 
   return {
     state: DataState.DATA,

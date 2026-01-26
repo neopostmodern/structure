@@ -21,6 +21,7 @@ import useShortcut from '../hooks/useShortcut'
 import useSortedFilteredNotes from '../hooks/useSortedFilteredNotes'
 import { RootState } from '../reducers'
 import { SHORTCUTS } from '../utils/keyboard'
+import logger from '../utils/logger'
 import noteCountsWithSearchMatchesString from '../utils/noteCountsWithSearchMatchesString'
 import {
   BASE_NOTE_FRAGMENT,
@@ -46,6 +47,7 @@ export const NOTES_QUERY = gql`
 `
 
 const NotesPage: React.FC = () => {
+  logger.trace('[NotesPage] Start of render cycle')
   const layout = useSelector<RootState, LinkLayout>(
     (state) => state.userInterface.linkLayout,
   )
@@ -59,6 +61,7 @@ const NotesPage: React.FC = () => {
 
   const entitiesUpdatedSince = useEntitiesUpdatedSince()
   useShortcut(SHORTCUTS.REFRESH, () => {
+    logger.trace('[NotesPage] Data refresh triggered from shortcut')
     entitiesUpdatedSince.refetch()
   })
 
@@ -78,6 +81,15 @@ const NotesPage: React.FC = () => {
 
   const content = []
   let primaryActions = null
+
+  logger.trace('[NotesPage] Render values summary', {
+    'entitiesUpdatedSince.state': entitiesUpdatedSince.state,
+    'cachedFilteredNotesPseudoQuery.state':
+      cachedFilteredNotesPseudoQuery.state,
+    'cachedFilteredNotesPseudoQuery.loadingBackground':
+      cachedFilteredNotesPseudoQuery.state === DataState.DATA &&
+      cachedFilteredNotesPseudoQuery.loadingBackground,
+  })
 
   if (cachedFilteredNotesPseudoQuery.state === DataState.ERROR) {
     content.push(
