@@ -37,7 +37,7 @@ export const SearchField = ({
     () =>
       debounce((searchQueryValue) => {
         dispatch(changeSearchQuery(searchQueryValue))
-      }, 200),
+      }, 300),
     [dispatch, changeSearchQuery],
   )
 
