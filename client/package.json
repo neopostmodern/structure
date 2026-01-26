@@ -103,7 +103,7 @@
     "esbuild-register": "^3.6.0",
     "eslint": "^9.34.0",
     "eslint-plugin-import": "^2.32.0",
-    "gts": "^6.0.2",
+    "gts": "^7.0.0",
     "husky": "^9.1.7",
     "identity-obj-proxy": "^3.0.0",
     "lint-staged": "^16.1.5",
