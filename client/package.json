@@ -124,6 +124,7 @@
     "@structure/common": "file:../common",
     "@structure/config": "file:../config",
     "apollo3-cache-persist": "github:neopostmodern/apollo-cache-persist#0.15.1",
+    "consola": "^3.4.2",
     "electron-debug": "^4.1.0",
     "electron-log": "^5.4.3",
     "electron-squirrel-startup": "^1.0.1",

@@ -1,5 +1,6 @@
+import configuration from './configuration'
 import electron from './electron'
 import history from './history'
 import persistence from './persistence'
 
-export default [electron, persistence, history]
+export default [electron, persistence, history, configuration]

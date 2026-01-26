@@ -1,9 +1,14 @@
 import { useApolloClient } from '@apollo/client/react'
 import { Box, MenuItem, Select, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { NetworkMode, setNetworkMode } from '../actions/configuration'
+import {
+  NetworkMode,
+  setLogLevel,
+  setNetworkMode,
+} from '../actions/configuration'
 import { RootState } from '../reducers'
 import { clearApolloCache } from '../utils/cache'
+import { LogLevelNumber } from '../utils/logger'
 import SettingsEntry from './SettingsEntry'
 
 const networkModeNames = {
@@ -17,11 +22,33 @@ const AdvancedSettings = () => {
   const networkMode = useSelector<RootState, NetworkMode>(
     (state) => state.configuration.networkMode,
   )
+  const logLevelNumber = useSelector<RootState, LogLevelNumber>(
+    (state) => state.configuration.logLevel,
+  )
   const dispatch = useDispatch()
 
   return (
     <>
       <Typography variant='h2'>Advanced</Typography>
+      <SettingsEntry title='Log level'>
+        <Box display='flex' justifyContent='flex-end'>
+          <Select
+            variant='standard'
+            value={logLevelNumber}
+            onChange={(event) => {
+              dispatch(setLogLevel(event.target.value as LogLevelNumber))
+            }}
+          >
+            {Object.entries(LogLevelNumber)
+              .filter(
+                ([logLevelName]) => isNaN(logLevelName as unknown as number), // weird trick to filter out double mapped enum entries
+              )
+              .map(([logLevelName, logLevelNumber]) => (
+                <MenuItem value={logLevelNumber}>{logLevelName}</MenuItem>
+              ))}
+          </Select>
+        </Box>
+      </SettingsEntry>
       <SettingsEntry
         title='Cache'
         comment={`${
