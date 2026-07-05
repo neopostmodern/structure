@@ -11,6 +11,7 @@ declare module '@structure/config' {
     BACKEND_URL: string
     WEB_FRONTEND_HOST: string
     ADDITIONAL_FRONTEND_HOSTS: Array<string>
+    EXTENSION_LOGIN_REDIRECT_URIS: Array<string>
     SESSION_SECRET: string
     USER: string
     SERVER: string

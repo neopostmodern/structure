@@ -27,6 +27,7 @@ const userCredentialsFragment = gql`
     credentials {
       bookmarklet
       rss
+      extension
     }
   }
 `
@@ -148,6 +149,27 @@ const UserSettingsSection: FC = () => {
           revokeCredential({ variables: { purpose } })
         }}
       />
+      <SettingsEntry
+        title='Browser extension'
+        comment='Connect from the extension itself. Revoking here signs out all browser extensions immediately.'
+        actionTitle='Revoke access'
+        actionHandler={() =>
+          revokeCredential({ variables: { purpose: 'extension' } })
+        }
+        readOnly={
+          !(
+            userQuery.state === DataState.DATA &&
+            userQuery.data.currentUser?.credentials?.extension
+          )
+        }
+      >
+        {userQuery.state === DataState.DATA &&
+        userQuery.data.currentUser?.credentials?.extension ? (
+          <i>Connected</i>
+        ) : (
+          <i>Not connected</i>
+        )}
+      </SettingsEntry>
     </>
   )
 }

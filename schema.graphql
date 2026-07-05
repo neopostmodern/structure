@@ -6,6 +6,7 @@ interface BaseObject {
 
 type Credentials {
   bookmarklet: String
+  extension: String
   rss: String
 }
 
@@ -126,5 +127,4 @@ type UserPermissions {
 type Versions {
   current: String!
   minimum: String
-  recommended: String @deprecated(reason: "Upgrade to 0.20.0+ and use 'current' field")
 }

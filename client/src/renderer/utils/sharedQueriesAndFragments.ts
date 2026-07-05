@@ -85,6 +85,50 @@ export const ADD_NOTE_MUTATION = gql`
   }
 `
 
+export const NOTE_QUERY = gql`
+  query Note($noteId: ID!) {
+    note(noteId: $noteId) {
+      _id
+      createdAt
+      updatedAt
+      changedAt
+      archivedAt
+      user {
+        ...BaseUser
+      }
+      url
+      name
+      description
+      domain
+      tags {
+        ...BaseTag
+      }
+    }
+  }
+  ${BASE_USER_FRAGMENT}
+  ${BASE_TAG_FRAGMENT}
+`
+
+export const UPDATE_NOTE_MUTATION = gql`
+  mutation UpdateNote($note: InputNote!) {
+    updateNote(note: $note) {
+      _id
+      createdAt
+      updatedAt
+      changedAt
+      url
+      domain
+      name
+      description
+      tags {
+        _id
+        name
+        color
+      }
+    }
+  }
+`
+
 export const ADD_TAG_BY_NAME_TO_NOTE_MUTATION = gql`
   mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
     addTagByNameToNote(noteId: $noteId, name: $tagName) {

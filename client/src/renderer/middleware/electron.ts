@@ -29,7 +29,7 @@ const handleLogin = (backendUrl: string, popUpOptions: string, dispatch) => {
 
 let electronMiddleware
 
-if (__BUILD_TARGET__ === 'web') {
+if (__BUILD_TARGET__ === 'web' || __BUILD_TARGET__ === 'extension') {
   electronMiddleware = (store) => (next) => (action) => {
     if (action.type === REQUEST_LOGIN) {
       handleLogin(

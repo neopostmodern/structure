@@ -26,6 +26,7 @@ export type BaseObject = {
 export type Credentials = {
   __typename?: 'Credentials';
   bookmarklet?: Maybe<Scalars['String']['output']>;
+  extension?: Maybe<Scalars['String']['output']>;
   rss?: Maybe<Scalars['String']['output']>;
 };
 
@@ -277,8 +278,6 @@ export type Versions = {
   __typename?: 'Versions';
   current: Scalars['String']['output'];
   minimum?: Maybe<Scalars['String']['output']>;
-  /** @deprecated Upgrade to 0.20.0+ and use 'current' field */
-  recommended?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -409,6 +408,7 @@ export type BaseObjectResolvers<ContextType = any, ParentType extends ResolversP
 
 export type CredentialsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Credentials'] = ResolversParentTypes['Credentials']> = {
   bookmarklet?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  extension?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rss?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -521,7 +521,6 @@ export type UserPermissionsResolvers<ContextType = any, ParentType extends Resol
 export type VersionsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Versions'] = ResolversParentTypes['Versions']> = {
   current?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   minimum?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  recommended?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

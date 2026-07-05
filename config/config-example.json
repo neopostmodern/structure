@@ -10,6 +10,7 @@
   "BACKEND_URL": "https://backend.structure.neopostmodern.com",
   "WEB_FRONTEND_HOST": "https://structure.neopostmodern.com",
   "ADDITIONAL_FRONTEND_HOSTS": ["file://", "http://localhost:5173"],
+  "EXTENSION_LOGIN_REDIRECT_URIS": ["https://YOUR_FIREFOX_EXTENSION_REDIRECT_URI_HERE"],
   "SESSION_SECRET": "YOUR_SESSION_SECRET_HERE",
   "USER": "YOU_SERVER_USERNAME_HERE",
   "SERVER": "YOUR_SERVER_URL_HERE",

@@ -1,4 +1,3 @@
-import { useMutation } from '@apollo/client/react'
 import { PostAdd } from '@mui/icons-material'
 import { Stack } from '@mui/material'
 import { FC, useCallback, useEffect, useState } from 'react'
@@ -10,11 +9,8 @@ import AddNoteForm from '../components/AddNoteForm'
 import AddNoteFromClipboard from '../components/AddNoteFromClipboard'
 import ErrorSnackbar from '../components/ErrorSnackbar'
 import Gap from '../components/Gap'
-import type {
-  AddNoteMutation,
-  AddNoteMutationVariables,
-} from '../generated/graphql'
-import { ADD_NOTE_MUTATION } from '../utils/sharedQueriesAndFragments'
+import type { AddNoteMutationVariables } from '../generated/graphql'
+import { useAddNote } from '../hooks/notes'
 import { isUrlValid } from '../utils/textHelpers'
 import ComplexLayout from './ComplexLayout'
 
@@ -22,30 +18,9 @@ const AddNotePage: FC = () => {
   const dispatch = useDispatch()
   const [defaultValue, setDefaultValue] = useState('')
 
-  const [addNote, addNoteMutation] = useMutation<
-    AddNoteMutation,
-    AddNoteMutationVariables
-  >(ADD_NOTE_MUTATION, {
+  const [addNote, addNoteMutation] = useAddNote({
     onCompleted: ({ createNote }) => {
       dispatch(replace(`/notes/${createNote._id}`))
-    },
-    onError: (error) => {
-      console.error(error)
-    },
-    update: (cache, { data }) => {
-      if (!data) {
-        return
-      }
-      const { createNote } = data
-
-      cache.modify({
-        id: 'ROOT_QUERY',
-        fields: {
-          notes(currentRefs: Readonly<Array<{ __ref: string }>>) {
-            return currentRefs.concat([{ __ref: `Note:${createNote._id}` }])
-          },
-        },
-      })
     },
   })
   const handleSubmitUrl = useCallback(

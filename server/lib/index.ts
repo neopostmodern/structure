@@ -12,6 +12,7 @@ import migrationSystem from './migrations/migrationSystem.mts'
 import { initializeMongo } from './mongo.mts'
 import restApi from './restApi.mts'
 import { resolvers, typeDefs } from './schema.mts'
+import { getUserByCredential } from './users/credentialsMethods.mts'
 import { setUpGitHubLogin } from './users/githubLogin.mts'
 import { logger, timerEnd, timerStart } from './util/logging.mts'
 import type { SessionContext } from './util/types.mts'
@@ -122,7 +123,17 @@ const runExpressServer = async () => {
     bodyParser.json(),
     expressMiddleware(apolloServer, {
       context: async ({ req }) => {
-        return { user: (req as any).user }
+        if ((req as any).user) {
+          return { user: (req as any).user }
+        }
+
+        const authorizationHeader = req.headers.authorization
+        const bearerToken = authorizationHeader?.startsWith('Bearer ')
+          ? authorizationHeader.slice('Bearer '.length)
+          : undefined
+
+        const user = await getUserByCredential('extension', bearerToken)
+        return { user }
       },
     }),
   )

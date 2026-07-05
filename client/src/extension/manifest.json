@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Structure",
+  "short_name": "Structure",
+  "description": "Save the current page to Structure.",
+  "version": "__VERSION__",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/16x16.png",
+      "32": "icons/32x32.png",
+      "48": "icons/48x48.png",
+      "128": "icons/128x128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/16x16.png",
+    "32": "icons/32x32.png",
+    "48": "icons/48x48.png",
+    "128": "icons/128x128.png"
+  },
+  "permissions": ["identity", "activeTab", "storage"],
+  "host_permissions": ["__BACKEND_URL__/*"],
+  "background": {
+    "service_worker": "background.js",
+    "scripts": ["background.js"],
+    "type": "module"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "extension@structure.love",
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
+}

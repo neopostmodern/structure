@@ -27,6 +27,7 @@ export type BaseObject = {
 export type Credentials = {
   __typename: 'Credentials';
   bookmarklet?: Maybe<Scalars['String']['output']>;
+  extension?: Maybe<Scalars['String']['output']>;
   rss?: Maybe<Scalars['String']['output']>;
 };
 
@@ -278,8 +279,6 @@ export type Versions = {
   __typename: 'Versions';
   current: Scalars['String']['output'];
   minimum?: Maybe<Scalars['String']['output']>;
-  /** @deprecated Upgrade to 0.20.0+ and use 'current' field */
-  recommended?: Maybe<Scalars['String']['output']>;
 };
 
 export type TagsWithCountsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -336,25 +335,6 @@ export type TitleSuggestionsQueryVariables = Exact<{
 
 export type TitleSuggestionsQuery = { __typename: 'Query', titleSuggestions: Array<string> };
 
-export type NoteQueryVariables = Exact<{
-  noteId: Scalars['ID']['input'];
-}>;
-
-
-export type NoteQuery = { __typename: 'Query', note: { __typename: 'Note', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, url?: string | null, name: string, description: string, domain?: string | null, user: { __typename: 'User', _id: string, name: string }, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
-
-export type UpdateNoteMutationVariables = Exact<{
-  note: InputNote;
-}>;
-
-
-export type UpdateNoteMutation = { __typename: 'Mutation', updateNote: { __typename: 'Note', _id: string, createdAt: any, updatedAt: any, changedAt: any, url?: string | null, domain?: string | null, name: string, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
-
-export type NotesForListQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type NotesForListQuery = { __typename: 'Query', notes: Array<{ __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, user: { __typename: 'User', _id: string, name: string } }> };
-
 export type TinyUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -398,26 +378,26 @@ export type UserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type UserQuery = { __typename: 'Query', currentUser?: { __typename: 'User', _id: string, authenticationProvider?: string | null, createdAt: any, name: string } | null };
 
-export type UserCredentialsFragmentFragment = { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null } | null };
+export type UserCredentialsFragmentFragment = { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null, extension?: string | null } | null };
 
 export type UserCredentialsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserCredentialsQuery = { __typename: 'Query', currentUser?: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null } | null } | null };
+export type UserCredentialsQuery = { __typename: 'Query', currentUser?: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null, extension?: string | null } | null } | null };
 
 export type RequestNewCredentialMutationVariables = Exact<{
   purpose: Scalars['String']['input'];
 }>;
 
 
-export type RequestNewCredentialMutation = { __typename: 'Mutation', requestNewCredential: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null } | null } };
+export type RequestNewCredentialMutation = { __typename: 'Mutation', requestNewCredential: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null, extension?: string | null } | null } };
 
 export type RevokeCredentialMutationVariables = Exact<{
   purpose: Scalars['String']['input'];
 }>;
 
 
-export type RevokeCredentialMutation = { __typename: 'Mutation', revokeCredential: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null } | null } };
+export type RevokeCredentialMutation = { __typename: 'Mutation', revokeCredential: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null, extension?: string | null } | null } };
 
 export type CreateTagMutationVariables = Exact<{
   name: Scalars['String']['input'];
@@ -441,17 +421,24 @@ export type EntitiesUpdatedSinceQueryVariables = Exact<{
 
 export type EntitiesUpdatedSinceQuery = { __typename: 'Query', entitiesUpdatedSince: { __typename: 'EntitiesUpdatedSince', removedNoteIds: Array<string>, removedTagIds: Array<string>, cacheId: string, addedNotes: Array<{ __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }>, updatedNotes: Array<{ __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }>, addedTags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }>, updatedTags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
 
-export type UpdatedNotesCacheQueryQueryVariables = Exact<{ [key: string]: never; }>;
+export type PopulateNotesCacheQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UpdatedNotesCacheQueryQuery = { __typename: 'Query', notes: Array<{ __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }> };
+export type PopulateNotesCacheQueryQuery = { __typename: 'Query', notes: Array<{ __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } }> };
 
-export type TagWithNoteIdsQueryVariables = Exact<{
+export type WriteNoteToCacheQueryQueryVariables = Exact<{
+  noteId: Scalars['ID']['input'];
+}>;
+
+
+export type WriteNoteToCacheQueryQuery = { __typename: 'Query', note: { __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } } };
+
+export type WriteTagToCacheQueryQueryVariables = Exact<{
   tagId: Scalars['ID']['input'];
 }>;
 
 
-export type TagWithNoteIdsQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, notes?: Array<{ __typename: 'Note', _id: string } | null> | null } };
+export type WriteTagToCacheQueryQuery = { __typename: 'Query', tag: { __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> } };
 
 export type NotesForSortAndFilterQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -491,6 +478,20 @@ export type AddNoteMutationVariables = Exact<{
 
 
 export type AddNoteMutation = { __typename: 'Mutation', createNote: { __typename: 'Note', _id: string, url?: string | null, domain?: string | null, name: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, deletedAt?: any | null, description: string, tags: Array<{ __typename: 'Tag', _id: string }>, user: { __typename: 'User', _id: string, name: string } } };
+
+export type NoteQueryVariables = Exact<{
+  noteId: Scalars['ID']['input'];
+}>;
+
+
+export type NoteQuery = { __typename: 'Query', note: { __typename: 'Note', _id: string, createdAt: any, updatedAt: any, changedAt: any, archivedAt?: any | null, url?: string | null, name: string, description: string, domain?: string | null, user: { __typename: 'User', _id: string, name: string }, tags: Array<{ __typename: 'Tag', _id: string, createdAt: any, updatedAt: any, changedAt: any, name: string, color: string, user: { __typename: 'User', _id: string, name: string }, permissions: Array<{ __typename: 'UserPermissions', user: { __typename: 'User', _id: string, name: string }, tag: { __typename: 'TagPermissions', read: boolean, write: boolean, use: boolean, share: boolean }, notes: { __typename: 'NotesPermissions', read: boolean, write: boolean } }> }> } };
+
+export type UpdateNoteMutationVariables = Exact<{
+  note: InputNote;
+}>;
+
+
+export type UpdateNoteMutation = { __typename: 'Mutation', updateNote: { __typename: 'Note', _id: string, createdAt: any, updatedAt: any, changedAt: any, url?: string | null, domain?: string | null, name: string, description: string, tags: Array<{ __typename: 'Tag', _id: string, name: string, color: string }> } };
 
 export type AddTagByNameToNoteMutationVariables = Exact<{
   noteId: Scalars['ID']['input'];
@@ -563,6 +564,7 @@ export const UserCredentialsFragmentFragmentDoc = gql`
   credentials {
     bookmarklet
     rss
+    extension
   }
 }
     `;
@@ -907,149 +909,6 @@ export type TitleSuggestionsQueryHookResult = ReturnType<typeof useTitleSuggesti
 export type TitleSuggestionsLazyQueryHookResult = ReturnType<typeof useTitleSuggestionsLazyQuery>;
 export type TitleSuggestionsSuspenseQueryHookResult = ReturnType<typeof useTitleSuggestionsSuspenseQuery>;
 export type TitleSuggestionsQueryResult = Apollo.QueryResult<TitleSuggestionsQuery, TitleSuggestionsQueryVariables>;
-export const NoteDocument = gql`
-    query Note($noteId: ID!) {
-  note(noteId: $noteId) {
-    _id
-    createdAt
-    updatedAt
-    changedAt
-    archivedAt
-    user {
-      ...BaseUser
-    }
-    url
-    name
-    description
-    domain
-    tags {
-      ...BaseTag
-    }
-  }
-}
-    ${BaseUserFragmentDoc}
-${BaseTagFragmentDoc}`;
-
-/**
- * __useNoteQuery__
- *
- * To run a query within a React component, call `useNoteQuery` and pass it any options that fit your needs.
- * When your component renders, `useNoteQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNoteQuery({
- *   variables: {
- *      noteId: // value for 'noteId'
- *   },
- * });
- */
-export function useNoteQuery(baseOptions: Apollo.QueryHookOptions<NoteQuery, NoteQueryVariables> & ({ variables: NoteQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<NoteQuery, NoteQueryVariables>(NoteDocument, options);
-      }
-export function useNoteLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NoteQuery, NoteQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<NoteQuery, NoteQueryVariables>(NoteDocument, options);
-        }
-export function useNoteSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<NoteQuery, NoteQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<NoteQuery, NoteQueryVariables>(NoteDocument, options);
-        }
-export type NoteQueryHookResult = ReturnType<typeof useNoteQuery>;
-export type NoteLazyQueryHookResult = ReturnType<typeof useNoteLazyQuery>;
-export type NoteSuspenseQueryHookResult = ReturnType<typeof useNoteSuspenseQuery>;
-export type NoteQueryResult = Apollo.QueryResult<NoteQuery, NoteQueryVariables>;
-export const UpdateNoteDocument = gql`
-    mutation UpdateNote($note: InputNote!) {
-  updateNote(note: $note) {
-    _id
-    createdAt
-    updatedAt
-    changedAt
-    url
-    domain
-    name
-    description
-    tags {
-      _id
-      name
-      color
-    }
-  }
-}
-    `;
-export type UpdateNoteMutationFn = Apollo.MutationFunction<UpdateNoteMutation, UpdateNoteMutationVariables>;
-
-/**
- * __useUpdateNoteMutation__
- *
- * To run a mutation, you first call `useUpdateNoteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateNoteMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateNoteMutation, { data, loading, error }] = useUpdateNoteMutation({
- *   variables: {
- *      note: // value for 'note'
- *   },
- * });
- */
-export function useUpdateNoteMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNoteMutation, UpdateNoteMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateNoteMutation, UpdateNoteMutationVariables>(UpdateNoteDocument, options);
-      }
-export type UpdateNoteMutationHookResult = ReturnType<typeof useUpdateNoteMutation>;
-export type UpdateNoteMutationResult = Apollo.MutationResult<UpdateNoteMutation>;
-export type UpdateNoteMutationOptions = Apollo.BaseMutationOptions<UpdateNoteMutation, UpdateNoteMutationVariables>;
-export const NotesForListDocument = gql`
-    query NotesForList {
-  notes {
-    ...BaseNote
-    tags {
-      ...BaseTag
-    }
-  }
-}
-    ${BaseNoteFragmentDoc}
-${BaseTagFragmentDoc}`;
-
-/**
- * __useNotesForListQuery__
- *
- * To run a query within a React component, call `useNotesForListQuery` and pass it any options that fit your needs.
- * When your component renders, `useNotesForListQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNotesForListQuery({
- *   variables: {
- *   },
- * });
- */
-export function useNotesForListQuery(baseOptions?: Apollo.QueryHookOptions<NotesForListQuery, NotesForListQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<NotesForListQuery, NotesForListQueryVariables>(NotesForListDocument, options);
-      }
-export function useNotesForListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NotesForListQuery, NotesForListQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<NotesForListQuery, NotesForListQueryVariables>(NotesForListDocument, options);
-        }
-export function useNotesForListSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<NotesForListQuery, NotesForListQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<NotesForListQuery, NotesForListQueryVariables>(NotesForListDocument, options);
-        }
-export type NotesForListQueryHookResult = ReturnType<typeof useNotesForListQuery>;
-export type NotesForListLazyQueryHookResult = ReturnType<typeof useNotesForListLazyQuery>;
-export type NotesForListSuspenseQueryHookResult = ReturnType<typeof useNotesForListSuspenseQuery>;
-export type NotesForListQueryResult = Apollo.QueryResult<NotesForListQuery, NotesForListQueryVariables>;
 export const TinyUserDocument = gql`
     query TinyUser {
   currentUser {
@@ -1550,8 +1409,8 @@ export type EntitiesUpdatedSinceQueryHookResult = ReturnType<typeof useEntitiesU
 export type EntitiesUpdatedSinceLazyQueryHookResult = ReturnType<typeof useEntitiesUpdatedSinceLazyQuery>;
 export type EntitiesUpdatedSinceSuspenseQueryHookResult = ReturnType<typeof useEntitiesUpdatedSinceSuspenseQuery>;
 export type EntitiesUpdatedSinceQueryResult = Apollo.QueryResult<EntitiesUpdatedSinceQuery, EntitiesUpdatedSinceQueryVariables>;
-export const UpdatedNotesCacheQueryDocument = gql`
-    query UpdatedNotesCacheQuery {
+export const PopulateNotesCacheQueryDocument = gql`
+    query PopulateNotesCacheQuery {
   notes {
     ...BaseNote
     tags {
@@ -1562,79 +1421,119 @@ export const UpdatedNotesCacheQueryDocument = gql`
     ${BaseNoteFragmentDoc}`;
 
 /**
- * __useUpdatedNotesCacheQueryQuery__
+ * __usePopulateNotesCacheQueryQuery__
  *
- * To run a query within a React component, call `useUpdatedNotesCacheQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useUpdatedNotesCacheQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `usePopulateNotesCacheQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePopulateNotesCacheQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useUpdatedNotesCacheQueryQuery({
+ * const { data, loading, error } = usePopulateNotesCacheQueryQuery({
  *   variables: {
  *   },
  * });
  */
-export function useUpdatedNotesCacheQueryQuery(baseOptions?: Apollo.QueryHookOptions<UpdatedNotesCacheQueryQuery, UpdatedNotesCacheQueryQueryVariables>) {
+export function usePopulateNotesCacheQueryQuery(baseOptions?: Apollo.QueryHookOptions<PopulateNotesCacheQueryQuery, PopulateNotesCacheQueryQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UpdatedNotesCacheQueryQuery, UpdatedNotesCacheQueryQueryVariables>(UpdatedNotesCacheQueryDocument, options);
+        return Apollo.useQuery<PopulateNotesCacheQueryQuery, PopulateNotesCacheQueryQueryVariables>(PopulateNotesCacheQueryDocument, options);
       }
-export function useUpdatedNotesCacheQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UpdatedNotesCacheQueryQuery, UpdatedNotesCacheQueryQueryVariables>) {
+export function usePopulateNotesCacheQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PopulateNotesCacheQueryQuery, PopulateNotesCacheQueryQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UpdatedNotesCacheQueryQuery, UpdatedNotesCacheQueryQueryVariables>(UpdatedNotesCacheQueryDocument, options);
+          return Apollo.useLazyQuery<PopulateNotesCacheQueryQuery, PopulateNotesCacheQueryQueryVariables>(PopulateNotesCacheQueryDocument, options);
         }
-export function useUpdatedNotesCacheQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UpdatedNotesCacheQueryQuery, UpdatedNotesCacheQueryQueryVariables>) {
+export function usePopulateNotesCacheQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<PopulateNotesCacheQueryQuery, PopulateNotesCacheQueryQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<UpdatedNotesCacheQueryQuery, UpdatedNotesCacheQueryQueryVariables>(UpdatedNotesCacheQueryDocument, options);
+          return Apollo.useSuspenseQuery<PopulateNotesCacheQueryQuery, PopulateNotesCacheQueryQueryVariables>(PopulateNotesCacheQueryDocument, options);
         }
-export type UpdatedNotesCacheQueryQueryHookResult = ReturnType<typeof useUpdatedNotesCacheQueryQuery>;
-export type UpdatedNotesCacheQueryLazyQueryHookResult = ReturnType<typeof useUpdatedNotesCacheQueryLazyQuery>;
-export type UpdatedNotesCacheQuerySuspenseQueryHookResult = ReturnType<typeof useUpdatedNotesCacheQuerySuspenseQuery>;
-export type UpdatedNotesCacheQueryQueryResult = Apollo.QueryResult<UpdatedNotesCacheQueryQuery, UpdatedNotesCacheQueryQueryVariables>;
-export const TagWithNoteIdsDocument = gql`
-    query TagWithNoteIds($tagId: ID!) {
-  tag(tagId: $tagId) {
-    _id
-    notes {
+export type PopulateNotesCacheQueryQueryHookResult = ReturnType<typeof usePopulateNotesCacheQueryQuery>;
+export type PopulateNotesCacheQueryLazyQueryHookResult = ReturnType<typeof usePopulateNotesCacheQueryLazyQuery>;
+export type PopulateNotesCacheQuerySuspenseQueryHookResult = ReturnType<typeof usePopulateNotesCacheQuerySuspenseQuery>;
+export type PopulateNotesCacheQueryQueryResult = Apollo.QueryResult<PopulateNotesCacheQueryQuery, PopulateNotesCacheQueryQueryVariables>;
+export const WriteNoteToCacheQueryDocument = gql`
+    query WriteNoteToCacheQuery($noteId: ID!) {
+  note(noteId: $noteId) {
+    ...BaseNote
+    tags {
       _id
     }
   }
 }
-    `;
+    ${BaseNoteFragmentDoc}`;
 
 /**
- * __useTagWithNoteIdsQuery__
+ * __useWriteNoteToCacheQueryQuery__
  *
- * To run a query within a React component, call `useTagWithNoteIdsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTagWithNoteIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useWriteNoteToCacheQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWriteNoteToCacheQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useTagWithNoteIdsQuery({
+ * const { data, loading, error } = useWriteNoteToCacheQueryQuery({
+ *   variables: {
+ *      noteId: // value for 'noteId'
+ *   },
+ * });
+ */
+export function useWriteNoteToCacheQueryQuery(baseOptions: Apollo.QueryHookOptions<WriteNoteToCacheQueryQuery, WriteNoteToCacheQueryQueryVariables> & ({ variables: WriteNoteToCacheQueryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<WriteNoteToCacheQueryQuery, WriteNoteToCacheQueryQueryVariables>(WriteNoteToCacheQueryDocument, options);
+      }
+export function useWriteNoteToCacheQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WriteNoteToCacheQueryQuery, WriteNoteToCacheQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<WriteNoteToCacheQueryQuery, WriteNoteToCacheQueryQueryVariables>(WriteNoteToCacheQueryDocument, options);
+        }
+export function useWriteNoteToCacheQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<WriteNoteToCacheQueryQuery, WriteNoteToCacheQueryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<WriteNoteToCacheQueryQuery, WriteNoteToCacheQueryQueryVariables>(WriteNoteToCacheQueryDocument, options);
+        }
+export type WriteNoteToCacheQueryQueryHookResult = ReturnType<typeof useWriteNoteToCacheQueryQuery>;
+export type WriteNoteToCacheQueryLazyQueryHookResult = ReturnType<typeof useWriteNoteToCacheQueryLazyQuery>;
+export type WriteNoteToCacheQuerySuspenseQueryHookResult = ReturnType<typeof useWriteNoteToCacheQuerySuspenseQuery>;
+export type WriteNoteToCacheQueryQueryResult = Apollo.QueryResult<WriteNoteToCacheQueryQuery, WriteNoteToCacheQueryQueryVariables>;
+export const WriteTagToCacheQueryDocument = gql`
+    query WriteTagToCacheQuery($tagId: ID!) {
+  tag(tagId: $tagId) {
+    ...BaseTag
+  }
+}
+    ${BaseTagFragmentDoc}`;
+
+/**
+ * __useWriteTagToCacheQueryQuery__
+ *
+ * To run a query within a React component, call `useWriteTagToCacheQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWriteTagToCacheQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWriteTagToCacheQueryQuery({
  *   variables: {
  *      tagId: // value for 'tagId'
  *   },
  * });
  */
-export function useTagWithNoteIdsQuery(baseOptions: Apollo.QueryHookOptions<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables> & ({ variables: TagWithNoteIdsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useWriteTagToCacheQueryQuery(baseOptions: Apollo.QueryHookOptions<WriteTagToCacheQueryQuery, WriteTagToCacheQueryQueryVariables> & ({ variables: WriteTagToCacheQueryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>(TagWithNoteIdsDocument, options);
+        return Apollo.useQuery<WriteTagToCacheQueryQuery, WriteTagToCacheQueryQueryVariables>(WriteTagToCacheQueryDocument, options);
       }
-export function useTagWithNoteIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>) {
+export function useWriteTagToCacheQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<WriteTagToCacheQueryQuery, WriteTagToCacheQueryQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>(TagWithNoteIdsDocument, options);
+          return Apollo.useLazyQuery<WriteTagToCacheQueryQuery, WriteTagToCacheQueryQueryVariables>(WriteTagToCacheQueryDocument, options);
         }
-export function useTagWithNoteIdsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>) {
+export function useWriteTagToCacheQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<WriteTagToCacheQueryQuery, WriteTagToCacheQueryQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>(TagWithNoteIdsDocument, options);
+          return Apollo.useSuspenseQuery<WriteTagToCacheQueryQuery, WriteTagToCacheQueryQueryVariables>(WriteTagToCacheQueryDocument, options);
         }
-export type TagWithNoteIdsQueryHookResult = ReturnType<typeof useTagWithNoteIdsQuery>;
-export type TagWithNoteIdsLazyQueryHookResult = ReturnType<typeof useTagWithNoteIdsLazyQuery>;
-export type TagWithNoteIdsSuspenseQueryHookResult = ReturnType<typeof useTagWithNoteIdsSuspenseQuery>;
-export type TagWithNoteIdsQueryResult = Apollo.QueryResult<TagWithNoteIdsQuery, TagWithNoteIdsQueryVariables>;
+export type WriteTagToCacheQueryQueryHookResult = ReturnType<typeof useWriteTagToCacheQueryQuery>;
+export type WriteTagToCacheQueryLazyQueryHookResult = ReturnType<typeof useWriteTagToCacheQueryLazyQuery>;
+export type WriteTagToCacheQuerySuspenseQueryHookResult = ReturnType<typeof useWriteTagToCacheQuerySuspenseQuery>;
+export type WriteTagToCacheQueryQueryResult = Apollo.QueryResult<WriteTagToCacheQueryQuery, WriteTagToCacheQueryQueryVariables>;
 export const NotesForSortAndFilterDocument = gql`
     query NotesForSortAndFilter {
   notes {
@@ -1838,6 +1737,106 @@ export function useAddNoteMutation(baseOptions?: Apollo.MutationHookOptions<AddN
 export type AddNoteMutationHookResult = ReturnType<typeof useAddNoteMutation>;
 export type AddNoteMutationResult = Apollo.MutationResult<AddNoteMutation>;
 export type AddNoteMutationOptions = Apollo.BaseMutationOptions<AddNoteMutation, AddNoteMutationVariables>;
+export const NoteDocument = gql`
+    query Note($noteId: ID!) {
+  note(noteId: $noteId) {
+    _id
+    createdAt
+    updatedAt
+    changedAt
+    archivedAt
+    user {
+      ...BaseUser
+    }
+    url
+    name
+    description
+    domain
+    tags {
+      ...BaseTag
+    }
+  }
+}
+    ${BaseUserFragmentDoc}
+${BaseTagFragmentDoc}`;
+
+/**
+ * __useNoteQuery__
+ *
+ * To run a query within a React component, call `useNoteQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNoteQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNoteQuery({
+ *   variables: {
+ *      noteId: // value for 'noteId'
+ *   },
+ * });
+ */
+export function useNoteQuery(baseOptions: Apollo.QueryHookOptions<NoteQuery, NoteQueryVariables> & ({ variables: NoteQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NoteQuery, NoteQueryVariables>(NoteDocument, options);
+      }
+export function useNoteLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NoteQuery, NoteQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NoteQuery, NoteQueryVariables>(NoteDocument, options);
+        }
+export function useNoteSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<NoteQuery, NoteQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<NoteQuery, NoteQueryVariables>(NoteDocument, options);
+        }
+export type NoteQueryHookResult = ReturnType<typeof useNoteQuery>;
+export type NoteLazyQueryHookResult = ReturnType<typeof useNoteLazyQuery>;
+export type NoteSuspenseQueryHookResult = ReturnType<typeof useNoteSuspenseQuery>;
+export type NoteQueryResult = Apollo.QueryResult<NoteQuery, NoteQueryVariables>;
+export const UpdateNoteDocument = gql`
+    mutation UpdateNote($note: InputNote!) {
+  updateNote(note: $note) {
+    _id
+    createdAt
+    updatedAt
+    changedAt
+    url
+    domain
+    name
+    description
+    tags {
+      _id
+      name
+      color
+    }
+  }
+}
+    `;
+export type UpdateNoteMutationFn = Apollo.MutationFunction<UpdateNoteMutation, UpdateNoteMutationVariables>;
+
+/**
+ * __useUpdateNoteMutation__
+ *
+ * To run a mutation, you first call `useUpdateNoteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateNoteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateNoteMutation, { data, loading, error }] = useUpdateNoteMutation({
+ *   variables: {
+ *      note: // value for 'note'
+ *   },
+ * });
+ */
+export function useUpdateNoteMutation(baseOptions?: Apollo.MutationHookOptions<UpdateNoteMutation, UpdateNoteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateNoteMutation, UpdateNoteMutationVariables>(UpdateNoteDocument, options);
+      }
+export type UpdateNoteMutationHookResult = ReturnType<typeof useUpdateNoteMutation>;
+export type UpdateNoteMutationResult = Apollo.MutationResult<UpdateNoteMutation>;
+export type UpdateNoteMutationOptions = Apollo.BaseMutationOptions<UpdateNoteMutation, UpdateNoteMutationVariables>;
 export const AddTagByNameToNoteDocument = gql`
     mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
   addTagByNameToNote(noteId: $noteId, name: $tagName) {

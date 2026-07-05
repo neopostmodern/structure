@@ -4,6 +4,7 @@ export const userSchema = gql`
   type Credentials {
     bookmarklet: String
     rss: String
+    extension: String
   }
   type User implements BaseObject {
     _id: ID!

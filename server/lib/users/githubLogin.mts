@@ -4,8 +4,19 @@ import session from 'express-session'
 import passport from 'passport'
 import PassportGithub from 'passport-github2'
 import { logger } from '../util/logging.mts'
+import { getOrCreateCredential } from './credentialsMethods.mts'
 import { createOwnershipTagOnUser } from './methods/createOwnershipTagOnUser.mts'
 import { User } from './userModel.mts'
+
+// The browser-extension login flow can't rely on a shared session cookie (its
+// OAuth popup runs in an isolated, ephemeral cookie jar by browser design), so
+// instead of ending in a Set-Cookie it ends by redirecting to a redirect_uri
+// the extension itself provided, with a bearer token in the URL fragment. To
+// stop that redirect_uri from being abused as an open redirect / token leak,
+// only exact, admin-configured values are ever allowed.
+const isAllowedExtensionRedirectUri = (uri: unknown): uri is string =>
+  typeof uri === 'string' &&
+  (config.EXTENSION_LOGIN_REDIRECT_URIS || []).includes(uri)
 
 // named import isn't working at the moment
 const GitHubStrategy = PassportGithub.Strategy
@@ -88,10 +99,46 @@ export function setUpGitHubLogin(app) {
 
   app.get('/login/github', passport.authenticate('github'))
 
+  // Entry point for the browser extension: it passes the redirect_uri its
+  // own browser.identity.launchWebAuthFlow() call will be listening for, and
+  // we thread it through as the OAuth `state` param so the callback below can
+  // recognize this login as extension-initiated and hand back a token
+  // instead of (only) a session cookie.
+  app.get('/login/github/extension', (request, result, next) => {
+    const { redirect_uri: redirectUri } = request.query
+    if (!isAllowedExtensionRedirectUri(redirectUri)) {
+      result
+        .status(400)
+        .send(
+          `Invalid or unregistered redirect_uri for extension login: ${redirectUri}`,
+        )
+      return
+    }
+
+    passport.authenticate('github', { state: redirectUri })(
+      request,
+      result,
+      next,
+    )
+  })
+
   app.get(
     '/login/github/callback',
     passport.authenticate('github', { failureRedirect: '/failure' }),
     (req, res) => {
+      const { state } = req.query
+      if (isAllowedExtensionRedirectUri(state)) {
+        getOrCreateCredential((req.user as any)._id, 'extension')
+          .then((token) => {
+            res.redirect(`${state}#token=${token}`)
+          })
+          .catch((error) => {
+            logger.error('Failed to mint extension login token', error)
+            res.status(500).send('Failed to complete extension login.')
+          })
+        return
+      }
+
       res.send(`
 <!doctype html>
 <html lang="en">

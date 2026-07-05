@@ -6,6 +6,7 @@ export type UserType = BaseType & {
   credentials: {
     bookmarklet?: string
     rss?: string
+    extension?: string
   }
   internal: {
     ownershipTagId: string

@@ -95,18 +95,19 @@ const extendedCache: {
   sortBy: null,
 }
 
-const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
+export const MAGIC_SKIP = 'MAGIC_SKIP'
+
+export const useSortedFilteredNotesExplicit = ({
+  archiveState,
+  sortBy,
+  searchQuery,
+}: {
+  archiveState: ArchiveState
+  sortBy: SortBy
+  searchQuery: string
+}): PolicedData<FilteredNotesAndAllNotes> => {
   logger.trace('[useSortedFilteredNotes] Hook start')
   performanceMeasurements.setReferencePoint('useSortedFilteredNotes')
-  const archiveState = useSelector<RootState, ArchiveState>(
-    (state) => state.userInterface.archiveState,
-  )
-  const sortBy = useSelector<RootState, SortBy>(
-    (state) => state.userInterface.sortBy,
-  )
-  const searchQuery = useSelector<RootState, string>(
-    (state) => state.userInterface.searchQuery,
-  )
   const skipSearch = !searchQuery
 
   const notesCacheQuery = useQuery<NotesForSortAndFilterQuery>(
@@ -178,48 +179,64 @@ const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
     return notes
   }, [notesCacheQuery.data, sortBy])
 
-  if (!allNotesSorted) {
-    return { state: DataState.LOADING }
-  }
+  return useMemo(() => {
+    if (!allNotesSorted || searchQuery === MAGIC_SKIP) {
+      return { state: DataState.LOADING }
+    }
 
-  if (
-    allNotesSorted !== extendedCache.sortedNotes ||
-    searchQuery !== extendedCache.searchQuery ||
-    archiveState !== extendedCache.archiveState ||
-    extendedCache.filteredNotes === null
-  ) {
-    performanceMeasurements.setReferencePoint(
-      'useSortedFilteredNotes:useMemo-filter',
-    )
-    extendedCache.sortedNotes = allNotesSorted
-    extendedCache.searchQuery = searchQuery
-    extendedCache.archiveState = archiveState
+    if (
+      allNotesSorted !== extendedCache.sortedNotes ||
+      searchQuery !== extendedCache.searchQuery ||
+      archiveState !== extendedCache.archiveState ||
+      extendedCache.filteredNotes === null
+    ) {
+      performanceMeasurements.setReferencePoint(
+        'useSortedFilteredNotes:useMemo-filter',
+      )
+      extendedCache.sortedNotes = allNotesSorted
+      extendedCache.searchQuery = searchQuery
+      extendedCache.archiveState = archiveState
 
-    extendedCache.filteredNotes = filterNotes(
-      allNotesSorted,
-      searchQuery,
-      archiveState,
-      tagsCacheQuery,
-    )
+      extendedCache.filteredNotes = filterNotes(
+        allNotesSorted,
+        searchQuery,
+        archiveState,
+        tagsCacheQuery,
+      )
+      performanceMeasurements.printMeasurement(
+        'useSortedFilteredNotes:useMemo-filter',
+        '[useSortedFilteredNotes] filtered (subprocess)',
+      )
+    }
+
     performanceMeasurements.printMeasurement(
-      'useSortedFilteredNotes:useMemo-filter',
-      '[useSortedFilteredNotes] filtered (subprocess)',
+      'useSortedFilteredNotes',
+      '[useSortedFilteredNotes] Hook total',
     )
-  }
 
-  performanceMeasurements.printMeasurement(
-    'useSortedFilteredNotes',
-    '[useSortedFilteredNotes] Hook total',
+    return {
+      state: DataState.DATA,
+      data: {
+        ...extendedCache.filteredNotes,
+        allNotes: allNotesSorted,
+      },
+      loadingBackground: false,
+    }
+  }, [allNotesSorted, searchQuery, archiveState, tagsCacheQuery])
+}
+
+const useSortedFilteredNotes = (): PolicedData<FilteredNotesAndAllNotes> => {
+  const archiveState = useSelector<RootState, ArchiveState>(
+    (state) => state.userInterface.archiveState,
+  )
+  const sortBy = useSelector<RootState, SortBy>(
+    (state) => state.userInterface.sortBy,
+  )
+  const searchQuery = useSelector<RootState, string>(
+    (state) => state.userInterface.searchQuery,
   )
 
-  return {
-    state: DataState.DATA,
-    data: {
-      ...extendedCache.filteredNotes,
-      allNotes: allNotesSorted,
-    },
-    loadingBackground: false,
-  }
+  return useSortedFilteredNotesExplicit({ archiveState, sortBy, searchQuery })
 }
 
 export default useSortedFilteredNotes

@@ -1,16 +1,21 @@
 import {
   ApolloClient,
+  ApolloLink,
+  gql,
   HttpLink,
   InMemoryCache,
   setLogVerbosity,
 } from '@apollo/client'
 import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev'
+import { SetContextLink } from '@apollo/client/link/context'
+import { LocalState } from '@apollo/client/local-state'
+import type { CacheSizes } from '@apollo/client/utilities'
 import { CachePersistor, LocalForageWrapper } from 'apollo3-cache-persist'
 import localforage from 'localforage'
 
 let backendUrl
-if (__BUILD_TARGET__ === 'web') {
-  // no backend customization for web, other backends should host their own frontends
+if (__BUILD_TARGET__ === 'web' || __BUILD_TARGET__ === 'extension') {
+  // no backend customization for web/extension, other backends should host their own frontends
   backendUrl = __BACKEND_URL__
 } else {
   backendUrl = localStorage.getItem('backend-url') || __BACKEND_URL__
@@ -78,11 +83,28 @@ export const cachePersistor = new CachePersistor({
   maxSize: false,
 })
 
+const httpLink = new HttpLink({
+  uri: `${backendUrl}/graphql`,
+  credentials: __BUILD_TARGET__ === 'extension' ? 'omit' : 'include',
+})
+
+// context link runs every time, so picks up a token added later automatically
+const extensionAuthLink = new SetContextLink(async (prevContext) => {
+  const { getStoredToken } = await import('../extension/auth') // can't import statically, relies on extension-specific globals
+  const token = await getStoredToken()
+  return {
+    headers: {
+      ...prevContext.headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  }
+})
+
 const apolloOptions = {
-  link: new HttpLink({
-    uri: `${backendUrl}/graphql`,
-    credentials: 'include',
-  }),
+  link:
+    __BUILD_TARGET__ === 'extension'
+      ? ApolloLink.from([extensionAuthLink, httpLink])
+      : httpLink,
   // eslint-disable-next-line no-underscore-dangle
   cache: cache.restore(window.__APOLLO_CLIENT__),
   ssrMode: false,
@@ -103,7 +125,23 @@ if (import.meta.env.DEV || __DEBUG_PROD__ === 'true') {
   setLogVerbosity('debug')
 }
 
+const NOTES_LIST_SEED_QUERY = gql`
+  query NotesListCacheSeed {
+    notes {
+      _id
+    }
+  }
+`
+const ensureExtensionNotesListFieldExists = () => {
+  if (cache.readQuery({ query: NOTES_LIST_SEED_QUERY }) === null) {
+    cache.writeQuery({ query: NOTES_LIST_SEED_QUERY, data: { notes: [] } })
+  }
+}
+
 export const getApolloClient = async () => {
   await cachePersistor.restore()
+  if (__BUILD_TARGET__ === 'extension') {
+    ensureExtensionNotesListFieldExists()
+  }
   return apolloClient
 }

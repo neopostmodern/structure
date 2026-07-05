@@ -18,6 +18,10 @@ const userSchema = withBaseSchema<UserType>(
           type: String,
           optional: true,
         },
+        extension: {
+          type: String,
+          optional: true,
+        },
       },
       default: {},
     },
