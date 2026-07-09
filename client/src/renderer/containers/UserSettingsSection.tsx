@@ -1,58 +1,48 @@
 import { useMutation, useQuery } from '@apollo/client/react'
 import { Typography } from '@mui/material'
-import { bookmarkletCode, rssFeedUrl } from '@structure/common'
 import { gql } from 'graphql-tag'
 import { FC } from 'react'
 import { useSelector } from 'react-redux'
-import Credentials, { CredentialsOrLoading } from '../components/Credentials'
+import TimeAgo from 'react-timeago'
 import FatalApolloError from '../components/FatalApolloError'
 import { StructureTextField } from '../components/formComponents'
 import SettingsEntry from '../components/SettingsEntry'
 import type {
-  RequestNewCredentialMutation,
-  RequestNewCredentialMutationVariables,
-  RevokeCredentialMutation,
-  RevokeCredentialMutationVariables,
-  UserCredentialsQuery,
+  RevokeTokenMutation,
+  RevokeTokenMutationVariables,
+  UserTokensQuery,
 } from '../generated/graphql'
 import { RootState } from '../reducers'
 import { ConfigurationStateType } from '../reducers/configuration'
 import gracefulNetworkPolicy from '../utils/gracefulNetworkPolicy'
 import useDataState, { DataState } from '../utils/useDataState'
 
-const userCredentialsFragment = gql`
-  fragment UserCredentialsFragment on User {
+const userTokensFragment = gql`
+  fragment UserTokensFragment on User {
     _id
 
-    credentials {
-      bookmarklet
-      rss
-      extension
+    tokens {
+      _id
+      purpose
+      comment
+      createdAt
     }
   }
 `
 
-const USER_CREDENTIALS_QUERY = gql`
-  ${userCredentialsFragment}
-  query UserCredentials {
+const USER_TOKENS_QUERY = gql`
+  ${userTokensFragment}
+  query UserTokens {
     currentUser {
-      ...UserCredentialsFragment
+      ...UserTokensFragment
     }
   }
 `
-const REQUEST_NEW_CREDENTIAL_MUTATION = gql`
-  ${userCredentialsFragment}
-  mutation RequestNewCredential($purpose: String!) {
-    requestNewCredential(purpose: $purpose) {
-      ...UserCredentialsFragment
-    }
-  }
-`
-const REVOKE_CREDENTIAL_MUTATION = gql`
-  ${userCredentialsFragment}
-  mutation RevokeCredential($purpose: String!) {
-    revokeCredential(purpose: $purpose) {
-      ...UserCredentialsFragment
+const REVOKE_TOKEN_MUTATION = gql`
+  ${userTokensFragment}
+  mutation RevokeToken($tokenId: ID!) {
+    revokeToken(tokenId: $tokenId) {
+      ...UserTokensFragment
     }
   }
 `
@@ -62,18 +52,14 @@ const UserSettingsSection: FC = () => {
     (state) => state.configuration,
   )
   const userQuery = useDataState(
-    useQuery<UserCredentialsQuery>(USER_CREDENTIALS_QUERY, {
+    useQuery<UserTokensQuery>(USER_TOKENS_QUERY, {
       fetchPolicy: gracefulNetworkPolicy(),
     }),
   )
-  const [requestNewCredential] = useMutation<
-    RequestNewCredentialMutation,
-    RequestNewCredentialMutationVariables
-  >(REQUEST_NEW_CREDENTIAL_MUTATION)
-  const [revokeCredential] = useMutation<
-    RevokeCredentialMutation,
-    RevokeCredentialMutationVariables
-  >(REVOKE_CREDENTIAL_MUTATION)
+  const [revokeToken] = useMutation<
+    RevokeTokenMutation,
+    RevokeTokenMutationVariables
+  >(REVOKE_TOKEN_MUTATION)
 
   if (userQuery.state === DataState.ERROR) {
     return (
@@ -84,32 +70,12 @@ const UserSettingsSection: FC = () => {
     )
   }
 
-  let credentialsConfiguration: CredentialsOrLoading
-  if (userQuery.state === DataState.LOADING) {
-    credentialsConfiguration = 'loading'
-  } else {
-    credentialsConfiguration = [
-      {
-        displayName: 'Bookmarklet (standalone)',
-        name: 'bookmarklet',
-        value:
-          userQuery.data.currentUser?.credentials?.bookmarklet &&
-          bookmarkletCode(
-            backendUrl,
-            userQuery.data.currentUser.credentials.bookmarklet,
-          ),
-        comment:
-          'This bookmarklet will save links in the background. You will not be able to change the title or tag it immediately. The bookmarklet uses an authentication token.',
-      },
-      {
-        displayName: 'RSS-Feed',
-        name: 'rss',
-        value:
-          userQuery.data.currentUser?.credentials?.rss &&
-          rssFeedUrl(backendUrl, userQuery.data.currentUser.credentials.rss),
-      },
-    ]
-  }
+  const extensionTokens =
+    userQuery.state === DataState.DATA
+      ? (userQuery.data.currentUser?.tokens.filter(
+          (token) => token.purpose === 'extension',
+        ) ?? [])
+      : []
 
   return (
     <>
@@ -140,36 +106,33 @@ const UserSettingsSection: FC = () => {
           value={`javascript:void(open('${__WEB_FRONTEND_HOST__}/notes/add?url='+encodeURIComponent(location.href)+'&autoSubmit'))`}
         />
       </SettingsEntry>
-      <Credentials
-        credentials={credentialsConfiguration}
-        requestNewCredential={(purpose): void => {
-          requestNewCredential({ variables: { purpose } })
-        }}
-        revokeCredential={(purpose): void => {
-          revokeCredential({ variables: { purpose } })
-        }}
-      />
-      <SettingsEntry
-        title='Browser extension'
-        comment='Connect from the extension itself. Revoking here signs out all browser extensions immediately.'
-        actionTitle='Revoke access'
-        actionHandler={() =>
-          revokeCredential({ variables: { purpose: 'extension' } })
-        }
-        readOnly={
-          !(
-            userQuery.state === DataState.DATA &&
-            userQuery.data.currentUser?.credentials?.extension
-          )
-        }
-      >
-        {userQuery.state === DataState.DATA &&
-        userQuery.data.currentUser?.credentials?.extension ? (
-          <i>Connected</i>
-        ) : (
+      {extensionTokens.length === 0 ? (
+        <SettingsEntry
+          title='Browser extension'
+          comment='Connect from the extension itself.'
+        >
           <i>Not connected</i>
-        )}
-      </SettingsEntry>
+        </SettingsEntry>
+      ) : (
+        extensionTokens.map((token) => (
+          <SettingsEntry
+            key={token._id}
+            title='Browser extension'
+            comment={
+              token.comment ||
+              'Connect from the extension itself. Revoking here signs out this browser extension immediately.'
+            }
+            actionTitle='Revoke access'
+            actionHandler={() =>
+              revokeToken({ variables: { tokenId: token._id } })
+            }
+          >
+            <i>
+              Connected <TimeAgo date={token.createdAt} />
+            </i>
+          </SettingsEntry>
+        ))
+      )}
     </>
   )
 }

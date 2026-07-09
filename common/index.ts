@@ -1,4 +1,3 @@
-export * from './linkGenerator'
 export * from './migrationSystem'
 export * from './urlAnalyzer'
 

@@ -8,23 +8,14 @@ const userSchema = withBaseSchema<UserType>(
     _id: String,
     name: String,
     authenticationProvider: String,
-    credentials: {
-      type: {
-        bookmarklet: {
-          type: String,
-          optional: true,
-        },
-        rss: {
-          type: String,
-          optional: true,
-        },
-        extension: {
-          type: String,
-          optional: true,
-        },
+    tokens: [
+      {
+        purpose: { type: String, required: true },
+        token: { type: String, required: true },
+        comment: { type: String, default: null },
+        createdAt: { type: Date, default: Date.now },
       },
-      default: {},
-    },
+    ],
     internal: {
       ownershipTagId: String,
     },

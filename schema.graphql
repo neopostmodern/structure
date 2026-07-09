@@ -4,10 +4,9 @@ interface BaseObject {
   updatedAt: Date!
 }
 
-type Credentials {
-  bookmarklet: String
-  extension: String
-  rss: String
+type CreateTokenResult {
+  rawToken: String!
+  user: User!
 }
 
 scalar Date
@@ -44,10 +43,10 @@ type Mutation {
   addTagByNameToNote(name: String!, noteId: ID!): Note!
   createNote(description: String, title: String, url: String): Note!
   createTag(color: String, name: String!): Tag!
+  createToken(comment: String): CreateTokenResult!
   permanentlyDeleteTag(tagId: ID!): Tag!
   removeTagByIdFromNote(noteId: ID!, tagId: ID!): Note!
-  requestNewCredential(purpose: String!): User!
-  revokeCredential(purpose: String!): User!
+  revokeToken(tokenId: ID!): User!
   shareTag(tagId: ID!, username: String!): Tag!
   toggleArchivedNote(noteId: ID!): Note!
   toggleDeletedNote(noteId: ID!): Note!
@@ -109,12 +108,19 @@ type TagPermissions {
   write: Boolean!
 }
 
+type Token {
+  _id: ID!
+  comment: String
+  createdAt: Date!
+  purpose: String!
+}
+
 type User implements BaseObject {
   _id: ID!
   authenticationProvider: String
   createdAt: Date!
-  credentials: Credentials
   name: String!
+  tokens: [Token!]!
   updatedAt: Date!
 }
 

@@ -1,8 +1,6 @@
-import {
-  requestNewCredential,
-  revokeCredential,
-} from './credentialsMethods.mts'
 import { getCachedUser } from './methods/getCachedUser.mts'
+import { issueToken, revokeToken } from './tokensMethods.mts'
+import { User } from './userModel.mts'
 
 export const userResolvers = {
   UserPermissions: {
@@ -16,29 +14,26 @@ export const userResolvers = {
     },
   },
   Mutation: {
-    requestNewCredential(root, { purpose }, { user }) {
+    async createToken(root, { comment }, { user }) {
       if (!user) {
-        throw new Error('Need to be logged in to request new credentials.')
+        throw new Error('Need to be logged in to create tokens.')
       }
 
-      if (user.credentials[purpose]) {
-        throw new Error(`Credential for this purpose (${purpose}) already set.`)
-      }
+      const rawToken = await issueToken(user._id, 'user', comment)
+      const updatedUser = await User.findById(user._id).lean()
 
-      return requestNewCredential(user._id, purpose)
+      return { rawToken, user: updatedUser }
     },
-    revokeCredential(root, { purpose }, { user }) {
+    revokeToken(root, { tokenId }, { user }) {
       if (!user) {
-        throw new Error('Need to be logged in to revoke credentials.')
+        throw new Error('Need to be logged in to revoke tokens.')
       }
 
-      if (!user.credentials[purpose]) {
-        throw new Error(
-          `Credential for this purpose (${purpose}) hasn't been created.`,
-        )
+      if (!user.tokens.some((token) => token._id.toString() === tokenId)) {
+        throw new Error(`Token ${tokenId} not found.`)
       }
 
-      return revokeCredential(user._id, purpose)
+      return revokeToken(user._id, tokenId)
     },
   },
 }

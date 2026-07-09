@@ -12,8 +12,8 @@ import migrationSystem from './migrations/migrationSystem.mts'
 import { initializeMongo } from './mongo.mts'
 import restApi from './restApi.mts'
 import { resolvers, typeDefs } from './schema.mts'
-import { getUserByCredential } from './users/credentialsMethods.mts'
 import { setUpGitHubLogin } from './users/githubLogin.mts'
+import { getUserByToken } from './users/tokensMethods.mts'
 import { logger, timerEnd, timerStart } from './util/logging.mts'
 import type { SessionContext } from './util/types.mts'
 
@@ -132,7 +132,7 @@ const runExpressServer = async () => {
           ? authorizationHeader.slice('Bearer '.length)
           : undefined
 
-        const user = await getUserByCredential('extension', bearerToken)
+        const user = await getUserByToken(bearerToken)
         return { user }
       },
     }),
@@ -154,7 +154,7 @@ await initializeMongo()
 
 try {
   logger.info('Running migrations...')
-  await migrationSystem.migrateTo(9)
+  await migrationSystem.migrateTo(10)
   logger.info('Migrations complete.')
   await runExpressServer()
 } catch (error) {

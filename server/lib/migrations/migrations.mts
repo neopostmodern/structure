@@ -316,4 +316,19 @@ migrations.set(9, {
   },
 })
 
+migrations.set(10, {
+  name: 'tokens-replace-credentials',
+  async up() {
+    return User.updateMany(
+      {},
+      { $unset: { credentials: true }, $set: { tokens: [] } },
+    )
+  },
+  async down() {
+    logger.warn(
+      'This migration is irreversible: removed bookmarklet/RSS tokens cannot be restored. Performing no action.',
+    )
+  },
+})
+
 export default migrations

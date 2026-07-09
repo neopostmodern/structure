@@ -23,11 +23,10 @@ export type BaseObject = {
   updatedAt: Scalars['Date']['output'];
 };
 
-export type Credentials = {
-  __typename?: 'Credentials';
-  bookmarklet?: Maybe<Scalars['String']['output']>;
-  extension?: Maybe<Scalars['String']['output']>;
-  rss?: Maybe<Scalars['String']['output']>;
+export type CreateTokenResult = {
+  __typename?: 'CreateTokenResult';
+  rawToken: Scalars['String']['output'];
+  user: User;
 };
 
 export type EntitiesUpdatedSince = {
@@ -64,10 +63,10 @@ export type Mutation = {
   addTagByNameToNote: Note;
   createNote: Note;
   createTag: Tag;
+  createToken: CreateTokenResult;
   permanentlyDeleteTag: Tag;
   removeTagByIdFromNote: Note;
-  requestNewCredential: User;
-  revokeCredential: User;
+  revokeToken: User;
   shareTag: Tag;
   toggleArchivedNote: Note;
   toggleDeletedNote: Note;
@@ -97,6 +96,11 @@ export type MutationCreateTagArgs = {
 };
 
 
+export type MutationCreateTokenArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type MutationPermanentlyDeleteTagArgs = {
   tagId: Scalars['ID']['input'];
 };
@@ -108,13 +112,8 @@ export type MutationRemoveTagByIdFromNoteArgs = {
 };
 
 
-export type MutationRequestNewCredentialArgs = {
-  purpose: Scalars['String']['input'];
-};
-
-
-export type MutationRevokeCredentialArgs = {
-  purpose: Scalars['String']['input'];
+export type MutationRevokeTokenArgs = {
+  tokenId: Scalars['ID']['input'];
 };
 
 
@@ -257,13 +256,21 @@ export type TagPermissions = {
   write: Scalars['Boolean']['output'];
 };
 
+export type Token = {
+  __typename?: 'Token';
+  _id: Scalars['ID']['output'];
+  comment?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['Date']['output'];
+  purpose: Scalars['String']['output'];
+};
+
 export type User = BaseObject & {
   __typename?: 'User';
   _id: Scalars['ID']['output'];
   authenticationProvider?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['Date']['output'];
-  credentials?: Maybe<Credentials>;
   name: Scalars['String']['output'];
+  tokens: Array<Token>;
   updatedAt: Scalars['Date']['output'];
 };
 
@@ -357,7 +364,7 @@ export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = 
 export type ResolversTypes = {
   BaseObject: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['BaseObject']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
-  Credentials: ResolverTypeWrapper<Credentials>;
+  CreateTokenResult: ResolverTypeWrapper<CreateTokenResult>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Date: ResolverTypeWrapper<Scalars['Date']['output']>;
   EntitiesUpdatedSince: ResolverTypeWrapper<EntitiesUpdatedSince>;
@@ -371,6 +378,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Tag: ResolverTypeWrapper<Tag>;
   TagPermissions: ResolverTypeWrapper<TagPermissions>;
+  Token: ResolverTypeWrapper<Token>;
   User: ResolverTypeWrapper<User>;
   UserPermissions: ResolverTypeWrapper<UserPermissions>;
   Versions: ResolverTypeWrapper<Versions>;
@@ -380,7 +388,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   BaseObject: ResolversInterfaceTypes<ResolversParentTypes>['BaseObject'];
   ID: Scalars['ID']['output'];
-  Credentials: Credentials;
+  CreateTokenResult: CreateTokenResult;
   String: Scalars['String']['output'];
   Date: Scalars['Date']['output'];
   EntitiesUpdatedSince: EntitiesUpdatedSince;
@@ -394,6 +402,7 @@ export type ResolversParentTypes = {
   Int: Scalars['Int']['output'];
   Tag: Tag;
   TagPermissions: TagPermissions;
+  Token: Token;
   User: User;
   UserPermissions: UserPermissions;
   Versions: Versions;
@@ -406,10 +415,9 @@ export type BaseObjectResolvers<ContextType = any, ParentType extends ResolversP
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
 };
 
-export type CredentialsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Credentials'] = ResolversParentTypes['Credentials']> = {
-  bookmarklet?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  extension?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  rss?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+export type CreateTokenResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateTokenResult'] = ResolversParentTypes['CreateTokenResult']> = {
+  rawToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -432,10 +440,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   addTagByNameToNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationAddTagByNameToNoteArgs, 'name' | 'noteId'>>;
   createNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, Partial<MutationCreateNoteArgs>>;
   createTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationCreateTagArgs, 'name'>>;
+  createToken?: Resolver<ResolversTypes['CreateTokenResult'], ParentType, ContextType, Partial<MutationCreateTokenArgs>>;
   permanentlyDeleteTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationPermanentlyDeleteTagArgs, 'tagId'>>;
   removeTagByIdFromNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationRemoveTagByIdFromNoteArgs, 'noteId' | 'tagId'>>;
-  requestNewCredential?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRequestNewCredentialArgs, 'purpose'>>;
-  revokeCredential?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRevokeCredentialArgs, 'purpose'>>;
+  revokeToken?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRevokeTokenArgs, 'tokenId'>>;
   shareTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationShareTagArgs, 'tagId' | 'username'>>;
   toggleArchivedNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationToggleArchivedNoteArgs, 'noteId'>>;
   toggleDeletedNote?: Resolver<ResolversTypes['Note'], ParentType, ContextType, RequireFields<MutationToggleDeletedNoteArgs, 'noteId'>>;
@@ -501,12 +509,20 @@ export type TagPermissionsResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']> = {
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  purpose?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   authenticationProvider?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  credentials?: Resolver<Maybe<ResolversTypes['Credentials']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tokens?: Resolver<Array<ResolversTypes['Token']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -526,7 +542,7 @@ export type VersionsResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type Resolvers<ContextType = any> = {
   BaseObject?: BaseObjectResolvers<ContextType>;
-  Credentials?: CredentialsResolvers<ContextType>;
+  CreateTokenResult?: CreateTokenResultResolvers<ContextType>;
   Date?: GraphQLScalarType;
   EntitiesUpdatedSince?: EntitiesUpdatedSinceResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
@@ -535,6 +551,7 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Tag?: TagResolvers<ContextType>;
   TagPermissions?: TagPermissionsResolvers<ContextType>;
+  Token?: TokenResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserPermissions?: UserPermissionsResolvers<ContextType>;
   Versions?: VersionsResolvers<ContextType>;

@@ -1,14 +1,8 @@
-import { rssFeedUrl } from '@structure/common'
 import config from '@structure/config'
-import { Feed } from 'feed'
 import _ from 'lodash'
 import { Meta } from './meta/metaModel.mts'
-import { createNote } from './notes/notesMethods.mts'
 import { Note } from './notes/notesModels.mts'
 import { Tag } from './tags/tagModel.mts'
-import { addTagByNameToNote } from './tags/tagsMethods.mts'
-import { User } from './users/userModel.mts'
-import { logger } from './util/logging.mts'
 
 const restApi = (app) => {
   app.get('/', (request, response) => {
@@ -43,39 +37,6 @@ body {
 </body>
 </html>`)
   })
-  app.get('/bookmarklet', (request, response) => {
-    const { token, url } = request.query
-    User.findOne({ 'credentials.bookmarklet': token })
-      .then((user) => {
-        if (!user) {
-          throw Error('No user with provided credential (token) found.')
-        }
-        return createNote(user, { url }).then(({ _id }) =>
-          addTagByNameToNote(user, _id, 'from:bookmarklet'),
-        )
-      })
-      .then(() =>
-        response.send(
-          `
-<html>
-<body>
-  <h1>Added to Structure!</h1>
-  You can close this window, if it doesn't do so itself.
-  <script>setTimeout(function () { window.close(); }, 3000);</script>
-</body>
-</html>`,
-        ),
-      )
-      .catch((error) => {
-        logger.error('Bookmarklet URL insert failed!', error)
-        response
-          .status(500)
-          .send(
-            '<!DOCTYPE html><html lang="en"><body><h1>Structure error.</h1>Failed to save your link :(</body></html>',
-          )
-      })
-  })
-
   app.get('/desktop/add', (request, response) => {
     const { url } = request.query
 
@@ -99,58 +60,6 @@ body {
 </body>
 </html>`,
     )
-  })
-
-  app.get('/rss', (request, response) => {
-    const { token } = request.query
-    User.findOne({ 'credentials.rss': token })
-      .then((user) => {
-        if (!user) {
-          throw Error('No feed with provided credential (token) found.')
-        }
-
-        const feed = new Feed({
-          title: `Structure - ${user.name}`,
-          description: `Automatically generated Structure-feed of all links by ${user.name}`,
-          id: 'http://example.com/',
-          link: rssFeedUrl(config.BACKEND_URL, user.credentials.rss),
-          favicon: `${config.BACKEND_URL}/favicon.ico`,
-          copyright: `Rights possibly reserved by ${user.name}`,
-          author: {
-            name: user.name,
-            link: `https://github.com/${user.name}`,
-          },
-        })
-
-        return Note.find({ user })
-          .sort({ createdAt: -1 })
-          .limit(10)
-          .exec()
-          .then((notes) => {
-            notes.forEach((note) => {
-              feed.addItem({
-                title: note.name,
-                guid: note._id.toString(),
-                guidIsPermaLink: false,
-                link: note.url, // todo: is this allowed to be null?
-                description: note.description,
-                date: note.createdAt,
-              })
-            })
-          })
-          .then(() => {
-            response.set('Content-Type', 'application/rss+xml')
-            response.status(200).send(feed.rss2())
-          })
-      })
-      .catch((error) => {
-        logger.error('Generating RSS feed failed!', error)
-        response
-          .status(500)
-          .send(
-            '<html><body><h1>Structure error.</h1>Failed to generate your RSS feed :(</body></html>',
-          )
-      })
   })
 
   app.get('/export.json', async (request, response) => {

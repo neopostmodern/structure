@@ -24,11 +24,10 @@ export type BaseObject = {
   updatedAt: Scalars['Date']['output'];
 };
 
-export type Credentials = {
-  __typename: 'Credentials';
-  bookmarklet?: Maybe<Scalars['String']['output']>;
-  extension?: Maybe<Scalars['String']['output']>;
-  rss?: Maybe<Scalars['String']['output']>;
+export type CreateTokenResult = {
+  __typename: 'CreateTokenResult';
+  rawToken: Scalars['String']['output'];
+  user: User;
 };
 
 export type EntitiesUpdatedSince = {
@@ -65,10 +64,10 @@ export type Mutation = {
   addTagByNameToNote: Note;
   createNote: Note;
   createTag: Tag;
+  createToken: CreateTokenResult;
   permanentlyDeleteTag: Tag;
   removeTagByIdFromNote: Note;
-  requestNewCredential: User;
-  revokeCredential: User;
+  revokeToken: User;
   shareTag: Tag;
   toggleArchivedNote: Note;
   toggleDeletedNote: Note;
@@ -98,6 +97,11 @@ export type MutationCreateTagArgs = {
 };
 
 
+export type MutationCreateTokenArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type MutationPermanentlyDeleteTagArgs = {
   tagId: Scalars['ID']['input'];
 };
@@ -109,13 +113,8 @@ export type MutationRemoveTagByIdFromNoteArgs = {
 };
 
 
-export type MutationRequestNewCredentialArgs = {
-  purpose: Scalars['String']['input'];
-};
-
-
-export type MutationRevokeCredentialArgs = {
-  purpose: Scalars['String']['input'];
+export type MutationRevokeTokenArgs = {
+  tokenId: Scalars['ID']['input'];
 };
 
 
@@ -258,13 +257,21 @@ export type TagPermissions = {
   write: Scalars['Boolean']['output'];
 };
 
+export type Token = {
+  __typename: 'Token';
+  _id: Scalars['ID']['output'];
+  comment?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['Date']['output'];
+  purpose: Scalars['String']['output'];
+};
+
 export type User = BaseObject & {
   __typename: 'User';
   _id: Scalars['ID']['output'];
   authenticationProvider?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['Date']['output'];
-  credentials?: Maybe<Credentials>;
   name: Scalars['String']['output'];
+  tokens: Array<Token>;
   updatedAt: Scalars['Date']['output'];
 };
 
@@ -280,6 +287,11 @@ export type Versions = {
   current: Scalars['String']['output'];
   minimum?: Maybe<Scalars['String']['output']>;
 };
+
+export type NotesListCacheSeedQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NotesListCacheSeedQuery = { __typename: 'Query', notes: Array<{ __typename: 'Note', _id: string }> };
 
 export type TagsWithCountsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -378,26 +390,19 @@ export type UserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type UserQuery = { __typename: 'Query', currentUser?: { __typename: 'User', _id: string, authenticationProvider?: string | null, createdAt: any, name: string } | null };
 
-export type UserCredentialsFragmentFragment = { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null, extension?: string | null } | null };
+export type UserTokensFragmentFragment = { __typename: 'User', _id: string, tokens: Array<{ __typename: 'Token', _id: string, purpose: string, comment?: string | null, createdAt: any }> };
 
-export type UserCredentialsQueryVariables = Exact<{ [key: string]: never; }>;
+export type UserTokensQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UserCredentialsQuery = { __typename: 'Query', currentUser?: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null, extension?: string | null } | null } | null };
+export type UserTokensQuery = { __typename: 'Query', currentUser?: { __typename: 'User', _id: string, tokens: Array<{ __typename: 'Token', _id: string, purpose: string, comment?: string | null, createdAt: any }> } | null };
 
-export type RequestNewCredentialMutationVariables = Exact<{
-  purpose: Scalars['String']['input'];
+export type RevokeTokenMutationVariables = Exact<{
+  tokenId: Scalars['ID']['input'];
 }>;
 
 
-export type RequestNewCredentialMutation = { __typename: 'Mutation', requestNewCredential: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null, extension?: string | null } | null } };
-
-export type RevokeCredentialMutationVariables = Exact<{
-  purpose: Scalars['String']['input'];
-}>;
-
-
-export type RevokeCredentialMutation = { __typename: 'Mutation', revokeCredential: { __typename: 'User', _id: string, credentials?: { __typename: 'Credentials', bookmarklet?: string | null, rss?: string | null, extension?: string | null } | null } };
+export type RevokeTokenMutation = { __typename: 'Mutation', revokeToken: { __typename: 'User', _id: string, tokens: Array<{ __typename: 'Token', _id: string, purpose: string, comment?: string | null, createdAt: any }> } };
 
 export type CreateTagMutationVariables = Exact<{
   name: Scalars['String']['input'];
@@ -558,13 +563,14 @@ export const NoteInListFragmentDoc = gql`
 }
     ${BaseTagFragmentDoc}
 ${BaseUserFragmentDoc}`;
-export const UserCredentialsFragmentFragmentDoc = gql`
-    fragment UserCredentialsFragment on User {
+export const UserTokensFragmentFragmentDoc = gql`
+    fragment UserTokensFragment on User {
   _id
-  credentials {
-    bookmarklet
-    rss
-    extension
+  tokens {
+    _id
+    purpose
+    comment
+    createdAt
   }
 }
     `;
@@ -588,6 +594,45 @@ export const BaseNoteFragmentDoc = gql`
   }
 }
     ${BaseUserFragmentDoc}`;
+export const NotesListCacheSeedDocument = gql`
+    query NotesListCacheSeed {
+  notes {
+    _id
+  }
+}
+    `;
+
+/**
+ * __useNotesListCacheSeedQuery__
+ *
+ * To run a query within a React component, call `useNotesListCacheSeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotesListCacheSeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotesListCacheSeedQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNotesListCacheSeedQuery(baseOptions?: Apollo.QueryHookOptions<NotesListCacheSeedQuery, NotesListCacheSeedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NotesListCacheSeedQuery, NotesListCacheSeedQueryVariables>(NotesListCacheSeedDocument, options);
+      }
+export function useNotesListCacheSeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NotesListCacheSeedQuery, NotesListCacheSeedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NotesListCacheSeedQuery, NotesListCacheSeedQueryVariables>(NotesListCacheSeedDocument, options);
+        }
+export function useNotesListCacheSeedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<NotesListCacheSeedQuery, NotesListCacheSeedQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<NotesListCacheSeedQuery, NotesListCacheSeedQueryVariables>(NotesListCacheSeedDocument, options);
+        }
+export type NotesListCacheSeedQueryHookResult = ReturnType<typeof useNotesListCacheSeedQuery>;
+export type NotesListCacheSeedLazyQueryHookResult = ReturnType<typeof useNotesListCacheSeedLazyQuery>;
+export type NotesListCacheSeedSuspenseQueryHookResult = ReturnType<typeof useNotesListCacheSeedSuspenseQuery>;
+export type NotesListCacheSeedQueryResult = Apollo.QueryResult<NotesListCacheSeedQuery, NotesListCacheSeedQueryVariables>;
 export const TagsWithCountsDocument = gql`
     query TagsWithCounts {
   tags {
@@ -1181,111 +1226,78 @@ export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserSuspenseQueryHookResult = ReturnType<typeof useUserSuspenseQuery>;
 export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
-export const UserCredentialsDocument = gql`
-    query UserCredentials {
+export const UserTokensDocument = gql`
+    query UserTokens {
   currentUser {
-    ...UserCredentialsFragment
+    ...UserTokensFragment
   }
 }
-    ${UserCredentialsFragmentFragmentDoc}`;
+    ${UserTokensFragmentFragmentDoc}`;
 
 /**
- * __useUserCredentialsQuery__
+ * __useUserTokensQuery__
  *
- * To run a query within a React component, call `useUserCredentialsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserCredentialsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useUserTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useUserCredentialsQuery({
+ * const { data, loading, error } = useUserTokensQuery({
  *   variables: {
  *   },
  * });
  */
-export function useUserCredentialsQuery(baseOptions?: Apollo.QueryHookOptions<UserCredentialsQuery, UserCredentialsQueryVariables>) {
+export function useUserTokensQuery(baseOptions?: Apollo.QueryHookOptions<UserTokensQuery, UserTokensQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UserCredentialsQuery, UserCredentialsQueryVariables>(UserCredentialsDocument, options);
+        return Apollo.useQuery<UserTokensQuery, UserTokensQueryVariables>(UserTokensDocument, options);
       }
-export function useUserCredentialsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserCredentialsQuery, UserCredentialsQueryVariables>) {
+export function useUserTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserTokensQuery, UserTokensQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UserCredentialsQuery, UserCredentialsQueryVariables>(UserCredentialsDocument, options);
+          return Apollo.useLazyQuery<UserTokensQuery, UserTokensQueryVariables>(UserTokensDocument, options);
         }
-export function useUserCredentialsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UserCredentialsQuery, UserCredentialsQueryVariables>) {
+export function useUserTokensSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UserTokensQuery, UserTokensQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<UserCredentialsQuery, UserCredentialsQueryVariables>(UserCredentialsDocument, options);
+          return Apollo.useSuspenseQuery<UserTokensQuery, UserTokensQueryVariables>(UserTokensDocument, options);
         }
-export type UserCredentialsQueryHookResult = ReturnType<typeof useUserCredentialsQuery>;
-export type UserCredentialsLazyQueryHookResult = ReturnType<typeof useUserCredentialsLazyQuery>;
-export type UserCredentialsSuspenseQueryHookResult = ReturnType<typeof useUserCredentialsSuspenseQuery>;
-export type UserCredentialsQueryResult = Apollo.QueryResult<UserCredentialsQuery, UserCredentialsQueryVariables>;
-export const RequestNewCredentialDocument = gql`
-    mutation RequestNewCredential($purpose: String!) {
-  requestNewCredential(purpose: $purpose) {
-    ...UserCredentialsFragment
+export type UserTokensQueryHookResult = ReturnType<typeof useUserTokensQuery>;
+export type UserTokensLazyQueryHookResult = ReturnType<typeof useUserTokensLazyQuery>;
+export type UserTokensSuspenseQueryHookResult = ReturnType<typeof useUserTokensSuspenseQuery>;
+export type UserTokensQueryResult = Apollo.QueryResult<UserTokensQuery, UserTokensQueryVariables>;
+export const RevokeTokenDocument = gql`
+    mutation RevokeToken($tokenId: ID!) {
+  revokeToken(tokenId: $tokenId) {
+    ...UserTokensFragment
   }
 }
-    ${UserCredentialsFragmentFragmentDoc}`;
-export type RequestNewCredentialMutationFn = Apollo.MutationFunction<RequestNewCredentialMutation, RequestNewCredentialMutationVariables>;
+    ${UserTokensFragmentFragmentDoc}`;
+export type RevokeTokenMutationFn = Apollo.MutationFunction<RevokeTokenMutation, RevokeTokenMutationVariables>;
 
 /**
- * __useRequestNewCredentialMutation__
+ * __useRevokeTokenMutation__
  *
- * To run a mutation, you first call `useRequestNewCredentialMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRequestNewCredentialMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useRevokeTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRevokeTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [requestNewCredentialMutation, { data, loading, error }] = useRequestNewCredentialMutation({
+ * const [revokeTokenMutation, { data, loading, error }] = useRevokeTokenMutation({
  *   variables: {
- *      purpose: // value for 'purpose'
+ *      tokenId: // value for 'tokenId'
  *   },
  * });
  */
-export function useRequestNewCredentialMutation(baseOptions?: Apollo.MutationHookOptions<RequestNewCredentialMutation, RequestNewCredentialMutationVariables>) {
+export function useRevokeTokenMutation(baseOptions?: Apollo.MutationHookOptions<RevokeTokenMutation, RevokeTokenMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RequestNewCredentialMutation, RequestNewCredentialMutationVariables>(RequestNewCredentialDocument, options);
+        return Apollo.useMutation<RevokeTokenMutation, RevokeTokenMutationVariables>(RevokeTokenDocument, options);
       }
-export type RequestNewCredentialMutationHookResult = ReturnType<typeof useRequestNewCredentialMutation>;
-export type RequestNewCredentialMutationResult = Apollo.MutationResult<RequestNewCredentialMutation>;
-export type RequestNewCredentialMutationOptions = Apollo.BaseMutationOptions<RequestNewCredentialMutation, RequestNewCredentialMutationVariables>;
-export const RevokeCredentialDocument = gql`
-    mutation RevokeCredential($purpose: String!) {
-  revokeCredential(purpose: $purpose) {
-    ...UserCredentialsFragment
-  }
-}
-    ${UserCredentialsFragmentFragmentDoc}`;
-export type RevokeCredentialMutationFn = Apollo.MutationFunction<RevokeCredentialMutation, RevokeCredentialMutationVariables>;
-
-/**
- * __useRevokeCredentialMutation__
- *
- * To run a mutation, you first call `useRevokeCredentialMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRevokeCredentialMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [revokeCredentialMutation, { data, loading, error }] = useRevokeCredentialMutation({
- *   variables: {
- *      purpose: // value for 'purpose'
- *   },
- * });
- */
-export function useRevokeCredentialMutation(baseOptions?: Apollo.MutationHookOptions<RevokeCredentialMutation, RevokeCredentialMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RevokeCredentialMutation, RevokeCredentialMutationVariables>(RevokeCredentialDocument, options);
-      }
-export type RevokeCredentialMutationHookResult = ReturnType<typeof useRevokeCredentialMutation>;
-export type RevokeCredentialMutationResult = Apollo.MutationResult<RevokeCredentialMutation>;
-export type RevokeCredentialMutationOptions = Apollo.BaseMutationOptions<RevokeCredentialMutation, RevokeCredentialMutationVariables>;
+export type RevokeTokenMutationHookResult = ReturnType<typeof useRevokeTokenMutation>;
+export type RevokeTokenMutationResult = Apollo.MutationResult<RevokeTokenMutation>;
+export type RevokeTokenMutationOptions = Apollo.BaseMutationOptions<RevokeTokenMutation, RevokeTokenMutationVariables>;
 export const CreateTagDocument = gql`
     mutation CreateTag($name: String!, $color: String) {
   createTag(name: $name, color: $color) {

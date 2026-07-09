@@ -1,10 +1,15 @@
 import { gql } from 'graphql-tag'
 
 export const userSchema = gql`
-  type Credentials {
-    bookmarklet: String
-    rss: String
-    extension: String
+  type Token {
+    _id: ID!
+    purpose: String!
+    comment: String
+    createdAt: Date!
+  }
+  type CreateTokenResult {
+    rawToken: String!
+    user: User!
   }
   type User implements BaseObject {
     _id: ID!
@@ -13,7 +18,7 @@ export const userSchema = gql`
 
     name: String!
     authenticationProvider: String
-    credentials: Credentials
+    tokens: [Token!]!
   }
 
   extend type Query {
@@ -22,8 +27,7 @@ export const userSchema = gql`
   }
 
   extend type Mutation {
-    requestNewCredential(purpose: String!): User!
-
-    revokeCredential(purpose: String!): User!
+    createToken(comment: String): CreateTokenResult!
+    revokeToken(tokenId: ID!): User!
   }
 `

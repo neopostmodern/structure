@@ -4,7 +4,7 @@ import session from 'express-session'
 import passport from 'passport'
 import PassportGithub from 'passport-github2'
 import { logger } from '../util/logging.mts'
-import { getOrCreateCredential } from './credentialsMethods.mts'
+import { issueToken } from './tokensMethods.mts'
 import { createOwnershipTagOnUser } from './methods/createOwnershipTagOnUser.mts'
 import { User } from './userModel.mts'
 
@@ -128,7 +128,7 @@ export function setUpGitHubLogin(app) {
     (req, res) => {
       const { state } = req.query
       if (isAllowedExtensionRedirectUri(state)) {
-        getOrCreateCredential((req.user as any)._id, 'extension')
+        issueToken((req.user as any)._id, 'extension')
           .then((token) => {
             res.redirect(`${state}#token=${token}`)
           })
