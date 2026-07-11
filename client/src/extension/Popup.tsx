@@ -2,21 +2,14 @@ import { FC } from 'react'
 import FatalApolloError from '../renderer/components/FatalApolloError'
 import { DataState } from '../renderer/utils/useDataState'
 import useAddCurrentTabNote from './hooks/useAddCurrentTabNote'
-import useAuth from './hooks/useAuth'
 import PopupLayout from './PopupLayout'
 import AddNoteScreen from './screens/AddNoteScreen'
-import LoginScreen from './screens/LoginScreen'
 import NoteScreen from './screens/NoteScreen'
 
 const Popup: FC = () => {
-  const auth = useAuth()
   const currentNote = useAddCurrentTabNote()
 
-  if (
-    auth.authState === 'checking' ||
-    auth.authState === 'loading-profile' ||
-    currentNote.noteId.state === DataState.LOADING
-  ) {
+  if (currentNote.noteId.state === DataState.LOADING) {
     return <PopupLayout loading />
   }
 
@@ -26,16 +19,6 @@ const Popup: FC = () => {
         key='error'
         error={currentNote.noteId.error}
         refetch={() => window.location.reload()}
-      />
-    )
-  }
-
-  if (auth.authState === 'logged-out') {
-    return (
-      <LoginScreen
-        loggingIn={auth.loggingIn}
-        loginError={auth.loginError}
-        onLogIn={auth.logIn}
       />
     )
   }
@@ -56,7 +39,6 @@ const Popup: FC = () => {
   return (
     <NoteScreen
       noteId={currentNote.noteId.data}
-      userId={auth.userId}
       currentUrl={currentNote.url}
       linkNoteId={currentNote.linkNoteId}
     />

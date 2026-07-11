@@ -7,7 +7,6 @@ import NoteForm from '../../renderer/components/NoteForm'
 import Tags from '../../renderer/components/Tags'
 import { useNote } from '../../renderer/hooks/notes'
 import { DataState } from '../../renderer/utils/useDataState'
-import UserIdContext from '../../renderer/utils/UserIdContext'
 import PopupLayout from '../PopupLayout'
 
 const handleOpenInApp = (noteId: string) => {
@@ -17,10 +16,9 @@ const handleOpenInApp = (noteId: string) => {
 
 const NoteScreen: FC<{
   noteId: string
-  userId: string
   currentUrl: string | undefined
   linkNoteId: (noteId: null) => void
-}> = ({ noteId, userId, currentUrl, linkNoteId }) => {
+}> = ({ noteId, currentUrl, linkNoteId }) => {
   const { noteQuery, updateNoteMutation, handleSubmit } = useNote(noteId)
   const onOpenInApp = useCallback(() => handleOpenInApp(noteId), [noteId])
 
@@ -31,42 +29,40 @@ const NoteScreen: FC<{
   const { note } = noteQuery.data
 
   return (
-    <UserIdContext.Provider value={userId}>
-      <PopupLayout
-        topBarActions={
-          <>
-            {currentUrl !== note.url && (
-              <IconButton
-                onClick={() => linkNoteId(null)}
-                sx={{ marginRight: 'auto' }}
-              >
-                <ArrowBack />
-              </IconButton>
-            )}
-            <IconButton onClick={onOpenInApp}>
-              <OpenInNew />
+    <PopupLayout
+      topBarActions={
+        <>
+          {currentUrl !== note.url && (
+            <IconButton
+              onClick={() => linkNoteId(null)}
+              sx={{ marginRight: 'auto' }}
+            >
+              <ArrowBack />
             </IconButton>
-          </>
+          )}
+          <IconButton onClick={onOpenInApp}>
+            <OpenInNew />
+          </IconButton>
+        </>
+      }
+    >
+      <ErrorSnackbar
+        error={updateNoteMutation.error}
+        actionDescription='update note'
+      />
+      <NoteForm
+        note={note}
+        onSubmit={handleSubmit}
+        tagsComponent={
+          <Tags
+            tags={note.tags}
+            size='medium'
+            withShortcuts
+            noteId={note._id}
+          />
         }
-      >
-        <ErrorSnackbar
-          error={updateNoteMutation.error}
-          actionDescription='update note'
-        />
-        <NoteForm
-          note={note}
-          onSubmit={handleSubmit}
-          tagsComponent={
-            <Tags
-              tags={note.tags}
-              size='medium'
-              withShortcuts
-              noteId={note._id}
-            />
-          }
-        />
-      </PopupLayout>
-    </UserIdContext.Provider>
+      />
+    </PopupLayout>
   )
 }
 

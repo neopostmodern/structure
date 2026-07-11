@@ -10,7 +10,7 @@ import configureStore from '../renderer/configureStore'
 import { RootState } from '../renderer/reducers'
 import '../renderer/styles/fonts.global.css'
 import useTheme from '../renderer/styles/useTheme'
-import Popup from './Popup'
+import PopupAuthWrapper from './PopupAuthWrapper'
 
 const PopupApp: FC<{
   client: Awaited<ReturnType<typeof getApolloClient>>
@@ -23,7 +23,7 @@ const PopupApp: FC<{
       <Provider store={store}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Popup />
+          <PopupAuthWrapper />
         </ThemeProvider>
       </Provider>
     </ApolloProvider>
@@ -44,3 +44,5 @@ Promise.all([getApolloClient(), configureStore()])
   .catch((error) => {
     console.error('Failed in initialize extension popup app', error)
   })
+
+// WIE LANGE REDEST DU NOCH
