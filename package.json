@@ -29,6 +29,7 @@
     "client:publish:electron": "(cd client && npm run package-publish)",
     "client:start:electron": "(cd client && npm run start)",
     "client:start:web": "(cd client && npm run start:web)",
+    "client:start:extension": "(cd client && npm run start:extension)",
     "common:build": "(cd common && npm run build)",
     "server:start": "(cd server && npm run start)",
     "server:dev": "(cd server && npm run dev)",
