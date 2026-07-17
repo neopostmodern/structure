@@ -1,7 +1,8 @@
-import { CircularProgress } from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
 import { FC, PropsWithChildren, ReactNode } from 'react'
 import styled from 'styled-components'
 import Centered from '../renderer/components/Centered'
+import { SmallGrayText } from '../renderer/components/util'
 
 const Container = styled.div`
   width: 22rem;
@@ -20,13 +21,27 @@ const TopBar = styled.div`
 // chrome for a small popup (an optional top-right action, e.g. "Open in
 // app") around whatever note-editing UI is reused from the main app.
 const PopupLayout: FC<
-  PropsWithChildren<{ loading?: boolean; topBarActions?: ReactNode }>
-> = ({ children, loading = false, topBarActions }) => (
+  PropsWithChildren<{
+    loading?: boolean
+    loadingHint?: string
+    topBarActions?: ReactNode
+  }>
+> = ({ children, loading = false, loadingHint, topBarActions }) => (
   <Container>
     {topBarActions && <TopBar>{topBarActions}</TopBar>}
     {loading ? (
       <Centered height='6rem'>
-        <CircularProgress color='inherit' disableShrink />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
+          <CircularProgress color='inherit' disableShrink />
+          <SmallGrayText>{loadingHint}</SmallGrayText>
+        </Box>
       </Centered>
     ) : (
       children

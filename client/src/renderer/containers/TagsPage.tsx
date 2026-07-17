@@ -23,7 +23,10 @@ import { RootState } from '../reducers'
 import { breakpointDesktop } from '../styles/constants'
 import colorTools, { ColorCache } from '../utils/colorTools'
 import { stripTypename } from '../utils/graphQl'
-import { BASE_TAG_FRAGMENT } from '../utils/sharedQueriesAndFragments'
+import {
+  BASE_TAG_FRAGMENT,
+  TAGS_QUERY,
+} from '../utils/sharedQueriesAndFragments'
 import useDataState, { DataState } from '../utils/useDataState'
 import ComplexLayout from './ComplexLayout'
 
@@ -94,15 +97,6 @@ export const layoutToName = (layout: TagsLayout): string => {
       return 'Unknown layout'
   }
 }
-
-export const TAGS_QUERY = gql`
-  query Tags {
-    tags {
-      ...BaseTag
-    }
-  }
-  ${BASE_TAG_FRAGMENT}
-`
 
 const UPDATE_TAG_MUTATION = gql`
   mutation UpdateTag2($tag: InputTag!) {

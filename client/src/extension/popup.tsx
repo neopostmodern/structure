@@ -10,7 +10,8 @@ import configureStore from '../renderer/configureStore'
 import { RootState } from '../renderer/reducers'
 import '../renderer/styles/fonts.global.css'
 import useTheme from '../renderer/styles/useTheme'
-import PopupAuthWrapper from './PopupAuthWrapper'
+// import logger, { LogLevelNumber } from '../renderer/utils/logger'
+import PopupAuthAndCacheWrapper from './PopupAuthAndCacheWrapper'
 
 const PopupApp: FC<{
   client: Awaited<ReturnType<typeof getApolloClient>>
@@ -23,12 +24,14 @@ const PopupApp: FC<{
       <Provider store={store}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <PopupAuthWrapper />
+          <PopupAuthAndCacheWrapper />
         </ThemeProvider>
       </Provider>
     </ApolloProvider>
   )
 }
+
+// logger.setLevel(LogLevelNumber.TRACE)
 
 const rootElement = document.getElementById('root')!
 const root = createRoot(rootElement)

@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client'
 import { useApolloClient, useLazyQuery } from '@apollo/client/react'
 import { useEffect } from 'react'
-import { TAGS_QUERY } from '../containers/TagsPage'
 import type {
   EntitiesUpdatedSinceQuery,
   EntitiesUpdatedSinceQueryVariables,
@@ -13,6 +12,7 @@ import performanceMeasurements from '../utils/performanceMeasurements'
 import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
+  TAGS_QUERY,
 } from '../utils/sharedQueriesAndFragments'
 import useDataState, { DataState } from '../utils/useDataState'
 import useIsOnline from './useIsOnline'
@@ -56,7 +56,7 @@ const POPULATE_NOTES_CACHE_QUERY = gql`
   ${BASE_NOTE_FRAGMENT}
 `
 const WRITE_NOTE_TO_CACHE_QUERY = gql`
-  query WriteNoteToCacheQuery($noteId: String!) {
+  query WriteNoteToCacheQuery($noteId: ID!) {
     note(noteId: $noteId) {
       ...BaseNote
 
@@ -68,7 +68,7 @@ const WRITE_NOTE_TO_CACHE_QUERY = gql`
   ${BASE_NOTE_FRAGMENT}
 `
 const WRITE_TAG_TO_CACHE_QUERY = gql`
-  query WriteTagToCacheQuery($tagId: String!) {
+  query WriteTagToCacheQuery($tagId: ID!) {
     tag(tagId: $tagId) {
       ...BaseTag
     }

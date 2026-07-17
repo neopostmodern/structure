@@ -46,9 +46,11 @@ const useAddCurrentTabNote = () => {
         throw new Error('Could not determine the current tab URL.')
       }
       setUrl(activeTab.url)
+
       const lastLinkedNote = (
         await browser.storage.local.get(LINKED_URL_STORAGE_KEY)
       )[LINKED_URL_STORAGE_KEY] as LinkedNoteEntry | null
+
       if (
         lastLinkedNote &&
         moreCanonicalUrl(activeTab.url) === moreCanonicalUrl(lastLinkedNote.url)
@@ -109,6 +111,7 @@ const useAddCurrentTabNote = () => {
       setSearchUrl(widenedSearchUrl)
       setSimilarNotes({ state: DataState.LOADING })
     } else {
+      // there was no direct match but the search was already exhaustive (no wider search URL)
       setSimilarNotes({
         state: DataState.DATA,
         data: [],

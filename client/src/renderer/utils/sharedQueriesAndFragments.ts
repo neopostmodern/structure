@@ -129,6 +129,25 @@ export const UPDATE_NOTE_MUTATION = gql`
   }
 `
 
+export const TAGS_QUERY = gql`
+  query Tags {
+    tags {
+      ...BaseTag
+    }
+  }
+  ${BASE_TAG_FRAGMENT}
+`
+
+export const TAGS_WITH_COUNTS_QUERY = gql`
+  query TagsWithCounts {
+    tags {
+      ...BaseTag
+      noteCount
+    }
+  }
+  ${BASE_TAG_FRAGMENT}
+`
+
 export const ADD_TAG_BY_NAME_TO_NOTE_MUTATION = gql`
   mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
     addTagByNameToNote(noteId: $noteId, name: $tagName) {

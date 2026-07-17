@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { Warning as WarningIcon } from '@mui/icons-material'
 import { Skeleton, Tooltip } from '@mui/material'
@@ -12,22 +11,12 @@ import type {
 import useUserId from '../hooks/useUserId'
 import {
   ADD_TAG_BY_NAME_TO_NOTE_MUTATION,
-  BASE_TAG_FRAGMENT,
+  TAGS_WITH_COUNTS_QUERY,
 } from '../utils/sharedQueriesAndFragments'
 import { DisplayOnlyTag } from '../utils/types'
 import useDataState, { DataState } from '../utils/useDataState'
 import ErrorSnackbar from './ErrorSnackbar'
 import InlineTagForm from './InlineTagForm'
-
-export const TAGS_WITH_COUNTS_QUERY = gql`
-  query TagsWithCounts {
-    tags {
-      ...BaseTag
-      noteCount
-    }
-  }
-  ${BASE_TAG_FRAGMENT}
-`
 
 export type AddTagFormProps = {
   noteId: string
