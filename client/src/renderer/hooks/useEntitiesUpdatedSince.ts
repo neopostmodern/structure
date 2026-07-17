@@ -121,53 +121,59 @@ const useEntitiesUpdatedSince = () => {
       entitiesUpdatedSince,
     })
 
-    if (!storedCacheId) {
-      cache.writeQuery({
-        query: POPULATE_NOTES_CACHE_QUERY,
-        data: { notes: updatedEntities.addedNotes },
-      })
-      cache.writeQuery({
-        query: TAGS_QUERY,
-        data: { tags: updatedEntities.addedTags },
-      })
-    } else {
-      ;[...updatedEntities.addedNotes, ...updatedEntities.updatedNotes].forEach(
-        (note) => {
-          cache.writeQuery({
-            query: WRITE_NOTE_TO_CACHE_QUERY,
-            data: { note },
-            variables: { noteId: note._id },
+    cache.batch({
+      update: (transactionCache) => {
+        if (!storedCacheId) {
+          transactionCache.writeQuery({
+            query: POPULATE_NOTES_CACHE_QUERY,
+            data: { notes: updatedEntities.addedNotes },
           })
-        },
-      )
-      ;[...updatedEntities.addedTags, ...updatedEntities.updatedTags].forEach(
-        (tag) => {
-          cache.writeQuery({
-            query: WRITE_TAG_TO_CACHE_QUERY,
-            data: { tag },
-            variables: { tagId: tag._id },
+          transactionCache.writeQuery({
+            query: TAGS_QUERY,
+            data: { tags: updatedEntities.addedTags },
           })
-        },
-      )
+        } else {
+          ;[
+            ...updatedEntities.addedNotes,
+            ...updatedEntities.updatedNotes,
+          ].forEach((note) => {
+            transactionCache.writeQuery({
+              query: WRITE_NOTE_TO_CACHE_QUERY,
+              data: { note },
+              variables: { noteId: note._id },
+            })
+          })
+          ;[
+            ...updatedEntities.addedTags,
+            ...updatedEntities.updatedTags,
+          ].forEach((tag) => {
+            transactionCache.writeQuery({
+              query: WRITE_TAG_TO_CACHE_QUERY,
+              data: { tag },
+              variables: { tagId: tag._id },
+            })
+          })
 
-      // todo: actually remove entities from cache with removeEntityFromCache() ?
+          // todo: actually remove entities from cache with removeEntityFromCache() ?
 
-      cache.modify({
-        id: 'ROOT_QUERY',
-        fields: {
-          notes: cacheRefUpdater(
-            'Note',
-            updatedEntities.addedNotes,
-            updatedEntities.removedNoteIds,
-          ),
-          tags: cacheRefUpdater(
-            'Tag',
-            updatedEntities.addedTags,
-            updatedEntities.removedTagIds,
-          ),
-        },
-      })
-    }
+          transactionCache.modify({
+            id: 'ROOT_QUERY',
+            fields: {
+              notes: cacheRefUpdater(
+                'Note',
+                updatedEntities.addedNotes,
+                updatedEntities.removedNoteIds,
+              ),
+              tags: cacheRefUpdater(
+                'Tag',
+                updatedEntities.addedTags,
+                updatedEntities.removedTagIds,
+              ),
+            },
+          })
+        }
+      },
+    })
 
     localStorage.setItem(
       ENTITIES_UPDATED_SINCE_CACHE_ID_STORAGE_KEY,
