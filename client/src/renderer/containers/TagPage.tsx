@@ -29,10 +29,10 @@ import {
   BASE_NOTE_FRAGMENT,
   BASE_TAG_FRAGMENT,
   BASE_USER_FRAGMENT,
+  TAGS_QUERY,
 } from '../utils/sharedQueriesAndFragments'
 import useDataState, { DataState } from '../utils/useDataState'
 import ComplexLayout from './ComplexLayout'
-import { TAGS_QUERY } from './TagsPage'
 
 // todo: the query is very heavy, it should leverage caching, at least on the inner tag query
 const TAG_QUERY = gql`
