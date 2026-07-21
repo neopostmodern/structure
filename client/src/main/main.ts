@@ -138,7 +138,6 @@ const createWindow = async () => {
   })
 
   mainWindow.webContents.on('did-create-window', (browserWindow) => {
-    browserWindow.webContents.toggleDevTools()
     browserWindow.webContents.on('did-finish-load', () => {
       if (
         browserWindow.webContents.getURL().startsWith(config.WEB_FRONTEND_HOST)
