@@ -53,6 +53,18 @@ jobs:
           name: setup-${{ matrix.os }}
           retention-days: 1
           path: setup.tar
+          if-no-files-found: error
+      - name: Create source archive
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: git archive --format=zip --output="source.zip" HEAD
+      - name: Store source archive (as artifact)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-archive
+          retention-days: 1
+          path: source.zip
+          if-no-files-found: error
 
   build-deploy-web:
     name: Build and deploy frontend
@@ -138,3 +150,33 @@ jobs:
           RESPONSE_CODE=$(curl -sL -w "%{http_code}" -I "$BACKEND_URL/hello" -o /dev/null)
           echo "HTTP response code from $BACKEND_URL/hello : $RESPONSE_CODE"
           [ "$RESPONSE_CODE" == "200" ]
+
+  publish-firefox-extension:
+    name: Publish Firefox extension
+    runs-on: ubuntu-latest
+    needs: [setup]
+    steps:
+      - name: Download setup (from artifact)
+        uses: actions/download-artifact@v4
+        with:
+          name: setup-ubuntu-latest
+      - name: Download source archive (from artifact)
+        uses: actions/download-artifact@v4
+        with:
+          name: source-archive
+      - name: Unpack setup
+        run: tar xf setup.tar && rm setup.tar
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+      - name: Build extension
+        run: npm run client:build:extension
+      - name: Package extension
+        run: cd client/out/extension && zip ../extension.xpi * **/*
+      - name: Store built extension (as artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Extension (Firefox)
+          retention-days: 1
+          path: client/out/extension.xpi
