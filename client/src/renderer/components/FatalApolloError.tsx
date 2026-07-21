@@ -9,7 +9,9 @@ import { breakPointMobile } from '../styles/constants'
 import { OFFLINE_CACHE_MISS } from '../utils/useDataState'
 import Gap from './Gap'
 
-const ErrorContainer = styled.div<{ variant?: 'fullpage' | 'outlined' }>`
+const ErrorContainer = styled.div<{
+  variant?: 'fullpage' | 'outlined' | 'bare'
+}>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -27,6 +29,9 @@ const ErrorContainer = styled.div<{ variant?: 'fullpage' | 'outlined' }>`
         border-radius: ${theme.shape.borderRadius}px;
         padding: 2rem;
       `
+    }
+    if (variant === 'bare') {
+      return ''
     }
     throw Error(
       `[FatalApolloError - ErrorContainer] Unknown variant: ${variant}`,
@@ -60,7 +65,7 @@ const FullErrorMessage = styled.pre`
   overflow-x: auto;
 `
 
-type NetworkErrorProps =
+type NetworkErrorProps = { variant?: 'fullpage' | 'bare' } & (
   | {
       error: ErrorLike | undefined // todo: could be more generic?
       refetch: () => void
@@ -72,6 +77,7 @@ type NetworkErrorProps =
         networkStatus: NetworkStatus
       }
     }
+)
 
 const FatalApolloError: React.FC<NetworkErrorProps> = (props) => {
   const { error, refetch, ...optionalProps } =
@@ -145,7 +151,7 @@ const FatalApolloError: React.FC<NetworkErrorProps> = (props) => {
     )
   }
   return (
-    <ErrorContainer>
+    <ErrorContainer variant={props.variant}>
       <ErrorTitle>
         {'networkStatus' in optionalProps &&
         optionalProps.networkStatus === NetworkStatus.error

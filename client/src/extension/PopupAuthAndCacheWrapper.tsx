@@ -1,6 +1,7 @@
 import { useApolloClient, useQuery } from '@apollo/client/react'
 import { FC } from 'react'
 
+import FatalApolloError from '../renderer/components/FatalApolloError'
 import type { TagsWithCountsQuery } from '../renderer/generated/graphql'
 import { TAGS_WITH_COUNTS_QUERY } from '../renderer/utils/sharedQueriesAndFragments'
 import useDataState, { DataState } from '../renderer/utils/useDataState'
@@ -14,6 +15,14 @@ const PopupTagCacheWarmup: FC = () => {
   const tagsQuery = useDataState(
     useQuery<TagsWithCountsQuery>(TAGS_WITH_COUNTS_QUERY),
   )
+
+  if (tagsQuery.state === DataState.ERROR) {
+    return (
+      <PopupLayout>
+        <FatalApolloError query={tagsQuery} variant='bare' />
+      </PopupLayout>
+    )
+  }
 
   if (tagsQuery.state !== DataState.DATA) {
     return (
