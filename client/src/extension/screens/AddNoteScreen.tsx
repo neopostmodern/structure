@@ -18,7 +18,7 @@ const AddNoteScreen: FC<{
   url: string | undefined
   linkNoteId: (noteId: string) => void
 }> = ({ isAdding, addError, onAdd, similarNotes, url, linkNoteId }) => (
-  <PopupLayout>
+  <PopupLayout showAppTitle={true}>
     <ErrorSnackbar error={addError} actionDescription='add note' />
 
     <Centered height='5rem'>

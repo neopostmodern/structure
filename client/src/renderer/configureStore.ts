@@ -1,10 +1,12 @@
 import { createBrowserHistory, createHashHistory } from 'history'
-import { applyMiddleware, compose, createStore } from 'redux'
+import { applyMiddleware, compose, createStore, Reducer } from 'redux'
 import { createReduxHistoryContext } from 'redux-first-history'
 import middlewares from './middleware'
 import createRootReducer from './reducers'
 
-const configureStore = async () => {
+const configureStore = async <Extra extends Record<string, Reducer> = {}>(
+  extraReducers?: Extra,
+) => {
   let createHistory =
     __BUILD_TARGET__ === 'web' ? createBrowserHistory : createHashHistory
 
@@ -43,7 +45,7 @@ const configureStore = async () => {
 
   // Create Store
   const store = createStore(
-    createRootReducer(routerReducer),
+    createRootReducer(routerReducer, extraReducers),
     undefined,
     enhancer,
   )

@@ -1,13 +1,12 @@
 import { useQuery } from '@apollo/client/react'
 import { Typography } from '@mui/material'
 import { gql } from 'graphql-tag'
-import { FC } from 'react'
+import { FC, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setBackendUrl } from '../actions/configuration'
 import AdvancedSettings from '../components/AdvancedSettings'
-import { StructureTextField } from '../components/formComponents'
+import Configuration from '../components/Configuration'
 import Gap from '../components/Gap'
-import SettingsEntry from '../components/SettingsEntry'
 import type { TinyUserQuery } from '../generated/graphql'
 import { RootState } from '../reducers'
 import { ConfigurationStateType } from '../reducers/configuration'
@@ -34,6 +33,13 @@ const SettingsPage: FC = () => {
 
   const isLoggedIn = userQuery.data?.currentUser
 
+  const handleBackendUrlChange = useCallback(
+    (newBackendUrl: string): void => {
+      dispatch(setBackendUrl(newBackendUrl))
+    },
+    [dispatch],
+  )
+
   return (
     <ComplexLayout>
       <Typography variant='h1'>Settings</Typography>
@@ -44,56 +50,11 @@ const SettingsPage: FC = () => {
           <Gap vertical={2} />
         </>
       )}
-      <Typography variant='h2'>Configuration</Typography>
-      <SettingsEntry
-        title='Server'
-        actionTitle='Update'
-        actionHandler={(): void => {
-          dispatch(
-            setBackendUrl(
-              (
-                document.getElementById(
-                  'configuration__backend-url',
-                ) as HTMLInputElement
-              ).value,
-            ),
-          )
-        }}
-        readOnly={__BUILD_TARGET__ === 'web'}
-        comment={
-          <>
-            The backend server is in charge of storing your data (username,
-            notes, tags, et cetera). You must trust this server (and/or the
-            operator of it), since your data is only encrypted during the
-            transport to the server, not on the server. This means the operator
-            of the server can (theoretically) read and/or modify all your data.
-            <br />
-            {__BUILD_TARGET__ === 'electron_renderer' ? (
-              <>
-                Modifying the backend server URL causes a restart.{' '}
-                <b>
-                  Setting an invalid value might make it impossible to restart
-                  the app.
-                </b>{' '}
-                Data is not migrated automatically when switching backend
-                servers.
-                <br />
-                Default: {backendUrlDefault}
-              </>
-            ) : (
-              <>This setting can not be changed in the web version.</>
-            )}
-          </>
-        }
-      >
-        <StructureTextField
-          id='configuration__backend-url'
-          type='text'
-          defaultValue={backendUrl}
-          placeholder={backendUrlDefault}
-          disabled={__BUILD_TARGET__ === 'web'}
-        />
-      </SettingsEntry>
+      <Configuration
+        currentBackendUrl={backendUrl}
+        defaultBackendUrl={backendUrlDefault}
+        onChangeBackendUrl={handleBackendUrlChange}
+      />
       <AdvancedSettings />
     </ComplexLayout>
   )
