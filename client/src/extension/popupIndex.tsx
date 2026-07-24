@@ -9,7 +9,6 @@ import ErrorBoundary from '../renderer/components/ErrorBoundary'
 import configureStore from '../renderer/configureStore'
 import '../renderer/styles/fonts.global.css'
 import useTheme from '../renderer/styles/useTheme'
-// import logger, { LogLevelNumber } from '../renderer/utils/logger'
 import PopupAuthAndCacheWrapper from './PopupAuthAndCacheWrapper'
 import settings from './reducers/settings'
 import SettingsScreen from './screens/SettingsScreen'
@@ -41,8 +40,6 @@ const PopupApp: FC<{
   )
 }
 
-// logger.setLevel(LogLevelNumber.TRACE)
-
 const rootElement = document.getElementById('root')!
 const root = createRoot(rootElement)
 
@@ -57,5 +54,3 @@ Promise.all([getApolloClient(), configureStore({ settings })])
   .catch((error) => {
     console.error('Failed in initialize extension popup app', error)
   })
-
-// WIE LANGE REDEST DU NOCH
