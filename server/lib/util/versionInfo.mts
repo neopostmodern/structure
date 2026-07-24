@@ -15,7 +15,7 @@ export const versionInfoResolver = {
   Query: {
     versions(root, { currentVersion }) {
       return {
-        minimum: currentVersion.split('.')[1] !== '25' ? '0.25.0' : null,
+        minimum: parseInt(currentVersion.split('.')[1]) < 25 ? '0.25.0' : null,
         current: packageJson.version,
       }
     },
