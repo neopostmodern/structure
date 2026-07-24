@@ -152,7 +152,7 @@ jobs:
           [ "$RESPONSE_CODE" == "200" ]
 
   publish-firefox-extension:
-    name: Publish Firefox extension
+    name: Build Firefox extension
     runs-on: ubuntu-latest
     needs: [setup]
     steps:
