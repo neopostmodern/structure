@@ -34,11 +34,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 const corsOptions = {
   origin(origin, callback) {
-    if (corsAllowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error(`Host disallowed by CORS: ${origin}`))
-    }
+    callback(null, corsAllowedOrigins.includes(origin))
   },
   credentials: true,
 }
