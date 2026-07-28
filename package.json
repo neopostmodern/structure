@@ -1,6 +1,12 @@
 {
   "name": "structure",
   "type": "module",
+  "workspaces": [
+    "client",
+    "common",
+    "config",
+    "server"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/neopostmodern/structure.git"
