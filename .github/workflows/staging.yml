@@ -36,15 +36,6 @@ jobs:
           CONFIG_DECRYPT_PASSPHRASE: ${{ secrets.CONFIG_DECRYPT_PASSPHRASE }}
       - name: Install root dependencies
         run: npm ci
-      - name: Install subpackage dependencies
-        run: |
-          packages=( "config" "common" "server" "client" )
-          for dir in "${packages[@]}"
-          do
-            pushd "$dir"
-            npm ci
-            popd
-          done
       - name: Pack setup
         run: tar cf setup.tar *
       - name: Store setup (as artifact)
@@ -123,8 +114,23 @@ jobs:
   deploy-backend:
     name: Deploy backend
     runs-on: ubuntu-latest
-    needs: [setup]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up node / npm with caching
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            **/package-lock.json
+      - name: Decrypt configuration
+        run: ./config/decrypt-config.sh
+        env:
+          CONFIG_DECRYPT_PASSPHRASE: ${{ secrets.CONFIG_DECRYPT_PASSPHRASE }}
+      - name: Install production dependencies for server
+        run: npm ci --omit=dev --workspace=server --include-workspace-root
       - name: Install required packages
         run: sudo apt-get install -y lftp
       - name: Install SSH key
@@ -132,14 +138,8 @@ jobs:
         with:
           key: ${{ secrets.SSH_KEY }}
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      - name: Download setup (from artifact)
-        uses: actions/download-artifact@v4
-        with:
-          name: setup-ubuntu-latest
-      - name: Unpack setup
-        run: tar xf setup.tar && rm setup.tar
       - name: Pack server
-        run: tar cf server.tar common config server package.json
+        run: tar cf server.tar common config server node_modules package.json
       - name: Deploy
         run: ./server/scripts/deploy/deploy.sh
       - name: Check HTTP status code
