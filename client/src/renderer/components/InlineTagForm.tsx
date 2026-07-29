@@ -1,6 +1,6 @@
 import { Autocomplete, Stack, TextField, Typography } from '@mui/material'
 import { matchSorter } from 'match-sorter'
-import React from 'react'
+import React, { useRef } from 'react'
 import type { TagsWithCountsQuery } from '../generated/graphql'
 import useUserId from '../hooks/useUserId'
 import { SkeletonTag } from './Skeletons'
@@ -18,12 +18,23 @@ type InlineTagFormProps = {
 const MAX_TAG_SUGGESTIONS = 20
 const TAG_OVERFLOW = 'TAG_OVERFLOW'
 
+const getMatchingTags = (
+  tags: Array<TagType>,
+  inputValue: string,
+): Array<TagType> =>
+  matchSorter(tags, inputValue, {
+    keys: [(tag) => tag.name.replace(/[:›>]/g, ' ')],
+    baseSort: ({ item: tagA }, { item: tagB }) =>
+      Math.sign(tagB.noteCount - tagA.noteCount),
+  })
+
 const InlineTagForm: React.FC<InlineTagFormProps> = ({
   onAddTag,
   onAbort,
   tags,
 }) => {
   const userId = useUserId()
+  const explicitlyHighlightedOptionRef = useRef<TagOrNewTagType | null>(null)
 
   return (
     <Autocomplete<TagOrNewTagType, false, false, true>
@@ -40,21 +51,50 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
       }
       autoHighlight
       onChange={(_event, newValue) => {
+        if (!newValue) {
+          return
+        }
+
         if (typeof newValue === 'string') {
-          throw Error(
-            `[InlineTagForm.onChange] Illegal input - shouldn't receive string '${newValue}'!`,
-          )
+          onAddTag(newValue)
+          return
         }
-        if (newValue) {
-          onAddTag(
-            'newTagName' in newValue ? newValue.newTagName : newValue.name,
-          )
-        }
+
+        onAddTag('newTagName' in newValue ? newValue.newTagName : newValue.name)
       }}
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
           onAbort(true)
+          return
         }
+        if (
+          event.key === 'Enter' &&
+          explicitlyHighlightedOptionRef.current === null
+        ) {
+          const inputValue = (event.target as HTMLInputElement).value.trim()
+
+          if (inputValue === '') {
+            return
+          }
+
+          const matchingTags = getMatchingTags(
+            tags === 'loading' ? [] : tags,
+            inputValue,
+          )
+
+          if (matchingTags.length > 0) {
+            event.preventDefault()
+            ;(
+              event as unknown as { defaultMuiPrevented?: boolean }
+            ).defaultMuiPrevented = true
+            onAddTag(matchingTags[0].name)
+          }
+
+          // the 'no match' scenario falls through to MUI's default (raw text) handling
+        }
+      }}
+      onHighlightChange={(_event, option) => {
+        explicitlyHighlightedOptionRef.current = option
       }}
       onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
         if (event.target.value.length === 0) {
@@ -65,14 +105,11 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
       filterOptions={(options, params) => {
         const { inputValue } = params
 
-        let filtered: Array<TagOrNewTagType> = matchSorter(
+        explicitlyHighlightedOptionRef.current = null
+
+        let filtered: Array<TagOrNewTagType> = getMatchingTags(
           options as Array<TagType>,
           inputValue,
-          {
-            keys: [(tag) => tag.name.replace(/[:›>]/g, ' ')],
-            baseSort: ({ item: tagA }, { item: tagB }) =>
-              Math.sign(tagB.noteCount - tagA.noteCount),
-          },
         )
 
         let hiddenCount = 0
@@ -103,9 +140,7 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
       }}
       getOptionLabel={(option) => {
         if (typeof option === 'string') {
-          throw Error(
-            `[InlineTagForm.getOptionLabel] Illegal input - shouldn't receive string '${option}'!`,
-          )
+          return option
         }
 
         return 'newTagName' in option ? option.newTagName : option.name
