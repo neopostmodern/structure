@@ -154,7 +154,18 @@ const useEntitiesUpdatedSince = () => {
             })
           })
 
-          // todo: actually remove entities from cache with removeEntityFromCache() ?
+          updatedEntities.removedNoteIds.forEach((noteId) => {
+            transactionCache.evict({ id: `Note:${noteId}` })
+          })
+          updatedEntities.removedTagIds.forEach((tagId) => {
+            transactionCache.evict({ id: `Tag:${tagId}` })
+          })
+          if (
+            updatedEntities.removedNoteIds.length ||
+            updatedEntities.removedTagIds.length
+          ) {
+            transactionCache.gc()
+          }
 
           transactionCache.modify({
             id: 'ROOT_QUERY',
