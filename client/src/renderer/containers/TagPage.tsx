@@ -51,7 +51,6 @@ const TAG_QUERY = gql`
   }
 
   ${BASE_TAG_FRAGMENT}
-  ${BASE_NOTE_FRAGMENT}
   ${BASE_USER_FRAGMENT}
 `
 const UPDATE_TAG_MUTATION = gql`
