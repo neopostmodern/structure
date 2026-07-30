@@ -9,6 +9,7 @@ import { dateToShortISO8601 } from '../utils/textHelpers'
 import DeleteNoteTrigger from './DeleteNoteTrigger'
 import EntityMetadata from './EntityMetadata'
 import { Menu } from './Menu'
+import NoteTextCounts from './NoteTextCounts'
 
 const NotePageMenu = ({ note }: { note: NoteQuery['note'] }) => {
   const onlyReadPermission = !useHasPermission(note, 'notes', 'write')
@@ -29,6 +30,7 @@ const NotePageMenu = ({ note }: { note: NoteQuery['note'] }) => {
       {deleteLinkErrorSnackbar}
       <Menu>
         <EntityMetadata entity={note} />
+        <NoteTextCounts />
         {!onlyReadPermission && (
           <>
             <Tooltip

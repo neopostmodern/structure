@@ -9,11 +9,13 @@ import {
   COMPLETE_LOGIN,
   INCREASE_INFINITE_SCROLL,
   LinkLayout,
+  NoteTextCountMode,
   REQUEST_LOGIN,
   REQUEST_LOGOUT,
   SET_BATCH_SELECTED,
   SET_BATCH_SELECTION,
   SET_CLIPBOARD,
+  SET_NOTE_TEXT_COUNT_MODE,
   SortBy,
   TagsLayout,
   TOGGLE_BATCH_EDITING,
@@ -34,6 +36,7 @@ export interface UserInterfaceStateType {
   batchEditing: boolean
   batchSelections: BatchSelectionType
   clipboard?: string
+  noteTextCountMode: NoteTextCountMode
 }
 
 type Action = { type: string; payload?: any }
@@ -44,6 +47,11 @@ type Action = { type: string; payload?: any }
 export const DEFAULT_NOTE_LAYOUT = LinkLayout.LIST_LAYOUT
 export const DEFAULT_ARCHIVE_STATE = ArchiveState.NO_ARCHIVE
 export const DEFAULT_SORT_BY = SortBy.CHANGED_AT
+export const DEFAULT_NOTE_TEXT_COUNT_MODE = NoteTextCountMode.CHARACTERS
+
+const noteTextCountMode =
+  (localStorage.getItem('note-text-count-mode') as NoteTextCountMode) ||
+  DEFAULT_NOTE_TEXT_COUNT_MODE
 
 const initialState: UserInterfaceStateType = {
   loggingIn: false,
@@ -55,6 +63,7 @@ const initialState: UserInterfaceStateType = {
   infiniteScrollLimit: 15,
   batchEditing: false,
   batchSelections: {},
+  noteTextCountMode,
 }
 
 const links = (
@@ -99,6 +108,8 @@ const links = (
       return { ...state, clipboard: action.payload }
     case CLEAR_CLIPBOARD:
       return { ...state, clipboard: undefined }
+    case SET_NOTE_TEXT_COUNT_MODE:
+      return { ...state, noteTextCountMode: action.payload }
     default:
       return state
   }

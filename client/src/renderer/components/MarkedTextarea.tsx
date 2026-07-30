@@ -2,6 +2,7 @@ import { Tab, Tabs, TextField } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
+import { useNoteTextStatsSetters } from '../contexts/NoteTextStatsContext'
 import useShortcut from '../hooks/useShortcut'
 import { SHORTCUTS } from '../utils/keyboard'
 import RenderedMarkdown from './RenderedMarkdown'
@@ -18,12 +19,75 @@ type MarkedTextareaProps = {
 }
 
 const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
-  const { control, getValues } = useFormContext()
+  const { control, getValues, watch } = useFormContext()
+  const { setFullText, setSelectedText, setTextOrigin } =
+    useNoteTextStatsSetters()
   const [editDescription, setEditDescription] = useState(false)
   const [lastSelection, setLastSelection] = useState<[number, number] | null>(
     null,
   )
   const textareaElement = useRef<HTMLTextAreaElement>()
+  const viewContainerElement = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const isRenderedMode = readOnly || !editDescription
+
+    const storeFullText = (currentDescription: string): void => {
+      setTextOrigin(isRenderedMode ? 'rendered' : 'source')
+      if (!currentDescription) {
+        setFullText('')
+      } else if (isRenderedMode) {
+        setFullText(viewContainerElement.current?.textContent ?? '')
+      } else {
+        setFullText(currentDescription)
+      }
+    }
+
+    storeFullText(getValues(name))
+
+    const subscription = watch((values, { name: changedField }) => {
+      if (!changedField || changedField === name) {
+        storeFullText(values[name] ?? '')
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [editDescription, readOnly])
+
+  useEffect(() => {
+    const handleSelectionChange = (): void => {
+      if (
+        textareaElement.current &&
+        document.activeElement === textareaElement.current
+      ) {
+        const { selectionStart, selectionEnd, value } = textareaElement.current
+        setSelectedText(
+          selectionStart !== selectionEnd
+            ? value.substring(selectionStart, selectionEnd)
+            : '',
+        )
+        return
+      }
+
+      const selection = window.getSelection()
+      if (
+        selection &&
+        selection.toString().length > 0 &&
+        selection.anchorNode &&
+        viewContainerElement.current?.contains(selection.anchorNode)
+      ) {
+        setSelectedText(selection.toString())
+      } else {
+        setSelectedText('')
+      }
+    }
+
+    document.addEventListener('selectionchange', handleSelectionChange)
+
+    return () => {
+      document.removeEventListener('selectionchange', handleSelectionChange)
+    }
+  }, [])
 
   // shortcuts need self-updating references
   const shortcutRefs = useRef<{
@@ -67,9 +131,11 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
             setLastSelection(null)
           }
         }
+        setSelectedText('')
         setEditDescription(false)
       }
     } else {
+      setSelectedText('')
       setEditDescription(true)
       setTimeout(() => {
         focusTextarea()
@@ -87,7 +153,11 @@ const MarkedTextarea: React.FC<MarkedTextareaProps> = ({ name, readOnly }) => {
     }
   }, [])
 
-  const renderMarkdown = () => <RenderedMarkdown markdown={getValues(name)} />
+  const renderMarkdown = () => (
+    <div ref={viewContainerElement}>
+      <RenderedMarkdown markdown={getValues(name)} />
+    </div>
+  )
 
   if (readOnly) {
     return renderMarkdown()

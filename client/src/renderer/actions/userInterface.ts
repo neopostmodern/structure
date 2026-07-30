@@ -20,6 +20,10 @@ export enum SortBy {
   UPDATED_AT = 'UPDATED_AT',
   CHANGED_AT = 'CHANGED_AT',
 }
+export enum NoteTextCountMode {
+  CHARACTERS = 'CHARACTERS',
+  WORDS = 'WORDS',
+}
 
 export const REQUEST_LOGIN = 'REQUEST_LOGIN'
 export const COMPLETE_LOGIN = 'COMPLETE_LOGIN'
@@ -36,6 +40,7 @@ export const SET_BATCH_SELECTION = 'SET_BATCH_SELECTION'
 export const REQUEST_CLIPBOARD = 'REQUEST_CLIPBOARD'
 export const SET_CLIPBOARD = 'SET_CLIPBOARD'
 export const CLEAR_CLIPBOARD = 'CLEAR_CLIPBOARD'
+export const SET_NOTE_TEXT_COUNT_MODE = 'SET_NOTE_TEXT_COUNT_MODE'
 
 export function requestLogin() {
   return {
@@ -122,5 +127,12 @@ export function setClipboard(clipboard: string) {
 export function clearClipboard() {
   return {
     type: CLEAR_CLIPBOARD,
+  }
+}
+
+export function setNoteTextCountMode(mode: NoteTextCountMode) {
+  return {
+    type: SET_NOTE_TEXT_COUNT_MODE,
+    payload: mode,
   }
 }

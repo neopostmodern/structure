@@ -5,6 +5,7 @@ import NetworkOperationsIndicator from '../components/NetworkOperationsIndicator
 import NoteForm from '../components/NoteForm'
 import NotePageMenu from '../components/NotePageMenu'
 import Tags from '../components/Tags'
+import { NoteTextStatsProvider } from '../contexts/NoteTextStatsContext'
 import { useNote } from '../hooks/notes'
 import { useIsDesktopLayout } from '../utils/mediaQueryHooks'
 import { DataState } from '../utils/useDataState'
@@ -32,20 +33,22 @@ const NotePage: React.FC<{ noteId: string }> = ({ noteId }) => {
   )
 
   return (
-    <ComplexLayout
-      primaryActions={isDesktopLayout && tagsComponent}
-      secondaryActions={<NotePageMenu note={note} />}
-    >
-      <NetworkOperationsIndicator
-        query={noteQuery}
-        mutation={updateNoteMutation}
-      />
-      <NoteForm
-        note={note}
-        onSubmit={handleSubmit}
-        tagsComponent={!isDesktopLayout && tagsComponent}
-      />
-    </ComplexLayout>
+    <NoteTextStatsProvider>
+      <ComplexLayout
+        primaryActions={isDesktopLayout && tagsComponent}
+        secondaryActions={<NotePageMenu note={note} />}
+      >
+        <NetworkOperationsIndicator
+          query={noteQuery}
+          mutation={updateNoteMutation}
+        />
+        <NoteForm
+          note={note}
+          onSubmit={handleSubmit}
+          tagsComponent={!isDesktopLayout && tagsComponent}
+        />
+      </ComplexLayout>
+    </NoteTextStatsProvider>
   )
 }
 
