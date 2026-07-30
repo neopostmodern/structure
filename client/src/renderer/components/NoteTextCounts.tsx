@@ -1,12 +1,20 @@
 import { FormatListNumberedRtl } from '@mui/icons-material'
 import { Button } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
+import styled from 'styled-components'
 import {
   NoteTextCountMode,
   setNoteTextCountMode,
 } from '../actions/userInterface'
 import { useNoteTextStats } from '../contexts/NoteTextStatsContext'
 import { RootState } from '../reducers'
+
+const TruncatedLabel = styled.span`
+  overflow: hidden;
+  min-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`
 
 const countWords = (text: string): number =>
   text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length
@@ -48,9 +56,15 @@ const NoteTextCounts = () => {
     stats.textOrigin === 'rendered' ? 'rendered text' : 'raw markdown'
 
   return (
-    <Button startIcon={<FormatListNumberedRtl />} onClick={toggleMode}>
-      {count} {unit} {isSelection ? ' selected' : ''}{' '}
-      {mode === NoteTextCountMode.CHARACTERS && `(${originHint})`}
+    <Button
+      startIcon={<FormatListNumberedRtl />}
+      onClick={toggleMode}
+      sx={{ maxWidth: '100%' }}
+    >
+      <TruncatedLabel>
+        {count} {unit} {isSelection ? ' selected' : ''}{' '}
+        {mode === NoteTextCountMode.CHARACTERS && `(${originHint})`}
+      </TruncatedLabel>
     </Button>
   )
 }
