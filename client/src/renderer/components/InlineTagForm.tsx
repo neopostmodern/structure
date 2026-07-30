@@ -107,6 +107,11 @@ const InlineTagForm: React.FC<InlineTagFormProps> = ({
 
         explicitlyHighlightedOptionRef.current = null
 
+        if (tags === 'loading') {
+          // MUI only possibly shows the loading state when there is no data, so must not return "Add ..." either
+          return []
+        }
+
         let filtered: Array<TagOrNewTagType> = getMatchingTags(
           options as Array<TagType>,
           inputValue,
