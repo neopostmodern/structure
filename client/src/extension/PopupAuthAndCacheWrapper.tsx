@@ -2,8 +2,8 @@ import { useApolloClient, useQuery } from '@apollo/client/react'
 import { FC } from 'react'
 
 import FatalApolloError from '../renderer/components/FatalApolloError'
-import type { TagsWithCountsQuery } from '../renderer/generated/graphql'
-import { TAGS_WITH_COUNTS_QUERY } from '../renderer/utils/sharedQueriesAndFragments'
+import type { TagsQuery } from '../renderer/generated/graphql'
+import { TAGS_QUERY } from '../renderer/utils/sharedQueriesAndFragments'
 import useDataState, { DataState } from '../renderer/utils/useDataState'
 import UserIdContext from '../renderer/utils/UserIdContext'
 import useAuth from './hooks/useAuth'
@@ -12,9 +12,7 @@ import PopupLayout from './PopupLayout'
 import LoginScreen from './screens/LoginScreen'
 
 const PopupTagCacheWarmup: FC = () => {
-  const tagsQuery = useDataState(
-    useQuery<TagsWithCountsQuery>(TAGS_WITH_COUNTS_QUERY),
-  )
+  const tagsQuery = useDataState(useQuery<TagsQuery>(TAGS_QUERY))
 
   if (tagsQuery.state === DataState.ERROR) {
     return (

@@ -6,12 +6,12 @@ import { useCallback, useState } from 'react'
 import type {
   AddTagByNameToNoteMutation,
   AddTagByNameToNoteMutationVariables,
-  TagsWithCountsQuery,
+  TagsQuery,
 } from '../generated/graphql'
 import useUserId from '../hooks/useUserId'
 import {
   ADD_TAG_BY_NAME_TO_NOTE_MUTATION,
-  TAGS_WITH_COUNTS_QUERY,
+  TAGS_QUERY,
 } from '../utils/sharedQueriesAndFragments'
 import { DisplayOnlyTag } from '../utils/types'
 import useDataState, { DataState } from '../utils/useDataState'
@@ -31,7 +31,7 @@ const AddTagForm = ({
   const [submittedTag, setSubmittedTag] = useState<string | null>(null)
 
   const tagsQuery = useDataState(
-    useQuery<TagsWithCountsQuery>(TAGS_WITH_COUNTS_QUERY, {
+    useQuery<TagsQuery>(TAGS_QUERY, {
       fetchPolicy: 'cache-first',
     }),
   )

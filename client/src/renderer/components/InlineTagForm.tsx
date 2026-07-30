@@ -1,12 +1,12 @@
 import { Autocomplete, Stack, TextField, Typography } from '@mui/material'
 import { matchSorter } from 'match-sorter'
 import React, { useRef } from 'react'
-import type { TagsWithCountsQuery } from '../generated/graphql'
+import type { TagsQuery } from '../generated/graphql'
 import useUserId from '../hooks/useUserId'
 import { SkeletonTag } from './Skeletons'
 import Tag from './Tag'
 
-type TagType = TagsWithCountsQuery['tags'][number]
+type TagType = TagsQuery['tags'][number]
 type TagOrNewTagType = TagType | { newTagName: string; title: string }
 
 type InlineTagFormProps = {

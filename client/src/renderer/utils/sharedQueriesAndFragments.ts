@@ -29,6 +29,7 @@ export const BASE_TAG_FRAGMENT = gql`
 
     name
     color
+    noteCount
 
     user {
       _id
@@ -138,16 +139,6 @@ export const TAGS_QUERY = gql`
   ${BASE_TAG_FRAGMENT}
 `
 
-export const TAGS_WITH_COUNTS_QUERY = gql`
-  query TagsWithCounts {
-    tags {
-      ...BaseTag
-      noteCount
-    }
-  }
-  ${BASE_TAG_FRAGMENT}
-`
-
 export const ADD_TAG_BY_NAME_TO_NOTE_MUTATION = gql`
   mutation AddTagByNameToNote($noteId: ID!, $tagName: String!) {
     addTagByNameToNote(noteId: $noteId, name: $tagName) {
@@ -155,7 +146,6 @@ export const ADD_TAG_BY_NAME_TO_NOTE_MUTATION = gql`
       updatedAt
       tags {
         ...BaseTag
-        noteCount
         notes {
           _id
         }
