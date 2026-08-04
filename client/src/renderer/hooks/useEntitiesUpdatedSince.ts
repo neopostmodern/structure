@@ -241,7 +241,7 @@ const useEntitiesUpdatedSince = () => {
     }
 
     const notesRefetchInterval = setInterval(() => {
-      entitiesUpdatedSince.refetch()
+      entitiesUpdatedSince.refetch({ cacheId: getUpdatedSinceCacheId() })
     }, ENTITIES_UPDATED_SINCE_INTERVAL_MS)
 
     return () => {
